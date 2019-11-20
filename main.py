@@ -2,6 +2,16 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+# Game System:
+# Based on "HârnMaster Third Edition"
+# Copyright (c) 1986 - 2003 N. Robin Crossby & Columbia Games, Inc.
+# By N. Robin Crossby and Tom Dalgliesh
+
+# Adventure Setting:
+# Based on "The Keep on the Borderlands"
+# Copyright (c) 1980, 1981 - TSR Hobbies, Inc.
+# By Gary Gygax
+
 # Main setup
 
 import random
