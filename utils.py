@@ -149,7 +149,9 @@ def printRoomDescription(room_id, rooms):
     if len(rooms[room_id].Exits) > 0:
       print("")
       for exit_dir,exit in rooms[room_id].Exits.items():
-        print("To the %s is %s" % (directions[exit_dir][0].upper(), rooms[exit.Room].ShortDescription))
+        print("To the %s is %s" % (
+          ANSI.TEXT_BOLD + directions[exit_dir][0].upper() + ANSI.TEXT_NORMAL,
+          rooms[exit.Room].ShortDescription))
 
   if len(rooms[room_id].RoomItems) > 0:
     print("\nThe following items are here:")
@@ -321,8 +323,12 @@ def prompt(player, rooms):
     elif x == "l" or x == "look":
       printRoomDescription(player.Room, rooms)
     elif x == "quit":
-      player.Command = x
-      break
+      y = input("\nAre you sure you wish to QUIT (make sure you SAVE prior to quitting)? ").lower()
+      if y == "y" or y == "yes":
+        player.Command = x
+        break
+      else:
+        print("\nQuit aborted.")
     elif x == "save":
       print("\nA password is used to encrypt your SAVE data.")
       print("It should NOT be a password used for anything important.")

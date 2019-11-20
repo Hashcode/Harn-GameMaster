@@ -78,7 +78,7 @@ while True:
   if res != RoomFuncResponse.NO_PROMPT:
     prompt(player, rooms)
     if player.Command == "quit":
-      print("Goodbye!")
+      print("\nGoodbye!\n")
       break
     if player.Command != "":
       print("You cannot do that here.")
