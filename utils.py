@@ -231,14 +231,14 @@ def actionEquipItem(player):
           print("[%s] is already equipped." % items[item_id].ItemName)
           return
     # only 2 weapons/shields
-    if item[equip_id].ItemType == ItemTypeEnum.WEAPON or item[equip_id].ItemType == ItemTypeEnum.WEAPON:
-      if item[item_id].ItemType == ItemTypeEnum.SHIELD or item[item_id].ItemType == ItemTypeEnum.WEAPON:
+    if items[equip_id].ItemType == ItemTypeEnum.WEAPON or items[equip_id].ItemType == ItemTypeEnum.WEAPON:
+      if items[item_id].ItemType == ItemTypeEnum.SHIELD or items[item_id].ItemType == ItemTypeEnum.WEAPON:
         count += 1
         if count > 1:
             print("Already wielding 2 weapons or shields.")
             return
     # only 2 rings
-    if item[equip_id].ItemType == ItemTypeEnum.RING and item[item_id].ItemType == ItemTypeEnum.RING:
+    if items[equip_id].ItemType == ItemTypeEnum.RING and items[item_id].ItemType == ItemTypeEnum.RING:
       count += 1
       if count > 1:
           print("Already wielding 2 rings.")
