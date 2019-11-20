@@ -39,11 +39,11 @@ def logd(line):
 
 # Roll
 
-def roll(rolls, die_base):
+def roll(rolls, die_base, modifier=0):
   value = 0
   for x in range(rolls):
-    y = random.randint(1, die_base)
-    logd("ROLL %dD%d = %d" % (rolls, die_base, y))
+    y = random.randint(1, die_base) + modifier
+    logd("ROLL %dD%d+%d = %d" % (rolls, die_base, modifier, y))
     value += y
   return value
 
