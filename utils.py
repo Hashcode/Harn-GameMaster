@@ -150,11 +150,7 @@ def printRoomDescription(room_id, rooms):
 
   if len(rooms[room_id].RoomItems) > 0:
     print("\nThe following items are here:")
-    for item_id, il in rooms[room_id].RoomItems.items():
-      if il.Quantity > 1:
-        print("  (%d) %s" % (il.Quantity, items[item_id].ItemName))
-      else:
-        print("  %s" % (items[item_id].ItemName))
+    printItems(rooms[room_id].RoomItems)
 
 def actionGetItem(player, rooms):
   print("\nItems in in the room:\n")
