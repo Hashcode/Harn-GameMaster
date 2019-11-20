@@ -129,12 +129,16 @@ def printStats(player):
 # Directions
 
 directions = {
-  DirectionEnum.NORTH: [ "north", "n" ],
-  DirectionEnum.SOUTH: [ "south", "s" ],
-  DirectionEnum.WEST:  [ "west",  "w" ],
-  DirectionEnum.EAST:  [ "east",  "e" ],
-  DirectionEnum.UP:    [ "up",    "u" ],
-  DirectionEnum.DOWN:  [ "down",  "d" ],
+  DirectionEnum.NORTH:    [ "north", "n" ],
+  DirectionEnum.SOUTH:    [ "south", "s" ],
+  DirectionEnum.WEST:     [ "west",  "w" ],
+  DirectionEnum.EAST:     [ "east",  "e" ],
+  DirectionEnum.NORTHWEST:[ "northwest", "nw" ],
+  DirectionEnum.NORTHEAST:[ "northeast", "ne" ],
+  DirectionEnum.SOUTHWEST:[ "southwest", "sw" ],
+  DirectionEnum.SOUTHEAST:[ "southeast", "se" ],
+  DirectionEnum.UP:       [ "up",    "u" ],
+  DirectionEnum.DOWN:     [ "down",  "d" ],
 }
 
 def printRoomDescription(room_id, rooms):

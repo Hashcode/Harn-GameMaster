@@ -599,8 +599,12 @@ class DirectionEnum(IntEnum):
   SOUTH = 2
   WEST = 3
   EAST = 4
-  UP = 5
-  DOWN = 6
+  NORTHWEST = 5
+  NORTHEAST = 6
+  SOUTHWEST = 7
+  SOUTHEAST = 8
+  UP = 9
+  DOWN = 10
 
 class Exit:
   def __init__(self, room_id, name="", lock=False, key_item=ItemEnum.NONE):
