@@ -1,0 +1,35 @@
+[[package]]
+category = "main"
+description = "Cryptographic modules for Python."
+name = "pycrypto"
+optional = false
+python-versions = "*"
+version = "2.6.1"
+
+[[package]]
+category = "main"
+description = "Simple, secure encryption and decryption for Python 2.7 and 3"
+name = "simple-crypt"
+optional = false
+python-versions = "*"
+version = "4.1.7"
+
+[package.dependencies]
+pycrypto = "*"
+
+[[package]]
+category = "main"
+description = "TinyDB is a tiny, document oriented database optimized for your happiness :)"
+name = "tinydb"
+optional = false
+python-versions = "*"
+version = "3.15.1"
+
+[metadata]
+content-hash = "85b5e001c2fd3819399f54af88ecddaeec68ada2e70f7305db23c194bc4b3146"
+python-versions = "^3.7"
+
+[metadata.hashes]
+pycrypto = ["f2ce1e989b272cfcb677616763e0a2e7ec659effa67a88aa92b3a65528f60a3c"]
+simple-crypt = ["49462ab7ea4b080a8c10e362abfe35ecfa6dbe1e1c454ea36de7d2a71dce992f"]
+tinydb = ["02ef39c07802e3f06e87d3d251f16c44336611fd9ddb4c9fcebf39933f4ba7f3", "804d131d070fc4315beb5821396abe0d84f483e55120dda73f12873ef5c27528"]
