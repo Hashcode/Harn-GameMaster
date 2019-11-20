@@ -5,13 +5,13 @@
 # Global Definitions
 
 from array import *
-from enum import Enum
+from enum import IntEnum
 import pickle
 import codecs
 
 # SKILLS
 
-class SkillEnum(Enum):
+class SkillEnum(IntEnum):
   NONE = 0
   UNARMED = 1
   SHIELD = 2
@@ -28,7 +28,7 @@ class SkillEnum(Enum):
   BLOWGUN = 13
   SLING = 14
 
-class QualityEnum(Enum):
+class QualityEnum(IntEnum):
   NONE = 0
   TERRIBLE = 1
   POOR = 2
@@ -54,7 +54,7 @@ qualities = {
 
 # MATERIALS
 
-class MaterialEnum(Enum):
+class MaterialEnum(IntEnum):
   NONE = 0
   # BASIC
   CLOTH_HAIR = 1
@@ -183,7 +183,7 @@ body_parts = {
 
 # DAMAGE
 
-class DamageTypeEnum(Enum):
+class DamageTypeEnum(IntEnum):
   NONE = 0
   BLUNT = 1
   EDGE = 2
@@ -196,7 +196,7 @@ class DamageTypeEnum(Enum):
 
 # EFFECTS
 
-class EffectTypeEnum(Enum):
+class EffectTypeEnum(IntEnum):
   NONE = 0
   STR = 1
   DEX = 2
@@ -219,7 +219,7 @@ class Effect:
 
 # ITEMS
 
-class ItemEnum(Enum):
+class ItemEnum(IntEnum):
   NONE = 0
 
   # WEAPON [UNARMED]
@@ -350,7 +350,7 @@ class ItemEnum(Enum):
   # MISC
   MISC_STONE = 50000
 
-class ItemTypeEnum(Enum):
+class ItemTypeEnum(IntEnum):
   NONE = 0
   WEAPON = 1
   SHIELD = 2
@@ -452,7 +452,7 @@ class Ring(Item):
 
 # COMBAT
 
-class CombatActionEnum(Enum):
+class CombatActionEnum(IntEnum):
   NONE = 0
   MELEE_ATTACK = 1
   DODGE = 2
@@ -511,7 +511,7 @@ class Person:
 
 # ENEMY
 
-class EnemyEnum(Enum):
+class EnemyEnum(IntEnum):
   NONE = 0
   RAT = 1
   CHARLOK = 10
@@ -562,7 +562,7 @@ class Player(Person):
 
 # ROOM
 
-class RoomEnum(Enum):
+class RoomEnum(IntEnum):
   NONE = 0
   START_GAME = 1
   RESTORE_SAVE = 2
@@ -574,12 +574,12 @@ class RoomEnum(Enum):
   DARK_CAVE = 103
   CHARLOK_PIT = 104
 
-class RoomFuncResponse(Enum):
+class RoomFuncResponse(IntEnum):
   NONE = 0
   NO_PROMPT = 1
   SKIP = 2
   
-class DirectionEnum(Enum):
+class DirectionEnum(IntEnum):
   NONE = 0
   NORTH = 1
   SOUTH = 2
