@@ -112,44 +112,44 @@ materials = {
 
 # BODY COVERAGE
 
-COVERAGE_SKULL = 0
-COVERAGE_FACE = 1
-COVERAGE_NECK = 2
-COVERAGE_SHOULDERS = 3
-COVERAGE_UPPER_ARMS = 4
-COVERAGE_ELBOWS = 5
-COVERAGE_FOREARMS = 6
-COVERAGE_HANDS = 7
-COVERAGE_FRONT_THORAX = 8
-COVERAGE_REAR_THORAX = 9
-COVERAGE_FRONT_ABDOMEN = 10
-COVERAGE_REAR_ABDOMEN = 11
-COVERAGE_HIPS = 12
-COVERAGE_GROIN = 13
-COVERAGE_THIGHS = 14
-COVERAGE_KNEES = 15
-COVERAGE_CALVES = 16
-COVERAGE_FEET = 17
-COVERAGE_MAX = 18
+class CoverageEnum(IntEnum):
+  SKULL = 0
+  FACE = 1
+  NECK = 2
+  SHOULDERS = 3
+  UPPER_ARMS = 4
+  ELBOWS = 5
+  FOREARMS = 6
+  HANDS = 7
+  FRONT_THORAX = 8
+  REAR_THORAX = 9
+  FRONT_ABDOMEN = 10
+  REAR_ABDOMEN = 11
+  HIPS = 12
+  GROIN = 13
+  THIGHS = 14
+  KNEES = 15
+  CALVES = 16
+  FEET = 17
 
-COV_Sk = 1 << COVERAGE_SKULL
-COV_Fa = 1 << COVERAGE_FACE
-COV_Nk = 1 << COVERAGE_NECK
-COV_Sh = 1 << COVERAGE_SHOULDERS
-COV_Ua = 1 << COVERAGE_UPPER_ARMS
-COV_El = 1 << COVERAGE_ELBOWS
-COV_Fo = 1 << COVERAGE_FOREARMS
-COV_Ha = 1 << COVERAGE_HANDS
-COV_Tx_F = 1 << COVERAGE_FRONT_THORAX
-COV_Tx_R = 1 << COVERAGE_REAR_THORAX
-COV_Ab_F = 1 << COVERAGE_FRONT_ABDOMEN
-COV_Ab_R = 1 << COVERAGE_REAR_ABDOMEN
-COV_Hp = 1 << COVERAGE_HIPS
-COV_Gr = 1 << COVERAGE_GROIN
-COV_Th = 1 << COVERAGE_THIGHS
-COV_Kn = 1 << COVERAGE_KNEES
-COV_Ca = 1 << COVERAGE_CALVES
-COV_Ft = 1 << COVERAGE_FEET
+COV_Sk = 1 << CoverageEnum.SKULL
+COV_Fa = 1 << CoverageEnum.FACE
+COV_Nk = 1 << CoverageEnum.NECK
+COV_Sh = 1 << CoverageEnum.SHOULDERS
+COV_Ua = 1 << CoverageEnum.UPPER_ARMS
+COV_El = 1 << CoverageEnum.ELBOWS
+COV_Fo = 1 << CoverageEnum.FOREARMS
+COV_Ha = 1 << CoverageEnum.HANDS
+COV_Tx_F = 1 << CoverageEnum.FRONT_THORAX
+COV_Tx_R = 1 << CoverageEnum.REAR_THORAX
+COV_Ab_F = 1 << CoverageEnum.FRONT_ABDOMEN
+COV_Ab_R = 1 << CoverageEnum.REAR_ABDOMEN
+COV_Hp = 1 << CoverageEnum.HIPS
+COV_Gr = 1 << CoverageEnum.GROIN
+COV_Th = 1 << CoverageEnum.THIGHS
+COV_Kn = 1 << CoverageEnum.KNEES
+COV_Ca = 1 << CoverageEnum.CALVES
+COV_Ft = 1 << CoverageEnum.FEET
 COV_Tx = COV_Tx_F | COV_Tx_R
 COV_Ab = COV_Ab_F | COV_Ab_R
 COV_Ch = COV_Tx_F | COV_Ab_F
@@ -161,24 +161,24 @@ class BodyPart:
     self.Mass = mass
 
 body_parts = {
-  COVERAGE_SKULL:         BodyPart("skull", 4),
-  COVERAGE_FACE:          BodyPart("face", 3),
-  COVERAGE_NECK:          BodyPart("neck", 4),
-  COVERAGE_SHOULDERS:     BodyPart("shoulder", 4),
-  COVERAGE_UPPER_ARMS:    BodyPart("upper arm", 6),
-  COVERAGE_ELBOWS:        BodyPart("elbow", 6),
-  COVERAGE_FOREARMS:      BodyPart("forearm", 6),
-  COVERAGE_HANDS:         BodyPart("haand", 4),
-  COVERAGE_FRONT_THORAX:  BodyPart("thorax (front)", 6),
-  COVERAGE_REAR_THORAX:   BodyPart("thorax (back)", 6),
-  COVERAGE_FRONT_ABDOMEN: BodyPart("abdomen (front)", 6),
-  COVERAGE_REAR_ABDOMEN:  BodyPart("abdomen (back)", 6),
-  COVERAGE_HIPS:          BodyPart("hip", 8),
-  COVERAGE_GROIN:         BodyPart("groin", 2),
-  COVERAGE_THIGHS:        BodyPart("thigh", 7),
-  COVERAGE_KNEES:         BodyPart("knee", 3),
-  COVERAGE_CALVES:        BodyPart("calf", 10),
-  COVERAGE_FEET:          BodyPart("foot", 6),
+  CoverageEnum.SKULL:         BodyPart("skull", 4),
+  CoverageEnum.FACE:          BodyPart("face", 3),
+  CoverageEnum.NECK:          BodyPart("neck", 4),
+  CoverageEnum.SHOULDERS:     BodyPart("shoulder", 4),
+  CoverageEnum.UPPER_ARMS:    BodyPart("upper arm", 6),
+  CoverageEnum.ELBOWS:        BodyPart("elbow", 6),
+  CoverageEnum.FOREARMS:      BodyPart("forearm", 6),
+  CoverageEnum.HANDS:         BodyPart("haand", 4),
+  CoverageEnum.FRONT_THORAX:  BodyPart("thorax (front)", 6),
+  CoverageEnum.REAR_THORAX:   BodyPart("thorax (back)", 6),
+  CoverageEnum.FRONT_ABDOMEN: BodyPart("abdomen (front)", 6),
+  CoverageEnum.REAR_ABDOMEN:  BodyPart("abdomen (back)", 6),
+  CoverageEnum.HIPS:          BodyPart("hip", 8),
+  CoverageEnum.GROIN:         BodyPart("groin", 2),
+  CoverageEnum.THIGHS:        BodyPart("thigh", 7),
+  CoverageEnum.KNEES:         BodyPart("knee", 3),
+  CoverageEnum.CALVES:        BodyPart("calf", 10),
+  CoverageEnum.FEET:          BodyPart("foot", 6),
 }
 
 # DAMAGE
@@ -427,7 +427,7 @@ class Armor(Item):
   def __init__(self, name, qual, material, layer = 0, coverage = 0, flags = 0, eff = None):
     # TODO use coverage / material Type
     mass = 0
-    for x in range(COVERAGE_SKULL, COVERAGE_MAX):
+    for x in CoverageEnum:
       if coverage & 1 << x > 0:
         mass += body_parts[x].Mass
     super().__init__(ItemTypeEnum.ARMOR, name, qual, material, mass, flags, eff)
@@ -436,7 +436,7 @@ class Armor(Item):
 
   def CoverageStr(self):
     cov_list = []
-    for x in range(COVERAGE_SKULL, COVERAGE_MAX):
+    for x in CoverageEnum:
       if self.Coverage & 1 << x > 0:
         cov_list.append(body_parts[x].PartName)
     return ", ".join(cov_list)
