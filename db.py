@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-import copy
 from tinydb import TinyDB, Query
 from simplecrypt import encrypt, decrypt
 
@@ -49,8 +48,6 @@ def LoadDB(name):
   return state
 
 def SavePlayer(save_obj, password):
-  #save_obj = copy.deepcopy(obj)
-  #save_obj.PlayerItems = copy.deepcopy(obj.PlayerItems)
   state_bytes = pickle.dumps(save_obj)
   if global_use_encrypt:
     enc_state_bytes = encrypt(password, state_bytes)
