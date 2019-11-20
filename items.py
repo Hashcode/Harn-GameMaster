@@ -8,13 +8,13 @@ items = {
   # WEAPON [UNARMED]
   ItemEnum.WEAPON_HAND:
     Weapon("hand", QualityEnum.AVERAGE, MaterialEnum.BONE, 0, SkillEnum.UNARMED, 0, 5, 0, 0, 0, 1, DamageTypeEnum.BLUNT,
-    flags=ITEM_NoSell|ITEM_NoDrop),
+    flags=item_flags[ItemFlagEnum.NO_SELL].Bit|item_flags[ItemFlagEnum.NO_DROP].Bit),
   ItemEnum.WEAPON_FOOT:
     Weapon("foot", QualityEnum.AVERAGE, MaterialEnum.BONE, 0, SkillEnum.UNARMED, 5, 5, 0, 0, 0, 2, DamageTypeEnum.BLUNT,
-    flags=ITEM_NoSell|ITEM_NoDrop),
+    flags=item_flags[ItemFlagEnum.NO_SELL].Bit|item_flags[ItemFlagEnum.NO_DROP].Bit),
   ItemEnum.WEAPON_BITE:
     Weapon("bite", QualityEnum.AVERAGE, MaterialEnum.BONE, 0, SkillEnum.UNARMED, 0, 0, 0, 0, 0, 2, DamageTypeEnum.PIERCE,
-    flags=ITEM_NoSell|ITEM_NoDrop),
+    flags=item_flags[ItemFlagEnum.NO_SELL].Bit|item_flags[ItemFlagEnum.NO_DROP].Bit),
   # WEAPON [DAGGER]
   ItemEnum.WEAPON_KNIFE:
     Weapon("hunting knife", QualityEnum.POOR, MaterialEnum.STEEL_WOOD, 1, SkillEnum.DAGGER, 5, 0, 0, 1, 4, 0, DamageTypeEnum.PIERCE),
@@ -36,10 +36,10 @@ items = {
   # WEAPON [CLUB]
   ItemEnum.WEAPON_STICK:
     Weapon("wooden stick", QualityEnum.TERRIBLE, MaterialEnum.WOOD, 5, SkillEnum.CLUB, 10, 5, 0, 0, 0, 2, DamageTypeEnum.BLUNT,
-    flags=ITEM_NoSell),
+    flags=item_flags[ItemFlagEnum.NO_SELL].Bit),
   ItemEnum.WEAPON_CLUB:
     Weapon("wooden club", QualityEnum.AVERAGE, MaterialEnum.WOOD, 3, SkillEnum.CLUB, 15, 5, 0, 1, 4, 0, DamageTypeEnum.BLUNT,
-    flags=ITEM_NoSell),
+    flags=item_flags[ItemFlagEnum.NO_SELL].Bit),
   ItemEnum.WEAPON_MACE:
     Weapon("iron mace", QualityEnum.AVERAGE, MaterialEnum.STEEL, 4, SkillEnum.CLUB, 15, 5, 0, 1, 6, 1, DamageTypeEnum.BLUNT),
   ItemEnum.WEAPON_MORNINGSTAR:
@@ -208,11 +208,11 @@ items = {
 
   ItemEnum.RING_ATTACK_SILVER:
     Ring("silver ring", QualityEnum.SUPERIOR, MaterialEnum.SILVER, 0.1, 1500,
-    flags=ITEM_Magic, eff=[ Effect(EffectTypeEnum.ATK, 2) ]),
+    flags=item_flags[ItemFlagEnum.MAGIC].Bit, eff=[ Effect(EffectTypeEnum.ATK, 2) ]),
 
   ItemEnum.RING_HP_GOLD:
     Ring("gold ring", QualityEnum.SUPERIOR, MaterialEnum.GOLD, 0.2, 2500,
-    flags=ITEM_Magic, eff=[ Effect(EffectTypeEnum.HP_MAX, 5) ]),
+    flags=item_flags[ItemFlagEnum.MAGIC].Bit, eff=[ Effect(EffectTypeEnum.HP_MAX, 5) ]),
 
   # MISC
 

@@ -89,7 +89,7 @@ def printCombatActions():
   print("  BLOCK")
   print("  FLEE")
 
-def filterLinks(item_links, equipped=False, equippable=False):
+def filterLinks(item_links, equipped=False, equippable=False, flags=0, noflags=0):
   item_dict = {}
   for item_id, il in item_links.items():
     if equippable and not items[item_id].ItemType in [ItemTypeEnum.WEAPON, ItemTypeEnum.ARMOR, ItemTypeEnum.RING]:
@@ -97,6 +97,10 @@ def filterLinks(item_links, equipped=False, equippable=False):
     if not equipped and il.Equipped and il.Quantity == 1:
       continue
     if equipped and not il.Equipped:
+      continue
+    if flags > 0 and items[item_id].Flags & flags == 0:
+      continue
+    if noflags > 0 and items[item_id].Flags & noflags > 0:
       continue
     item_dict.update({item_id: il})
   return item_dict
@@ -106,12 +110,12 @@ def printItems(item_links, number=False):
   for item_id, il in item_links.items():
     count += 1
     if number:
-      print("%d. %s" % (count, items[item_id].ItemName))
+      print("%d. %s%s" % (count, items[item_id].ItemName, items[item_id].ItemFlagStr(" (%s)")))
     else:
       if il.Quantity > 1 and not il.Equipped:
-        print("  (%d) %s" % (il.Quantity, items[item_id].ItemName))
+        print("  (%d) %s%s" % (il.Quantity, items[item_id].ItemName, items[item_id].ItemFlagStr(" (%s)")))
       else:
-        print("  %s" % items[item_id].ItemName)
+        print("  %s%s" % (items[item_id].ItemName, items[item_id].ItemFlagStr(" (%s)")))
 
 def printStats(player):
   print("\nSTATS for %s" % (player.Name))
@@ -194,11 +198,15 @@ def actionDropItem(player, rooms):
   count = 0
   for item_id, il in links.items():
     count += 1
-    if count == itemNum:
-      player.RemoveItem(item_id, ItemLink(1))
-      rooms[player.Room].AddItem(item_id, ItemLink(1))
-      print("[%s] dropped." % items[item_id].ItemName)
-      break
+    if count != itemNum:
+      continue
+    if items[item_id].Flags & item_flags[ItemFlagEnum.NO_DROP].Bit > 0:
+      print("[%s] cannot be dropped." % items[item_id].ItemName)
+      return
+    player.RemoveItem(item_id, ItemLink(1))
+    rooms[player.Room].AddItem(item_id, ItemLink(1))
+    print("[%s] dropped." % items[item_id].ItemName)
+    break
 
 def actionEquipItem(player):
   print("\nEquippable items in your inventory:\n")

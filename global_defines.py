@@ -360,15 +360,23 @@ class ItemTypeEnum(IntEnum):
   CONTAINER = 6
   MISC = 7
 
-IFLAG_NO_SELL = 0
-IFLAG_NO_DROP = 1
-IFLAG_LIGHT = 2
-IFLAG_MAGIC = 3
+class ItemFlagEnum(IntEnum):
+  NO_SELL = 0
+  NO_DROP = 1
+  LIGHT = 2
+  MAGIC = 3
 
-ITEM_NoSell = 1 << IFLAG_NO_SELL
-ITEM_NoDrop = 1 << IFLAG_NO_DROP
-ITEM_Light = 1 << IFLAG_LIGHT
-ITEM_Magic = 1 << IFLAG_MAGIC
+class ItemFlag:
+  def __init__(self, name, bit):
+    self.Name = name
+    self.Bit = bit
+
+item_flags = {
+  ItemFlagEnum.NO_SELL: ItemFlag("no sell", 1 << ItemFlagEnum.NO_SELL),
+  ItemFlagEnum.NO_DROP: ItemFlag("no drop", 1 << ItemFlagEnum.NO_DROP),
+  ItemFlagEnum.LIGHT: ItemFlag("light", 1 << ItemFlagEnum.LIGHT),
+  ItemFlagEnum.MAGIC: ItemFlag("magic", 1 << ItemFlagEnum.MAGIC),
+}
 
 class Item:
   def __init__(self, item_type = ItemTypeEnum.NONE, name = "", qual = QualityEnum.NONE, material = MaterialEnum.NONE, mass = 0, flags = 0, eff = None):
@@ -383,6 +391,16 @@ class Item:
     # Calculations
     self.Weight = self.Mass * materials[self.Material].WeightBase
     self.Value = self.Mass * materials[self.Material].CostBase * qualities[self.Quality].CostModifier
+
+  def ItemFlagStr(self, format="%s"):
+    flag_list = []
+    for x in ItemFlagEnum:
+        if item_flags[x].Bit & self.Flags > 0:
+          flag_list.append(item_flags[x].Name)
+    if len(flag_list) == 0:
+      return ""
+    else:
+      return format % ", ".join(flag_list)
 
 class Shield(Item):
   def __init__(self, name, qual, material, mass, skill, ar, dr, flags = 0, eff = None):
