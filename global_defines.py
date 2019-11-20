@@ -531,8 +531,7 @@ class Person:
 
 class EnemyEnum(IntEnum):
   NONE = 0
-  RAT = 1
-  CHARLOK = 10
+  RAT = 100
 
 class Enemy(Person):
   def __init__(self, name, hp, dmg_rolls, dmg_dice, dmg_type,
@@ -586,11 +585,8 @@ class RoomEnum(IntEnum):
   RESTORE_SAVE = 2
   CREATE_CHARACTER = 3
   DEAD = 10
-  OUTSIDE_HUT = 100
-  CLEARING = 101
-  ICY_MOUNTAINS = 102
-  DARK_CAVE = 103
-  CHARLOK_PIT = 104
+  BL_BEGIN = 10000
+  BL_RESPAWN = 10001
 
 class RoomFuncResponse(IntEnum):
   NONE = 0
