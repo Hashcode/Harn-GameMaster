@@ -88,3 +88,5 @@ enemies = {
           2, 6, DamageTypeEnum.EDGE, 12,
           char_StartRound, char_EndRound),
 }
+
+# vim: tabstop=2 shiftwidth=2 expandtab:

@@ -634,3 +634,5 @@ class Room:
         self.RoomItems[item_id].Quantity -= item.Quantity
       else:
         self.RoomItems.pop(item_id)
+
+# vim: tabstop=2 shiftwidth=2 expandtab:

@@ -71,3 +71,5 @@ while True:
       break
     if player.Command != "":
       print("You cannot do that here.")
+
+# vim: set tabstop=2 shiftwidth=2 expandtab:

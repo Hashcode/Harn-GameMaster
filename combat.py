@@ -70,3 +70,5 @@ def combat(player, enemy, rooms):
 
   if enemy.HitPoints_Cur <= 0:
     enemy.Alive = False
+
+# vim: set tabstop=2 shiftwidth=2 expandtab:

@@ -69,3 +69,5 @@ def LoadPlayer(player, name, password):
   p = pickle.loads(state_bytes)
   player.Copy(p)
   return True
+
+# vim: set tabstop=2 shiftwidth=2 expandtab:

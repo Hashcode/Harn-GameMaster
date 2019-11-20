@@ -219,3 +219,5 @@ items = {
   ItemEnum.MISC_STONE:
     Item(ItemTypeEnum.MISC, "stone", QualityEnum.TERRIBLE, MaterialEnum.STONE, 1),
 }
+
+# vim: tabstop=2 shiftwidth=2 expandtab:

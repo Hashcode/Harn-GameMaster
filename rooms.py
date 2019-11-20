@@ -125,3 +125,5 @@ rooms = {
           DirectionEnum.EAST: Exit(RoomEnum.DARK_CAVE),
         }),
 }
+
+# vim: tabstop=2 shiftwidth=2 expandtab:
