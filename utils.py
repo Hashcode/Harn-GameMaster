@@ -138,13 +138,16 @@ directions = {
 }
 
 def printRoomDescription(room_id, rooms):
-  print("\n", end='')
-
+  print("")
+  # Room Title
+  if rooms[room_id].Title != "":
+    print("%s%s%s" % (ANSI.TEXT_BOLD, rooms[room_id].Title, ANSI.TEXT_NORMAL))
   # Room Description
   if rooms[room_id].LongDescription != "":
-    print("%s\n" % rooms[room_id].LongDescription)
+    print("\n%s" % rooms[room_id].LongDescription)
     # Exits
-    if not rooms[room_id].Exits is None:
+    if len(rooms[room_id].Exits) > 0:
+      print("")
       for exit_dir,exit in rooms[room_id].Exits.items():
         print("To the %s is %s" % (directions[exit_dir][0].upper(), rooms[exit.Room].ShortDescription))
 

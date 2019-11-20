@@ -25,6 +25,7 @@ from combat import combat
 TestMode = True
 
 random.seed()
+print(ANSI.CLEAR + ANSI.RESET_CURSOR, end='')
 
 player = Player("Unknown")
 player.SetRoom(RoomEnum.START_GAME)

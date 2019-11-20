@@ -614,8 +614,9 @@ class Exit:
     self.Key = key_item
 
 class Room:
-  def __init__(self, short_desc, long_desc="", func=None, enemy=EnemyEnum.NONE,
+  def __init__(self, title, short_desc, long_desc="", func=None, enemy=EnemyEnum.NONE,
               exits=None, room_items=None):
+    self.Title = title
     self.ShortDescription = short_desc
     self.LongDescription = long_desc
     self.Function = func
@@ -652,5 +653,13 @@ class Room:
         self.RoomItems[item_id].Quantity -= item.Quantity
       else:
         self.RoomItems.pop(item_id)
+
+# FORMATTING
+
+class ANSI:
+  RESET_CURSOR =  "\x1B[1;1H"
+  CLEAR =         "\x1B[2J"
+  TEXT_NORMAL =   "\x1B[0m"
+  TEXT_BOLD =   "\x1B[1m"
 
 # vim: tabstop=2 shiftwidth=2 expandtab:
