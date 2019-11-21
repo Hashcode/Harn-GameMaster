@@ -7,13 +7,28 @@ from global_defines import *
 items = {
   # WEAPON [UNARMED]
   ItemEnum.WEAPON_HAND:
-    Weapon("hand", QualityEnum.AVERAGE, MaterialEnum.BONE, 0, SkillEnum.UNARMED, 0, 5, 0, 0, 0, 1, DamageTypeEnum.BLUNT,
+    Weapon("punch", QualityEnum.AVERAGE, MaterialEnum.BONE, 0, SkillEnum.UNARMED, 0, 5, 0, 1, 2, 0, DamageTypeEnum.BLUNT,
     flags=item_flags[ItemFlagEnum.NO_SELL].Bit|item_flags[ItemFlagEnum.NO_DROP].Bit),
   ItemEnum.WEAPON_FOOT:
-    Weapon("foot", QualityEnum.AVERAGE, MaterialEnum.BONE, 0, SkillEnum.UNARMED, 5, 5, 0, 0, 0, 2, DamageTypeEnum.BLUNT,
+    Weapon("kick", QualityEnum.AVERAGE, MaterialEnum.BONE, 0, SkillEnum.UNARMED, 5, 5, 0, 1, 2, 1, DamageTypeEnum.BLUNT,
     flags=item_flags[ItemFlagEnum.NO_SELL].Bit|item_flags[ItemFlagEnum.NO_DROP].Bit),
-  ItemEnum.WEAPON_BITE:
-    Weapon("bite", QualityEnum.AVERAGE, MaterialEnum.BONE, 0, SkillEnum.UNARMED, 0, 0, 0, 0, 0, 2, DamageTypeEnum.PIERCE,
+  ItemEnum.WEAPON_BITE_SMALL:
+    Weapon("bite", QualityEnum.AVERAGE, MaterialEnum.BONE, 0, SkillEnum.UNARMED, 0, 0, 0, 1, 2, 0, DamageTypeEnum.PIERCE,
+    flags=item_flags[ItemFlagEnum.NO_SELL].Bit|item_flags[ItemFlagEnum.NO_DROP].Bit),
+  ItemEnum.WEAPON_BITE_MED:
+    Weapon("bite", QualityEnum.AVERAGE, MaterialEnum.BONE, 0, SkillEnum.UNARMED, 0, 0, 0, 1, 4, 0, DamageTypeEnum.PIERCE,
+    flags=item_flags[ItemFlagEnum.NO_SELL].Bit|item_flags[ItemFlagEnum.NO_DROP].Bit),
+  ItemEnum.WEAPON_BITE_LARGE:
+    Weapon("large bite", QualityEnum.AVERAGE, MaterialEnum.BONE, 0, SkillEnum.UNARMED, 0, 0, 0, 1, 6, 0, DamageTypeEnum.PIERCE,
+    flags=item_flags[ItemFlagEnum.NO_SELL].Bit|item_flags[ItemFlagEnum.NO_DROP].Bit),
+  ItemEnum.WEAPON_CLAW_SMALL:
+    Weapon("small sharp claws", QualityEnum.INFERIOR, MaterialEnum.BONE, 0, SkillEnum.UNARMED, 0, 0, 0, 1, 2, 0, DamageTypeEnum.EDGE,
+    flags=item_flags[ItemFlagEnum.NO_SELL].Bit|item_flags[ItemFlagEnum.NO_DROP].Bit),
+  ItemEnum.WEAPON_CLAW_MED:
+    Weapon("long claws", QualityEnum.INFERIOR, MaterialEnum.BONE, 0, SkillEnum.UNARMED, 0, 0, 0, 1, 4, 0, DamageTypeEnum.EDGE,
+    flags=item_flags[ItemFlagEnum.NO_SELL].Bit|item_flags[ItemFlagEnum.NO_DROP].Bit),
+  ItemEnum.WEAPON_CLAW_LARGE:
+    Weapon("razor-sharp claws", QualityEnum.INFERIOR, MaterialEnum.BONE, 0, SkillEnum.UNARMED, 0, 0, 0, 1, 6, 0, DamageTypeEnum.EDGE,
     flags=item_flags[ItemFlagEnum.NO_SELL].Bit|item_flags[ItemFlagEnum.NO_DROP].Bit),
   # WEAPON [DAGGER]
   ItemEnum.WEAPON_KNIFE:

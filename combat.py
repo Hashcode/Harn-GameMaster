@@ -10,65 +10,31 @@ import random
 from global_defines import *
 from utils import *
 
-def playerStartRound(player, rooms):
-  player.Action = CombatActionEnum.NONE
+def combat(player, persons, rooms):
+  # start of combat checks?
+
   while True:
-    prompt(player, rooms)
-    if player.Command == "attack":
-        player.Action = CombatActionEnum.MELEE_ATTACK
-        break
-    elif player.Command == "block":
-        player.Action = CombatActionEnum.BLOCK
-        break
-    elif player.Command == "dodge":
-        player.Action = CombatActionEnum.DODGE
-        break
-    elif player.Command == "flee":
-      player.Action = CombatActionEnum.FLEE
-      break
-    else:
-      print("\nYou are unable to use that ability.")
-      break
+    # start of round checks
+    player.Action = CombatActionEnum.NONE
+    for x in rooms[player.Room].Persons:
+      if x.CombatEnemy == player:
+        x.Action = CombatActionEnum.NONE
 
-def playerApplyAction(player, enemy):
-  if player.Action == CombatActionEnum.MELEE_ATTACK:
-    # TODO calc attack options
-    print("attack!")
-  elif player.Action == CombatActionEnum.BLOCK:
-    print("\nA glowing purple shield appears around you shielding you from some damage.")
-  elif player.Action == CombatActionEnum.FLEE:
-    print("\nYou turn around and flee!")
-    player.SetRoom(player.LastRoom)
-
-def combat(player, enemy, rooms):
-  ResetPlayerStats(player)
-  enemy.ResetStats()
-
-  while enemy.HitPoints_Cur > 0 and player.Action != CombatActionEnum.FLEE:
-    if player.HitPoints_Cur < 1:
-      return
-
+    initiative_list = []
     # TODO Determine Initiative
 
     # First Attack vs. Defense
     # Seciond Attack vs. Defense
 
-    enemy.Action = CombatActionEnum.NONE
     enemyAttNum = random.randint(1,100)
+    #enemy.StartRound(enemyAttNum, player, enemy)
 
-    enemy.StartRound(enemyAttNum, player, enemy)
-
-    print("\n%s HP: %d" %(enemy.Name.upper(), enemy.HitPoints_Cur))
-    print("\nYour HP: %d\nYour Mana: %d\n\nYour combat command:" % (player.HitPoints_Cur, player.MagicPoints_Cur))
+    print("\nYour HP: %d\nYour Mana: %d\n" % (player.HitPoints_Cur, player.MagicPoints_Cur))
+    print("\nChoose a combat command:")
     printCombatActions()
+    prompt(player, rooms)
 
-    playerStartRound(player, rooms)
-    enemy.LastAction = enemy.Action
-    playerApplyAction(player, enemy)
-    if enemy.HitPoints_Cur > 0 and player.Action != CombatActionEnum.FLEE:
-      enemy.EndRound(player, enemy)
-
-  if enemy.HitPoints_Cur <= 0:
-    enemy.Alive = False
+    if player.HitPoints_Cur < 1 or player.Action == CombatActionEnum.FLEE:
+      break
 
 # vim: set tabstop=2 shiftwidth=2 expandtab:

@@ -19,7 +19,7 @@ import random
 from global_defines import *
 from utils import *
 from rooms import rooms
-from enemy import enemies
+from person import persons
 from combat import combat
 
 TestMode = True
@@ -28,7 +28,7 @@ random.seed()
 print(ANSI.CLEAR + ANSI.RESET_CURSOR, end='')
 
 player = Player("Unknown")
-player.SetRoom(RoomEnum.START_GAME)
+player.SetRoom(RoomEnum.GAME_START)
 
 if TestMode:
   ResetPlayerStats(player)
@@ -44,6 +44,7 @@ if TestMode:
   player.AddItem(ItemEnum.MISC_STONE, ItemLink(2))
 
 while True:
+  combat_flag = False
   res = RoomFuncResponse.NONE
   printRoomDescription(player.Room, rooms)
 
@@ -55,30 +56,33 @@ while True:
   if res == RoomFuncResponse.SKIP:
     continue
 
-  # Fighting Check
-  if player.CombatEnemy == EnemyEnum.NONE:
-    # Check if the room has an enemy
-    if rooms[player.Room].Enemy != EnemyEnum.NONE:
-      if enemies[rooms[player.Room].Enemy].Alive:
-        player.CombatEnemy = rooms[player.Room].Enemy
+  # Check if the room persons need to attack
+  for x in rooms[player.Room].Persons:
+    if x.Flags & PERS_COMBAT == 0 and x.Flags & PERS_AGGRESSIVE > 0:
+      combat_flag = True
+      x.CombatEnemy == player
+      x.Flags |= PERS_COMBAT
+      player.Flags |= PERS_COMBAT
+      print("%s attacks you!" % x.Name)
 
-  if player.CombatEnemy != EnemyEnum.NONE:
-    combat(player, enemies[player.CombatEnemy], rooms)
-    player.CombatEnemy = EnemyEnum.NONE
-    if player.HitPoints_Cur < 1:
+  if player.CombatEnemy != None:
+     combat_flag = True
+
+  if combat_flag:
+    combat(player, persons, rooms)
+    if player.HitPoints_Cur <= 0:
       print("\nThe last of your strength slips away, and your vision fades to black...")
-      print("\nYou have been defeated by %s." % (enemies[player.CombatEnemy].Name))
+      print("\n%sYou have died!%s" % (ANSI.TEXT_BOLD, ANSI_TEXT_NORMAL))
       time.sleep(2)
-      player.SetRoom(RoomEnum.DEATH)
-    elif not enemies[player.CombatEnemy].Alive:
-      if not enemies[player.CombatEnemy].Alive:
-        print("\nCongratulations! You have defeated %s!" % (enemies[player.CombatEnemy].Name))
+      print("\nYou slow come back to your senses ...\n")
+      time.sleep(2)
+      player.SetRoom(ROOM_RESPAWN)
+      continue
 
   # Handle Commands
   if res != RoomFuncResponse.NO_PROMPT:
     prompt(player, rooms)
-    if player.Command == "quit":
-      print("\nGoodbye!\n")
+    if player.Command == "q" or player.Command == "quit":
       break
     if player.Command != "":
       print("You cannot do that here.")

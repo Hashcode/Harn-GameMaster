@@ -8,7 +8,7 @@ import random
 
 from global_defines import *
 from items import *
-from enemy import *
+from person import *
 from db import *
 
 # Logging
@@ -53,7 +53,7 @@ def CalcEffect(player, eff_type):
     if not items[item_id].Effects is None:
       for y in items[item_id].Effects:
         if y.EffectType == eff_type:
-          value += y.Modifer * il.Quantity
+          value += y.Modifier * il.Quantity
   if not player.Effects is None:
     for y in player.Effects:
       if y.EffectType == eff_type:
@@ -113,18 +113,9 @@ def printItems(item_links, number=False):
       print("%d. %s%s" % (count, items[item_id].ItemName, items[item_id].ItemFlagStr(" (%s)")))
     else:
       if il.Quantity > 1 and not il.Equipped:
-        print("  (%d) %s%s" % (il.Quantity, items[item_id].ItemName, items[item_id].ItemFlagStr(" (%s)")))
+        print("(%d) %s%s" % (il.Quantity, items[item_id].ItemName, items[item_id].ItemFlagStr(" (%s)")))
       else:
-        print("  %s%s" % (items[item_id].ItemName, items[item_id].ItemFlagStr(" (%s)")))
-
-def printStats(player):
-  print("\nSTATS for %s" % (player.Name))
-  if player.CombatEnemy != EnemyEnum.NONE:
-    print("  FIGHTING: %s" % (enemies[player.CombatEnemy].Name))
-  print("  HEALTH  : %d" % (player.HitPoints_Cur))
-  print("  MAGIC   : %d" % (player.MagicPoints_Cur))
-  print("  ATTACK  : %d" % (CalcAttackPoints(player)))
-  print("  DEFENSE : %d" % (CalcDefense(player)))
+        print("%s%s" % (items[item_id].ItemName, items[item_id].ItemFlagStr(" (%s)")))
 
 # Directions
 
@@ -160,30 +151,6 @@ def printRoomDescription(room_id, rooms):
   if len(rooms[room_id].RoomItems) > 0:
     print("\nThe following items are here:")
     printItems(rooms[room_id].RoomItems)
-
-def actionGetItem(player, rooms):
-  print("\nItems in in the room:\n")
-  links = filterLinks(rooms[player.Room].RoomItems, equipped=False)
-  if len(links) < 1:
-    print("There are no items in the room.")
-    return
-  printItems(links, number=True)
-  x = input("\nWhich item # to pick up: ").lower()
-  if not x.isnumeric():
-    print("Invalid item.")
-    return
-  itemNum = int(x)
-  if itemNum < 1 or itemNum > len(links):
-    print("Invalid item.")
-    return
-  count = 0
-  for item_id, il in links.items():
-    count += 1
-    if count == itemNum:
-      rooms[player.Room].RemoveItem(item_id, ItemLink(1))
-      player.AddItem(item_id, ItemLink(1))
-      print("[%s] picked up." % items[item_id].ItemName)
-      break
 
 def actionDropItem(player, rooms):
   print("\nItems in your inventory:\n")
@@ -259,6 +226,65 @@ def actionEquipItem(player):
   player.ItemLinks[equip_id].Equipped = True
   print("[%s] equipped." % items[equip_id].ItemName)
 
+def actionGetItem(player, rooms):
+  print("\nItems in in the room:\n")
+  links = filterLinks(rooms[player.Room].RoomItems, equipped=False)
+  if len(links) < 1:
+    print("There are no items in the room.")
+    return
+  printItems(links, number=True)
+  x = input("\nWhich item # to pick up: ").lower()
+  if not x.isnumeric():
+    print("Invalid item.")
+    return
+  itemNum = int(x)
+  if itemNum < 1 or itemNum > len(links):
+    print("Invalid item.")
+    return
+  count = 0
+  for item_id, il in links.items():
+    count += 1
+    if count == itemNum:
+      rooms[player.Room].RemoveItem(item_id, ItemLink(1))
+      player.AddItem(item_id, ItemLink(1))
+      print("[%s] picked up." % items[item_id].ItemName)
+      break
+
+def actionInventory(player):
+  print("\n%sCURRENCY%s: %dsp" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL, player.Currency))
+  print("\n%sEQUIPMENT:%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  links = filterLinks(player.ItemLinks, equipped=True)
+  if len(links) < 1:
+    print("[NONE]")
+  else:
+    printItems(links)
+  print("\n%sITEMS:%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  links = filterLinks(player.ItemLinks, equipped=False)
+  if len(links) < 1:
+    print("[NONE]")
+  else:
+    printItems(links)
+
+def actionSave(player, rooms):
+  if SavePlayer(player, rooms[player.Room].Title, player.Password):
+    return True
+  else:
+    print("%sAn error occured during SAVE!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    return False
+
+def actionStats(player, rooms):
+  print("\n%sCHARACTER STATS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  if player.Flags & PERS_COMBAT > 0:
+    fighting = []
+    for x in rooms[player.Room].Persons:
+      if x.CombatEnemy == player:
+        fighting.append(x.Name)
+    print("%-8s: %s" % ("Fighting", ", ".join(fighting)))
+  print("%-8s: %d" % ("Health", player.HitPoints_Cur))
+  print("%-8s: %d" % ("Mana", player.MagicPoints_Cur))
+  print("%-8s: %d" % ("Attack", CalcAttackPoints(player)))
+  print("%-8s: %d" % ("Defense", CalcDefense(player)))
+
 def actionUnequipItem(player):
   print("\nYour equipped items:\n")
   links = filterLinks(player.ItemLinks, equipped=True)
@@ -282,6 +308,16 @@ def actionUnequipItem(player):
       print("[%s] removed." % items[item_id].ItemName)
       break
 
+def actionListPlayers():
+  pinfo = ListDB()
+  if len(pinfo) == 0:
+    print("\nThere are no saved characters!")
+  else:
+    print("\n%s%-20s %s%s" % (ANSI.TEXT_BOLD, "CHARACTER NAME", "SAVED IN ROOM", ANSI.TEXT_NORMAL))
+    print("%s%-20s %s%s" %   (ANSI.TEXT_BOLD, "--------------", "-------------", ANSI.TEXT_NORMAL))
+    for x in sorted(pinfo):
+      print("%-20s %s" % (x, pinfo[x]))
+
 def prompt(player, rooms):
   player.Command = ""
   while True:
@@ -298,54 +334,74 @@ def prompt(player, rooms):
       actionGetItem(player, rooms)
     elif x == "help":
       print("\nGeneral Commands:")
+      print("  DROP")
+      print("  EQUIP")
+      print("  GET")
       print("  INVENTORY")
-      if player.CombatEnemy == EnemyEnum.NONE:
-        print("  LOOK")
+      print("  LOOK")
+      print("  OPEN")
+      print("  PASSWORD")
+      print("  QUIT")
       print("  SAVE")
+      print("  SKILLS")
       print("  STATS")
+      print("  UNEQUIP")
+      print("  UNLOCK")
+      print("  WHO")
       if not rooms[player.Room].Exits is None:
         print("\nDirection Commands:")
         for exit_dir,exit in rooms[player.Room].Exits.items():
           print("  %s" % directions[exit_dir].upper())
-      if player.CombatEnemy != EnemyEnum.NONE:
+      if player.Flags & PERS_COMBAT > 0:
         print("\nCombat Commands:")
         printCombatActions()
     elif x == "i" or x == "inventory":
-      print("\nCURRENCY: %dsp" % (player.Currency))
-      print("\nEQUIPMENT:")
-      links = filterLinks(player.ItemLinks, equipped=True)
-      if len(links) < 1:
-        print("  [NONE]")
-      else:
-        printItems(links)
-      print("\nITEMS:")
-      links = filterLinks(player.ItemLinks, equipped=False)
-      if len(links) < 1:
-        print("  [NONE]")
-      else:
-        printItems(links)
+      actionInventory(player)
     elif x == "l" or x == "look":
       printRoomDescription(player.Room, rooms)
-    elif x == "quit":
-      y = input("\nAre you sure you wish to QUIT (make sure you SAVE prior to quitting)? ").lower()
-      if y == "y" or y == "yes":
-        player.Command = x
-        break
+    elif x == "open":
+      # TODO:
+      print("Coming soon!")
+    elif x == "password":
+      if player.Flags & PERS_COMBAT > 0:
+        print("\n%sYou can't change your password in combat!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
       else:
-        print("\nQuit aborted.")
+        print("\nYour password is used to encrypt SAVE data.")
+        print("It should NOT be a password used for anything important.")
+        x = input("\nEnter a password: ").upper
+        if len(x.Password) < 3 or len(x.Password) > 10:
+          print("\nPassword needs to be between 3 and 10 characters long.")
+        player.Password = x
+        actionSave(player, rooms)
+    elif x == "q" or x == "quit":
+      if player.Flags & PERS_COMBAT > 0:
+        print("\n%sYou can't QUIT in combat!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+      else:
+        y = input("\nAre you sure you wish to QUIT? ").lower()
+        if y == "y" or y == "yes":
+          actionSave(player, rooms)
+          print("\nGoodbye!\n")
+          player.Command = x
+          break
+        else:
+          print("\nQuit aborted.")
     elif x == "save":
-      print("\nA password is used to encrypt your SAVE data.")
-      print("It should NOT be a password used for anything important.")
-      password = input("\nEnter your SAVE data password: ")
-      print("\nPlease wait while data is being saved ...")
-      if SavePlayer(player, password):
-        print("Saved.")
+      if player.Flags & PERS_COMBAT > 0:
+        print("\n%sYou can't SAVE in combat!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
       else:
-        print("An error occured during SAVE.")
+        actionSave(player, rooms)
+    elif x == "skills":
+      # TODO:
+      print("Coming soon!")
     elif x == "stats":
-      printStats(player)
+      actionStats(player, rooms)
     elif x == "unequip":
       actionUnequipItem(player)
+    elif x == "unlock":
+      # TODO:
+      print("Coming soon!")
+    elif x == "who":
+      actionListPlayers()
     else:
       # Handle directions
       if not rooms[player.Room].Exits is None:

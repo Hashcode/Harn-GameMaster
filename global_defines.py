@@ -8,6 +8,7 @@ from array import *
 from enum import IntEnum
 import pickle
 import codecs
+from uuid import uuid4
 
 # SKILLS
 
@@ -225,7 +226,12 @@ class ItemEnum(IntEnum):
   # WEAPON [UNARMED]
   WEAPON_HAND = 10000
   WEAPON_FOOT = 10001
-  WEAPON_BITE = 10002
+  WEAPON_BITE_SMALL = 10010
+  WEAPON_BITE_MED = 10011
+  WEAPON_BITE_LARGE = 10012
+  WEAPON_CLAW_SMALL = 10020
+  WEAPON_CLAW_MED = 10021
+  WEAPON_CLAW_LARGE = 10022
   # WEAPON [DAGGER]
   WEAPON_KNIFE = 10200
   WEAPON_DAGGER = 10210
@@ -363,8 +369,11 @@ class ItemTypeEnum(IntEnum):
 class ItemFlagEnum(IntEnum):
   NO_SELL = 0
   NO_DROP = 1
+  NO_GET = 2
   LIGHT = 2
   MAGIC = 3
+  HIDDEN = 4
+  INVISIBLE = 5
 
 class ItemFlag:
   def __init__(self, name, bit):
@@ -374,8 +383,11 @@ class ItemFlag:
 item_flags = {
   ItemFlagEnum.NO_SELL: ItemFlag("no sell", 1 << ItemFlagEnum.NO_SELL),
   ItemFlagEnum.NO_DROP: ItemFlag("no drop", 1 << ItemFlagEnum.NO_DROP),
+  ItemFlagEnum.NO_GET: ItemFlag("no get", 1 << ItemFlagEnum.NO_GET),
   ItemFlagEnum.LIGHT: ItemFlag("light", 1 << ItemFlagEnum.LIGHT),
   ItemFlagEnum.MAGIC: ItemFlag("magic", 1 << ItemFlagEnum.MAGIC),
+  ItemFlagEnum.HIDDEN: ItemFlag("hidden", 1 << ItemFlagEnum.HIDDEN),
+  ItemFlagEnum.INVISIBLE: ItemFlag("invisible", 1 << ItemFlagEnum.INVISIBLE),
 }
 
 class Item:
@@ -479,26 +491,54 @@ class CombatActionEnum(IntEnum):
   ABILITY = 5
   FLEE = 6
 
+# GENERIC PERSON
+
+class PersonEnum(IntEnum):
+  NONE = 0
+  RAT = 100
+
+class PersonTypeEnum(IntEnum):
+  NONE = 0
+  MONSTER = 1
+  NPC = 2
+  PLAYER = 4
+
+class PersonFlagEnum(IntEnum):
+  COMBAT = 0
+  AGGRESSIVE = 1
+  SHOPKEEP = 2
+
+PERS_COMBAT = 1 << PersonFlagEnum.COMBAT
+PERS_AGGRESSIVE = 1 << PersonFlagEnum.AGGRESSIVE
+PERS_SHOPKEEP = 1 << PersonFlagEnum.SHOPKEEP
+
 class ItemLink:
   def __init__(self, qty = 1, equip = False):
     self.Quantity = qty
     self.Equipped = equip
 
-
-# GENERIC PERSON
-
 class Person:
-  def __init__(self, name = ""):
+  def __init__(self, person_type, name, flags = 0, cur = 0, uid = None):
+    # None == Template
+    self.UUID = uid
+    self.PersonType = person_type
     self.Name = name
+    self.Flags = flags
     self.HitPoints_Cur = -1
     self.Action = CombatActionEnum.NONE
+    self.CombatEnemy = None
+    self.Currency = cur
     self.Effects = []
     self.ItemLinks = {}
 
   def Copy(self, p):
+    self.PersonType = p.PersonType
     self.Name = p.Name
+    self.Flags = p.Flags
     self.HitPoints_Cur = p.HitPoints_Cur
     self.Action = p.Action
+    self.CombatEnemy = None
+    self.Currency = p.Currency
     self.Effects.clear()
     for x in p.Effects:
       self.Effects.append(x)
@@ -527,25 +567,25 @@ class Person:
         self.ItemLinks.pop(item_id)
     return True
 
-# ENEMY
+# MONSTER
 
-class EnemyEnum(IntEnum):
-  NONE = 0
-  RAT = 100
+class Attack:
+  def __init__(self, chance=100):
+    self.Chance = chance
 
-class Enemy(Person):
-  def __init__(self, name, hp, dmg_rolls, dmg_dice, dmg_type,
-              defen, startFunc, endFunc):
-    super().__init__(name)
-    self.Alive = True
+class Monster(Person):
+  def __init__(self, name, hp, skin, flags = 0, attacks = None):
+    super().__init__(PersonTypeEnum.MONSTER, name, flags)
     self.HitPoints_Max = hp
-    self.DamageRolls = dmg_rolls
-    self.DamageDice = dmg_dice
-    self.DamageType = dmg_type
-    self.Defense = defen
-    self.StartRound = startFunc
-    self.EndRound = endFunc
+    self.SkinMaterial = skin
+    self.Attacks = {}
     self.ResetStats()
+    if not attacks == None:
+      for item_id, atk in attacks.items():
+        self.Attacks.update({ item_id: atk })
+    # TODO: Initiative Stat
+    # TODO: Currency drop
+    # TODO: Loot drop
 
   def ResetStats(self):
     self.HitPoints_Cur = self.HitPoints_Max
@@ -555,38 +595,65 @@ class Enemy(Person):
 
 class Player(Person):
   def __init__(self, name = ""):
-    super().__init__(name)
+    super().__init__(PersonTypeEnum.PLAYER, name)
+    self.Password = ""
     self.MagicPoints_Cur = -1
-    self.Currency = 0
     self.Lives = 3
     self.Command = ""
     self.Room = None
     self.LastRoom = None
-    self.CombatEnemy = EnemyEnum.NONE
 
   def Copy(self, p):
     super().Copy(p)
     self.MagicPoints_Cur = p.MagicPoints_Cur
-    self.Currency = p.Currency
     self.Lives = p.Lives
     self.Room = p.Room
     self.LastRoom = p.LastRoom
-    self.CombatEnemy = p.CombatEnemy
 
   def SetRoom(self, room_id):
     self.LastRoom = self.Room
     self.Room = room_id
 
+
 # ROOM
 
 class RoomEnum(IntEnum):
   NONE = 0
-  START_GAME = 1
-  RESTORE_SAVE = 2
-  CREATE_CHARACTER = 3
-  DEAD = 10
-  BL_BEGIN = 10000
-  BL_RESPAWN = 10001
+  GAME_START = 1
+  GAME_RESTORE_SAVE = 2
+  GAME_CREATE_CHARACTER = 3
+  BL_KEEP_GATEHOUSE = 10000
+  BL_PRIEST_CHAMBER = 10001
+  BL_GATEHOUSE_PASSAGE = 10002
+  BL_ENTRY_YARD = 10010
+  BL_STABLE = 10011
+  BL_NORTH_GATEHOUSE_TOWER = 10012
+  BL_EASTERN_WALK = 10020
+  BL_WAREHOUSE = 10021
+  BL_SOUTH_GATEHOUSE_TOWER = 10022
+  BL_SOUTHEASTERN_WALK = 10030
+  BL_BAILIFF_TOWER = 10031
+  BL_SOUTHERN_WALK = 10040
+  BL_ARMORY = 10041
+  BL_APARMENT_1 = 10042
+  BL_SOUTHERN_WALK_2 = 10050
+  BL_WOODWORKER = 10051
+  BL_WEAPONSMITH = 10052
+  BL_PROVISIONS = 10053
+  BL_TRADER = 10054
+  BL_FOUNTAIN_SQUARE = 10055
+  BL_TAVERN_MAINROOM = 10056
+  BL_TAVERN_KITCHEN = 10057
+  BL_INN_ENTRYWAY = 10070
+  BL_INN_COMMONROOM = 10071
+  BL_INN_STAIRWAY = 10074
+  BL_INN_HALLWAY_1 = 10075
+  BL_INN_HALLWAY_2 = 10076
+  BL_INN_ROOM_1 = 10077
+  BL_INN_ROOM_2 = 10078
+  BL_INN_ROOM_3 = 10079
+  BL_INN_ROOM_4 = 10080
+  BL_INN_OWNER_ROOM = 10081
 
 class RoomFuncResponse(IntEnum):
   NONE = 0
@@ -614,13 +681,13 @@ class Exit:
     self.Key = key_item
 
 class Room:
-  def __init__(self, title, short_desc, long_desc="", func=None, enemy=EnemyEnum.NONE,
+  def __init__(self, title, short_desc, long_desc="", func=None, persons=None,
               exits=None, room_items=None):
     self.Title = title
     self.ShortDescription = short_desc
     self.LongDescription = long_desc
     self.Function = func
-    self.Enemy = enemy
+    self.Persons = []
     self.Exits = {}
     self.RoomItems = {}
     if not exits is None:
@@ -653,6 +720,17 @@ class Room:
         self.RoomItems[item_id].Quantity -= item.Quantity
       else:
         self.RoomItems.pop(item_id)
+
+  def AddPerson(self, person_id):
+    x = copy.deepcopy(persons[person_id])
+    x.uuid = uuid.uuid4()
+    self.Persons.append(x)
+
+  def RemovePerson(self, uid):
+    for x in self.Persons:
+      if x == uid:
+        self.Persons.remove(x)
+        break
 
 # FORMATTING
 

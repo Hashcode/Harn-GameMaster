@@ -11,7 +11,7 @@ DATABASE_FILE = "game.json"
 
 global_db = None
 global_id = -1
-global_use_encrypt = True
+global_use_encrypt = False
 
 def GetDB():
   global global_db
@@ -30,14 +30,14 @@ def ExistsDB(name):
 def DeleteDB(name):
   db.remove(where('name') == name.upper())
 
-def SaveDB(name, state):
+def SaveDB(name, info, state):
   global global_id
   db = GetDB()
   if ExistsDB(name):
-    db.update({'state': state}, Query().name == name.upper())
+    db.update({'info':info, 'state':state}, Query().name == name.upper())
   else:
     global_id += 1
-    db.insert({'id':global_id,'name':name.upper(),'state': state})
+    db.insert({'id':global_id, 'name':name.upper(), 'info':info, 'state':state})
   return True
 
 def LoadDB(name):
@@ -47,14 +47,20 @@ def LoadDB(name):
     break
   return state
 
-def SavePlayer(save_obj, password):
+def ListDB():
+  players = {}
+  for row in GetDB().all():
+    players.update({row["name"]: row["info"]})
+  return players
+
+def SavePlayer(save_obj, info, password):
   state_bytes = pickle.dumps(save_obj)
   if global_use_encrypt:
     enc_state_bytes = encrypt(password, state_bytes)
     state_str = codecs.encode(enc_state_bytes, "base64").decode("utf-8")
   else:
     state_str = codecs.encode(state_bytes, "base64").decode("utf-8")
-  return SaveDB(save_obj.Name, state_str)
+  return SaveDB(save_obj.Name, info, state_str)
 
 def LoadPlayer(player, name, password):
   state_str = LoadDB(name)
