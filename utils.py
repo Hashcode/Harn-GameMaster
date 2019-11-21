@@ -152,6 +152,12 @@ def printRoomObjects(room_id, rooms):
     printItems(rooms[room_id].RoomItems)
 
 
+# GENERIC COMMAND FUNCTIONS
+
+def actionComingSoon(player, rooms):
+  print("\nComing soon!")
+
+
 def actionDropItem(player, rooms):
   print("\nItems in your inventory:\n")
   links = filterLinks(player.ItemLinks, equipped=False)
@@ -181,7 +187,7 @@ def actionDropItem(player, rooms):
     break
 
 
-def actionEquipItem(player):
+def actionEquipItem(player, rooms):
   print("\nEquippable items in your inventory:\n")
   links = filterLinks(player.ItemLinks, equipped=False, equippable=True)
   if len(links) < 1:
@@ -258,7 +264,7 @@ def actionGetItem(player, rooms):
       break
 
 
-def actionInventory(player):
+def actionInventory(player, rooms):
   print("\n%sCURRENCY%s: %dsp" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL,
                                   player.Currency))
   print("\n%sEQUIPMENT:%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
@@ -284,7 +290,7 @@ def actionSave(player, rooms):
     return False
 
 
-def actionSkills(player):
+def actionSkills(player, rooms):
   print("\n%sCHARACTER SKILLS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   for skill_id in player.SkillTrainings:
     print("%-15s: %d" % (skills[skill_id].Name, player.SkillML(skill_id)))
@@ -313,7 +319,7 @@ def actionStats(player, rooms):
   print("%-15s: %d" % ("Defense", CalcDefense(player)))
 
 
-def actionUnequipItem(player):
+def actionUnequipItem(player, rooms):
   print("\nYour equipped items:\n")
   links = filterLinks(player.ItemLinks, equipped=True)
   if len(links) < 1:
@@ -337,7 +343,7 @@ def actionUnequipItem(player):
       break
 
 
-def actionListPlayers():
+def actionListPlayers(player, rooms):
   pinfo = ListDB()
   if len(pinfo) == 0:
     print("\nThere are no saved characters!")
@@ -350,6 +356,97 @@ def actionListPlayers():
       print("%-20s %s" % (x, pinfo[x]))
 
 
+def actionLook(player, rooms):
+  printRoomDescription(player.Room, rooms)
+  printRoomObjects(player.Room, rooms)
+
+
+def actionChangePassword(player, rooms):
+  if player.Flags & PERS_COMBAT > 0:
+    print("\n%sYou can't change your password in combat!%s" %
+          (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  else:
+    print("\nYour password is used to encrypt SAVE data.")
+    print("It should NOT be a password used for anything important.")
+    x = input("\nEnter a password: ").upper
+    if len(x.Password) < 3 or len(x.Password) > 10:
+      print("\nPassword needs to be between 3 and 10 characters long.")
+    player.Password = x
+    if actionSave(player, rooms):
+      print("\nCharacter updated.")
+
+
+def actionQuit(player, rooms):
+  if player.Flags & PERS_COMBAT > 0:
+    print("\n%sYou can't QUIT in combat!%s" %
+          (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  else:
+    y = input("\nAre you sure you wish to QUIT? ").lower()
+    if y == "y" or y == "yes":
+      actionSave(player, rooms)
+      print("\nGoodbye!\n")
+      exit()
+    else:
+      print("\nQuit aborted.")
+
+
+def actionSaveGeneric(player, rooms):
+    if player.Flags & PERS_COMBAT > 0:
+      print("\n%sYou can't SAVE in combat!%s" %
+            (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    else:
+      if actionSave(player, rooms):
+        print("\nCharacter saved.")
+
+
+class GenericCommand:
+  def __init__(self, cmds, cmd_func, desc=""):
+    self.Commands = []
+    self.Description = desc
+    self.Function = cmd_func
+    if cmds is not None:
+      for c in cmds:
+        self.Commands.append(c)
+
+
+commands = []
+
+
+def actionPrintHelp(player, rooms):
+    print("\nGeneral Commands:")
+    # generic commands
+    for cmd in commands:
+      print("  %s" % cmd.Commands[0].upper())
+    # exits
+    if not rooms[player.Room].Exits is None:
+      print("\nDirection Commands:")
+      for exit_dir, exit_names in directions.items():
+        print("  %s" % exit_names[0].upper())
+    # combat commands
+    if player.Flags & PERS_COMBAT > 0:
+      print("\nCombat Commands:")
+      printCombatActions()
+
+
+commands.append(GenericCommand(["armor"], actionComingSoon))
+commands.append(GenericCommand(["close"], actionComingSoon))
+commands.append(GenericCommand(["drop"], actionDropItem))
+commands.append(GenericCommand(["equip"], actionEquipItem))
+commands.append(GenericCommand(["get"], actionGetItem))
+commands.append(GenericCommand(["help", "?"], actionPrintHelp))
+commands.append(GenericCommand(["inventory", "i"], actionInventory))
+commands.append(GenericCommand(["look", "l"], actionLook))
+commands.append(GenericCommand(["open"], actionComingSoon))
+commands.append(GenericCommand(["password"], actionChangePassword))
+commands.append(GenericCommand(["quit", "q"], actionQuit))
+commands.append(GenericCommand(["save"], actionSaveGeneric))
+commands.append(GenericCommand(["skills"], actionSkills))
+commands.append(GenericCommand(["stats"], actionStats))
+commands.append(GenericCommand(["unequip"], actionUnequipItem))
+commands.append(GenericCommand(["unlock"], actionComingSoon))
+commands.append(GenericCommand(["who"], actionListPlayers))
+
+
 def prompt(player, rooms, command_func=None):
   player.Command = ""
   while True:
@@ -357,87 +454,15 @@ def prompt(player, rooms, command_func=None):
     if x == "":
       continue
 
-    # CHECK FOR UNIVERSAL COMMANDS
-    if x == "drop":
-      actionDropItem(player, rooms)
-    elif x == "equip":
-      actionEquipItem(player)
-    elif x == "get":
-      actionGetItem(player, rooms)
-    elif x == "help":
-      print("\nGeneral Commands:")
-      print("  DROP")
-      print("  EQUIP")
-      print("  GET")
-      print("  INVENTORY")
-      print("  LOOK")
-      print("  OPEN")
-      print("  PASSWORD")
-      print("  QUIT")
-      print("  SAVE")
-      print("  SKILLS")
-      print("  STATS")
-      print("  UNEQUIP")
-      print("  UNLOCK")
-      print("  WHO")
-      if not rooms[player.Room].Exits is None:
-        print("\nDirection Commands:")
-        for exit_dir, ex in rooms[player.Room].Exits.items():
-          print("  %s" % directions[exit_dir].upper())
-      if player.Flags & PERS_COMBAT > 0:
-        print("\nCombat Commands:")
-        printCombatActions()
-    elif x == "i" or x == "inventory":
-      actionInventory(player)
-    elif x == "l" or x == "look":
-      printRoomDescription(player.Room, rooms)
-      printRoomObjects(player.Room, rooms)
-    elif x == "open":
-      # TODO:
-      print("Coming soon!")
-    elif x == "password":
-      if player.Flags & PERS_COMBAT > 0:
-        print("\n%sYou can't change your password in combat!%s" %
-              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-      else:
-        print("\nYour password is used to encrypt SAVE data.")
-        print("It should NOT be a password used for anything important.")
-        x = input("\nEnter a password: ").upper
-        if len(x.Password) < 3 or len(x.Password) > 10:
-          print("\nPassword needs to be between 3 and 10 characters long.")
-        player.Password = x
-        if actionSave(player, rooms):
-          print("\nCharacter updated.")
-    elif x == "q" or x == "quit":
-      if player.Flags & PERS_COMBAT > 0:
-        print("\n%sYou can't QUIT in combat!%s" %
-              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-      else:
-        y = input("\nAre you sure you wish to QUIT? ").lower()
-        if y == "y" or y == "yes":
-          actionSave(player, rooms)
-          print("\nGoodbye!\n")
-          exit()
-        else:
-          print("\nQuit aborted.")
-    elif x == "save":
-      if player.Flags & PERS_COMBAT > 0:
-        print("\n%sYou can't SAVE in combat!%s" %
-              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-      else:
-        if actionSave(player, rooms):
-          print("\nCharacter saved.")
-    elif x == "skills":
-      actionSkills(player)
-    elif x == "stats":
-      actionStats(player, rooms)
-    elif x == "unequip":
-      actionUnequipItem(player)
-    elif x == "unlock":
-      # TODO:
-      print("Coming soon!")
-    elif x == "who":
-      actionListPlayers()
+    # Handle universal commands
+    cmd_match = None
+    for gen_cmd in commands:
+      for cmds in gen_cmd.Commands:
+        if x == cmds:
+          cmd_match = gen_cmd
+          break
+    if cmd_match is not None:
+      cmd_match.Function(player, rooms)
     else:
       # Handle directions
       match_dir = DirectionEnum.NONE
