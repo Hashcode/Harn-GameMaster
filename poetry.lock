@@ -26,10 +26,11 @@ python-versions = "*"
 version = "3.15.1"
 
 [metadata]
-content-hash = "85b5e001c2fd3819399f54af88ecddaeec68ada2e70f7305db23c194bc4b3146"
+content-hash = "9679b392b9a714e29a10ecb0dd0ef1e3860a9a5e8bea302b6f2f7c38070b41f9"
 python-versions = "^3.7"
 
 [metadata.hashes]
 pycrypto = ["f2ce1e989b272cfcb677616763e0a2e7ec659effa67a88aa92b3a65528f60a3c"]
 simple-crypt = ["49462ab7ea4b080a8c10e362abfe35ecfa6dbe1e1c454ea36de7d2a71dce992f"]
 tinydb = ["02ef39c07802e3f06e87d3d251f16c44336611fd9ddb4c9fcebf39933f4ba7f3", "804d131d070fc4315beb5821396abe0d84f483e55120dda73f12873ef5c27528"]
+
