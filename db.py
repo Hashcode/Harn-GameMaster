@@ -2,6 +2,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+import pickle
+import codecs
+
 from tinydb import TinyDB, Query
 from simplecrypt import encrypt, decrypt
 
