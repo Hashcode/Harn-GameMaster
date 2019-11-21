@@ -15,6 +15,8 @@
 # Main setup
 
 import random
+import time
+import calendar
 
 from global_defines import *
 from utils import *
@@ -56,28 +58,44 @@ while True:
   if res == RoomFuncResponse.SKIP:
     continue
 
+  # Check for room spawns
+  if not rooms[player.Room].Spawns is None:
+    for s in rooms[player.Room].Spawns:
+      seconds = calendar.timegm(time.gmtime())
+      if s.LastSpawnCheck + s.SpawnDelaySeconds >= seconds:
+        continue
+      s.LastSpawnCheck = seconds
+      count = 0
+      for p in rooms[player.Room].Persons:
+        if p.Person == s.Person:
+          count += 1
+      if count < s.MaxQuantity:
+        if roll(1,100) <= s.Chance:
+          rooms[player.Room].AddPerson(s.Person)
+
+  printRoomObjects(player.Room, rooms)
+
   # Check if the room persons need to attack
   for x in rooms[player.Room].Persons:
-    if x.Flags & PERS_COMBAT == 0 and x.Flags & PERS_AGGRESSIVE > 0:
+    if persons[x.Person].Flags & PERS_COMBAT == 0 and persons[x.Person].Flags & PERS_AGGRESSIVE > 0:
       combat_flag = True
-      x.CombatEnemy == player
-      x.Flags |= PERS_COMBAT
+      x.CombatEnemy = player
       player.Flags |= PERS_COMBAT
-      print("%s attacks you!" % x.Name)
+      print("[%s] attacks you!" % persons[x.Person].Name)
 
-  if player.CombatEnemy != None:
+  if player.Flags & PERS_COMBAT > 0:
      combat_flag = True
 
   if combat_flag:
     combat(player, persons, rooms)
     if player.HitPoints_Cur <= 0:
       print("\nThe last of your strength slips away, and your vision fades to black...")
-      print("\n%sYou have died!%s" % (ANSI.TEXT_BOLD, ANSI_TEXT_NORMAL))
+      print("\n%sYou have died!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
       time.sleep(2)
       print("\nYou slow come back to your senses ...\n")
       time.sleep(2)
       player.SetRoom(ROOM_RESPAWN)
-      continue
+    continue
 
   # Handle Commands
   if res != RoomFuncResponse.NO_PROMPT:
@@ -85,6 +103,6 @@ while True:
     if player.Command == "q" or player.Command == "quit":
       break
     if player.Command != "":
-      print("You cannot do that here.")
+      print("\n%sYou cannot do that here.%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
 
 # vim: set tabstop=2 shiftwidth=2 expandtab:

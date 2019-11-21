@@ -14,7 +14,7 @@ DATABASE_FILE = "game.json"
 
 global_db = None
 global_id = -1
-global_use_encrypt = False
+global_use_encrypt = True
 
 def GetDB():
   global global_db

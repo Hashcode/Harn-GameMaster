@@ -4,10 +4,9 @@
 
 # Global Definitions
 
+import copy
 from array import *
 from enum import IntEnum
-import pickle
-import codecs
 from uuid import uuid4
 
 # SKILLS
@@ -495,7 +494,8 @@ class CombatActionEnum(IntEnum):
 
 class PersonEnum(IntEnum):
   NONE = 0
-  RAT = 100
+  MON_RAT = 100
+  BL_KEEP_GUARD = 10000
 
 class PersonTypeEnum(IntEnum):
   NONE = 0
@@ -518,24 +518,25 @@ class ItemLink:
     self.Equipped = equip
 
 class Person:
-  def __init__(self, person_type, name, flags = 0, cur = 0, uid = None):
+  def __init__(self, person_type, name, long_desc = "", flags = 0, cur = 0, it = None):
     # None == Template
-    self.UUID = uid
     self.PersonType = person_type
     self.Name = name
+    self.LongDescription = long_desc
     self.Flags = flags
-    self.HitPoints_Cur = -1
     self.Action = CombatActionEnum.NONE
     self.CombatEnemy = None
     self.Currency = cur
     self.Effects = []
     self.ItemLinks = {}
+    if not it is None:
+      for item_id, il in it.items():
+        self.AddItem(item_id, il)
 
   def Copy(self, p):
     self.PersonType = p.PersonType
     self.Name = p.Name
     self.Flags = p.Flags
-    self.HitPoints_Cur = p.HitPoints_Cur
     self.Action = p.Action
     self.CombatEnemy = None
     self.Currency = p.Currency
@@ -574,8 +575,8 @@ class Attack:
     self.Chance = chance
 
 class Monster(Person):
-  def __init__(self, name, hp, skin, flags = 0, attacks = None):
-    super().__init__(PersonTypeEnum.MONSTER, name, flags)
+  def __init__(self, name, long_desc, hp, skin, flags = 0, attacks = None):
+    super().__init__(PersonTypeEnum.MONSTER, name, long_desc, flags)
     self.HitPoints_Max = hp
     self.SkinMaterial = skin
     self.Attacks = {}
@@ -591,12 +592,29 @@ class Monster(Person):
     self.HitPoints_Cur = self.HitPoints_Max
     super().ResetStats()
 
+# NPC
+
+class NPC(Person):
+  def __init__(self, name, long_desc, hp, flags = 0, eq = None):
+    super().__init__(PersonTypeEnum.NPC, name, long_desc, flags, it=eq)
+    self.HitPoints_Max = hp
+    self.ResetStats()
+    # TODO: Items
+    # TODO: Initiative Stat
+    # TODO: Currency drop
+    # TODO: Loot drop
+
+  def ResetStats(self):
+    self.HitPoints_Cur = self.HitPoints_Max
+    super().ResetStats()
+
 # PLAYER
 
 class Player(Person):
   def __init__(self, name = ""):
-    super().__init__(PersonTypeEnum.PLAYER, name)
+    super().__init__(PersonTypeEnum.PLAYER, name, "player")
     self.Password = ""
+    self.HitPoints_Cur = -1
     self.MagicPoints_Cur = -1
     self.Lives = 3
     self.Command = ""
@@ -605,6 +623,7 @@ class Player(Person):
 
   def Copy(self, p):
     super().Copy(p)
+    self.HitPoints_Cur = p.HitPoints_Cur
     self.MagicPoints_Cur = p.MagicPoints_Cur
     self.Lives = p.Lives
     self.Room = p.Room
@@ -680,14 +699,31 @@ class Exit:
     self.Locked = lock
     self.Key = key_item
 
+class PersonLink:
+  def __init__(self, person_id, unique):
+    self.Person = person_id
+    self.UUID = unique
+    self.HitPoints_Cur = -1
+    self.MagicPoints_Cur = -1
+    self.CombatEnemy = None
+
+class RoomSpawn:
+  def __init__(self, person_id, chance, max_qty = 1, delay = 60):
+    self.Person = person_id
+    self.Chance = chance
+    self.MaxQuantity = max_qty
+    self.SpawnDelaySeconds = delay
+    self.LastSpawnCheck = 0
+
 class Room:
   def __init__(self, title, short_desc, long_desc="", func=None, persons=None,
-              exits=None, room_items=None):
+              exits=None, room_items=None, spawns=None):
     self.Title = title
     self.ShortDescription = short_desc
     self.LongDescription = long_desc
     self.Function = func
     self.Persons = []
+    self.Spawns = []
     self.Exits = {}
     self.RoomItems = {}
     if not exits is None:
@@ -697,6 +733,12 @@ class Room:
       for item_id, qty in room_items.items():
         self.AddItem(item_id)
       self.RoomItems = room_items
+    if not persons is None:
+      for person_id in persons:
+        self.AddPerson(person_id)
+    if not spawns is None:
+      for s in spawns:
+        self.Spawns.append(s)
 
   def AddExit(self, exit_dir, exit):
     if exit_dir in self.Exits:
@@ -722,8 +764,7 @@ class Room:
         self.RoomItems.pop(item_id)
 
   def AddPerson(self, person_id):
-    x = copy.deepcopy(persons[person_id])
-    x.uuid = uuid.uuid4()
+    x = PersonLink(person_id, uuid4())
     self.Persons.append(x)
 
   def RemovePerson(self, uid):
@@ -738,6 +779,6 @@ class ANSI:
   RESET_CURSOR =  "\x1B[1;1H"
   CLEAR =         "\x1B[2J"
   TEXT_NORMAL =   "\x1B[0m"
-  TEXT_BOLD =   "\x1B[1m"
+  TEXT_BOLD =     "\x1B[1m"
 
 # vim: tabstop=2 shiftwidth=2 expandtab:

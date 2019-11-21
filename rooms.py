@@ -103,7 +103,10 @@ rooms = {
       "solid granite, undoubtedly common throughout the entire fortress.",
       exits={
         DirectionEnum.WEST: Exit(RoomEnum.BL_GATEHOUSE_PASSAGE),
-      }),
+      },
+      persons=[
+        PersonEnum.BL_KEEP_GUARD,
+      ]),
   RoomEnum.BL_PRIEST_CHAMBER:
     Room("The Priest's Chamber",
       "the priest's chamber",
@@ -172,7 +175,10 @@ rooms = {
       "** TODO **",
       exits={
         DirectionEnum.EAST: Exit(RoomEnum.BL_EASTERN_WALK),
-      }),
+      },
+      spawns=[
+        RoomSpawn(PersonEnum.MON_RAT, 100, 1),
+      ]),
   RoomEnum.BL_SOUTHEASTERN_WALK:
     Room("South-Eastern Walk",
       "the south-eastern walk",

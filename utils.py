@@ -148,6 +148,13 @@ def printRoomDescription(room_id, rooms):
           ANSI.TEXT_BOLD + directions[exit_dir][0].upper() + ANSI.TEXT_NORMAL,
           rooms[exit.Room].ShortDescription))
 
+def printRoomObjects(room_id, rooms):
+  # Persons
+  if len(rooms[room_id].Persons) > 0:
+    print("")
+    for x in rooms[room_id].Persons:
+      print("%s" % persons[x.Person].LongDescription)
+  # Items
   if len(rooms[room_id].RoomItems) > 0:
     print("\nThe following items are here:")
     printItems(rooms[room_id].RoomItems)
@@ -359,6 +366,7 @@ def prompt(player, rooms):
       actionInventory(player)
     elif x == "l" or x == "look":
       printRoomDescription(player.Room, rooms)
+      printRoomObjects(player.Room, rooms)
     elif x == "open":
       # TODO:
       print("Coming soon!")
@@ -372,7 +380,8 @@ def prompt(player, rooms):
         if len(x.Password) < 3 or len(x.Password) > 10:
           print("\nPassword needs to be between 3 and 10 characters long.")
         player.Password = x
-        actionSave(player, rooms)
+        if actionSave(player, rooms):
+          print("\nCharacter updated.")
     elif x == "q" or x == "quit":
       if player.Flags & PERS_COMBAT > 0:
         print("\n%sYou can't QUIT in combat!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
@@ -389,7 +398,8 @@ def prompt(player, rooms):
       if player.Flags & PERS_COMBAT > 0:
         print("\n%sYou can't SAVE in combat!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
       else:
-        actionSave(player, rooms)
+        if actionSave(player, rooms):
+          print("\nCharacter saved.")
     elif x == "skills":
       # TODO:
       print("Coming soon!")
@@ -404,12 +414,23 @@ def prompt(player, rooms):
       actionListPlayers()
     else:
       # Handle directions
-      if not rooms[player.Room].Exits is None:
-        for exit_dir,exit in rooms[player.Room].Exits.items():
-          for d in directions[exit_dir]:
-            if x == d.lower():
+      match_dir = DirectionEnum.NONE
+      for d, d_cmds in directions.items():
+        for d_cmd in d_cmds:
+          if x == d_cmd.lower():
+            match_dir = d
+            break
+
+      if match_dir != DirectionEnum.NONE:
+        if player.Flags & PERS_COMBAT > 0:
+          print("\n%sYou can't move in combat!  Try to FLEE!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+        else:
+          for exit_dir, exit in rooms[player.Room].Exits.items():
+            if match_dir == exit_dir:
               player.SetRoom(exit.Room)
               return
+          print("\n%sYou can't go in that direction.%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+        continue
 
       player.Command = x
       break
