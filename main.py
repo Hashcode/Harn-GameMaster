@@ -39,15 +39,14 @@ player.SetRoom(RoomEnum.GAME_START)
 
 if TestMode:
   ResetPlayerStats(player)
-  player.AddItem(ItemEnum.WEAPON_DAGGER, ItemLink(1))
+  player.AddItem(ItemEnum.WEAPON_DAGGER, ItemLink(1, equip=True))
 
-  player.AddItem(ItemEnum.ARMOR_HALFHELM_LEATHER_RING, ItemLink(1))
-  player.AddItem(ItemEnum.ARMOR_TUNIC_CLOTH, ItemLink(1))
-  player.AddItem(ItemEnum.ARMOR_LEGGINGS_CLOTH, ItemLink(1))
-  player.AddItem(ItemEnum.ARMOR_SHOES_LEATHER, ItemLink(1))
-  player.AddItem(ItemEnum.ARMOR_COWL_MAIL, ItemLink(1))
+  player.AddItem(ItemEnum.ARMOR_HALFHELM_LEATHER_RING, ItemLink(1, equip=True))
+  player.AddItem(ItemEnum.ARMOR_TUNIC_CLOTH, ItemLink(1, equip=True))
+  player.AddItem(ItemEnum.ARMOR_LEGGINGS_CLOTH, ItemLink(1, equip=True))
+  player.AddItem(ItemEnum.ARMOR_SHOES_LEATHER, ItemLink(1, equip=True))
 
-  player.AddItem(ItemEnum.RING_ATTACK_SILVER, ItemLink(1))
+  player.AddItem(ItemEnum.RING_ATTACK_SILVER, ItemLink(1, equip=True))
   player.AddItem(ItemEnum.MISC_STONE, ItemLink(2))
 
 NextRoomEvent = 0
@@ -92,7 +91,7 @@ while True:
             count += 1
         if count < s.MaxQuantity:
           logd("SpawnCheck [%s] in %s [<=%d]" % (persons[s.Person].Name,
-                                               rooms[r].Title, s.Chance))
+                                                 rooms[r].Title, s.Chance))
           if roll(1, 100) <= s.Chance:
             rooms[r].AddPerson(s.Person)
 
