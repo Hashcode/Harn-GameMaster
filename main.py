@@ -14,11 +14,11 @@
 
 # Main setup
 
-import random
-import time
-import calendar
+from random import seed
+from time import (gmtime, sleep)
+from calendar import timegm
 
-from global_defines import (roll, ItemEnum, ItemLink, Player,
+from global_defines import (roll, logd, ItemEnum, ItemLink, Player,
                             PERS_COMBAT, PERS_AGGRESSIVE,
                             RoomEnum, RoomFuncResponse, ANSI)
 from utils import (ResetPlayerStats, printRoomDescription, printRoomObjects,
@@ -31,7 +31,7 @@ TestMode = True
 
 ROOM_RESPAWN = RoomEnum.BL_PRIEST_CHAMBER
 
-random.seed()
+seed()
 print(ANSI.CLEAR + ANSI.RESET_CURSOR, end='')
 
 player = Player("Unknown")
@@ -50,13 +50,15 @@ if TestMode:
   player.AddItem(ItemEnum.RING_ATTACK_SILVER, ItemLink(1))
   player.AddItem(ItemEnum.MISC_STONE, ItemLink(2))
 
+NextRoomEvent = 0
+
 while True:
   combat_flag = False
   res = RoomFuncResponse.NONE
   printRoomDescription(player.Room, rooms)
 
   # Call Room Function
-  if not rooms[player.Room].Function is None:
+  if rooms[player.Room].Function is not None:
     # Return value means: True == Print Prompt, False == Skip Prompt
     res = rooms[player.Room].Function(player)
 
@@ -64,19 +66,35 @@ while True:
     continue
 
   # Check for room spawns
-  if not rooms[player.Room].Spawns is None:
-    for s in rooms[player.Room].Spawns:
-      seconds = calendar.timegm(time.gmtime())
-      if s.LastSpawnCheck + s.SpawnDelaySeconds >= seconds:
+  seconds = timegm(gmtime())
+  if NextRoomEvent < seconds:
+    logd("RoomEvents check")
+    # Set NextRoomEvent max 10mins
+    NextRoomEvent = seconds + (10 * 60)
+    for r in rooms:
+      if rooms[r].Spawns is None:
         continue
-      s.LastSpawnCheck = seconds
-      count = 0
-      for p in rooms[player.Room].Persons:
-        if p.Person == s.Person:
-          count += 1
-      if count < s.MaxQuantity:
-        if roll(1, 100) <= s.Chance:
-          rooms[player.Room].AddPerson(s.Person)
+      for s in rooms[r].Spawns:
+        if s.LastSpawnCheck + s.SpawnDelaySeconds >= seconds:
+          if NextRoomEvent > s.LastSpawnCheck + s.SpawnDelaySeconds:
+            NextRoomEvent = s.LastSpawnCheck + s.SpawnDelaySeconds
+            logd("Next RoomEvents check in %d seconds" %
+                 (NextRoomEvent - seconds))
+          continue
+        s.LastSpawnCheck = seconds
+        if NextRoomEvent > seconds + s.SpawnDelaySeconds:
+          NextRoomEvent = seconds + s.SpawnDelaySeconds
+          logd("Next RoomEvents check in %d seconds" %
+               (NextRoomEvent - seconds))
+        count = 0
+        for p in rooms[r].Persons:
+          if p.Person == s.Person:
+            count += 1
+        if count < s.MaxQuantity:
+          logd("SpawnCheck [%s] in %s [<=%d]" % (persons[s.Person].Name,
+                                               rooms[r].Title, s.Chance))
+          if roll(1, 100) <= s.Chance:
+            rooms[r].AddPerson(s.Person)
 
   printRoomObjects(player.Room, rooms)
 
@@ -98,9 +116,9 @@ while True:
       print("\nThe last of your strength slips away, and your vision\n"
             "fades to black...")
       print("\n%sYou have died!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-      time.sleep(2)
+      sleep(2)
       print("\nYou slow come back to your senses ...\n")
-      time.sleep(2)
+      sleep(2)
       player.SetRoom(ROOM_RESPAWN)
     continue
 
