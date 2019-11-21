@@ -1,0 +1,5 @@
+[flake8]
+ignore =
+	# ignore tab settings
+	E114, E111
+
