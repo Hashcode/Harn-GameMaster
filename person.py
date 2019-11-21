@@ -6,15 +6,19 @@
 
 from global_defines import (MaterialEnum, ItemEnum, ItemLink,
                             PERS_AGGRESSIVE, PersonEnum,
-                            MonsterAttack, Monster, NPC)
+                            Monster, NPC)
 
 persons = {
     PersonEnum.MON_RAT:
         Monster("ugly rat", "An ugly rat scurries across the ground.", 10,
                 MaterialEnum.QUILT_FUR, PERS_AGGRESSIVE,
                 attacks={
-                    ItemEnum.WEAPON_BITE_SMALL: MonsterAttack(50),
-                    ItemEnum.WEAPON_CLAW_SMALL: MonsterAttack(50),
+                    ItemEnum.WEAPON_BITE_SMALL: 50,
+                    ItemEnum.WEAPON_CLAW_SMALL: 50,
+                },
+                loot={
+                    ItemEnum.WEAPON_BITE_SMALL: 50,
+                    ItemEnum.WEAPON_CLAW_SMALL: 50,
                 }),
     PersonEnum.BL_KEEP_GUARD:
         NPC("gatehouse guard", "An impassive guard stares ahead.", 90,

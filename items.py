@@ -454,6 +454,9 @@ items = {
     ItemEnum.MISC_STONE:
         Item(ItemTypeEnum.MISC, "stone", QualityEnum.TER,
              MaterialEnum.STONE, 1),
+    ItemEnum.MISC_RAT_FUR:
+        Item(ItemTypeEnum.MISC, "rat fur", QualityEnum.POR,
+             MaterialEnum.QUILT_FUR, 1),
 }
 
 # vim: tabstop=2 shiftwidth=2 expandtab:

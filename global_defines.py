@@ -368,6 +368,7 @@ class ItemEnum(IntEnum):
   RING_HP_GOLD = 30001
   # MISC
   MISC_STONE = 50000
+  MISC_RAT_FUR = 50001
 
 
 class ItemTypeEnum(IntEnum):
@@ -1056,21 +1057,21 @@ class Person:
 
 # MONSTER
 
-class MonsterAttack:
-  def __init__(self, chance=100):
-    self.Chance = chance
-
-
 class Monster(Person):
-  def __init__(self, name, long_desc, hp, skin, flags=0, attacks=None):
+  def __init__(self, name, long_desc, hp, skin, flags=0, attacks=None,
+               loot=None):
     super().__init__(PersonTypeEnum.MONSTER, name, long_desc, flags)
     self.HitPoints_Max = hp
     self.SkinMaterial = skin
     self.Attacks = dict()
+    self.Loot = dict()
     self.ResetStats()
     if attacks is not None:
-      for item_id, atk in attacks.items():
-        self.Attacks.update({item_id: atk})
+      for item_id, chance in attacks.items():
+        self.Attacks.update({item_id: chance})
+    if loot is not None:
+      for item_id, chance in loot.items():
+        self.Loot.update({item_id: chance})
     # TODO: Initiative Stat
     # TODO: Currency drop
     # TODO: Loot drop
