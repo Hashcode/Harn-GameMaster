@@ -2,50 +2,15 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# Utility FunctionsHas
+# Utility Functions
 
-import random
+import sys
 
 from global_defines import *
 from items import *
 from person import *
 from db import *
 
-# Logging
-
-LOG_OFF = 0
-LOG_ERR = 1
-LOG_WRN = 2
-LOG_INF = 3
-LOG_DBG = 4
-
-LogLevel = LOG_DBG
-
-def log(ll, line):
-  if LogLevel >= ll:
-    print(line)
-
-def loge(line):
-  log(LOG_ERR, "[error] %s" % line)
-
-def logw(line):
-  log(LOG_WRN, "[warn] %s" % line)
-
-def logi(line):
-  log(LOG_INF, "[info] %s" % line)
-
-def logd(line):
-  log(LOG_DBG, "[debug] %s" % line)
-
-# Roll
-
-def roll(rolls, die_base, modifier=0):
-  value = 0
-  for x in range(rolls):
-    y = random.randint(1, die_base) + modifier
-    logd("ROLL %dD%d+%d = %d" % (rolls, die_base, modifier, y))
-    value += y
-  return value
 
 def CalcEffect(player, eff_type):
   value = 0
@@ -279,18 +244,32 @@ def actionSave(player, rooms):
     print("%sAn error occured during SAVE!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
     return False
 
+def actionSkills(player):
+  print("\n%sCHARACTER SKILLS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  for skill_id in player.SkillTrainings:
+    print("%-15s: %d" % (skills[skill_id].Name, player.SkillML(skill_id)))
+
 def actionStats(player, rooms):
+  for ac_id, ac in attribute_classes.items():
+    if ac.Hidden:
+      continue
+    print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, ac.Name.upper(), ANSI.TEXT_NORMAL))
+    for attr, val in player.Attr.items():
+      if not attributes[attr].Hidden and attributes[attr].AttrClass == ac_id:
+        print("%-15s: %d" % (attributes[attr].Name, val))
+
   print("\n%sCHARACTER STATS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   if player.Flags & PERS_COMBAT > 0:
     fighting = []
     for x in rooms[player.Room].Persons:
       if x.CombatEnemy == player:
         fighting.append(x.Name)
-    print("%-8s: %s" % ("Fighting", ", ".join(fighting)))
-  print("%-8s: %d" % ("Health", player.HitPoints_Cur))
-  print("%-8s: %d" % ("Mana", player.MagicPoints_Cur))
-  print("%-8s: %d" % ("Attack", CalcAttackPoints(player)))
-  print("%-8s: %d" % ("Defense", CalcDefense(player)))
+    print("%-15s: %s" % ("Fighting", ", ".join(fighting)))
+  print("%-15s: %d" % ("Health", player.HitPoints_Cur))
+  print("%-15s: %d" % ("Mana", player.MagicPoints_Cur))
+  print("%-15s: %d" % ("Attack", CalcAttackPoints(player)))
+  print("%-15s: %d" % ("Defense", CalcDefense(player)))
+
 
 def actionUnequipItem(player):
   print("\nYour equipped items:\n")
@@ -325,10 +304,10 @@ def actionListPlayers():
     for x in sorted(pinfo):
       print("%-20s %s" % (x, pinfo[x]))
 
-def prompt(player, rooms):
+def prompt(player, rooms, command_func = None):
   player.Command = ""
   while True:
-    x = input("\nType your command: ").lower()
+    x = input("\nCommand: ").lower()
     if x == "":
       continue
 
@@ -390,8 +369,7 @@ def prompt(player, rooms):
         if y == "y" or y == "yes":
           actionSave(player, rooms)
           print("\nGoodbye!\n")
-          player.Command = x
-          break
+          sys.exit()
         else:
           print("\nQuit aborted.")
     elif x == "save":
@@ -401,8 +379,7 @@ def prompt(player, rooms):
         if actionSave(player, rooms):
           print("\nCharacter saved.")
     elif x == "skills":
-      # TODO:
-      print("Coming soon!")
+      actionSkills(player)
     elif x == "stats":
       actionStats(player, rooms)
     elif x == "unequip":

@@ -100,8 +100,6 @@ while True:
   # Handle Commands
   if res != RoomFuncResponse.NO_PROMPT:
     prompt(player, rooms)
-    if player.Command == "q" or player.Command == "quit":
-      break
     if player.Command != "":
       print("\n%sYou cannot do that here.%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
 

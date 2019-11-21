@@ -61,9 +61,14 @@ def room_CreateCharacter(player):
     print("\nPassword needs to be between 3 and 10 characters long.")
     return RoomFuncResponse.SKIP
 
+  player.GenAttr()
+  player.GenSkills()
   player.SetRoom(ROOM_START)
+
+  print("\nSaving character ...")
   if not actionSave(player, rooms):
     return RoomFuncResponse.SKIP
+  print("Done.")
 
   ResetPlayerStats(player)
 

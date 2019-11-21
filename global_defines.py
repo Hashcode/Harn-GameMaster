@@ -4,29 +4,50 @@
 
 # Global Definitions
 
+import random
 import copy
 from array import *
 from enum import IntEnum
 from uuid import uuid4
 
-# SKILLS
 
-class SkillEnum(IntEnum):
-  NONE = 0
-  UNARMED = 1
-  SHIELD = 2
-  DAGGER = 3
-  SWORD = 4
-  CLUB = 5
-  AXE = 6
-  FLAIL = 7
-  SPEAR = 8
-  POLEARM = 9
-  NET = 10
-  WHIP = 11
-  BOW = 12
-  BLOWGUN = 13
-  SLING = 14
+# Logging
+
+LOG_OFF = 0
+LOG_ERR = 1
+LOG_WRN = 2
+LOG_INF = 3
+LOG_DBG = 4
+
+LogLevel = LOG_DBG
+
+def log(ll, line):
+  if LogLevel >= ll:
+    print(line)
+
+def loge(line):
+  log(LOG_ERR, "[error] %s" % line)
+
+def logw(line):
+  log(LOG_WRN, "[warn] %s" % line)
+
+def logi(line):
+  log(LOG_INF, "[info] %s" % line)
+
+def logd(line):
+  log(LOG_DBG, "[debug] %s" % line)
+
+# ROLL
+
+def roll(rolls, die_base, modifier=0):
+  value = 0
+  for x in range(rolls):
+    y = random.randint(1, die_base) + modifier
+    logd("ROLL %dD%d+%d = %d" % (rolls, die_base, modifier, y))
+    value += y
+  return value
+
+# QUALITY
 
 class QualityEnum(IntEnum):
   NONE = 0
@@ -490,6 +511,382 @@ class CombatActionEnum(IntEnum):
   ABILITY = 5
   FLEE = 6
 
+# TIME
+
+class SeasonEnum(IntEnum):
+  NONE = 0
+  SPRING = 1
+  SUMMER = 2
+  AUTUMN = 3
+  WINTER = 4
+
+class MonthEnum(IntEnum):
+  NONE = 0
+  NUZYAEL = 1
+  PEONU = 2
+  KELEN = 3
+  NOLUS = 4
+  LARANE = 5
+  AGRAZHAR = 6
+  AZURA = 7
+  HALANE = 8
+  SAVOR = 9
+  ILVIN = 10
+  NAVEK = 11
+  MORGAT = 12
+
+class HarnMonth:
+  def __init__(self, name, season):
+    self.Name = name
+    self.Season = season
+
+months = {
+  MonthEnum.NUZYAEL: HarnMonth("Nuzyael", SeasonEnum.SPRING),
+  MonthEnum.PEONU: HarnMonth("Peonu", SeasonEnum.SPRING),
+  MonthEnum.KELEN: HarnMonth("Kelen", SeasonEnum.SPRING),
+  MonthEnum.NOLUS: HarnMonth("Nolus", SeasonEnum.SUMMER),
+  MonthEnum.LARANE: HarnMonth("Larane", SeasonEnum.SUMMER),
+  MonthEnum.AGRAZHAR: HarnMonth("Agrazhar", SeasonEnum.SUMMER),
+  MonthEnum.AZURA: HarnMonth("Azura", SeasonEnum.AUTUMN),
+  MonthEnum.HALANE: HarnMonth("Halane", SeasonEnum.AUTUMN),
+  MonthEnum.SAVOR: HarnMonth("Savor", SeasonEnum.AUTUMN),
+  MonthEnum.ILVIN: HarnMonth("Ilvin", SeasonEnum.WINTER),
+  MonthEnum.NAVEK: HarnMonth("Navek", SeasonEnum.WINTER),
+  MonthEnum.MORGAT: HarnMonth("Morgat", SeasonEnum.WINTER),
+}
+
+# SUNSIGN
+
+class SunsignEnum(IntEnum):
+  NONE = 0
+  ULA = 1
+  ARA = 2
+  FEN = 3
+  AHN = 4
+  ANG = 5
+  NAD = 6
+  HIR = 7
+  TAR = 8
+  TAI = 9
+  SKO = 10
+  MAS = 11
+  LAD = 12
+
+SS_ULA = SunsignEnum.ULA
+SS_ARA = SunsignEnum.ARA
+SS_FEN = SunsignEnum.FEN
+SS_AHN = SunsignEnum.AHN
+SS_ANG = SunsignEnum.ANG
+SS_NAD = SunsignEnum.NAD
+SS_HIR = SunsignEnum.HIR
+SS_TAR = SunsignEnum.TAR
+SS_TAI = SunsignEnum.TAI
+SS_SKO = SunsignEnum.SKO
+SS_MAS = SunsignEnum.MAS
+SS_LAD = SunsignEnum.LAD
+
+class Sunsign:
+  def __init__(self, abbrev, name, symbol, start_day, start_month, end_day, end_month):
+    self.Abbrev = abbrev
+    self.Name = name
+    self.Symbol = symbol
+    self.StartDay = start_day
+    self.StartMonth = start_month
+    self.EndDay = end_day
+    self.EndMonth = end_month
+
+sunsigns = {
+  SS_ULA: Sunsign("ULA", "Ulandus", "Tree", 4, MonthEnum.NUZYAEL, 3, MonthEnum.PEONU),
+  SS_ARA: Sunsign("ARA", "Aralius", "Wands", 4, MonthEnum.PEONU, 2, MonthEnum.KELEN),
+  SS_FEN: Sunsign("FEN", "Feniri", "Smith", 3, MonthEnum.KELEN, 3, MonthEnum.NOLUS),
+  SS_AHN: Sunsign("AHN", "Ahnu", "Fire Dragon", 4, MonthEnum.NOLUS, 4, MonthEnum.LARANE),
+  SS_ANG: Sunsign("ANG", "Angberelius", "Flaming Swords", 5, MonthEnum.LARANE, 6, MonthEnum.AGRAZHAR),
+  SS_NAD: Sunsign("NAD", "Nadai", "Salamander", 7, MonthEnum.AGRAZHAR, 5, MonthEnum.AZURA),
+  SS_HIR: Sunsign("HIR", "Hirin", "Eagle", 6, MonthEnum.AZURA, 4, MonthEnum.HALANE),
+  SS_TAR: Sunsign("TAR", "Tarael", "Pentacle", 5, MonthEnum.HALANE, 3, MonthEnum.SAVOR),
+  SS_TAI: Sunsign("TAI", "Tai", "Lantern", 4, MonthEnum.SAVOR, 2, MonthEnum.ILVIN),
+  SS_SKO: Sunsign("SKO", "Skorus", "Mixer", 3, MonthEnum.ILVIN, 2, MonthEnum.NAVEK),
+  SS_MAS: Sunsign("MAS", "Masara", "Chalic", 3, MonthEnum.NAVEK, 1, MonthEnum.MORGAT),
+  SS_LAD: Sunsign("LAD", "Lado", "Galley", 2, MonthEnum.MORGAT, 3, MonthEnum.NUZYAEL),
+}
+
+class SunsignMod:
+  def __init__(self, sign, mod):
+    self.Sunsign = sign
+    self.Mod = mod
+
+# ATTRIBUTES
+
+class AttrClassEnum(IntEnum):
+  NONE = 0
+  BIRTH = 1
+  APPEARANCE = 2
+  PHYSICAL = 3
+  PERSONALITY = 4
+  OCCUPATION = 5
+
+class AttrClass:
+  def __init__(self, name, hidden = False):
+    self.Name = name
+    self.Hidden = hidden
+
+attribute_classes = {
+  AttrClassEnum.BIRTH: AttrClass("Birth", hidden=True),
+  AttrClassEnum.APPEARANCE: AttrClass("Appearance", hidden=True),
+  AttrClassEnum.PHYSICAL: AttrClass("Physical"),
+  AttrClassEnum.PERSONALITY: AttrClass("Personality"),
+  AttrClassEnum.OCCUPATION: AttrClass("Occupation", hidden=True),
+}
+
+class AttrEnum(IntEnum):
+  NONE = 0
+  # BIRTH
+  SPECIES = 1
+  SEX = 2
+  BIRTH_MONTH = 3
+  BIRTH_DAY = 4
+  CULTURE = 5
+  SOCIAL_CLASS = 6
+  SIBLING_RANK = 7
+  PARENT = 8
+  PARENT_SUB = 9
+  ESTRANGEMENT = 10
+  CLANHEAD = 11
+  # APPEARANCE
+  HEIGHT = 12
+  FRAME = 13
+  COMELINESS = 14
+  COMPLEXION = 15
+  COLOR_HAIR = 16
+  COLOR_EYE = 17
+  # PHYSICAL
+  STRENGTH = 18
+  STAMINA = 19
+  DEXTERITY = 20
+  AGILITY = 21
+  EYESIGHT = 22
+  HEARING = 23
+  SMELL = 24
+  VOICE = 25
+  MEDICAL = 26
+  # PERSONALITY
+  INTELLIGENCE = 27
+  AURA = 28
+  WILL = 29
+  PSYCHE = 30
+  # OCCUPATION
+  OCCUPATION = 31
+
+ATTR_SPE = AttrEnum.SPECIES
+ATTR_SEX = AttrEnum.SEX
+ATTR_BMO = AttrEnum.BIRTH_MONTH
+ATTR_BDY = AttrEnum.BIRTH_DAY
+ATTR_CUL = AttrEnum.CULTURE
+ATTR_CLS = AttrEnum.SOCIAL_CLASS
+ATTR_SIB = AttrEnum.SIBLING_RANK
+ATTR_PR1 = AttrEnum.PARENT
+ATTR_PR2 = AttrEnum.PARENT_SUB
+ATTR_EST = AttrEnum.ESTRANGEMENT
+ATTR_CLN = AttrEnum.CLANHEAD
+ATTR_HGT = AttrEnum.HEIGHT
+ATTR_FRM = AttrEnum.FRAME
+ATTR_CML = AttrEnum.COMELINESS
+ATTR_CPL = AttrEnum.COMPLEXION
+ATTR_CHR = AttrEnum.COLOR_HAIR
+ATTR_CEY = AttrEnum.COLOR_EYE
+ATTR_STR = AttrEnum.STRENGTH
+ATTR_STA = AttrEnum.STAMINA
+ATTR_DEX = AttrEnum.DEXTERITY
+ATTR_AGL = AttrEnum.AGILITY
+ATTR_HRG = AttrEnum.HEARING
+ATTR_EYE = AttrEnum.EYESIGHT
+ATTR_SML = AttrEnum.SMELL
+ATTR_VOI = AttrEnum.VOICE
+ATTR_MED = AttrEnum.MEDICAL
+ATTR_INT = AttrEnum.INTELLIGENCE
+ATTR_AUR = AttrEnum.AURA
+ATTR_WIL = AttrEnum.WILL
+ATTR_PSY = AttrEnum.PSYCHE
+ATTR_OCC = AttrEnum.OCCUPATION
+
+class Attr:
+  def __init__(self, abbrev, name, attr_class, rolls, dice, mod, hidden = False):
+    self.Abbrev = abbrev
+    self.Name = name
+    self.AttrClass = attr_class
+    self.GenRolls = rolls
+    self.GenDice = dice
+    self.GenMod = mod
+    self.Hidden = hidden
+  
+attributes = {
+  # BIRTH
+  ATTR_SPE: Attr("SPE", "Species", AttrClassEnum.BIRTH, 1, 1, 0),
+  ATTR_SEX: Attr("SEX", "Sex", AttrClassEnum.BIRTH, 1, 100, 0),
+  ATTR_BMO: Attr("BMO", "Birth Month", AttrClassEnum.BIRTH, 1, 12, 0),
+  ATTR_BDY: Attr("BDY", "Birth Day", AttrClassEnum.BIRTH, 1, 30, 0),
+  ATTR_CUL: Attr("CUL", "Culture", AttrClassEnum.BIRTH, 1, 100, 0),
+  ATTR_CLS: Attr("CLS", "Social Class", AttrClassEnum.BIRTH, 1, 100, 0),
+  ATTR_SIB: Attr("SIB", "Sibling Rank", AttrClassEnum.BIRTH, 1, 100, 0),
+  ATTR_PR1: Attr("PR1", "Parent Status", AttrClassEnum.BIRTH, 1, 100, 0),
+  ATTR_PR2: Attr("PR2", "Parent Status (Sub)", AttrClassEnum.BIRTH, 1, 100, 0),
+  ATTR_EST: Attr("EST", "Estrangement", AttrClassEnum.BIRTH, 1, 100, 0),
+  ATTR_CLN: Attr("CLN", "Clanhead", AttrClassEnum.BIRTH, 1, 100, 0),
+  # APPEARANCE
+  ATTR_HGT: Attr("HGT", "Height", AttrClassEnum.APPEARANCE, 4, 6, 54),
+  ATTR_FRM: Attr("FRM", "Frame", AttrClassEnum.APPEARANCE, 3, 6, 0),
+  ATTR_CML: Attr("CML", "Comeliness", AttrClassEnum.APPEARANCE, 3, 6, 0),
+  ATTR_CPL: Attr("CPL", "Complexion", AttrClassEnum.APPEARANCE, 1, 100, 0),
+  ATTR_CHR: Attr("CHR", "Hair Color", AttrClassEnum.APPEARANCE, 1, 100, 0),
+  ATTR_CEY: Attr("CEY", "Eye Color", AttrClassEnum.APPEARANCE, 1, 100, 0),
+  # PHYSICAL
+  ATTR_STR: Attr("STR", "Strength", AttrClassEnum.PHYSICAL, 3, 6, 0),
+  ATTR_STA: Attr("STA", "Stamina", AttrClassEnum.PHYSICAL, 3, 6, 0),
+  ATTR_DEX: Attr("DEX", "Dexterity", AttrClassEnum.PHYSICAL, 3, 6, 0),
+  ATTR_AGL: Attr("AGL", "Agility", AttrClassEnum.PHYSICAL, 3, 6, 0),
+  ATTR_EYE: Attr("EYE", "Eyesight", AttrClassEnum.PHYSICAL, 3, 6, 0),
+  ATTR_HRG: Attr("HRG", "Hearing", AttrClassEnum.PHYSICAL, 3, 6, 0),
+  ATTR_SML: Attr("SML", "Smelling", AttrClassEnum.PHYSICAL, 3, 6, 0),
+  ATTR_VOI: Attr("VOI", "Voice", AttrClassEnum.PHYSICAL, 3, 6, 0),
+  ATTR_MED: Attr("MED", "Medical", AttrClassEnum.PHYSICAL, 1, 100, 0, hidden=True),
+  # PERSONALITY
+  ATTR_INT: Attr("INT", "Intelligence", AttrClassEnum.PERSONALITY, 3, 6, 0),
+  ATTR_AUR: Attr("AUR", "Aura", AttrClassEnum.PERSONALITY, 3, 6, 0),
+  ATTR_WIL: Attr("WIL", "Will", AttrClassEnum.PERSONALITY, 3, 6, 0),
+  ATTR_PSY: Attr("PSY", "Psyche", AttrClassEnum.PERSONALITY, 1, 100, 0, hidden=True),
+  # OCCUPATION
+  ATTR_OCC: Attr("OCC", "Occupation", AttrClassEnum.OCCUPATION, 1, 100, 0),
+}
+
+# SKILLS
+
+class SkillTypeEnum(IntEnum):
+  NONE = 0
+  AUTOMATIC = 1
+  TRAIN = 2
+
+class SkillClassEnum(IntEnum):
+  NONE = 0
+  PHYSICAL = 1
+  COMMUNICATION = 2
+  COMBAT = 3
+
+class SkillEnum(IntEnum):
+  NONE = 0
+  # PHYSICAL
+  ACROBATICS = 100
+  CLIMBING = 101
+  DANCING = 102
+  JUMPING = 103
+  LEGERDEMAIN = 104
+  STEALTH = 105
+  SWIMMING = 106
+  THROWING = 107
+  # COMMUNICATION
+  AWARENESS = 200
+  INTRIGUE = 201
+  MENTAL_CONFLICT = 202
+  ORATORY = 203
+  RHETORIC = 204
+  SINGING = 205
+  # COMBAT
+  INITIATIVE = 300
+  UNARMED = 301
+  RIDING = 302
+  AXE = 303
+  BLOWGUN = 304
+  BOW = 305
+  CLUB = 306
+  DAGGER = 307
+  FLAIL = 308
+  NET = 309
+  POLEARM = 310
+  SHIELD = 311
+  SLING = 312
+  SPEAR = 313
+  SWORD = 314
+  WHIP = 315
+  # LORE / CRAFT
+  AGRICULTURE = 400
+  ALCHEMY = 401
+  ANIMALCRAFT = 402
+  BREWING = 403
+  COOKERY = 404
+  FISHING = 405
+  FLETCHING = 406
+  FORAGING = 407
+  HERBLORE = 408
+  HIDEWORK = 409
+  JEWELCRAFT = 410
+  LOCKCRAFT = 411
+  METALCRAFT = 412
+  MINING = 413
+  PHYSICIAN = 414
+  SURVIVAL = 415
+  TIMBERCRAFT = 416
+  TRACKING = 417
+  WEAPONCRAFT = 418
+  WOODCRAFT = 419
+
+class Skill:
+  def __init__(self, name, skill_type, skill_class, attr1 = AttrEnum.NONE, attr2 = AttrEnum.NONE, attr3 = AttrEnum.NONE, oml_mod = 1, sunsign_mod = None):
+    self.Name = name
+    self.SkillType = skill_type
+    self.SkillClass = skill_class
+    self.Attr1 = attr1
+    self.Attr2 = attr2
+    self.Attr3 = attr3
+    self.OMLMod = oml_mod
+    self.SunsignMod = {}
+    if not sunsign_mod is None:
+      for ss, mod in sunsign_mod.items():
+        self.SunsignMod.update({ ss: mod })
+
+skills = {
+  # PHYSICAL
+  SkillEnum.ACROBATICS: Skill("Acrobatics", SkillTypeEnum.TRAIN, SkillClassEnum.PHYSICAL,
+    ATTR_STR, ATTR_AGL, ATTR_AGL, 2, { SS_NAD: 2, SS_HIR: 1 }),
+  SkillEnum.CLIMBING: Skill("Climbing", SkillTypeEnum.AUTOMATIC, SkillClassEnum.PHYSICAL,
+    ATTR_STR, ATTR_DEX, ATTR_AGL, 4, { SS_ULA: 2, SS_ARA: 2 }),
+  SkillEnum.DANCING: Skill("Dancing", SkillTypeEnum.TRAIN, SkillClassEnum.PHYSICAL,
+    ATTR_DEX, ATTR_AGL, ATTR_AGL, 2, { SS_ULA: 1, SS_LAD: 1 }),
+  SkillEnum.JUMPING: Skill("Jumping", SkillTypeEnum.AUTOMATIC, SkillClassEnum.PHYSICAL,
+    ATTR_STR, ATTR_AGL, ATTR_AGL, 4, { SS_NAD: 2, SS_HIR: 2 }),
+  SkillEnum.LEGERDEMAIN: Skill("Legerdemain", SkillTypeEnum.TRAIN, SkillClassEnum.PHYSICAL,
+    ATTR_DEX, ATTR_DEX, ATTR_WIL, 1, { SS_SKO: 2, SS_TAI: 2, SS_TAR: 2 }),
+  SkillEnum.STEALTH: Skill("Stealth", SkillTypeEnum.AUTOMATIC, SkillClassEnum.PHYSICAL,
+    ATTR_AGL, ATTR_HRG, ATTR_WIL, 3, { SS_HIR: 2, SS_TAR: 2, SS_TAI: 2 }),
+  SkillEnum.SWIMMING: Skill("Swimming", SkillTypeEnum.TRAIN, SkillClassEnum.PHYSICAL,
+    ATTR_STA, ATTR_DEX, ATTR_AGL, 1, { SS_SKO: 1, SS_MAS: 3, SS_LAD: 3 }),
+  SkillEnum.THROWING: Skill("Throwing", SkillTypeEnum.AUTOMATIC, SkillClassEnum.PHYSICAL,
+    ATTR_STR, ATTR_DEX, ATTR_EYE, 4, { SS_HIR: 2, SS_TAR: 1, SS_NAD: 1 }),
+  # COMMUNICATION
+  SkillEnum.AWARENESS: Skill("Awareness", SkillTypeEnum.AUTOMATIC, SkillClassEnum.COMMUNICATION,
+    ATTR_EYE, ATTR_HRG, ATTR_SML, 4, { SS_HIR: 2, SS_TAR: 2 }),
+  SkillEnum.AWARENESS: Skill("Intrigue", SkillTypeEnum.AUTOMATIC, SkillClassEnum.COMMUNICATION,
+    ATTR_INT, ATTR_AUR, ATTR_WIL, 3, { SS_TAI: 1, SS_TAR: 1, SS_SKO: 1 }),
+  SkillEnum.MENTAL_CONFLICT: Skill("Mental Conflict", SkillTypeEnum.TRAIN, SkillClassEnum.COMMUNICATION,
+    ATTR_AUR, ATTR_WIL, ATTR_WIL, 3),
+  SkillEnum.ORATORY: Skill("Oratory", SkillTypeEnum.AUTOMATIC, SkillClassEnum.COMMUNICATION,
+    ATTR_CML, ATTR_VOI, ATTR_INT, 2, { SS_TAR: 1 }),
+  SkillEnum.RHETORIC: Skill("Rhetoric", SkillTypeEnum.AUTOMATIC, SkillClassEnum.COMMUNICATION,
+    ATTR_VOI, ATTR_INT, ATTR_WIL, 3, { SS_TAI: 1, SS_TAR: 1, SS_SKO: 1 }),
+  SkillEnum.SINGING: Skill("Singing", SkillTypeEnum.AUTOMATIC, SkillClassEnum.COMMUNICATION,
+    ATTR_HRG, ATTR_VOI, ATTR_VOI, 3, { SS_MAS: 1 }),
+  # COMBAT
+  SkillEnum.INITIATIVE: Skill("Initiative", SkillTypeEnum.AUTOMATIC, SkillClassEnum.COMBAT,
+    ATTR_AGL, ATTR_WIL, ATTR_WIL, 4),
+  SkillEnum.UNARMED: Skill("Unarmed Combat", SkillTypeEnum.AUTOMATIC, SkillClassEnum.COMBAT,
+    ATTR_STR, ATTR_DEX, ATTR_AGL, 4, { SS_MAS: 2, SS_LAD: 2, SS_ULA: 2 }),
+  SkillEnum.RIDING: Skill("Riding", SkillTypeEnum.TRAIN, SkillClassEnum.COMBAT,
+    ATTR_DEX, ATTR_AGL, ATTR_WIL, 1, { SS_ULA: 1, SS_ARA: 1 }),
+}
+
+class SkillTraining:
+  def __init__(self, points, att = 0):
+    self.Points = points
+    self.Attempts = att
+
 # GENERIC PERSON
 
 class PersonEnum(IntEnum):
@@ -527,6 +924,8 @@ class Person:
     self.Action = CombatActionEnum.NONE
     self.CombatEnemy = None
     self.Currency = cur
+    self.Attr = {}
+    self.SkillTrainings = {}
     self.Effects = []
     self.ItemLinks = {}
     if not it is None:
@@ -540,6 +939,12 @@ class Person:
     self.Action = p.Action
     self.CombatEnemy = None
     self.Currency = p.Currency
+    self.Attr.clear()
+    for attr_id, value in p.Attr.items():
+      self.Attr.update({ attr_id: value })
+    self.SkillTrainings.clear()
+    for skill_id, st in p.SkillTrainings.items():
+      self.SkillTrainings.update({ skill_id: st })
     self.Effects.clear()
     for x in p.Effects:
       self.Effects.append(x)
@@ -567,6 +972,11 @@ class Person:
       else:
         self.ItemLinks.pop(item_id)
     return True
+
+  def SkillML(self, skill_id):
+    ml = round((self.Attr[skills[skill_id].Attr1] + self.Attr[skills[skill_id].Attr2] + self.Attr[skills[skill_id].Attr3]) / 3)
+    ml += self.SkillTrainings[skill_id].Points
+    return ml
 
 # MONSTER
 
@@ -614,6 +1024,7 @@ class Player(Person):
   def __init__(self, name = ""):
     super().__init__(PersonTypeEnum.PLAYER, name, "player")
     self.Password = ""
+    self.Sunsign = SunsignEnum.NONE
     self.HitPoints_Cur = -1
     self.MagicPoints_Cur = -1
     self.Lives = 3
@@ -633,6 +1044,25 @@ class Player(Person):
     self.LastRoom = self.Room
     self.Room = room_id
 
+  def GenAttr(self):
+    # Generate Attributes
+    for attr_id, attr in attributes.items():
+      self.Attr.update({ attr_id: roll(attr.GenRolls, attr.GenDice) + attr.GenMod })
+    # Calculate Sunsign
+    for ss_id, ss in sunsigns.items():
+      if self.Attr[AttrEnum.BIRTH_MONTH] == ss.StartMonth and self.Attr[AttrEnum.BIRTH_DAY] >= ss.StartDay or \
+        self.Attr[AttrEnum.BIRTH_MONTH] == ss.EndMonth and self.Attr[AttrEnum.BIRTH_DAY] <= ss.EndDay:
+          self.Sunsign = ss_id
+          break
+
+  def GenSkills(self):
+    for skill_id, skill in skills.items():
+      if skill.SkillType == SkillTypeEnum.AUTOMATIC:
+        points = 0
+        for ss_id, mod in skills[skill_id].SunsignMod.items():
+          if self.Sunsign == ss_id:
+            points += mod
+        self.SkillTrainings.update({ skill_id: SkillTraining(points) })
 
 # ROOM
 
