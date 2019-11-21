@@ -18,13 +18,18 @@ import random
 import time
 import calendar
 
-from global_defines import *
-from utils import *
+from global_defines import (roll, ItemEnum, ItemLink, Player,
+                            PERS_COMBAT, PERS_AGGRESSIVE,
+                            RoomEnum, RoomFuncResponse, ANSI)
+from utils import (ResetPlayerStats, printRoomDescription, printRoomObjects,
+                   prompt)
 from rooms import rooms
 from person import persons
 from combat import combat
 
 TestMode = True
+
+ROOM_RESPAWN = RoomEnum.BL_PRIEST_CHAMBER
 
 random.seed()
 print(ANSI.CLEAR + ANSI.RESET_CURSOR, end='')
@@ -70,14 +75,15 @@ while True:
         if p.Person == s.Person:
           count += 1
       if count < s.MaxQuantity:
-        if roll(1,100) <= s.Chance:
+        if roll(1, 100) <= s.Chance:
           rooms[player.Room].AddPerson(s.Person)
 
   printRoomObjects(player.Room, rooms)
 
   # Check if the room persons need to attack
   for x in rooms[player.Room].Persons:
-    if persons[x.Person].Flags & PERS_COMBAT == 0 and persons[x.Person].Flags & PERS_AGGRESSIVE > 0:
+    if persons[x.Person].Flags & PERS_COMBAT == 0 and \
+       persons[x.Person].Flags & PERS_AGGRESSIVE > 0:
       combat_flag = True
       x.CombatEnemy = player
       player.Flags |= PERS_COMBAT
@@ -89,7 +95,8 @@ while True:
   if combat_flag:
     combat(player, persons, rooms)
     if player.HitPoints_Cur <= 0:
-      print("\nThe last of your strength slips away, and your vision fades to black...")
+      print("\nThe last of your strength slips away, and your vision\n"
+            "fades to black...")
       print("\n%sYou have died!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
       time.sleep(2)
       print("\nYou slow come back to your senses ...\n")
@@ -101,6 +108,7 @@ while True:
   if res != RoomFuncResponse.NO_PROMPT:
     prompt(player, rooms)
     if player.Command != "":
-      print("\n%sYou cannot do that here.%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+      print("\n%sYou cannot do that here.%s" %
+            (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
 
 # vim: set tabstop=2 shiftwidth=2 expandtab:

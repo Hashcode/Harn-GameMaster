@@ -8,18 +8,17 @@ import codecs
 from tinydb import TinyDB, Query
 from simplecrypt import encrypt, decrypt
 
-from global_defines import *
-
 DATABASE_FILE = "game.json"
 
 global_db = None
 global_id = -1
-global_use_encrypt = True
+global_use_encrypt = False
+
 
 def GetDB():
   global global_db
   global global_id
-  if global_db != None:
+  if global_db is not None:
     return global_db
   global_db = TinyDB(DATABASE_FILE)
   for row in global_db.all():
@@ -27,21 +26,26 @@ def GetDB():
       global_id = row["id"]
   return global_db
 
+
 def ExistsDB(name):
   return GetDB().contains(Query().name == name.upper())
 
+
 def DeleteDB(name):
-  db.remove(where('name') == name.upper())
+  return GetDB().remove(Query().name == name.upper())
+
 
 def SaveDB(name, info, state):
   global global_id
   db = GetDB()
   if ExistsDB(name):
-    db.update({'info':info, 'state':state}, Query().name == name.upper())
+    db.update({'info': info, 'state': state}, Query().name == name.upper())
   else:
     global_id += 1
-    db.insert({'id':global_id, 'name':name.upper(), 'info':info, 'state':state})
+    db.insert({'id': global_id, 'name': name.upper(), 'info': info,
+               'state': state})
   return True
+
 
 def LoadDB(name):
   state = ""
@@ -50,11 +54,13 @@ def LoadDB(name):
     break
   return state
 
+
 def ListDB():
   players = {}
   for row in GetDB().all():
     players.update({row["name"]: row["info"]})
   return players
+
 
 def SavePlayer(save_obj, info, password):
   state_bytes = pickle.dumps(save_obj)
@@ -64,6 +70,7 @@ def SavePlayer(save_obj, info, password):
   else:
     state_str = codecs.encode(state_bytes, "base64").decode("utf-8")
   return SaveDB(save_obj.Name, info, state_str)
+
 
 def LoadPlayer(player, name, password):
   state_str = LoadDB(name)

@@ -4,12 +4,18 @@
 
 # Utility Functions
 
-import sys
+from sys import exit
+from textwrap import TextWrapper
 
-from global_defines import *
-from items import *
-from person import *
-from db import *
+from global_defines import (attribute_classes, attributes, skills, item_flags,
+                            EffectTypeEnum, ItemTypeEnum, ItemFlagEnum,
+                            ItemLink, PERS_COMBAT, DirectionEnum, ANSI)
+from items import items
+from person import persons
+from db import (ListDB, SavePlayer)
+
+
+wrapper = TextWrapper(width=70, fix_sentence_endings=True)
 
 
 def CalcEffect(player, eff_type):
@@ -19,34 +25,42 @@ def CalcEffect(player, eff_type):
       for y in items[item_id].Effects:
         if y.EffectType == eff_type:
           value += y.Modifier * il.Quantity
-  if not player.Effects is None:
+  if player.Effects is not None:
     for y in player.Effects:
       if y.EffectType == eff_type:
         value += y.Modifer
   return value
 
+
 def CalcHitPoints_Max(player):
   return 10 + CalcEffect(player, EffectTypeEnum.HP_MAX)
+
 
 def CalcMagicPoints_Max(player):
   return 10 + CalcEffect(player, EffectTypeEnum.MANA_MAX)
 
+
 def CalcAttackPoints(player):
   return CalcEffect(player, EffectTypeEnum.ATK)
+
 
 def CalcDefense(player):
   return CalcEffect(player, EffectTypeEnum.DEF)
 
+
 def CalcHealing(player):
   return CalcEffect(player, EffectTypeEnum.HEALING)
 
+
 def CalcMagicRegen(player):
   return CalcEffect(player, EffectTypeEnum.MANA_REGEN)
+
 
 def ResetPlayerStats(player):
   player.HitPoints_Cur = CalcHitPoints_Max(player)
   player.MagicPoints_Cur = CalcMagicPoints_Max(player)
   player.ResetStats()
+
 
 def printCombatActions():
   print("  ATTACK")
@@ -54,11 +68,15 @@ def printCombatActions():
   print("  BLOCK")
   print("  FLEE")
 
-def filterLinks(item_links, equipped=False, equippable=False, flags=0, noflags=0):
+
+def filterLinks(item_links, equipped=False, equippable=False, flags=0,
+                noflags=0):
   item_dict = {}
   for item_id, il in item_links.items():
-    if equippable and not items[item_id].ItemType in [ItemTypeEnum.WEAPON, ItemTypeEnum.ARMOR, ItemTypeEnum.RING]:
-      continue
+    if equippable:
+      if not items[item_id].ItemType in \
+          [ItemTypeEnum.WEAPON, ItemTypeEnum.ARMOR, ItemTypeEnum.RING]:
+        continue
     if not equipped and il.Equipped and il.Quantity == 1:
       continue
     if equipped and not il.Equipped:
@@ -70,32 +88,38 @@ def filterLinks(item_links, equipped=False, equippable=False, flags=0, noflags=0
     item_dict.update({item_id: il})
   return item_dict
 
+
 def printItems(item_links, number=False):
   count = 0
   for item_id, il in item_links.items():
     count += 1
     if number:
-      print("%d. %s%s" % (count, items[item_id].ItemName, items[item_id].ItemFlagStr(" (%s)")))
+      print("%d. %s%s" % (count, items[item_id].ItemName,
+                          items[item_id].ItemFlagStr(" (%s)")))
     else:
       if il.Quantity > 1 and not il.Equipped:
-        print("(%d) %s%s" % (il.Quantity, items[item_id].ItemName, items[item_id].ItemFlagStr(" (%s)")))
+        print("(%d) %s%s" % (il.Quantity, items[item_id].ItemName,
+                             items[item_id].ItemFlagStr(" (%s)")))
       else:
-        print("%s%s" % (items[item_id].ItemName, items[item_id].ItemFlagStr(" (%s)")))
+        print("%s%s" % (items[item_id].ItemName,
+                        items[item_id].ItemFlagStr(" (%s)")))
+
 
 # Directions
 
 directions = {
-  DirectionEnum.NORTH:    [ "north", "n" ],
-  DirectionEnum.SOUTH:    [ "south", "s" ],
-  DirectionEnum.WEST:     [ "west",  "w" ],
-  DirectionEnum.EAST:     [ "east",  "e" ],
-  DirectionEnum.NORTHWEST:[ "northwest", "nw" ],
-  DirectionEnum.NORTHEAST:[ "northeast", "ne" ],
-  DirectionEnum.SOUTHWEST:[ "southwest", "sw" ],
-  DirectionEnum.SOUTHEAST:[ "southeast", "se" ],
-  DirectionEnum.UP:       [ "up",    "u" ],
-  DirectionEnum.DOWN:     [ "down",  "d" ],
+    DirectionEnum.NORTH: ["north", "n"],
+    DirectionEnum.SOUTH: ["south", "s"],
+    DirectionEnum.WEST: ["west", "w"],
+    DirectionEnum.EAST: ["east", "e"],
+    DirectionEnum.NORTHWEST: ["northwest", "nw"],
+    DirectionEnum.NORTHEAST: ["northeast", "ne"],
+    DirectionEnum.SOUTHWEST: ["southwest", "sw"],
+    DirectionEnum.SOUTHEAST: ["southeast", "se"],
+    DirectionEnum.UP: ["up", "u"],
+    DirectionEnum.DOWN: ["down", "d"],
 }
+
 
 def printRoomDescription(room_id, rooms):
   print("")
@@ -103,15 +127,18 @@ def printRoomDescription(room_id, rooms):
   if rooms[room_id].Title != "":
     print("%s%s%s" % (ANSI.TEXT_BOLD, rooms[room_id].Title, ANSI.TEXT_NORMAL))
   # Room Description
-  if rooms[room_id].LongDescription != "":
-    print("\n%s" % rooms[room_id].LongDescription)
+  if len(rooms[room_id].LongDescription) > 0:
+    for para in rooms[room_id].LongDescription:
+      print("\n" + wrapper.fill(para))
     # Exits
     if len(rooms[room_id].Exits) > 0:
       print("")
-      for exit_dir,exit in rooms[room_id].Exits.items():
-        print("To the %s is %s" % (
-          ANSI.TEXT_BOLD + directions[exit_dir][0].upper() + ANSI.TEXT_NORMAL,
-          rooms[exit.Room].ShortDescription))
+      for exit_dir, ex in rooms[room_id].Exits.items():
+        print("To the %s%s%s is %s" % (ANSI.TEXT_BOLD,
+                                       directions[exit_dir][0].upper(),
+                                       ANSI.TEXT_NORMAL,
+                                       rooms[ex.Room].ShortDescription))
+
 
 def printRoomObjects(room_id, rooms):
   # Persons
@@ -123,6 +150,7 @@ def printRoomObjects(room_id, rooms):
   if len(rooms[room_id].RoomItems) > 0:
     print("\nThe following items are here:")
     printItems(rooms[room_id].RoomItems)
+
 
 def actionDropItem(player, rooms):
   print("\nItems in your inventory:\n")
@@ -152,6 +180,7 @@ def actionDropItem(player, rooms):
     print("[%s] dropped." % items[item_id].ItemName)
     break
 
+
 def actionEquipItem(player):
   print("\nEquippable items in your inventory:\n")
   links = filterLinks(player.ItemLinks, equipped=False, equippable=True)
@@ -178,25 +207,31 @@ def actionEquipItem(player):
     if not il.Equipped:
       continue
     # check armor coverage / layer conflicts
-    if items[equip_id].ItemType == ItemTypeEnum.ARMOR and items[item_id].ItemType == ItemTypeEnum.ARMOR:
-      if items[item_id].Layer & items[equip_id].Layer > 0 and items[item_id].Coverage & items[equip_id].Coverage > 0:
+    if items[equip_id].ItemType == ItemTypeEnum.ARMOR and \
+       items[item_id].ItemType == ItemTypeEnum.ARMOR:
+      if items[item_id].Layer & items[equip_id].Layer > 0 and \
+         items[item_id].Coverage & items[equip_id].Coverage > 0:
           print("[%s] is already equipped." % items[item_id].ItemName)
           return
     # only 2 weapons/shields
-    if items[equip_id].ItemType == ItemTypeEnum.WEAPON or items[equip_id].ItemType == ItemTypeEnum.WEAPON:
-      if items[item_id].ItemType == ItemTypeEnum.SHIELD or items[item_id].ItemType == ItemTypeEnum.WEAPON:
+    if items[equip_id].ItemType == ItemTypeEnum.WEAPON or \
+       items[equip_id].ItemType == ItemTypeEnum.WEAPON:
+      if items[item_id].ItemType == ItemTypeEnum.SHIELD or \
+         items[item_id].ItemType == ItemTypeEnum.WEAPON:
         count += 1
         if count > 1:
             print("Already wielding 2 weapons or shields.")
             return
     # only 2 rings
-    if items[equip_id].ItemType == ItemTypeEnum.RING and items[item_id].ItemType == ItemTypeEnum.RING:
+    if items[equip_id].ItemType == ItemTypeEnum.RING and \
+       items[item_id].ItemType == ItemTypeEnum.RING:
       count += 1
       if count > 1:
           print("Already wielding 2 rings.")
           return
   player.ItemLinks[equip_id].Equipped = True
   print("[%s] equipped." % items[equip_id].ItemName)
+
 
 def actionGetItem(player, rooms):
   print("\nItems in in the room:\n")
@@ -222,8 +257,10 @@ def actionGetItem(player, rooms):
       print("[%s] picked up." % items[item_id].ItemName)
       break
 
+
 def actionInventory(player):
-  print("\n%sCURRENCY%s: %dsp" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL, player.Currency))
+  print("\n%sCURRENCY%s: %dsp" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL,
+                                  player.Currency))
   print("\n%sEQUIPMENT:%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   links = filterLinks(player.ItemLinks, equipped=True)
   if len(links) < 1:
@@ -237,23 +274,28 @@ def actionInventory(player):
   else:
     printItems(links)
 
+
 def actionSave(player, rooms):
   if SavePlayer(player, rooms[player.Room].Title, player.Password):
     return True
   else:
-    print("%sAn error occured during SAVE!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    print("%sAn error occured during SAVE!%s" %
+          (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
     return False
+
 
 def actionSkills(player):
   print("\n%sCHARACTER SKILLS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   for skill_id in player.SkillTrainings:
     print("%-15s: %d" % (skills[skill_id].Name, player.SkillML(skill_id)))
 
+
 def actionStats(player, rooms):
   for ac_id, ac in attribute_classes.items():
     if ac.Hidden:
       continue
-    print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, ac.Name.upper(), ANSI.TEXT_NORMAL))
+    print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, ac.Name.upper(),
+                                ANSI.TEXT_NORMAL))
     for attr, val in player.Attr.items():
       if not attributes[attr].Hidden and attributes[attr].AttrClass == ac_id:
         print("%-15s: %d" % (attributes[attr].Name, val))
@@ -294,17 +336,21 @@ def actionUnequipItem(player):
       print("[%s] removed." % items[item_id].ItemName)
       break
 
+
 def actionListPlayers():
   pinfo = ListDB()
   if len(pinfo) == 0:
     print("\nThere are no saved characters!")
   else:
-    print("\n%s%-20s %s%s" % (ANSI.TEXT_BOLD, "CHARACTER NAME", "SAVED IN ROOM", ANSI.TEXT_NORMAL))
-    print("%s%-20s %s%s" %   (ANSI.TEXT_BOLD, "--------------", "-------------", ANSI.TEXT_NORMAL))
+    print("\n%s%-20s %s%s" % (ANSI.TEXT_BOLD, "CHARACTER NAME",
+                              "SAVED IN ROOM", ANSI.TEXT_NORMAL))
+    print("%s%-20s %s%s" % (ANSI.TEXT_BOLD, "--------------",
+                            "-------------", ANSI.TEXT_NORMAL))
     for x in sorted(pinfo):
       print("%-20s %s" % (x, pinfo[x]))
 
-def prompt(player, rooms, command_func = None):
+
+def prompt(player, rooms, command_func=None):
   player.Command = ""
   while True:
     x = input("\nCommand: ").lower()
@@ -336,7 +382,7 @@ def prompt(player, rooms, command_func = None):
       print("  WHO")
       if not rooms[player.Room].Exits is None:
         print("\nDirection Commands:")
-        for exit_dir,exit in rooms[player.Room].Exits.items():
+        for exit_dir, ex in rooms[player.Room].Exits.items():
           print("  %s" % directions[exit_dir].upper())
       if player.Flags & PERS_COMBAT > 0:
         print("\nCombat Commands:")
@@ -351,7 +397,8 @@ def prompt(player, rooms, command_func = None):
       print("Coming soon!")
     elif x == "password":
       if player.Flags & PERS_COMBAT > 0:
-        print("\n%sYou can't change your password in combat!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+        print("\n%sYou can't change your password in combat!%s" %
+              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
       else:
         print("\nYour password is used to encrypt SAVE data.")
         print("It should NOT be a password used for anything important.")
@@ -363,18 +410,20 @@ def prompt(player, rooms, command_func = None):
           print("\nCharacter updated.")
     elif x == "q" or x == "quit":
       if player.Flags & PERS_COMBAT > 0:
-        print("\n%sYou can't QUIT in combat!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+        print("\n%sYou can't QUIT in combat!%s" %
+              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
       else:
         y = input("\nAre you sure you wish to QUIT? ").lower()
         if y == "y" or y == "yes":
           actionSave(player, rooms)
           print("\nGoodbye!\n")
-          sys.exit()
+          exit()
         else:
           print("\nQuit aborted.")
     elif x == "save":
       if player.Flags & PERS_COMBAT > 0:
-        print("\n%sYou can't SAVE in combat!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+        print("\n%sYou can't SAVE in combat!%s" %
+              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
       else:
         if actionSave(player, rooms):
           print("\nCharacter saved.")
@@ -400,13 +449,15 @@ def prompt(player, rooms, command_func = None):
 
       if match_dir != DirectionEnum.NONE:
         if player.Flags & PERS_COMBAT > 0:
-          print("\n%sYou can't move in combat!  Try to FLEE!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+          print("\n%sYou can't move in combat!  Try to FLEE!%s" %
+                (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
         else:
-          for exit_dir, exit in rooms[player.Room].Exits.items():
+          for exit_dir, ex in rooms[player.Room].Exits.items():
             if match_dir == exit_dir:
-              player.SetRoom(exit.Room)
+              player.SetRoom(ex.Room)
               return
-          print("\n%sYou can't go in that direction.%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+          print("\n%sYou can't go in that direction.%s" %
+                (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
         continue
 
       player.Command = x

@@ -4,11 +4,9 @@
 
 # Combat Function
 
-import time
-import random
+from global_defines import ANSI, CombatActionEnum, PERS_COMBAT
+from utils import printCombatActions, prompt
 
-from global_defines import *
-from utils import *
 
 def combat(player, persons, rooms):
   # start of combat checks?
@@ -20,16 +18,15 @@ def combat(player, persons, rooms):
       if x.CombatEnemy == player:
         x.Action = CombatActionEnum.NONE
 
-    initiative_list = []
     # TODO Determine Initiative
 
     # First Attack vs. Defense
     # Seciond Attack vs. Defense
 
-    enemyAttNum = random.randint(1,100)
-    #enemy.StartRound(enemyAttNum, player, enemy)
+    # enemy.StartRound(enemyAttNum, player, enemy)
 
-    print("\nYour HP: %d\nYour Mana: %d\n" % (player.HitPoints_Cur, player.MagicPoints_Cur))
+    print("\nYour HP: %d\nYour Mana: %d\n" %
+          (player.HitPoints_Cur, player.MagicPoints_Cur))
     print("\nChoose a combat command:")
     printCombatActions()
 
@@ -57,7 +54,8 @@ def combat(player, persons, rooms):
         print("\n%sYou FLEE!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
         break
       else:
-        print("\n%sYou cannot do that here.%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+        print("\n%sYou cannot do that here.%s" %
+              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
 
     if player.HitPoints_Cur < 1 or player.Action == CombatActionEnum.FLEE:
       break
