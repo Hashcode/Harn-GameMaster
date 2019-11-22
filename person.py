@@ -11,7 +11,8 @@ from global_defines import (MaterialEnum, ItemEnum, ItemLink,
 persons = {
     PersonEnum.MON_RAT:
         Monster("ugly rat", "An ugly rat scurries across the ground.",
-                MaterialEnum.QUILT_FUR, PERS_AGGRESSIVE,
+                PERS_AGGRESSIVE,
+                MaterialEnum.FUR_LT,
                 attacks={
                     ItemEnum.WEAPON_BITE_SMALL: 50,
                     ItemEnum.WEAPON_CLAW_SMALL: 50,

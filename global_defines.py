@@ -114,44 +114,58 @@ qualities = {
 
 # MATERIALS
 
+class MaterialFlagEnum(IntEnum):
+  MAGIC = 0
+
+
 class MaterialEnum(IntEnum):
   NONE = 0
-  # BASIC
-  CLOTH_HAIR = 1
-  QUILT_FUR = 2
-  LEATHER_HIDE = 3
-  KURBUL = 4
-  LEATHER_RING = 5
-  MAIL = 6
-  SCALE = 7
-  STEEL = 8
-  STEEL_WOOD = 9
+  # SKIN TYPES
+  FEATHERS_LT = 1
+  FEATHERS_MD = 2
+  FEATHERS_HV = 3
+  FUR_LT = 7
+  FUR_MD = 8
+  FUR_HV = 9
+  HIDE = 10
+  HIDE_BEAR_LT = 11
+  HIDE_BEAR_MD = 12
+  HIDE_BEAR_HV = 13
+  HIDE_DRAGON_LT = 14
+  HIDE_DRAGON_MD = 15
+  HIDE_DRAGON_HV = 16
+  # CRAFTED
+  CLOTH = 100
+  QUILT = 101
+  LEATHER = 102
+  KURBUL = 103
+  LEATHER_RING = 104
+  MAIL = 105
+  SCALE = 106
+  STEEL = 107
+  STEEL_WOOD = 108
   # PRECIOUS
-  SILVER = 100
-  GOLD = 101
-  MITHRIL = 102
+  SILVER = 200
+  GOLD = 201
+  MITHRIL = 202
   # NATURAL
-  WOOD = 200
-  STONE = 201
-  BONE = 202
-  # MAGIC
-  DRAGON_HIDE = 300
+  WOOD = 300
+  STONE = 301
+  BONE = 302
 
 
 class Material:
-  def __init__(self, weight, cost, store_mod, blunt, edge, pierce, fire=0,
-               cold=0, shock=0, poison=0, magic=0):
+  def __init__(self, name, weight=0, cost=0, store_mod=1,
+               blunt=0, edge=0, pierce=0, ele=0, flags=0):
+    self.Name = name
     self.WeightBase = weight
     self.CostBase = cost
     self.StorageMod = store_mod
     self.ProtBlunt = blunt
     self.ProtEdge = edge
     self.ProtPierce = pierce
-    self.ProtFire = fire
-    self.ProtCold = cold
-    self.ProtShock = shock
-    self.ProtPoison = poison
-    self.ProtMagic = magic
+    self.ProtElemental = ele
+    self.Flags = flags
 
   def Clear(self):
     self.WeightBase = 0
@@ -160,44 +174,79 @@ class Material:
     self.ProtBlunt = 0
     self.ProtEdge = 0
     self.ProtPierce = 0
-    self.ProtFire = 0
-    self.ProtCold = 0
-    self.ProtShock = 0
-    self.ProtPoison = 0
-    self.ProtMagic = 0
+    self.ProtElemental = 0
+    self.Flags = 0
+
+  def Copy(self, m):
+    self.Name = m.Name
+    self.WeightBase = m.WeightBase
+    self.CostBase = m.CostBase
+    self.StorageMod = m.StorageMod
+    self.ProtBlunt = m.ProtBlunt
+    self.ProtEdge = m.ProtEdge
+    self.ProtPierce = m.ProtPierce
+    self.ProtElemental = m.ProtElemental
+    self.Flags = m.Flags
 
   def Add(self, m):
-    self.WeightBase += m.WeightBase
-    self.CostBase += m.CostBase
-    self.StorageMod += m.StorageMod
     self.ProtBlunt += m.ProtBlunt
     self.ProtEdge += m.ProtEdge
     self.ProtPierce += m.ProtPierce
-    self.ProtFire += m.ProtFire
-    self.ProtCold += m.ProtCold
-    self.ProtShock += m.ProtShock
-    self.ProtPoison += m.ProtPoison
-    self.ProtMagic += m.ProtMagic
+    self.ProtElemental += m.ProtElemental
 
 
 materials = {
-    MaterialEnum.CLOTH_HAIR: Material(0.1, 2, 0.25, 1, 1, 1, fire=1, cold=3),
-    MaterialEnum.QUILT_FUR: Material(0.3, 4, 0.5, 5, 3, 2, fire=4, cold=5),
-    MaterialEnum.LEATHER_HIDE: Material(0.2, 4, 0.75, 2, 4, 3, fire=3, cold=2),
-    MaterialEnum.KURBUL: Material(0.25, 5, 1, 4, 5, 4, fire=3, cold=2),
-    MaterialEnum.LEATHER_RING: Material(0.4, 7, 0.75, 3, 6, 4, fire=3, cold=2),
-    MaterialEnum.MAIL: Material(0.5, 15, 0.5, 2, 8, 5, fire=1, cold=1),
-    MaterialEnum.SCALE: Material(0.7, 10, 1, 5, 9, 4, fire=5, cold=2),
-    MaterialEnum.STEEL: Material(0.8, 25, 1, 7, 11, 7, fire=2, cold=2),
-    MaterialEnum.STEEL_WOOD: Material(0.8, 10, 1, 5, 8, 4, fire=1, cold=1),
-    MaterialEnum.SILVER: Material(1.5, 60, 1, 3, 8, 3, fire=2, cold=2),
-    MaterialEnum.GOLD: Material(3.0, 120, 1, 4, 9, 4, fire=2, cold=2),
-    MaterialEnum.MITHRIL: Material(0.25, 1200, 0.5, 4, 10, 7, fire=8, cold=8),
-    MaterialEnum.WOOD: Material(1.0, 2, 1, 3, 4, 3, fire=1, cold=2),
-    MaterialEnum.STONE: Material(1.5, 0, 1, 6, 10, 6, fire=5, cold=2),
-    MaterialEnum.BONE: Material(0.3, 0, 1, 4, 7, 5, fire=2, cold=2),
-    MaterialEnum.DRAGON_HIDE: Material(0.2, 4800, 0.5, 7, 11, 8, fire=10,
-                                       cold=10),
+    MaterialEnum.NONE: Material("None"),
+    # SKIN TYPES
+    MaterialEnum.FEATHERS_LT: Material("Feathers", 0, 0, 0, 3, 2, 1, 2),
+    MaterialEnum.FEATHERS_MD: Material("Feathers", 0, 0, 0, 3, 4, 2, 4),
+    MaterialEnum.FUR_LT: Material("Fur", 0, 0, 0, 2, 1, 1, 2),
+    MaterialEnum.FUR_MD: Material("Fur", 0, 0, 0, 4, 3, 1, 3),
+    MaterialEnum.FUR_HV: Material("Fur", 0, 0, 0, 5, 4, 1, 3),
+    MaterialEnum.HIDE: Material("Hide", 0, 0, 0, 5, 4, 1, 3),
+    MaterialEnum.HIDE_BEAR_LT: Material("Bear Hide", 0, 0, 0, 5, 3, 2, 4),
+    MaterialEnum.HIDE_BEAR_MD: Material("Bear Hide", 0, 0, 0, 6, 4, 3, 5),
+    MaterialEnum.HIDE_BEAR_HV: Material("Bear Hide", 0, 0, 0, 7, 5, 3, 6),
+    MaterialEnum.HIDE_DRAGON_LT: Material("Dragon Hide", 0.2, 4800, 0.5,
+                                          8, 5, 8, 7,
+                                          flags=1 << MaterialFlagEnum.MAGIC),
+    MaterialEnum.HIDE_DRAGON_MD: Material("Dragon Hide", 0.2, 6400, 0.5,
+                                          10, 8, 7, 9,
+                                          flags=1 << MaterialFlagEnum.MAGIC),
+    MaterialEnum.HIDE_DRAGON_HV: Material("Dragon Hide", 0.2, 9600, 0.5,
+                                          12, 15, 12, 14,
+                                          flags=1 << MaterialFlagEnum.MAGIC),
+    # CRAFTED
+    MaterialEnum.CLOTH: Material("Cloth", 0.1, 2, 0.25,
+                                 1, 1, 1, 1),
+    MaterialEnum.QUILT: Material("Quilt", 0.3, 4, 0.5,
+                                 5, 3, 2, 4),
+    MaterialEnum.LEATHER: Material("Leather", 0.2, 4, 0.75,
+                                   2, 4, 3, 3),
+    MaterialEnum.KURBUL: Material("Hardened Leather", 0.25, 5, 1,
+                                  4, 5, 4, 3),
+    MaterialEnum.LEATHER_RING: Material("Studded Leather", 0.4, 7, 0.75,
+                                        3, 6, 4, 3),
+    MaterialEnum.MAIL: Material("Chainmail", 0.5, 15, 0.5,
+                                2, 8, 5, 1),
+    MaterialEnum.SCALE: Material("Scale Mail", 0.7, 10, 1,
+                                 5, 9, 4, 5),
+    MaterialEnum.STEEL: Material("Steel", 0.8, 25, 1,
+                                 6, 10, 6, 2),
+    MaterialEnum.STEEL_WOOD: Material("Steel & Wood", 0.8, 10, 1,
+                                      5, 8, 4, 1),
+    # PRECIOUS
+    MaterialEnum.SILVER: Material("Silver", 1.5, 60, 1,
+                                  3, 8, 3, 2),
+    MaterialEnum.GOLD: Material("Gold", 3.0, 120, 1,
+                                4, 9, 4, 3),
+    MaterialEnum.MITHRIL: Material("Mithril", 0.25, 1200, 0.5,
+                                   4, 10, 7, 8,
+                                   flags=1 << MaterialFlagEnum.MAGIC),
+    # NATURAL
+    MaterialEnum.WOOD: Material("Wood", 1.0, 2, 1, 3, 4, 3, 1),
+    MaterialEnum.STONE: Material("Stone", 1.5, 0, 1, 6, 10, 6, 3),
+    MaterialEnum.BONE: Material("Bone", 0.3, 0, 1, 4, 7, 5, 2),
 }
 
 
@@ -1372,12 +1421,14 @@ class ItemLink:
 
 
 class Person:
-  def __init__(self, person_type, name, long_desc="", flags=0, cur=0, it=None):
+  def __init__(self, person_type, name, long_desc="", flags=0,
+               skin=MaterialEnum.NONE, cur=0, it=None):
     # None == Template
     self.PersonType = person_type
     self.Name = name
     self.LongDescription = long_desc
     self.Flags = flags
+    self.SkinMaterial = skin
     self.Action = CombatActionEnum.NONE
     self.CombatEnemy = None
     self.Currency = cur
@@ -1473,10 +1524,9 @@ class Person:
 # MONSTER
 
 class Monster(Person):
-  def __init__(self, name, long_desc, skin, flags=0, attacks=None,
-               loot=None):
-    super().__init__(PersonTypeEnum.MONSTER, name, long_desc, flags)
-    self.SkinMaterial = skin
+  def __init__(self, name, long_desc, flags=0, skin=MaterialEnum.NONE,
+               attacks=None, loot=None):
+    super().__init__(PersonTypeEnum.MONSTER, name, long_desc, flags, skin)
     self.Attacks = dict()
     self.Loot = dict()
     if attacks is not None:
@@ -1494,8 +1544,9 @@ class Monster(Person):
 # NPC
 
 class NPC(Person):
-  def __init__(self, name, long_desc, flags=0, eq=None):
-    super().__init__(PersonTypeEnum.NPC, name, long_desc, flags, it=eq)
+  def __init__(self, name, long_desc, flags=0, skin=MaterialEnum.NONE,
+               eq=None):
+    super().__init__(PersonTypeEnum.NPC, name, long_desc, flags, skin, it=eq)
     # TODO: Items
     # TODO: Initiative Stat
     # TODO: Currency drop

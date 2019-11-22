@@ -109,7 +109,8 @@ items = {
         Weapon("sharp dagger", QualityEnum.AVE, MaterialEnum.STEEL, 1.2,
                SkillEnum.DAGGER, 5, 5, 0, 1, 6, 0, DamageTypeEnum.PIERCE),
     ItemEnum.WEAPON_MAIN_GAUCHE:
-        Weapon("small parrying blade", QualityEnum.SUP, MaterialEnum.STEEL, 1.2,
+        Weapon("small parrying blade", QualityEnum.SUP,
+               MaterialEnum.STEEL, 1.2,
                SkillEnum.DAGGER, 5, 10, 0, 1, 6, 0, DamageTypeEnum.PIERCE),
     # WEAPON [SWORD]
     ItemEnum.WEAPON_SHORTSWORD:
@@ -210,95 +211,95 @@ items = {
     # ARMOR [CLOTH]
     ItemEnum.ARMOR_CAP_CLOTH:
         Armor("cloth cap",
-              QualityEnum.AVE, MaterialEnum.CLOTH_HAIR, AL_1,
+              QualityEnum.AVE, MaterialEnum.CLOTH, AL_1,
               COV_Sk),
     ItemEnum.ARMOR_HOOD_CLOTH:
         Armor("cloth hood",
-              QualityEnum.AVE, MaterialEnum.CLOTH_HAIR, AL_1,
+              QualityEnum.AVE, MaterialEnum.CLOTH, AL_1,
               COV_Sk | COV_Nk),
     ItemEnum.ARMOR_VEST_CLOTH:
         Armor("cloth vest",
-              QualityEnum.AVE, MaterialEnum.CLOTH_HAIR, AL_1,
+              QualityEnum.AVE, MaterialEnum.CLOTH, AL_1,
               COV_Sh | COV_Tx | COV_Ab),
     ItemEnum.ARMOR_TUNIC_CLOTH:
         Armor("cloth tunic",
-              QualityEnum.AVE, MaterialEnum.CLOTH_HAIR, AL_1,
+              QualityEnum.AVE, MaterialEnum.CLOTH, AL_1,
               COV_Ua | COV_Sh | COV_Tx | COV_Ab | COV_Hp | COV_Gr),
     ItemEnum.ARMOR_SURCOAT_CLOTH:
         Armor("cloth surcoat",
-              QualityEnum.AVE, MaterialEnum.CLOTH_HAIR, AL_1,
+              QualityEnum.AVE, MaterialEnum.CLOTH, AL_1,
               COV_Sh | COV_Tx | COV_Ab | COV_Hp | COV_Gr | COV_Th),
     ItemEnum.ARMOR_ROBE_CLOTH:
         Armor("cloth robe",
-              QualityEnum.AVE, MaterialEnum.CLOTH_HAIR, AL_1,
+              QualityEnum.AVE, MaterialEnum.CLOTH, AL_1,
               COV_Ua | COV_Sh | COV_Tx | COV_Ab | COV_Hp | COV_Gr | COV_Fo | \
               COV_El | COV_Th | COV_Kn | COV_Ca),
     ItemEnum.ARMOR_LEGGINGS_CLOTH:
         Armor("cloth leggings",
-              QualityEnum.AVE, MaterialEnum.CLOTH_HAIR, AL_1_5,
+              QualityEnum.AVE, MaterialEnum.CLOTH, AL_1_5,
               COV_Hp | COV_Gr | COV_Th | COV_Kn | COV_Ca | COV_Ft),
     # ARMOR [QUILT]
     ItemEnum.ARMOR_CAP_QUILT:
         Armor("quilt cap",
-              QualityEnum.AVE, MaterialEnum.QUILT_FUR, AL_2,
+              QualityEnum.AVE, MaterialEnum.QUILT, AL_2,
               COV_Sk),
     ItemEnum.ARMOR_COWL_QUILT:
         Armor("quilt cowl",
-              QualityEnum.AVE, MaterialEnum.QUILT_FUR, AL_2,
+              QualityEnum.AVE, MaterialEnum.QUILT, AL_2,
               COV_Sk | COV_Nk),
     ItemEnum.ARMOR_TUNIC_QUILT:
         Armor("quilt tunic",
-              QualityEnum.AVE, MaterialEnum.QUILT_FUR, AL_2,
+              QualityEnum.AVE, MaterialEnum.QUILT, AL_2,
               COV_Ua | COV_Sh | COV_Tx | COV_Ab | COV_Hp | COV_Gr),
     ItemEnum.ARMOR_GAMBESON_QUILT:
         Armor("quilt gambeson",
-              QualityEnum.AVE, MaterialEnum.QUILT_FUR, AL_2,
+              QualityEnum.AVE, MaterialEnum.QUILT, AL_2,
               COV_Fo | COV_El | COV_Ua | COV_Sh | COV_Tx | COV_Ab | COV_Hp | \
               COV_Gr | COV_Th),
     ItemEnum.ARMOR_LEGGINGS_QUILT:
         Armor("quilt leggings",
-              QualityEnum.AVE, MaterialEnum.QUILT_FUR, AL_2_5,
+              QualityEnum.AVE, MaterialEnum.QUILT, AL_2_5,
               COV_Hp | COV_Gr | COV_Th | COV_Kn | COV_Ca | COV_Ft),
     # ARMOR [LEATHER]
     ItemEnum.ARMOR_CAP_LEATHER:
         Armor("leather cap",
-              QualityEnum.AVE, MaterialEnum.LEATHER_HIDE, AL_3,
+              QualityEnum.AVE, MaterialEnum.LEATHER, AL_3,
               COV_Sk),
     ItemEnum.ARMOR_COWL_LEATHER:
         Armor("leather cowl",
-              QualityEnum.AVE, MaterialEnum.LEATHER_HIDE, AL_3,
+              QualityEnum.AVE, MaterialEnum.LEATHER, AL_3,
               COV_Sk | COV_Nk),
     ItemEnum.ARMOR_VEST_LEATHER:
         Armor("leather vest",
-              QualityEnum.AVE, MaterialEnum.LEATHER_HIDE, AL_3,
+              QualityEnum.AVE, MaterialEnum.LEATHER, AL_3,
               COV_Sh | COV_Tx | COV_Ab),
     ItemEnum.ARMOR_TUNIC_LEATHER:
         Armor("leather tunic",
-              QualityEnum.AVE, MaterialEnum.LEATHER_HIDE, AL_3,
+              QualityEnum.AVE, MaterialEnum.LEATHER, AL_3,
               COV_Ua | COV_Sh | COV_Tx | COV_Ab | COV_Hp | COV_Gr),
     ItemEnum.ARMOR_SURCOAT_LEATHER:
         Armor("leather surcoat",
-              QualityEnum.AVE, MaterialEnum.LEATHER_HIDE, AL_3,
+              QualityEnum.AVE, MaterialEnum.LEATHER, AL_3,
               COV_Sh | COV_Tx | COV_Ab | COV_Hp | COV_Gr | COV_Th),
     ItemEnum.ARMOR_LEGGINGS_LEATHER:
         Armor("leather leggings",
-              QualityEnum.AVE, MaterialEnum.LEATHER_HIDE, AL_3,
+              QualityEnum.AVE, MaterialEnum.LEATHER, AL_3,
               COV_Hp | COV_Gr | COV_Th | COV_Kn | COV_Ca | COV_Ft),
     ItemEnum.ARMOR_SHOES_LEATHER:
         Armor("leather shoes",
-              QualityEnum.AVE, MaterialEnum.LEATHER_HIDE, AL_3_5,
+              QualityEnum.AVE, MaterialEnum.LEATHER, AL_3_5,
               COV_Ft),
     ItemEnum.ARMOR_CALF_BOOTS_LEATHER:
         Armor("leather calf boots",
-              QualityEnum.AVE, MaterialEnum.LEATHER_HIDE, AL_3_5,
+              QualityEnum.AVE, MaterialEnum.LEATHER, AL_3_5,
               COV_Ca | COV_Ft),
     ItemEnum.ARMOR_KNEE_BOOTS_LEATHER:
         Armor("leather knee boots",
-              QualityEnum.AVE, MaterialEnum.LEATHER_HIDE, AL_3_5,
+              QualityEnum.AVE, MaterialEnum.LEATHER, AL_3_5,
               COV_Kn | COV_Ca | COV_Ft),
     ItemEnum.ARMOR_GAUNTLETS_LEATHER:
         Armor("leather gauntlets",
-              QualityEnum.AVE, MaterialEnum.LEATHER_HIDE, AL_3,
+              QualityEnum.AVE, MaterialEnum.LEATHER, AL_3,
               COV_Ha),
     # ARMOR [KURBUL]
     ItemEnum.ARMOR_HALFHELM_KURBUL:
@@ -458,7 +459,7 @@ items = {
              MaterialEnum.STONE, 1),
     ItemEnum.MISC_RAT_FUR:
         Item(ItemTypeEnum.MISC, "rat fur", QualityEnum.POR,
-             MaterialEnum.QUILT_FUR, 1),
+             MaterialEnum.FUR_LT, 1),
 }
 
 # vim: tabstop=2 shiftwidth=2 expandtab:

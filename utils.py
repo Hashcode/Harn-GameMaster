@@ -360,7 +360,7 @@ def actionStats(player, rooms):
 
 def actionArmor(player, rooms):
   print("\n%sARMOR COVERAGE%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-  print("%s%-16s BLUNT EDGE PIERCE FIRE COLD SHOCK POISON MAGIC%s" %
+  print("%s%-16s BLUNT EDGE PIERCE ELEMENTAL%s" %
         (ANSI.TEXT_BOLD, "LOCATION", ANSI.TEXT_NORMAL))
   m = Material(0, 0, 0, 0, 0, 0)
   for bp_id, bp in body_parts.items():
@@ -372,9 +372,9 @@ def actionArmor(player, rooms):
         continue
       if items[item_id].Covered(bp_id):
         m.Add(materials[items[item_id].Material])
-    print("%-16s %-5d %-4d %-6d %-4d %-4d %-5d %-6d %-5d" %
+    print("%-16s %-5d %-4d %-6d %-9d" %
           (body_parts[bp_id].PartName, m.ProtBlunt, m.ProtEdge, m.ProtPierce,
-           m.ProtFire, m.ProtCold, m.ProtShock, m.ProtPoison, m.ProtMagic))
+           m.ProtElemental))
 
 
 def actionRemoveItem(player, rooms):
