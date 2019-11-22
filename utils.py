@@ -401,7 +401,7 @@ def actionArmor(player, rooms):
            m.ProtFire, m.ProtCold, m.ProtShock, m.ProtPoison, m.ProtMagic))
 
 
-def actionUnequipItem(player, rooms):
+def actionRemoveItem(player, rooms):
   print("\nYour equipped items:\n")
   links = filterLinks(player.ItemLinks, equipped=True)
   if len(links) < 1:
@@ -522,10 +522,10 @@ commands.append(GenericCommand(["look", "l"], actionLook))
 commands.append(GenericCommand(["open"], actionComingSoon))
 commands.append(GenericCommand(["password"], actionChangePassword))
 commands.append(GenericCommand(["quit", "q"], actionQuit))
+commands.append(GenericCommand(["remove"], actionRemoveItem))
 commands.append(GenericCommand(["save"], actionSaveGeneric))
 commands.append(GenericCommand(["skills"], actionSkills))
 commands.append(GenericCommand(["stats"], actionStats))
-commands.append(GenericCommand(["unequip"], actionUnequipItem))
 commands.append(GenericCommand(["unlock"], actionComingSoon))
 commands.append(GenericCommand(["who"], actionListPlayers))
 
