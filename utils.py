@@ -13,7 +13,7 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             complexions, color_hairs, color_eyes,
                             skill_classes, skills, item_flags, body_parts,
                             materials, NumAdj, AttrEnum, Material,
-                            EffectTypeEnum, ItemTypeEnum, ItemFlagEnum,
+                            ItemTypeEnum, ItemFlagEnum,
                             ItemLink, DirectionEnum,
                             PERS_COMBAT, ANSI)
 from items import items
@@ -36,36 +36,6 @@ def CalcEffect(player, eff_type):
       if y.EffectType == eff_type:
         value += y.Modifer
   return value
-
-
-def CalcHitPoints_Max(player):
-  return 10 + CalcEffect(player, EffectTypeEnum.HP_MAX)
-
-
-def CalcMagicPoints_Max(player):
-  return 10 + CalcEffect(player, EffectTypeEnum.MANA_MAX)
-
-
-def CalcAttackPoints(player):
-  return CalcEffect(player, EffectTypeEnum.ATK)
-
-
-def CalcDefense(player):
-  return CalcEffect(player, EffectTypeEnum.DEF)
-
-
-def CalcHealing(player):
-  return CalcEffect(player, EffectTypeEnum.HEALING)
-
-
-def CalcMagicRegen(player):
-  return CalcEffect(player, EffectTypeEnum.MANA_REGEN)
-
-
-def ResetPlayerStats(player):
-  player.HitPoints_Cur = CalcHitPoints_Max(player)
-  player.MagicPoints_Cur = CalcMagicPoints_Max(player)
-  player.ResetStats()
 
 
 def printCombatActions():

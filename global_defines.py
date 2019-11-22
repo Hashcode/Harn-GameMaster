@@ -1473,14 +1473,12 @@ class Person:
 # MONSTER
 
 class Monster(Person):
-  def __init__(self, name, long_desc, hp, skin, flags=0, attacks=None,
+  def __init__(self, name, long_desc, skin, flags=0, attacks=None,
                loot=None):
     super().__init__(PersonTypeEnum.MONSTER, name, long_desc, flags)
-    self.HitPoints_Max = hp
     self.SkinMaterial = skin
     self.Attacks = dict()
     self.Loot = dict()
-    self.ResetStats()
     if attacks is not None:
       for item_id, chance in attacks.items():
         self.Attacks.update({item_id: chance})
@@ -1490,26 +1488,18 @@ class Monster(Person):
     # TODO: Initiative Stat
     # TODO: Currency drop
     # TODO: Loot drop
-
-  def ResetStats(self):
-    self.HitPoints_Cur = self.HitPoints_Max
     super().ResetStats()
 
 
 # NPC
 
 class NPC(Person):
-  def __init__(self, name, long_desc, hp, flags=0, eq=None):
+  def __init__(self, name, long_desc, flags=0, eq=None):
     super().__init__(PersonTypeEnum.NPC, name, long_desc, flags, it=eq)
-    self.HitPoints_Max = hp
-    self.ResetStats()
     # TODO: Items
     # TODO: Initiative Stat
     # TODO: Currency drop
     # TODO: Loot drop
-
-  def ResetStats(self):
-    self.HitPoints_Cur = self.HitPoints_Max
     super().ResetStats()
 
 
@@ -1520,19 +1510,16 @@ class Player(Person):
     super().__init__(PersonTypeEnum.PLAYER, name, "player")
     self.Password = ""
     self.Sunsign = SunsignEnum.NONE
-    self.HitPoints_Cur = -1
-    self.MagicPoints_Cur = -1
     self.Command = ""
     self.Room = None
     self.LastRoom = None
 
   def Copy(self, p):
     super().Copy(p)
-    self.HitPoints_Cur = p.HitPoints_Cur
-    self.MagicPoints_Cur = p.MagicPoints_Cur
     self.Room = p.Room
     self.LastRoom = p.LastRoom
     self.CalcSunsign()
+    super().ResetStats()
 
   def SetRoom(self, room_id):
     self.LastRoom = self.Room
@@ -1786,8 +1773,6 @@ class PersonLink:
   def __init__(self, person_id, unique):
     self.Person = person_id
     self.UUID = unique
-    self.HitPoints_Cur = -1
-    self.MagicPoints_Cur = -1
     self.CombatEnemy = None
 
 

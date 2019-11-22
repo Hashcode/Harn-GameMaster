@@ -21,8 +21,7 @@ from calendar import timegm
 from global_defines import (roll, logd, ItemEnum, ItemLink, Player,
                             PERS_COMBAT, PERS_AGGRESSIVE,
                             RoomEnum, RoomFuncResponse, ANSI)
-from utils import (ResetPlayerStats, printRoomDescription, printRoomObjects,
-                   prompt)
+from utils import (printRoomDescription, printRoomObjects, prompt)
 from rooms import rooms
 from person import persons
 from combat import combat
@@ -38,7 +37,6 @@ player = Player("Unknown")
 player.SetRoom(RoomEnum.GAME_START)
 
 if TestMode:
-  ResetPlayerStats(player)
   player.AddItem(ItemEnum.WEAPON_DAGGER, ItemLink(1, equip=True))
 
   player.AddItem(ItemEnum.ARMOR_HALFHELM_LEATHER_RING, ItemLink(1, equip=True))

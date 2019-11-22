@@ -10,7 +10,7 @@ from global_defines import (MaterialEnum, ItemEnum, ItemLink,
 
 persons = {
     PersonEnum.MON_RAT:
-        Monster("ugly rat", "An ugly rat scurries across the ground.", 10,
+        Monster("ugly rat", "An ugly rat scurries across the ground.",
                 MaterialEnum.QUILT_FUR, PERS_AGGRESSIVE,
                 attacks={
                     ItemEnum.WEAPON_BITE_SMALL: 50,
@@ -20,7 +20,7 @@ persons = {
                     ItemEnum.MISC_RAT_FUR: 75,
                 }),
     PersonEnum.BL_KEEP_GUARD:
-        NPC("gatehouse guard", "An impassive guard stares ahead.", 90,
+        NPC("gatehouse guard", "An impassive guard stares ahead.",
             eq={
                 ItemEnum.WEAPON_BASTARD_SWORD: ItemLink(equip=True),
                 ItemEnum.SHIELD_KNIGHT_STEEL: ItemLink(equip=True),

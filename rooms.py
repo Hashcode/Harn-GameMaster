@@ -7,7 +7,7 @@
 from global_defines import (PersonEnum, Player, DirectionEnum,
                             RoomFuncResponse, RoomEnum, Exit, Room, RoomSpawn,
                             ANSI)
-from utils import (ResetPlayerStats, actionSave)
+from utils import (actionSave)
 from db import (ExistsDB, LoadPlayer)
 
 ROOM_START = RoomEnum.BL_KEEP_GATEHOUSE
@@ -40,7 +40,7 @@ def room_RestoreSave(player):
     return RoomFuncResponse.SKIP
 
   print("Loaded.")
-  ResetPlayerStats(player)
+  player.ResetStats()
   player.SetRoom(player.Room)
   return RoomFuncResponse.SKIP
 
@@ -65,14 +65,13 @@ def room_CreateCharacter(player):
 
   player.GenAttr()
   player.GenSkills()
+  player.ResetStats()
   player.SetRoom(ROOM_START)
 
   print("\nSaving character ...")
   if not actionSave(player, rooms):
     return RoomFuncResponse.SKIP
   print("Done.")
-
-  ResetPlayerStats(player)
 
   print("\nGood luck, %s!" % (player.Name))
   return RoomFuncResponse.SKIP
