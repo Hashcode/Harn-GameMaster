@@ -173,8 +173,8 @@ materials = {
     MaterialEnum.LEATHER_RING: Material(0.4, 7, 0.75, 3, 6, 4, fire=3, cold=2),
     MaterialEnum.MAIL: Material(0.5, 15, 0.5, 2, 8, 5, fire=1, cold=1),
     MaterialEnum.SCALE: Material(0.7, 10, 1, 5, 9, 4, fire=5, cold=2),
-    MaterialEnum.STEEL: Material(1.0, 25, 1, 7, 11, 7, fire=2, cold=2),
-    MaterialEnum.STEEL_WOOD: Material(1.0, 10, 1, 5, 8, 4, fire=1, cold=1),
+    MaterialEnum.STEEL: Material(0.8, 25, 1, 7, 11, 7, fire=2, cold=2),
+    MaterialEnum.STEEL_WOOD: Material(0.8, 10, 1, 5, 8, 4, fire=1, cold=1),
     MaterialEnum.SILVER: Material(1.5, 60, 1, 3, 8, 3, fire=2, cold=2),
     MaterialEnum.GOLD: Material(3.0, 120, 1, 4, 9, 4, fire=2, cold=2),
     MaterialEnum.MITHRIL: Material(0.25, 1200, 0.5, 4, 10, 7, fire=8, cold=8),
@@ -232,7 +232,7 @@ body_parts = {
     CoverageEnum.GROIN: BodyPart("Groin", 2),
     CoverageEnum.THIGHS: BodyPart("Thighs", 7),
     CoverageEnum.KNEES: BodyPart("Knee", 3),
-    CoverageEnum.CALVES: BodyPart("Calves", 10),
+    CoverageEnum.CALVES: BodyPart("Calves", 8),
     CoverageEnum.FEET: BodyPart("Feet", 6),
 }
 
@@ -1548,6 +1548,12 @@ class Player(Person):
         ret = c_id
         break
     return ret
+
+  def AttrEndurance(self):
+    ret = self.Attr[AttrEnum.STRENGTH]
+    ret += self.Attr[AttrEnum.STAMINA]
+    ret += self.Attr[AttrEnum.WILL]
+    return round(ret / 3)
 
 
 # ROOM
