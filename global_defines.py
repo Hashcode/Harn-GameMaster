@@ -1555,6 +1555,26 @@ class Player(Person):
     ret += self.Attr[AttrEnum.WILL]
     return round(ret / 3)
 
+  def EquipWeight(self, items):
+    eq = 0
+    for item_id, il in self.ItemLinks.items():
+      if il.Equipped:
+        eq += items[item_id].Weight
+    return eq / 2
+
+  def InvenWeight(self, items):
+    inv = 0
+    for item_id, il in self.ItemLinks.items():
+      if il.Equipped:
+        if il.Quantity > 1:
+          inv += items[item_id].Weight * (il.Quantity - 1)
+      else:
+        inv += items[item_id].Weight * il.Quantity
+    return inv
+
+  def Encumbrance(self, items):
+    return self.EquipWeight(items) + self.InvenWeight(items)
+
 
 # ROOM
 
