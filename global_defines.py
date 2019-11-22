@@ -679,6 +679,14 @@ class SunsignMod:
     self.Mod = mod
 
 
+# GENERIC ATTRIBUTE CLASSES
+
+class AttrNameMax:
+  def __init__(self, name, attr_max):
+    self.Name = name
+    self.AttrMax = attr_max
+
+
 # SOCIAL CLASS
 
 class SocialClassEnum:
@@ -716,10 +724,9 @@ class CultureEnum:
   TRIBAL = 4
 
 
-class Culture:
+class Culture(AttrNameMax):
   def __init__(self, name, attr_max, sc_attrmax):
-    self.Name = name
-    self.AttrMax = attr_max
+    super().__init__(name, attr_max)
     self.SCAttrMax = sc_attrmax
 
 
@@ -758,19 +765,13 @@ cultures = {
 
 # SIBLINK RANK
 
-class SiblingRank:
-  def __init__(self, name, attr_max):
-    self.Name = name
-    self.AttrMax = attr_max
-
-
 sibling_ranks = {
-    1: SiblingRank("Eldest", 25),
-    2: SiblingRank("2nd Child", 50),
-    3: SiblingRank("3rd Child", 70),
-    4: SiblingRank("4th Child", 85),
-    5: SiblingRank("5th Child", 95),
-    6: SiblingRank("6th Child", 100),
+    1: AttrNameMax("Eldest", 25),
+    2: AttrNameMax("2nd Child", 50),
+    3: AttrNameMax("3rd Child", 70),
+    4: AttrNameMax("4th Child", 85),
+    5: AttrNameMax("5th Child", 95),
+    6: AttrNameMax("6th Child", 100),
 }
 
 
@@ -785,18 +786,12 @@ class ParentStatusEnum:
   ORPHAN = 5
 
 
-class ParentStatus:
-  def __init__(self, name, attr_max):
-    self.Name = name
-    self.AttrMax = attr_max
-
-
 parent_statuses = {
-    ParentStatusEnum.OFFSPRING: ParentStatus("Normal", 50),
-    ParentStatusEnum.FOSTERED: ParentStatus("Fostered", 70),
-    ParentStatusEnum.ADOPTED: ParentStatus("Adopted", 70),
-    ParentStatusEnum.BASTARD: ParentStatus("Bastard", 85),
-    ParentStatusEnum.ORPHAN: ParentStatus("Orphaned", 95),
+    ParentStatusEnum.OFFSPRING: AttrNameMax("Normal", 50),
+    ParentStatusEnum.FOSTERED: AttrNameMax("Fostered", 70),
+    ParentStatusEnum.ADOPTED: AttrNameMax("Adopted", 70),
+    ParentStatusEnum.BASTARD: AttrNameMax("Bastard", 85),
+    ParentStatusEnum.ORPHAN: AttrNameMax("Orphaned", 95),
 }
 
 
@@ -811,10 +806,9 @@ class PlayerFrameEnum:
   MASSIVE = 5
 
 
-class PlayerFrame:
+class PlayerFrame(AttrNameMax):
   def __init__(self, name, attr_max, mod):
-    self.Name = name
-    self.AttrMax = attr_max
+    super().__init__(name, attr_max)
     self.ModPercent = mod
 
 
@@ -850,18 +844,12 @@ class ComelinessEnum:
   HANDSOME = 5
 
 
-class Comeliness:
-  def __init__(self, name, attr_max):
-    self.Name = name
-    self.AttrMax = attr_max
-
-
 comelinesses = {
-    ComelinessEnum.UGLY: Comeliness("Ugly", 5),
-    ComelinessEnum.PLAIN: Comeliness("Plain", 8),
-    ComelinessEnum.AVERAGE: Comeliness("Average", 12),
-    ComelinessEnum.ATTRACTIVE: Comeliness("Attractive", 15),
-    ComelinessEnum.HANDSOME: Comeliness("Handsome", 100),
+    ComelinessEnum.UGLY: AttrNameMax("Ugly", 5),
+    ComelinessEnum.PLAIN: AttrNameMax("Plain", 8),
+    ComelinessEnum.AVERAGE: AttrNameMax("Average", 12),
+    ComelinessEnum.ATTRACTIVE: AttrNameMax("Attractive", 15),
+    ComelinessEnum.HANDSOME: AttrNameMax("Handsome", 100),
 }
 
 
@@ -874,10 +862,9 @@ class ComplexionEnum:
   DARK = 3
 
 
-class Complexion:
+class Complexion(AttrNameMax):
   def __init__(self, name, attr_max, eye_mod):
-    self.Name = name
-    self.AttrMax = attr_max
+    super().__init__(name, attr_max)
     self.EyeColorMod = eye_mod
 
 
@@ -899,18 +886,12 @@ class ColorHairEnum:
   BLONDE = 5
 
 
-class ColorHair:
-  def __init__(self, name, attr_max):
-    self.Name = name
-    self.AttrMax = attr_max
-
-
 color_hairs = {
-    ColorHairEnum.BROWN: ColorHair("Brown", 40),
-    ColorHairEnum.BLACK: ColorHair("Black", 55),
-    ColorHairEnum.RED: ColorHair("Red", 65),
-    ColorHairEnum.SILVER: ColorHair("Silver", 70),
-    ColorHairEnum.BLONDE: ColorHair("Blonde", 100),
+    ColorHairEnum.BROWN: AttrNameMax("Brown", 40),
+    ColorHairEnum.BLACK: AttrNameMax("Black", 55),
+    ColorHairEnum.RED: AttrNameMax("Red", 65),
+    ColorHairEnum.SILVER: AttrNameMax("Silver", 70),
+    ColorHairEnum.BLONDE: AttrNameMax("Blonde", 100),
 }
 
 
@@ -923,18 +904,12 @@ class ColorEyeEnum:
   BLUE = 5
 
 
-class ColorEye:
-  def __init__(self, name, attr_max):
-    self.Name = name
-    self.AttrMax = attr_max
-
-
 color_eyes = {
-    ColorEyeEnum.HAZEL: ColorEye("Hazel", 40),
-    ColorEyeEnum.GRAY: ColorEye("Gray", 55),
-    ColorEyeEnum.VIOLET: ColorEye("Violet", 56),
-    ColorEyeEnum.GREEN: ColorEye("Green", 70),
-    ColorEyeEnum.BLUE: ColorEye("Blue", 200),
+    ColorEyeEnum.HAZEL: AttrNameMax("Hazel", 40),
+    ColorEyeEnum.GRAY: AttrNameMax("Gray", 55),
+    ColorEyeEnum.VIOLET: AttrNameMax("Violet", 56),
+    ColorEyeEnum.GREEN: AttrNameMax("Green", 70),
+    ColorEyeEnum.BLUE: AttrNameMax("Blue", 200),
 }
 
 
