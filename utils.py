@@ -503,7 +503,7 @@ commands.append(GenericCommand(["who"], actionListPlayers))
 def prompt(player, rooms, command_func=None):
   player.Command = ""
   while True:
-    x = input("\nCommand: ").lower()
+    x = input("\n[? = HELP] Command: ").lower()
     if x == "":
       continue
 
