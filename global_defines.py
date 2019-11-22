@@ -58,7 +58,9 @@ def roll(rolls, die_base, modifier=0):
 def NumAdj(num):
   ret = "th"
   digit = num % 10
-  if digit == 1:
+  if num == 11 or num == 12 or num == 13:
+    ret = "th"
+  elif digit == 1:
     ret = "st"
   elif digit == 2:
     ret = "nd"
