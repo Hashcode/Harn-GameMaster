@@ -1108,17 +1108,22 @@ attributes = {
 
 # SKILLS
 
-class SkillTypeEnum(IntEnum):
-  NONE = 0
-  AUTO = 1
-  TRAIN = 2
-
-
 class SkillClassEnum(IntEnum):
   NONE = 0
   PHYSICAL = 1
   COMMUNICATION = 2
-  COMBAT = 3
+  RELIGION = 3
+  COMBAT = 4
+  LORE_CRAFTS = 5
+
+
+skill_classes = {
+    SkillClassEnum.PHYSICAL: AttrClass("Physical"),
+    SkillClassEnum.COMMUNICATION: AttrClass("Communication"),
+    SkillClassEnum.RELIGION: AttrClass("Religion", hidden=True),
+    SkillClassEnum.COMBAT: AttrClass("Combat"),
+    SkillClassEnum.LORE_CRAFTS: AttrClass("Lore & Crafts", hidden=True),
+}
 
 
 class SkillEnum(IntEnum):
@@ -1181,105 +1186,155 @@ class SkillEnum(IntEnum):
 
 
 class Skill:
-  def __init__(self, name, skill_type, skill_class, attr1=AttrEnum.NONE,
-               attr2=AttrEnum.NONE, attr3=AttrEnum.NONE, oml_mod=1,
-               sunsign_mod=None):
+  def __init__(self, name, skill_class, attr1=AttrEnum.NONE,
+               attr2=AttrEnum.NONE, attr3=AttrEnum.NONE, oml_mod=1, apsuc=100,
+               sunsign_mod=None, hidden=False):
     self.Name = name
-    self.SkillType = skill_type
     self.SkillClass = skill_class
     self.Attr1 = attr1
     self.Attr2 = attr2
     self.Attr3 = attr3
     self.OMLMod = oml_mod
+    self.AttemptsPerSkillUpCheck = apsuc
     self.SunsignMod = dict()
     if sunsign_mod is not None:
       for ss, mod in sunsign_mod.items():
         self.SunsignMod.update({ss: mod})
+    self.Hidden = hidden
 
 
 skills = {
     # PHYSICAL
     SkillEnum.ACROBATICS:
-        Skill("Acrobatics", SkillTypeEnum.TRAIN, SkillClassEnum.PHYSICAL,
+        Skill("Acrobatics", SkillClassEnum.PHYSICAL,
               ATTR_STR, ATTR_AGL, ATTR_AGL, 2,
               {SS_NAD: 2, SS_HIR: 1}),
     SkillEnum.CLIMBING:
-        Skill("Climbing", SkillTypeEnum.AUTO, SkillClassEnum.PHYSICAL,
+        Skill("Climbing", SkillClassEnum.PHYSICAL,
               ATTR_STR, ATTR_DEX, ATTR_AGL, 4,
               {SS_ULA: 2, SS_ARA: 2}),
     SkillEnum.CONDITIONING:
-        Skill("Conditioning", SkillTypeEnum.AUTO, SkillClassEnum.PHYSICAL,
+        Skill("Conditioning", SkillClassEnum.PHYSICAL,
               ATTR_STR, ATTR_STA, ATTR_WIL, 5,
               {SS_ULA: 1, SS_LAD: 1}),
     SkillEnum.DANCING:
-        Skill("Dancing", SkillTypeEnum.TRAIN, SkillClassEnum.PHYSICAL,
+        Skill("Dancing", SkillClassEnum.PHYSICAL,
               ATTR_DEX, ATTR_AGL, ATTR_AGL, 2,
-              {SS_ULA: 1, SS_LAD: 1}),
+              {SS_ULA: 1, SS_LAD: 1}, hidden=True),
     SkillEnum.JUMPING:
-        Skill("Jumping", SkillTypeEnum.AUTO, SkillClassEnum.PHYSICAL,
+        Skill("Jumping", SkillClassEnum.PHYSICAL,
               ATTR_STR, ATTR_AGL, ATTR_AGL, 4,
               {SS_NAD: 2, SS_HIR: 2}),
     SkillEnum.LEGERDEMAIN:
-        Skill("Legerdemain", SkillTypeEnum.TRAIN, SkillClassEnum.PHYSICAL,
+        Skill("Legerdemain", SkillClassEnum.PHYSICAL,
               ATTR_DEX, ATTR_DEX, ATTR_WIL, 1,
               {SS_SKO: 2, SS_TAI: 2, SS_TAR: 2}),
     SkillEnum.STEALTH:
-        Skill("Stealth", SkillTypeEnum.AUTO, SkillClassEnum.PHYSICAL,
+        Skill("Stealth", SkillClassEnum.PHYSICAL,
               ATTR_AGL, ATTR_HRG, ATTR_WIL, 3,
               {SS_HIR: 2, SS_TAR: 2, SS_TAI: 2}),
     SkillEnum.SWIMMING:
-        Skill("Swimming", SkillTypeEnum.TRAIN, SkillClassEnum.PHYSICAL,
+        Skill("Swimming", SkillClassEnum.PHYSICAL,
               ATTR_STA, ATTR_DEX, ATTR_AGL, 1,
               {SS_SKO: 1, SS_MAS: 3, SS_LAD: 3}),
     SkillEnum.THROWING:
-        Skill("Throwing", SkillTypeEnum.AUTO, SkillClassEnum.PHYSICAL,
+        Skill("Throwing", SkillClassEnum.PHYSICAL,
               ATTR_STR, ATTR_DEX, ATTR_EYE, 4,
               {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
     # COMMUNICATION
     SkillEnum.AWARENESS:
-        Skill("Awareness", SkillTypeEnum.AUTO,
-              SkillClassEnum.COMMUNICATION,
+        Skill("Awareness", SkillClassEnum.COMMUNICATION,
               ATTR_EYE, ATTR_HRG, ATTR_SML, 4,
               {SS_HIR: 2, SS_TAR: 2}),
     SkillEnum.AWARENESS:
-        Skill("Intrigue", SkillTypeEnum.AUTO,
-              SkillClassEnum.COMMUNICATION,
+        Skill("Intrigue", SkillClassEnum.COMMUNICATION,
               ATTR_INT, ATTR_AUR, ATTR_WIL, 3,
               {SS_TAI: 1, SS_TAR: 1, SS_SKO: 1}),
     SkillEnum.MENTAL_CONFLICT:
-        Skill("Mental Conflict", SkillTypeEnum.TRAIN,
-              SkillClassEnum.COMMUNICATION,
+        Skill("Mental Conflict", SkillClassEnum.COMMUNICATION,
               ATTR_AUR, ATTR_WIL, ATTR_WIL, 3),
     SkillEnum.ORATORY:
-        Skill("Oratory", SkillTypeEnum.AUTO, SkillClassEnum.COMMUNICATION,
+        Skill("Oratory", SkillClassEnum.COMMUNICATION,
               ATTR_CML, ATTR_VOI, ATTR_INT, 2,
               {SS_TAR: 1}),
     SkillEnum.RHETORIC:
-        Skill("Rhetoric", SkillTypeEnum.AUTO,
-              SkillClassEnum.COMMUNICATION,
+        Skill("Rhetoric", SkillClassEnum.COMMUNICATION,
               ATTR_VOI, ATTR_INT, ATTR_WIL, 3,
               {SS_TAI: 1, SS_TAR: 1, SS_SKO: 1}),
     SkillEnum.SINGING:
-        Skill("Singing", SkillTypeEnum.AUTO, SkillClassEnum.COMMUNICATION,
+        Skill("Singing", SkillClassEnum.COMMUNICATION,
               ATTR_HRG, ATTR_VOI, ATTR_VOI, 3,
-              {SS_MAS: 1}),
+              {SS_MAS: 1}, hidden=True),
     # COMBAT
     SkillEnum.INITIATIVE:
-        Skill("Initiative", SkillTypeEnum.AUTO, SkillClassEnum.COMBAT,
+        Skill("Initiative", SkillClassEnum.COMBAT,
               ATTR_AGL, ATTR_WIL, ATTR_WIL, 4),
     SkillEnum.UNARMED:
-        Skill("Unarmed Combat", SkillTypeEnum.AUTO, SkillClassEnum.COMBAT,
+        Skill("Unarmed Combat", SkillClassEnum.COMBAT,
               ATTR_STR, ATTR_DEX, ATTR_AGL, 4,
               {SS_MAS: 2, SS_LAD: 2, SS_ULA: 2}),
     SkillEnum.RIDING:
-        Skill("Riding", SkillTypeEnum.TRAIN, SkillClassEnum.COMBAT,
+        Skill("Riding", SkillClassEnum.COMBAT,
               ATTR_DEX, ATTR_AGL, ATTR_WIL, 1,
               {SS_ULA: 1, SS_ARA: 1}),
+    SkillEnum.AXE:
+        Skill("Axe", SkillClassEnum.COMBAT,
+              ATTR_STR, ATTR_STR, ATTR_DEX, 3,
+              {SS_AHN: 1, SS_FEN: 1, SS_ANG: 1}),
+    SkillEnum.BLOWGUN:
+        Skill("Blowgun", SkillClassEnum.COMBAT,
+              ATTR_STA, ATTR_DEX, ATTR_EYE, 4,
+              {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
+    SkillEnum.BOW:
+        Skill("Bow", SkillClassEnum.COMBAT,
+              ATTR_STR, ATTR_DEX, ATTR_EYE, 2,
+              {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
+    SkillEnum.CLUB:
+        Skill("Club", SkillClassEnum.COMBAT,
+              ATTR_STR, ATTR_STR, ATTR_DEX, 4,
+              {SS_ULA: 1, SS_ARA: 1}),
+    SkillEnum.DAGGER:
+        Skill("Dagger", SkillClassEnum.COMBAT,
+              ATTR_DEX, ATTR_DEX, ATTR_EYE, 3,
+              {SS_ANG: 2, SS_NAD: 2}),
+    SkillEnum.FLAIL:
+        Skill("Flail", SkillClassEnum.COMBAT,
+              ATTR_DEX, ATTR_DEX, ATTR_DEX, 1,
+              {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
+    SkillEnum.NET:
+        Skill("Net", SkillClassEnum.COMBAT,
+              ATTR_DEX, ATTR_DEX, ATTR_EYE, 1,
+              {SS_MAS: 1, SS_SKO: 1, SS_LAD: 1}),
+    SkillEnum.POLEARM:
+        Skill("Polearm", SkillClassEnum.COMBAT,
+              ATTR_STR, ATTR_STR, ATTR_DEX, 2,
+              {SS_ANG: 1, SS_ARA: 1}),
+    SkillEnum.SHIELD:
+        Skill("Shield", SkillClassEnum.COMBAT,
+              ATTR_STR, ATTR_DEX, ATTR_DEX, 3,
+              {SS_ULA: 1, SS_LAD: 1, SS_MAS: 1}),
+    SkillEnum.SLING:
+        Skill("Sling", SkillClassEnum.COMBAT,
+              ATTR_DEX, ATTR_DEX, ATTR_EYE, 1,
+              {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
+    SkillEnum.SPEAR:
+        Skill("Spear", SkillClassEnum.COMBAT,
+              ATTR_STR, ATTR_STR, ATTR_DEX, 3,
+              {SS_ARA: 1, SS_FEN: 1, SS_ULA: 1}),
+    SkillEnum.SWORD:
+        Skill("Sword", SkillClassEnum.COMBAT,
+              ATTR_STR, ATTR_DEX, ATTR_DEX, 3,
+              {SS_ANG: 3, SS_AHN: 1, SS_NAD: 1}),
+    SkillEnum.WHIP:
+        Skill("Whip", SkillClassEnum.COMBAT,
+              ATTR_DEX, ATTR_DEX, ATTR_EYE, 1,
+              {SS_HIR: 1, SS_NAD: 1}),
+    # LORE / CRAFT
 }
 
 
-class SkillTraining:
-  def __init__(self, points, att=0):
+class SkillLink:
+  def __init__(self, points=0, att=0):
     self.Points = points
     self.Attempts = att
 
@@ -1327,7 +1382,7 @@ class Person:
     self.CombatEnemy = None
     self.Currency = cur
     self.Attr = dict()
-    self.SkillTrainings = dict()
+    self.SkillLinks = dict()
     self.Effects = []
     self.ItemLinks = dict()
     if it is not None:
@@ -1342,11 +1397,26 @@ class Person:
     self.CombatEnemy = None
     self.Currency = p.Currency
     self.Attr.clear()
-    for attr_id, value in p.Attr.items():
-      self.Attr.update({attr_id: value})
-    self.SkillTrainings.clear()
-    for skill_id, st in p.SkillTrainings.items():
-      self.SkillTrainings.update({skill_id: st})
+    for attr_id, attr in attributes.items():
+      if attr_id in p.Attr:
+        self.Attr.update({attr_id: p.Attr[attr_id]})
+      else:
+        # add new attributes
+        self.Attr.update({attr_id: roll(attr.GenRolls, attr.GenDice,
+                                        flags=attr.GenFlags) + attr.GenMod})
+    self.SkillLinks.clear()
+    # copy all skills into skill training
+    for skill_id, skill in skills.items():
+      if skill_id in p.SkillLinks:
+        self.SkillLinks.update({skill_id: p.SkillLinks[skill_id]})
+      else:
+        points = 0
+        for ss_id, mod in skill.SunsignMod.items():
+          if self.Sunsign == ss_id:
+            points += mod
+            break
+        # add new skills
+        self.SkillLinks.update({skill_id: SkillLink(points)})
     self.Effects.clear()
     for x in p.Effects:
       self.Effects.append(x)
@@ -1382,10 +1452,22 @@ class Person:
                 self.Attr[skills[skill_id].Attr3]) / 3)
     return sb
 
+  def SkillAttempts(self, skill_id):
+    ret = 0
+    if skill_id in self.SkillLinks:
+      ret = self.SkillLinks[skill_id].Attempts
+    return ret
+
   def SkillML(self, skill_id):
     ml = self.SkillBase(skill_id) * skills[skill_id].OMLMod
-    ml += self.SkillTrainings[skill_id].Points
+    ml += self.SkillLinks[skill_id].Points
     return ml
+
+  def SkillIndex(self, skill_id):
+    return round(self.SkillML(skill_id) / 10)
+
+  def SkillMax(self, skill_id):
+    return 100 + self.SkillBase(skill_id)
 
 
 # MONSTER
@@ -1515,12 +1597,12 @@ class Player(Person):
 
   def GenSkills(self):
     for skill_id, skill in skills.items():
-      if skill.SkillType == SkillTypeEnum.AUTO:
-        points = 0
-        for ss_id, mod in skills[skill_id].SunsignMod.items():
-          if self.Sunsign == ss_id:
-            points += mod
-        self.SkillTrainings.update({skill_id: SkillTraining(points)})
+      points = 0
+      for ss_id, mod in skill.SunsignMod.items():
+        if self.Sunsign == ss_id:
+          points += mod
+          break
+      self.SkillLinks.update({skill_id: SkillLink(points)})
 
   def AttrSex(self):
     ret = SexEnum.MALE

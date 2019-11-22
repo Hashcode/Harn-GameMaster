@@ -11,8 +11,8 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             cultures, social_classes, sibling_ranks,
                             parent_statuses, player_frames, comelinesses,
                             complexions, color_hairs, color_eyes,
-                            skills, item_flags, body_parts, materials,
-                            NumAdj, AttrEnum, Material,
+                            skill_classes, skills, item_flags, body_parts,
+                            materials, NumAdj, AttrEnum, Material,
                             EffectTypeEnum, ItemTypeEnum, ItemFlagEnum,
                             ItemLink, DirectionEnum,
                             PERS_COMBAT, ANSI)
@@ -307,17 +307,22 @@ def actionSave(player, rooms):
 
 
 def actionSkills(player, rooms):
-  print("\n%sCHARACTER SKILLS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-  for skill_id in player.SkillTrainings:
-    train = 0
-    if player.SkillTrainings[skill_id] is not None:
-      train = player.SkillTrainings[skill_id].Points
-    print("%-15s: %s/%s/%s  ML:%-3d(%d)" %
-          (skills[skill_id].Name,
-           attributes[skills[skill_id].Attr1].Abbrev,
-           attributes[skills[skill_id].Attr2].Abbrev,
-           attributes[skills[skill_id].Attr3].Abbrev,
-           player.SkillML(skill_id), train))
+  for skc_id, skc in skill_classes.items():
+    if skc.Hidden:
+      continue
+    print("\n%s%s SKILLS%s\n" %
+          (ANSI.TEXT_BOLD, skc.Name.upper(), ANSI.TEXT_NORMAL))
+    for sk_id, sk in skills.items():
+      if sk.SkillClass != skc_id:
+        continue
+      if sk.Hidden:
+        continue
+      print("%-30s: %s/%s/%s  ML:%-3d" %
+            (sk.Name,
+             attributes[skills[sk_id].Attr1].Abbrev,
+             attributes[skills[sk_id].Attr2].Abbrev,
+             attributes[skills[sk_id].Attr3].Abbrev,
+             player.SkillML(sk_id)))
 
 
 def actionInfo(player, rooms):
