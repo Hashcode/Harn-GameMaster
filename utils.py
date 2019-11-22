@@ -95,7 +95,7 @@ def filterLinks(item_links, equipped=False, equippable=False, flags=0,
   return item_dict
 
 
-def printItems(item_links, number=False):
+def printItems(item_links, number=False, stats=False):
   count = 0
   for item_id, il in item_links.items():
     count += 1
@@ -103,12 +103,16 @@ def printItems(item_links, number=False):
       print("%d. %s%s" % (count, items[item_id].ItemName,
                           items[item_id].ItemFlagStr(" (%s)")))
     else:
+      weight = items[item_id].Weight * il.Quantity
       if il.Quantity > 1 and not il.Equipped:
-        print("(%d) %s%s" % (il.Quantity, items[item_id].ItemName,
-                             items[item_id].ItemFlagStr(" (%s)")))
+        print("%-40s : %5s lbs" %
+              (("(%d) " % il.Quantity) + items[item_id].ItemName + \
+               items[item_id].ItemFlagStr(" (%s)"),
+               "{:3.1f}".format(weight)))
       else:
-        print("%s%s" % (items[item_id].ItemName,
-                        items[item_id].ItemFlagStr(" (%s)")))
+        print("%-40s : %5s lbs" %
+              (items[item_id].ItemName + items[item_id].ItemFlagStr(" (%s)"),
+               "{:3.1f}".format(weight)))
 
 
 # Directions
@@ -279,12 +283,18 @@ def actionInventory(player, rooms):
     print("[NONE]")
   else:
     printItems(links)
+  print("%s%-40s : %5s lbs%s" % (ANSI.TEXT_BOLD, "EQUIPPED WEIGHT (1/2)",
+                                 "{:3.1f}".format(player.EquipWeight(items)),
+                                 ANSI.TEXT_NORMAL))
   print("\n%sITEMS:%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   links = filterLinks(player.ItemLinks, equipped=False)
   if len(links) < 1:
     print("[NONE]")
   else:
     printItems(links)
+  print("%s%-40s : %5s lbs%s" % (ANSI.TEXT_BOLD, "INVENTORY WEIGHT",
+                                 "{:3.1f}".format(player.InvenWeight(items)),
+                                 ANSI.TEXT_NORMAL))
 
 
 def actionSave(player, rooms):
@@ -365,10 +375,11 @@ def actionStats(player, rooms):
       if x.CombatEnemy == player:
         fighting.append(x.Name)
     print("%-15s: %s" % ("Fighting", ", ".join(fighting)))
-  print("%-15s: %d" % ("Health", player.HitPoints_Cur))
-  print("%-15s: %d" % ("Mana", player.MagicPoints_Cur))
-  print("%-15s: %d" % ("Attack", CalcAttackPoints(player)))
-  print("%-15s: %d" % ("Defense", CalcDefense(player)))
+  end = player.AttrEndurance()
+  enc = player.Encumbrance(items)
+  print("%-15s: %d" % ("Endurance", end))
+  print("%-15s: %d lbs" % ("Encumbrance", enc))
+  print("%-15s: %d" % ("Enc. Penalty", -round(enc / end)))
 
 
 def actionArmor(player, rooms):
