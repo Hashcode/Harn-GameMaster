@@ -81,7 +81,7 @@ def room_CreateCharacter(player):
 rooms = {
     # GAME ROOMS
     RoomEnum.GAME_START:
-        Room("Welcome to Hashcode's Gameshop!", "",
+        Room("Welcome to Harn GameMaster!", "",
              [
                  "Take your characters on exciting journeys in the gritty "
                  "world of the HârnMaster Game System in classic Dungeon's "
