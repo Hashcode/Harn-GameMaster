@@ -7,9 +7,7 @@
 from sys import exit
 from textwrap import TextWrapper
 
-from global_defines import (attribute_classes, attributes, skills, item_flags,
-                            EffectTypeEnum, ItemTypeEnum, ItemFlagEnum,
-                            ItemLink, PERS_COMBAT, DirectionEnum, ANSI)
+from global_defines import *
 from items import items
 from person import persons
 from db import (ListDB, SavePlayer)
@@ -293,8 +291,53 @@ def actionSave(player, rooms):
 def actionSkills(player, rooms):
   print("\n%sCHARACTER SKILLS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   for skill_id in player.SkillTrainings:
-    print("%-15s: %d" % (skills[skill_id].Name, player.SkillML(skill_id)))
+    train = 0
+    if player.SkillTrainings[skill_id] is not None:
+      train = player.SkillTrainings[skill_id].Points
+    print("%-15s: %s/%s/%s  ML:%-3d(%d)" %
+          (skills[skill_id].Name,
+           attributes[skills[skill_id].Attr1].Abbrev,
+           attributes[skills[skill_id].Attr2].Abbrev,
+           attributes[skills[skill_id].Attr3].Abbrev,
+           player.SkillML(skill_id), train))
 
+
+def actionInfo(player, rooms):
+  print("\n%sBIRTH INFORMATION%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  # TODO: hardcoded Human for now
+  print("%-15s: %s" % ("Name", player.Name))
+  print("%-15s: %s" % (attributes[AttrEnum.SPECIES].Name, "Human"))
+  print("%-15s: %s" % (attributes[AttrEnum.SEX].Name, player.AttrSexStr()))
+  print("%-15s: %s %d%s" % ("Birth Month/Day",
+                            months[player.Attr[AttrEnum.BIRTH_MONTH]].Name,
+                            player.Attr[AttrEnum.BIRTH_DAY],
+                            NumAdj(player.Attr[AttrEnum.BIRTH_DAY])))
+  print("%-15s: %s (%s)" % ("Sunsign", sunsigns[player.Sunsign].Name,
+                            sunsigns[player.Sunsign].Symbol))
+  print("%-15s: %s" % (attributes[AttrEnum.CULTURE].Name,
+                       cultures[player.AttrCulture()].Name))
+  print("%-15s: %s" % (attributes[AttrEnum.SOCIAL_CLASS].Name,
+                       social_classes[player.AttrSocialClass()].Name))
+  print("%-15s: %s of %d" % (attributes[AttrEnum.SIBLING_RANK].Name,
+                             sibling_ranks[player.AttrSiblingRank()].Name,
+                             player.Attr[AttrEnum.SIBLING_COUNT]))
+  print("%-15s: %s" % (attributes[AttrEnum.PARENT].Name,
+                       parent_statuses[player.AttrParentStatus()].Name))
+  print("\n%sAPPEARANCE%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  print("%-15s: %d\'%d\"" % (attributes[AttrEnum.HEIGHT].Name,
+                             int(player.Attr[AttrEnum.HEIGHT] / 12),
+                             player.Attr[AttrEnum.HEIGHT] % 12,))
+  print("%-15s: %s" % (attributes[AttrEnum.FRAME].Name,
+                       player_frames[player.AttrFrame()].Name))
+  print("%-15s: %d lbs" % ("Weight", player.AttrWeight()))
+  print("%-15s: %s" % (attributes[AttrEnum.COMELINESS].Name,
+                       comelinesses[player.AttrComeliness()].Name))
+  print("%-15s: %s" % (attributes[AttrEnum.COMPLEXION].Name,
+                       complexions[player.AttrComplexion()].Name))
+  print("%-15s: %s" % (attributes[AttrEnum.COLOR_HAIR].Name,
+                       color_hairs[player.AttrColorHair()].Name))
+  print("%-15s: %s" % (attributes[AttrEnum.COLOR_EYE].Name,
+                       color_eyes[player.AttrColorEye()].Name))
 
 def actionStats(player, rooms):
   for ac_id, ac in attribute_classes.items():
@@ -434,6 +477,7 @@ commands.append(GenericCommand(["drop"], actionDropItem))
 commands.append(GenericCommand(["equip"], actionEquipItem))
 commands.append(GenericCommand(["get"], actionGetItem))
 commands.append(GenericCommand(["help", "?"], actionPrintHelp))
+commands.append(GenericCommand(["info"], actionInfo))
 commands.append(GenericCommand(["inventory", "i"], actionInventory))
 commands.append(GenericCommand(["look", "l"], actionLook))
 commands.append(GenericCommand(["open"], actionComingSoon))

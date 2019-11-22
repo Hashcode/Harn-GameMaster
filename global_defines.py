@@ -53,6 +53,20 @@ def roll(rolls, die_base, modifier=0):
   return value
 
 
+# NUMBER
+
+def NumAdj(num):
+  ret = "th"
+  digit = num % 10
+  if digit == 1:
+    ret = "st"
+  elif digit == 2:
+    ret = "nd"
+  elif digit == 3:
+    ret = "rd"
+  return ret
+
+
 # QUALITY
 
 class QualityEnum(IntEnum):
@@ -569,6 +583,7 @@ class SunsignEnum(IntEnum):
   LAD = 12
 
 
+SS_NON = SunsignEnum.NONE
 SS_ULA = SunsignEnum.ULA
 SS_ARA = SunsignEnum.ARA
 SS_FEN = SunsignEnum.FEN
@@ -596,6 +611,8 @@ class Sunsign:
 
 
 sunsigns = {
+    SS_NON: Sunsign("NONE", "[None]", "[None]", 0,
+                    MonthEnum.NONE, 0, MonthEnum.NONE),
     SS_ULA: Sunsign("ULA", "Ulandus", "Tree", 4,
                     MonthEnum.NUZYAEL, 3, MonthEnum.PEONU),
     SS_ARA: Sunsign("ARA", "Aralius", "Wands", 4,
@@ -629,6 +646,265 @@ class SunsignMod:
     self.Mod = mod
 
 
+# SOCIAL CLASS
+
+class SocialClassEnum:
+  NONE = 0
+  SLAVE = 1
+  SERF = 2
+  FREEMAN = 3
+  UNGUILDED = 4
+  GUILDED = 5
+  NOBLE = 6
+
+
+class SocialClass:
+  def __init__(self, name):
+    self.Name = name
+
+
+social_classes = {
+    SocialClassEnum.SLAVE: SocialClass("Slave"),
+    SocialClassEnum.SERF: SocialClass("Serf"),
+    SocialClassEnum.FREEMAN: SocialClass("Freeman"),
+    SocialClassEnum.UNGUILDED: SocialClass("Unguilded"),
+    SocialClassEnum.GUILDED: SocialClass("Guilded"),
+    SocialClassEnum.NOBLE: SocialClass("Noble"),
+}
+
+
+# CULTURE
+
+class CultureEnum:
+  NONE = 0
+  FEUDAL = 1
+  IMPERIAL = 2
+  VIKING = 3
+  TRIBAL = 4
+
+
+class Culture:
+  def __init__(self, name, attr_max, sc_attrmax):
+    self.Name = name
+    self.AttrMax = attr_max
+    self.SCAttrMax = sc_attrmax
+
+
+cultures = {
+    CultureEnum.FEUDAL: Culture("Feudal", 80,
+        {
+            SocialClassEnum.SLAVE: 15,
+            SocialClassEnum.SERF: 70,
+            SocialClassEnum.UNGUILDED: 93,
+            SocialClassEnum.GUILDED: 98,
+            SocialClassEnum.NOBLE: 100,
+        }),
+    CultureEnum.IMPERIAL: Culture("Imperial", 90,
+        {
+            SocialClassEnum.SLAVE: 25,
+            SocialClassEnum.UNGUILDED: 90,
+            SocialClassEnum.GUILDED: 98,
+            SocialClassEnum.NOBLE: 100,
+        }),
+    CultureEnum.VIKING: Culture("Viking", 95,
+        {
+            SocialClassEnum.SLAVE: 15,
+            SocialClassEnum.FREEMAN: 80,
+            SocialClassEnum.UNGUILDED: 93,
+            SocialClassEnum.GUILDED: 98,
+            SocialClassEnum.NOBLE: 100,
+        }),
+    CultureEnum.TRIBAL: Culture("Tribal", 100,
+        {
+            SocialClassEnum.SLAVE: 10,
+            SocialClassEnum.UNGUILDED: 99,
+            SocialClassEnum.NOBLE: 100,
+        }),
+}
+
+
+# SIBLINK RANK
+
+class SiblingRank:
+  def __init__(self, name, attr_max):
+    self.Name = name
+    self.AttrMax = attr_max
+
+
+sibling_ranks = {
+    1: SiblingRank("Eldest", 25),
+    2: SiblingRank("2nd Child", 50),
+    3: SiblingRank("3rd Child", 70),
+    4: SiblingRank("4th Child", 85),
+    5: SiblingRank("5th Child", 95),
+    6: SiblingRank("6th Child", 100),
+}
+
+
+# PARENTS
+
+class ParentStatusEnum:
+  NONE = 0
+  OFFSPRING = 1
+  FOSTERED = 2
+  ADOPTED = 3
+  BASTARD = 4
+  ORPHAN = 5
+
+
+class ParentStatus:
+  def __init__(self, name, attr_max):
+    self.Name = name
+    self.AttrMax = attr_max
+
+
+parent_statuses = {
+    ParentStatusEnum.OFFSPRING: ParentStatus("Normal", 50),
+    ParentStatusEnum.FOSTERED: ParentStatus("Fostered", 70),
+    ParentStatusEnum.ADOPTED: ParentStatus("Adopted", 70),
+    ParentStatusEnum.BASTARD: ParentStatus("Bastard", 85),
+    ParentStatusEnum.ORPHAN: ParentStatus("Orphaned", 95),
+}
+
+
+# FRAME / WEIGHT
+
+class PlayerFrameEnum:
+  NONE = 0
+  SCANT = 1
+  LIGHT = 2
+  MEDIUM = 3
+  HEAVY = 4
+  MASSIVE = 5
+
+
+class PlayerFrame:
+  def __init__(self, name, attr_max, mod):
+    self.Name = name
+    self.AttrMax = attr_max
+    self.ModPercent = mod
+
+
+player_frames = {
+    PlayerFrameEnum.SCANT: PlayerFrame("Scant", 5, 0.8),
+    PlayerFrameEnum.LIGHT: PlayerFrame("Light", 8, 0.9),
+    PlayerFrameEnum.MEDIUM: PlayerFrame("Medium", 12, 1),
+    PlayerFrameEnum.HEAVY: PlayerFrame("Heavy", 15, 1.1),
+    PlayerFrameEnum.MASSIVE: PlayerFrame("Massive", 100, 1.2),
+}
+
+
+player_weights = {
+    40: 75, 41: 77, 42: 79, 43: 81, 44: 83, 45: 85,
+    46: 87, 47: 89, 48: 91, 49: 93, 50: 95, 51: 97,
+    52: 100, 53: 103, 54: 106, 55: 109, 56: 112, 57: 115, 58: 118,
+    59: 121, 60: 124, 61: 127, 62: 130, 63: 133, 64: 137, 65: 141,
+    66: 145, 67: 149, 68: 153, 69: 157, 70: 160, 71: 165, 72: 170,
+    73: 175, 74: 180, 75: 185, 76: 190, 77: 195, 78: 200, 79: 205,
+    80: 210, 81: 215, 82: 220, 83: 225, 84: 230, 85: 235, 86: 240,
+    87: 245, 88: 250, 89: 255,
+}
+
+
+# COMELINESS
+
+class ComelinessEnum:
+  NONE = 0
+  UGLY = 1
+  PLAIN = 2
+  AVERAGE = 3
+  ATTRACTIVE = 4
+  HANDSOME = 5
+
+
+class Comeliness:
+  def __init__(self, name, attr_max):
+    self.Name = name
+    self.AttrMax = attr_max
+
+
+comelinesses = {
+    ComelinessEnum.UGLY: Comeliness("Ugly", 5),
+    ComelinessEnum.PLAIN: Comeliness("Plain", 8),
+    ComelinessEnum.AVERAGE: Comeliness("Average", 12),
+    ComelinessEnum.ATTRACTIVE: Comeliness("Attractive", 15),
+    ComelinessEnum.HANDSOME: Comeliness("Handsome", 100),
+}
+
+
+# COMPLEXION
+
+class ComplexionEnum:
+  NONE = 0
+  FAIR = 1
+  MEDIUM = 2
+  DARK = 3
+
+
+class Complexion:
+  def __init__(self, name, attr_max, eye_mod):
+    self.Name = name
+    self.AttrMax = attr_max
+    self.EyeColorMod = eye_mod
+
+
+complexions = {
+    ComplexionEnum.FAIR: Complexion("Fair", 27, 25),
+    ComplexionEnum.MEDIUM: Complexion("Medium", 74, 0),
+    ComplexionEnum.DARK: Complexion("Dark", 100, -25),
+}
+
+
+# HAIR / EYE COLOR
+
+class ColorHairEnum:
+  NONE = 0
+  BROWN = 1
+  BLACK = 2
+  RED = 3
+  SILVER = 4
+  BLONDE = 5
+
+
+class ColorHair:
+  def __init__(self, name, attr_max):
+    self.Name = name
+    self.AttrMax = attr_max
+
+
+color_hairs = {
+    ColorHairEnum.BROWN: ColorHair("Brown", 40),
+    ColorHairEnum.BLACK: ColorHair("Black", 55),
+    ColorHairEnum.RED: ColorHair("Red", 65),
+    ColorHairEnum.SILVER: ColorHair("Silver", 70),
+    ColorHairEnum.BLONDE: ColorHair("Blonde", 100),
+}
+
+
+class ColorEyeEnum:
+  NONE = 0
+  HAZEL = 1
+  GRAY = 2
+  VIOLET = 3
+  GREEN = 4
+  BLUE = 5
+
+
+class ColorEye:
+  def __init__(self, name, attr_max):
+    self.Name = name
+    self.AttrMax = attr_max
+
+
+color_eyes = {
+    ColorEyeEnum.HAZEL: ColorEye("Hazel", 40),
+    ColorEyeEnum.GRAY: ColorEye("Gray", 55),
+    ColorEyeEnum.VIOLET: ColorEye("Violet", 56),
+    ColorEyeEnum.GREEN: ColorEye("Green", 70),
+    ColorEyeEnum.BLUE: ColorEye("Blue", 200),
+}
+
+
 # ATTRIBUTES
 
 class AttrClassEnum(IntEnum):
@@ -658,41 +934,42 @@ attribute_classes = {
 class AttrEnum(IntEnum):
   NONE = 0
   # BIRTH
-  SPECIES = 1
-  SEX = 2
-  BIRTH_MONTH = 3
-  BIRTH_DAY = 4
-  CULTURE = 5
-  SOCIAL_CLASS = 6
-  SIBLING_RANK = 7
-  PARENT = 8
-  PARENT_SUB = 9
-  ESTRANGEMENT = 10
-  CLANHEAD = 11
+  SPECIES = 10
+  SEX = 11
+  BIRTH_MONTH = 12
+  BIRTH_DAY = 13
+  CULTURE = 14
+  SOCIAL_CLASS = 15
+  SIBLING_RANK = 16
+  SIBLING_COUNT = 17
+  PARENT = 18
+  PARENT_SUB = 19
+  ESTRANGEMENT = 20
+  CLANHEAD = 21
   # APPEARANCE
-  HEIGHT = 12
-  FRAME = 13
-  COMELINESS = 14
-  COMPLEXION = 15
-  COLOR_HAIR = 16
-  COLOR_EYE = 17
+  HEIGHT = 30
+  FRAME = 31
+  COMELINESS = 32
+  COMPLEXION = 33
+  COLOR_HAIR = 34
+  COLOR_EYE = 35
   # PHYSICAL
-  STRENGTH = 18
-  STAMINA = 19
-  DEXTERITY = 20
-  AGILITY = 21
-  EYESIGHT = 22
-  HEARING = 23
-  SMELL = 24
-  VOICE = 25
-  MEDICAL = 26
+  STRENGTH = 50
+  STAMINA = 51
+  DEXTERITY = 52
+  AGILITY = 53
+  EYESIGHT = 54
+  HEARING = 55
+  SMELL = 56
+  VOICE = 57
+  MEDICAL = 58
   # PERSONALITY
-  INTELLIGENCE = 27
-  AURA = 28
-  WILL = 29
-  PSYCHE = 30
+  INTELLIGENCE = 70
+  AURA = 71
+  WILL = 72
+  PSYCHE = 73
   # OCCUPATION
-  OCCUPATION = 31
+  OCCUPATION = 80
 
 
 ATTR_SPE = AttrEnum.SPECIES
@@ -702,6 +979,7 @@ ATTR_BDY = AttrEnum.BIRTH_DAY
 ATTR_CUL = AttrEnum.CULTURE
 ATTR_CLS = AttrEnum.SOCIAL_CLASS
 ATTR_SIB = AttrEnum.SIBLING_RANK
+ATTR_SBC = AttrEnum.SIBLING_COUNT
 ATTR_PR1 = AttrEnum.PARENT
 ATTR_PR2 = AttrEnum.PARENT_SUB
 ATTR_EST = AttrEnum.ESTRANGEMENT
@@ -749,6 +1027,7 @@ attributes = {
     ATTR_CUL: Attr("CUL", "Culture", AttrClassEnum.BIRTH, 1, 100, 0),
     ATTR_CLS: Attr("CLS", "Social Class", AttrClassEnum.BIRTH, 1, 100, 0),
     ATTR_SIB: Attr("SIB", "Sibling Rank", AttrClassEnum.BIRTH, 1, 100, 0),
+    ATTR_SBC: Attr("SBC", "Sibling Count", AttrClassEnum.BIRTH, 1, 6, -1),
     ATTR_PR1: Attr("PR1", "Parent Status", AttrClassEnum.BIRTH, 1, 100, 0),
     ATTR_PR2: Attr("PR2", "Parent Status2", AttrClassEnum.BIRTH, 1, 100, 0),
     ATTR_EST: Attr("EST", "Estrangement", AttrClassEnum.BIRTH, 1, 100, 0),
@@ -786,7 +1065,7 @@ attributes = {
 
 class SkillTypeEnum(IntEnum):
   NONE = 0
-  AUTOMATIC = 1
+  AUTO = 1
   TRAIN = 2
 
 
@@ -879,7 +1158,7 @@ skills = {
               ATTR_STR, ATTR_AGL, ATTR_AGL, 2,
               {SS_NAD: 2, SS_HIR: 1}),
     SkillEnum.CLIMBING:
-        Skill("Climbing", SkillTypeEnum.AUTOMATIC, SkillClassEnum.PHYSICAL,
+        Skill("Climbing", SkillTypeEnum.AUTO, SkillClassEnum.PHYSICAL,
               ATTR_STR, ATTR_DEX, ATTR_AGL, 4,
               {SS_ULA: 2, SS_ARA: 2}),
     SkillEnum.DANCING:
@@ -887,7 +1166,7 @@ skills = {
               ATTR_DEX, ATTR_AGL, ATTR_AGL, 2,
               {SS_ULA: 1, SS_LAD: 1}),
     SkillEnum.JUMPING:
-        Skill("Jumping", SkillTypeEnum.AUTOMATIC, SkillClassEnum.PHYSICAL,
+        Skill("Jumping", SkillTypeEnum.AUTO, SkillClassEnum.PHYSICAL,
               ATTR_STR, ATTR_AGL, ATTR_AGL, 4,
               {SS_NAD: 2, SS_HIR: 2}),
     SkillEnum.LEGERDEMAIN:
@@ -895,7 +1174,7 @@ skills = {
               ATTR_DEX, ATTR_DEX, ATTR_WIL, 1,
               {SS_SKO: 2, SS_TAI: 2, SS_TAR: 2}),
     SkillEnum.STEALTH:
-        Skill("Stealth", SkillTypeEnum.AUTOMATIC, SkillClassEnum.PHYSICAL,
+        Skill("Stealth", SkillTypeEnum.AUTO, SkillClassEnum.PHYSICAL,
               ATTR_AGL, ATTR_HRG, ATTR_WIL, 3,
               {SS_HIR: 2, SS_TAR: 2, SS_TAI: 2}),
     SkillEnum.SWIMMING:
@@ -903,17 +1182,17 @@ skills = {
               ATTR_STA, ATTR_DEX, ATTR_AGL, 1,
               {SS_SKO: 1, SS_MAS: 3, SS_LAD: 3}),
     SkillEnum.THROWING:
-        Skill("Throwing", SkillTypeEnum.AUTOMATIC, SkillClassEnum.PHYSICAL,
+        Skill("Throwing", SkillTypeEnum.AUTO, SkillClassEnum.PHYSICAL,
               ATTR_STR, ATTR_DEX, ATTR_EYE, 4,
               {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
     # COMMUNICATION
     SkillEnum.AWARENESS:
-        Skill("Awareness", SkillTypeEnum.AUTOMATIC,
+        Skill("Awareness", SkillTypeEnum.AUTO,
               SkillClassEnum.COMMUNICATION,
               ATTR_EYE, ATTR_HRG, ATTR_SML, 4,
               {SS_HIR: 2, SS_TAR: 2}),
     SkillEnum.AWARENESS:
-        Skill("Intrigue", SkillTypeEnum.AUTOMATIC,
+        Skill("Intrigue", SkillTypeEnum.AUTO,
               SkillClassEnum.COMMUNICATION,
               ATTR_INT, ATTR_AUR, ATTR_WIL, 3,
               {SS_TAI: 1, SS_TAR: 1, SS_SKO: 1}),
@@ -922,24 +1201,24 @@ skills = {
               SkillClassEnum.COMMUNICATION,
               ATTR_AUR, ATTR_WIL, ATTR_WIL, 3),
     SkillEnum.ORATORY:
-        Skill("Oratory", SkillTypeEnum.AUTOMATIC, SkillClassEnum.COMMUNICATION,
+        Skill("Oratory", SkillTypeEnum.AUTO, SkillClassEnum.COMMUNICATION,
               ATTR_CML, ATTR_VOI, ATTR_INT, 2,
               {SS_TAR: 1}),
     SkillEnum.RHETORIC:
-        Skill("Rhetoric", SkillTypeEnum.AUTOMATIC,
+        Skill("Rhetoric", SkillTypeEnum.AUTO,
               SkillClassEnum.COMMUNICATION,
               ATTR_VOI, ATTR_INT, ATTR_WIL, 3,
               {SS_TAI: 1, SS_TAR: 1, SS_SKO: 1}),
     SkillEnum.SINGING:
-        Skill("Singing", SkillTypeEnum.AUTOMATIC, SkillClassEnum.COMMUNICATION,
+        Skill("Singing", SkillTypeEnum.AUTO, SkillClassEnum.COMMUNICATION,
               ATTR_HRG, ATTR_VOI, ATTR_VOI, 3,
               {SS_MAS: 1}),
     # COMBAT
     SkillEnum.INITIATIVE:
-        Skill("Initiative", SkillTypeEnum.AUTOMATIC, SkillClassEnum.COMBAT,
+        Skill("Initiative", SkillTypeEnum.AUTO, SkillClassEnum.COMBAT,
               ATTR_AGL, ATTR_WIL, ATTR_WIL, 4),
     SkillEnum.UNARMED:
-        Skill("Unarmed Combat", SkillTypeEnum.AUTOMATIC, SkillClassEnum.COMBAT,
+        Skill("Unarmed Combat", SkillTypeEnum.AUTO, SkillClassEnum.COMBAT,
               ATTR_STR, ATTR_DEX, ATTR_AGL, 4,
               {SS_MAS: 2, SS_LAD: 2, SS_ULA: 2}),
     SkillEnum.RIDING:
@@ -1047,10 +1326,14 @@ class Person:
         self.ItemLinks.pop(item_id)
     return True
 
-  def SkillML(self, skill_id):
-    ml = round((self.Attr[skills[skill_id].Attr1] + \
+  def SkillBase(self, skill_id):
+    sb = round((self.Attr[skills[skill_id].Attr1] + \
                 self.Attr[skills[skill_id].Attr2] + \
                 self.Attr[skills[skill_id].Attr3]) / 3)
+    return sb
+
+  def SkillML(self, skill_id):
+    ml = self.SkillBase(skill_id) * skills[skill_id].OMLMod
     ml += self.SkillTrainings[skill_id].Points
     return ml
 
@@ -1117,17 +1400,13 @@ class Player(Person):
     self.MagicPoints_Cur = p.MagicPoints_Cur
     self.Room = p.Room
     self.LastRoom = p.LastRoom
+    self.CalcSunsign()
 
   def SetRoom(self, room_id):
     self.LastRoom = self.Room
     self.Room = room_id
 
-  def GenAttr(self):
-    # Generate Attributes
-    for attr_id, attr in attributes.items():
-      self.Attr.update({attr_id: roll(attr.GenRolls, attr.GenDice) + \
-                        attr.GenMod})
-    # Calculate Sunsign
+  def CalcSunsign(self):
     for ss_id, ss in sunsigns.items():
       if (self.Attr[AttrEnum.BIRTH_MONTH] == ss.StartMonth and \
          self.Attr[AttrEnum.BIRTH_DAY] >= ss.StartDay) or \
@@ -1136,14 +1415,108 @@ class Player(Person):
           self.Sunsign = ss_id
           break
 
+  def GenAttr(self):
+    # Generate Attributes
+    for attr_id, attr in attributes.items():
+      self.Attr.update({attr_id: roll(attr.GenRolls, attr.GenDice) + \
+                        attr.GenMod})
+    self.CalcSunsign()
+    # Sibling Count includes Sibling Rank
+    self.Attr[AttrEnum.SIBLING_COUNT] += self.AttrSiblingRank()
+
   def GenSkills(self):
     for skill_id, skill in skills.items():
-      if skill.SkillType == SkillTypeEnum.AUTOMATIC:
+      if skill.SkillType == SkillTypeEnum.AUTO:
         points = 0
         for ss_id, mod in skills[skill_id].SunsignMod.items():
           if self.Sunsign == ss_id:
             points += mod
         self.SkillTrainings.update({skill_id: SkillTraining(points)})
+
+  def AttrSexStr(self):
+    if self.Attr[AttrEnum.SEX] <= 48:
+      return "Male"
+    else:
+      return "Female"
+
+  def AttrCulture(self):
+    ret = CultureEnum.NONE
+    for c_id, c in cultures.items():
+      if self.Attr[AttrEnum.CULTURE] <= c.AttrMax:
+        ret = c_id
+        break
+    return ret
+
+  def AttrSocialClass(self):
+    sc = SocialClassEnum.NONE
+    c_id = self.AttrCulture()
+    for sc_id, attr_max in cultures[c_id].SCAttrMax.items():
+      if self.Attr[AttrEnum.SOCIAL_CLASS] <= attr_max:
+        sc = sc_id
+        break
+    return sc
+
+  def AttrSiblingRank(self):
+    ret = 1
+    for sr_id, sr in sibling_ranks.items():
+      if self.Attr[AttrEnum.SIBLING_RANK] <= sr.AttrMax:
+        ret = sr_id
+        break
+    return ret
+
+  def AttrParentStatus(self):
+    ret = ParentStatusEnum.NONE
+    for ps_id, ps in parent_statuses.items():
+      if self.Attr[AttrEnum.PARENT] <= ps.AttrMax:
+        ret = ps_id
+        break
+    return ret
+
+  def AttrFrame(self):
+    ret = PlayerFrameEnum.NONE
+    for pf_id, pf in player_frames.items():
+      if self.Attr[AttrEnum.FRAME] <= pf.AttrMax:
+        ret = pf_id
+        break
+    return ret
+
+  def AttrWeight(self):
+    ret = player_weights[self.Attr[AttrEnum.HEIGHT]]
+    ret *= player_frames[self.AttrFrame()].ModPercent
+    return round(ret)
+
+  def AttrComeliness(self):
+    ret = ComelinessEnum.NONE
+    for c_id, c in comelinesses.items():
+      if self.Attr[AttrEnum.COMELINESS] <= c.AttrMax:
+        ret = c_id
+        break
+    return ret
+
+  def AttrColorHair(self):
+    ret = ColorHairEnum.NONE
+    for c_id, c in color_hairs.items():
+      if self.Attr[AttrEnum.COLOR_HAIR] <= c.AttrMax:
+        ret = c_id
+        break
+    return ret
+
+  def AttrColorEye(self):
+    ret = ColorEyeEnum.NONE
+    for c_id, c in color_eyes.items():
+      if self.Attr[AttrEnum.COLOR_EYE] + \
+         complexions[self.AttrComplexion()].EyeColorMod <= c.AttrMax:
+        ret = c_id
+        break
+    return ret
+
+  def AttrComplexion(self):
+    ret = ComplexionEnum.NONE
+    for c_id, c in complexions.items():
+      if self.Attr[AttrEnum.COMPLEXION] <= c.AttrMax:
+        ret = c_id
+        break
+    return ret
 
 
 # ROOM
