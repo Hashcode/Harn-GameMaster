@@ -7,7 +7,15 @@
 from sys import exit
 from textwrap import TextWrapper
 
-from global_defines import *
+from global_defines import (attribute_classes, attributes, months, sunsigns,
+                            cultures, social_classes, sibling_ranks,
+                            parent_statuses, player_frames, comelinesses,
+                            complexions, color_hairs, color_eyes,
+                            skills, item_flags,
+                            NumAdj, AttrEnum,
+                            EffectTypeEnum, ItemTypeEnum, ItemFlagEnum,
+                            ItemLink, DirectionEnum,
+                            PERS_COMBAT, ANSI)
 from items import items
 from person import persons
 from db import (ListDB, SavePlayer)
@@ -338,6 +346,7 @@ def actionInfo(player, rooms):
                        color_hairs[player.AttrColorHair()].Name))
   print("%-15s: %s" % (attributes[AttrEnum.COLOR_EYE].Name,
                        color_eyes[player.AttrColorEye()].Name))
+
 
 def actionStats(player, rooms):
   for ac_id, ac in attribute_classes.items():
