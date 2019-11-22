@@ -44,12 +44,25 @@ def logd(line):
 
 # ROLL
 
-def roll(rolls, die_base, modifier=0):
+ROLLF_DROP_LOWEST = 1 << 0
+
+
+def roll(rolls, die_base, modifier=0, flags=0):
   value = 0
+  roll_list = []
   for x in range(rolls):
     y = random.randint(1, die_base) + modifier
-    logd("ROLL %dD%d+%d = %d" % (rolls, die_base, modifier, y))
-    value += y
+    roll_list.append(y)
+  if flags & ROLLF_DROP_LOWEST > 0:
+    lowest = 99999
+    for r in roll_list:
+      if lowest > r:
+        lowest = r
+    roll_list.remove(lowest)
+  for r in roll_list:
+    value += r
+  logd("ROLL %dD%d+%d (flags:%x): %d" % (rolls, die_base, modifier,
+                                         flags, value))
   return value
 
 
@@ -1016,13 +1029,14 @@ ATTR_OCC = AttrEnum.OCCUPATION
 
 class Attr:
   def __init__(self, abbrev, name, attr_class, rolls, dice, mod,
-               hidden=False):
+               roll_flags=0, hidden=False):
     self.Abbrev = abbrev
     self.Name = name
     self.AttrClass = attr_class
     self.GenRolls = rolls
     self.GenDice = dice
     self.GenMod = mod
+    self.GenFlags = roll_flags
     self.Hidden = hidden
 
 
@@ -1048,10 +1062,14 @@ attributes = {
     ATTR_CHR: Attr("CHR", "Hair Color", AttrClassEnum.APPEARANCE, 1, 100, 0),
     ATTR_CEY: Attr("CEY", "Eye Color", AttrClassEnum.APPEARANCE, 1, 100, 0),
     # PHYSICAL
-    ATTR_STR: Attr("STR", "Strength", AttrClassEnum.PHYSICAL, 3, 6, 0),
-    ATTR_STA: Attr("STA", "Stamina", AttrClassEnum.PHYSICAL, 3, 6, 0),
-    ATTR_DEX: Attr("DEX", "Dexterity", AttrClassEnum.PHYSICAL, 3, 6, 0),
-    ATTR_AGL: Attr("AGL", "Agility", AttrClassEnum.PHYSICAL, 3, 6, 0),
+    ATTR_STR: Attr("STR", "Strength", AttrClassEnum.PHYSICAL, 4, 6, 0,
+                   roll_flags=ROLLF_DROP_LOWEST),
+    ATTR_STA: Attr("STA", "Stamina", AttrClassEnum.PHYSICAL, 4, 6, 0,
+                   roll_flags=ROLLF_DROP_LOWEST),
+    ATTR_DEX: Attr("DEX", "Dexterity", AttrClassEnum.PHYSICAL, 4, 6, 0,
+                   roll_flags=ROLLF_DROP_LOWEST),
+    ATTR_AGL: Attr("AGL", "Agility", AttrClassEnum.PHYSICAL, 4, 6, 0,
+                   roll_flags=ROLLF_DROP_LOWEST),
     ATTR_EYE: Attr("EYE", "Eyesight", AttrClassEnum.PHYSICAL, 3, 6, 0),
     ATTR_HRG: Attr("HRG", "Hearing", AttrClassEnum.PHYSICAL, 3, 6, 0),
     ATTR_SML: Attr("SML", "Smelling", AttrClassEnum.PHYSICAL, 3, 6, 0),
@@ -1059,9 +1077,12 @@ attributes = {
     ATTR_MED: Attr("MED", "Medical", AttrClassEnum.PHYSICAL, 1, 100, 0,
                    hidden=True),
     # PERSONALITY
-    ATTR_INT: Attr("INT", "Intelligence", AttrClassEnum.PERSONALITY, 3, 6, 0),
-    ATTR_AUR: Attr("AUR", "Aura", AttrClassEnum.PERSONALITY, 3, 6, 0),
-    ATTR_WIL: Attr("WIL", "Will", AttrClassEnum.PERSONALITY, 3, 6, 0),
+    ATTR_INT: Attr("INT", "Intelligence", AttrClassEnum.PERSONALITY, 4, 6, 0,
+                   roll_flags=ROLLF_DROP_LOWEST),
+    ATTR_AUR: Attr("AUR", "Aura", AttrClassEnum.PERSONALITY, 4, 6, 0,
+                   roll_flags=ROLLF_DROP_LOWEST),
+    ATTR_WIL: Attr("WIL", "Will", AttrClassEnum.PERSONALITY, 4, 6, 0,
+                   roll_flags=ROLLF_DROP_LOWEST),
     ATTR_PSY: Attr("PSY", "Psyche", AttrClassEnum.PERSONALITY, 1, 100, 0,
                    hidden=True),
     # OCCUPATION
@@ -1089,12 +1110,13 @@ class SkillEnum(IntEnum):
   # PHYSICAL
   ACROBATICS = 100
   CLIMBING = 101
-  DANCING = 102
-  JUMPING = 103
-  LEGERDEMAIN = 104
-  STEALTH = 105
-  SWIMMING = 106
-  THROWING = 107
+  CONDITIONING = 102
+  DANCING = 103
+  JUMPING = 104
+  LEGERDEMAIN = 105
+  STEALTH = 106
+  SWIMMING = 107
+  THROWING = 108
   # COMMUNICATION
   AWARENESS = 200
   INTRIGUE = 201
@@ -1169,6 +1191,10 @@ skills = {
         Skill("Climbing", SkillTypeEnum.AUTO, SkillClassEnum.PHYSICAL,
               ATTR_STR, ATTR_DEX, ATTR_AGL, 4,
               {SS_ULA: 2, SS_ARA: 2}),
+    SkillEnum.CONDITIONING:
+        Skill("Conditioning", SkillTypeEnum.AUTO, SkillClassEnum.PHYSICAL,
+              ATTR_STR, ATTR_STA, ATTR_WIL, 5,
+              {SS_ULA: 1, SS_LAD: 1}),
     SkillEnum.DANCING:
         Skill("Dancing", SkillTypeEnum.TRAIN, SkillClassEnum.PHYSICAL,
               ATTR_DEX, ATTR_AGL, ATTR_AGL, 2,
@@ -1426,8 +1452,8 @@ class Player(Person):
   def GenAttr(self):
     # Generate Attributes
     for attr_id, attr in attributes.items():
-      self.Attr.update({attr_id: roll(attr.GenRolls, attr.GenDice) + \
-                        attr.GenMod})
+      self.Attr.update({attr_id: roll(attr.GenRolls, attr.GenDice,
+                                      flags=attr.GenFlags) + attr.GenMod})
     self.CalcSunsign()
     # Sibling Count includes Sibling Rank
     self.Attr[AttrEnum.SIBLING_COUNT] += self.AttrSiblingRank()
@@ -1527,10 +1553,7 @@ class Player(Person):
     return ret
 
   def AttrEndurance(self):
-    ret = self.Attr[AttrEnum.STRENGTH]
-    ret += self.Attr[AttrEnum.STAMINA]
-    ret += self.Attr[AttrEnum.WILL]
-    return round(ret / 3)
+    return round(self.SkillML(SkillEnum.CONDITIONING) / 5)
 
   def EquipWeight(self, items):
     eq = 0
