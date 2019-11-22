@@ -17,8 +17,7 @@ persons = {
                     ItemEnum.WEAPON_CLAW_SMALL: 50,
                 },
                 loot={
-                    ItemEnum.WEAPON_BITE_SMALL: 50,
-                    ItemEnum.WEAPON_CLAW_SMALL: 50,
+                    ItemEnum.MISC_RAT_FUR: 75,
                 }),
     PersonEnum.BL_KEEP_GUARD:
         NPC("gatehouse guard", "An impassive guard stares ahead.", 90,
