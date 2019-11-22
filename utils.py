@@ -344,10 +344,11 @@ def actionInfo(player, rooms):
   print("\n%sAPPEARANCE%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   print("%-15s: %d\'%d\"" % (attributes[AttrEnum.HEIGHT].Name,
                              int(player.Attr[AttrEnum.HEIGHT] / 12),
-                             player.Attr[AttrEnum.HEIGHT] % 12,))
+                             player.Attr[AttrEnum.HEIGHT] % 12))
   print("%-15s: %s" % (attributes[AttrEnum.FRAME].Name,
                        player_frames[player.AttrFrame()].Name))
-  print("%-15s: %d lbs" % ("Weight", player.AttrWeight()))
+  print("%-15s: %d lbs" % (attributes[AttrEnum.WEIGHT].Name,
+                           player.Attr[AttrEnum.WEIGHT]))
   print("%-15s: %s" % (attributes[AttrEnum.COMELINESS].Name,
                        comelinesses[player.AttrComeliness()].Name))
   print("%-15s: %s" % (attributes[AttrEnum.COMPLEXION].Name,

@@ -700,6 +700,19 @@ class AttrNameMax:
     self.AttrMax = attr_max
 
 
+# SEX
+
+class SexEnum(IntEnum):
+  MALE = 0
+  FEMALE = 1
+
+
+sexes = {
+    SexEnum.MALE: AttrNameMax("Male", 48),
+    SexEnum.FEMALE: AttrNameMax("Female", 100),
+}
+
+
 # SOCIAL CLASS
 
 class SocialClassEnum:
@@ -970,10 +983,11 @@ class AttrEnum(IntEnum):
   # APPEARANCE
   HEIGHT = 30
   FRAME = 31
-  COMELINESS = 32
-  COMPLEXION = 33
-  COLOR_HAIR = 34
-  COLOR_EYE = 35
+  WEIGHT = 32
+  COMELINESS = 33
+  COMPLEXION = 34
+  COLOR_HAIR = 35
+  COLOR_EYE = 36
   # PHYSICAL
   STRENGTH = 50
   STAMINA = 51
@@ -1007,6 +1021,7 @@ ATTR_EST = AttrEnum.ESTRANGEMENT
 ATTR_CLN = AttrEnum.CLANHEAD
 ATTR_HGT = AttrEnum.HEIGHT
 ATTR_FRM = AttrEnum.FRAME
+ATTR_WGT = AttrEnum.WEIGHT
 ATTR_CML = AttrEnum.COMELINESS
 ATTR_CPL = AttrEnum.COMPLEXION
 ATTR_CHR = AttrEnum.COLOR_HAIR
@@ -1057,6 +1072,7 @@ attributes = {
     # APPEARANCE
     ATTR_HGT: Attr("HGT", "Height", AttrClassEnum.APPEARANCE, 4, 6, 54),
     ATTR_FRM: Attr("FRM", "Frame", AttrClassEnum.APPEARANCE, 3, 6, 0),
+    ATTR_WGT: Attr("WGT", "Weight", AttrClassEnum.APPEARANCE, 1, 1, 0),
     ATTR_CML: Attr("CML", "Comeliness", AttrClassEnum.APPEARANCE, 3, 6, 0),
     ATTR_CPL: Attr("CPL", "Complexion", AttrClassEnum.APPEARANCE, 1, 100, 0),
     ATTR_CHR: Attr("CHR", "Hair Color", AttrClassEnum.APPEARANCE, 1, 100, 0),
@@ -1454,6 +1470,45 @@ class Player(Person):
     for attr_id, attr in attributes.items():
       self.Attr.update({attr_id: roll(attr.GenRolls, attr.GenDice,
                                       flags=attr.GenFlags) + attr.GenMod})
+    # Adjustments
+    # Frame: -3 Human Female
+    if self.AttrSex() == SexEnum.FEMALE:
+      self.Attr[AttrEnum.FRAME] -= 3
+    # Calc Weight
+    self.Attr[AttrEnum.WEIGHT] = player_weights[self.Attr[AttrEnum.HEIGHT]]
+    self.Attr[AttrEnum.WEIGHT] *= player_frames[self.AttrFrame()].ModPercent
+    # Strength: Weight Modifier
+    if self.Attr[AttrEnum.WEIGHT] <= 85:
+      self.Attr[AttrEnum.STRENGTH] -= 4
+    elif self.Attr[AttrEnum.WEIGHT] <= 110:
+      self.Attr[AttrEnum.STRENGTH] -= 3
+    elif self.Attr[AttrEnum.WEIGHT] <= 130:
+      self.Attr[AttrEnum.STRENGTH] -= 2
+    elif self.Attr[AttrEnum.WEIGHT] <= 145:
+      self.Attr[AttrEnum.STRENGTH] -= 1
+    elif self.Attr[AttrEnum.WEIGHT] >= 216:
+      self.Attr[AttrEnum.STRENGTH] += 4
+    elif self.Attr[AttrEnum.WEIGHT] >= 191:
+      self.Attr[AttrEnum.STRENGTH] += 3
+    elif self.Attr[AttrEnum.WEIGHT] >= 171:
+      self.Attr[AttrEnum.STRENGTH] += 2
+    elif self.Attr[AttrEnum.WEIGHT] >= 156:
+      self.Attr[AttrEnum.STRENGTH] += 1
+    # Agility: +2 Scant Frame, +1 Light Frame, -1 Heavy Frame, -2 Massive Frame
+    frame = self.AttrFrame()
+    if frame == PlayerFrameEnum.SCANT:
+      self.Attr[AttrEnum.AGILITY] += 2
+    elif frame == PlayerFrameEnum.LIGHT:
+      self.Attr[AttrEnum.AGILITY] += 1
+    elif frame == PlayerFrameEnum.HEAVY:
+      self.Attr[AttrEnum.AGILITY] -= 1
+    elif frame == PlayerFrameEnum.MASSIVE:
+      self.Attr[AttrEnum.AGILITY] -= 2
+    # Hearing: +2 Tribesmen
+    # Smell: +2 Tribesmen
+    if self.AttrCulture() == CultureEnum.TRIBAL:
+      self.Attr[AttrEnum.HEARING] += 2
+      self.Attr[AttrEnum.SMELL] += 2
     self.CalcSunsign()
     # Sibling Count includes Sibling Rank
     self.Attr[AttrEnum.SIBLING_COUNT] += self.AttrSiblingRank()
@@ -1467,11 +1522,16 @@ class Player(Person):
             points += mod
         self.SkillTrainings.update({skill_id: SkillTraining(points)})
 
+  def AttrSex(self):
+    ret = SexEnum.MALE
+    for s_id, s in sexes.items():
+      if self.Attr[AttrEnum.SEX] <= s.AttrMax:
+        ret = s_id
+        break
+    return ret
+
   def AttrSexStr(self):
-    if self.Attr[AttrEnum.SEX] <= 48:
-      return "Male"
-    else:
-      return "Female"
+    return sexes[self.AttrSex()].Name
 
   def AttrCulture(self):
     ret = CultureEnum.NONE
@@ -1513,11 +1573,6 @@ class Player(Person):
         ret = pf_id
         break
     return ret
-
-  def AttrWeight(self):
-    ret = player_weights[self.Attr[AttrEnum.HEIGHT]]
-    ret *= player_frames[self.AttrFrame()].ModPercent
-    return round(ret)
 
   def AttrComeliness(self):
     ret = ComelinessEnum.NONE
