@@ -11,8 +11,8 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             cultures, social_classes, sibling_ranks,
                             parent_statuses, player_frames, comelinesses,
                             complexions, color_hairs, color_eyes,
-                            skills, item_flags,
-                            NumAdj, AttrEnum,
+                            skills, item_flags, body_parts, materials,
+                            NumAdj, AttrEnum, Material,
                             EffectTypeEnum, ItemTypeEnum, ItemFlagEnum,
                             ItemLink, DirectionEnum,
                             PERS_COMBAT, ANSI)
@@ -371,6 +371,25 @@ def actionStats(player, rooms):
   print("%-15s: %d" % ("Defense", CalcDefense(player)))
 
 
+def actionArmor(player, rooms):
+  print("\n%sARMOR COVERAGE%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  print("%s%-16s BLUNT EDGE PIERCE FIRE COLD SHOCK POISON MAGIC%s" %
+        (ANSI.TEXT_BOLD, "LOCATION", ANSI.TEXT_NORMAL))
+  m = Material(0, 0, 0, 0, 0, 0)
+  for bp_id, bp in body_parts.items():
+    m.Clear()
+    for item_id, il in player.ItemLinks.items():
+      if items[item_id].ItemType != ItemTypeEnum.ARMOR:
+        continue
+      if not il.Equipped:
+        continue
+      if items[item_id].Covered(bp_id):
+        m.Add(materials[items[item_id].Material])
+    print("%-16s %-5d %-4d %-6d %-4d %-4d %-5d %-6d %-5d" %
+          (body_parts[bp_id].PartName, m.ProtBlunt, m.ProtEdge, m.ProtPierce,
+           m.ProtFire, m.ProtCold, m.ProtShock, m.ProtPoison, m.ProtMagic))
+
+
 def actionUnequipItem(player, rooms):
   print("\nYour equipped items:\n")
   links = filterLinks(player.ItemLinks, equipped=True)
@@ -480,7 +499,7 @@ def actionPrintHelp(player, rooms):
       printCombatActions()
 
 
-commands.append(GenericCommand(["armor"], actionComingSoon))
+commands.append(GenericCommand(["armor"], actionArmor))
 commands.append(GenericCommand(["close"], actionComingSoon))
 commands.append(GenericCommand(["drop"], actionDropItem))
 commands.append(GenericCommand(["equip"], actionEquipItem))

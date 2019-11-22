@@ -138,6 +138,32 @@ class Material:
     self.ProtPoison = poison
     self.ProtMagic = magic
 
+  def Clear(self):
+    self.WeightBase = 0
+    self.CostBase = 0
+    self.StorageMod = 0
+    self.ProtBlunt = 0
+    self.ProtEdge = 0
+    self.ProtPierce = 0
+    self.ProtFire = 0
+    self.ProtCold = 0
+    self.ProtShock = 0
+    self.ProtPoison = 0
+    self.ProtMagic = 0
+
+  def Add(self, m):
+    self.WeightBase += m.WeightBase
+    self.CostBase += m.CostBase
+    self.StorageMod += m.StorageMod
+    self.ProtBlunt += m.ProtBlunt
+    self.ProtEdge += m.ProtEdge
+    self.ProtPierce += m.ProtPierce
+    self.ProtFire += m.ProtFire
+    self.ProtCold += m.ProtCold
+    self.ProtShock += m.ProtShock
+    self.ProtPoison += m.ProtPoison
+    self.ProtMagic += m.ProtMagic
+
 
 materials = {
     MaterialEnum.CLOTH_HAIR: Material(0.1, 2, 0.25, 1, 1, 1, fire=1, cold=3),
@@ -190,24 +216,24 @@ class BodyPart:
 
 
 body_parts = {
-    CoverageEnum.SKULL: BodyPart("skull", 4),
-    CoverageEnum.FACE: BodyPart("face", 3),
-    CoverageEnum.NECK: BodyPart("neck", 4),
-    CoverageEnum.SHOULDERS: BodyPart("shoulder", 4),
-    CoverageEnum.UPPER_ARMS: BodyPart("upper arm", 6),
-    CoverageEnum.ELBOWS: BodyPart("elbow", 6),
-    CoverageEnum.FOREARMS: BodyPart("forearm", 6),
-    CoverageEnum.HANDS: BodyPart("haand", 4),
-    CoverageEnum.FRONT_THORAX: BodyPart("thorax (front)", 6),
-    CoverageEnum.REAR_THORAX: BodyPart("thorax (back)", 6),
-    CoverageEnum.FRONT_ABDOMEN: BodyPart("abdomen (front)", 6),
-    CoverageEnum.REAR_ABDOMEN: BodyPart("abdomen (back)", 6),
-    CoverageEnum.HIPS: BodyPart("hip", 8),
-    CoverageEnum.GROIN: BodyPart("groin", 2),
-    CoverageEnum.THIGHS: BodyPart("thigh", 7),
-    CoverageEnum.KNEES: BodyPart("knee", 3),
-    CoverageEnum.CALVES: BodyPart("calf", 10),
-    CoverageEnum.FEET: BodyPart("foot", 6),
+    CoverageEnum.SKULL: BodyPart("Skull", 4),
+    CoverageEnum.FACE: BodyPart("Face", 3),
+    CoverageEnum.NECK: BodyPart("Neck", 4),
+    CoverageEnum.SHOULDERS: BodyPart("Shoulders", 4),
+    CoverageEnum.UPPER_ARMS: BodyPart("Upper Arms", 6),
+    CoverageEnum.ELBOWS: BodyPart("Elbows", 6),
+    CoverageEnum.FOREARMS: BodyPart("Forearms", 6),
+    CoverageEnum.HANDS: BodyPart("Hands", 4),
+    CoverageEnum.FRONT_THORAX: BodyPart("Thorax (front)", 6),
+    CoverageEnum.REAR_THORAX: BodyPart("Thorax (back)", 6),
+    CoverageEnum.FRONT_ABDOMEN: BodyPart("Abdomen (front)", 6),
+    CoverageEnum.REAR_ABDOMEN: BodyPart("Abdomen (back)", 6),
+    CoverageEnum.HIPS: BodyPart("Hip", 8),
+    CoverageEnum.GROIN: BodyPart("Groin", 2),
+    CoverageEnum.THIGHS: BodyPart("Thighs", 7),
+    CoverageEnum.KNEES: BodyPart("Knee", 3),
+    CoverageEnum.CALVES: BodyPart("Calves", 10),
+    CoverageEnum.FEET: BodyPart("Feet", 6),
 }
 
 
@@ -496,6 +522,11 @@ class Armor(Item):
       if self.Coverage & 1 << x > 0:
         cov_list.append(body_parts[x].PartName)
     return ", ".join(cov_list)
+
+  def Covered(self, bp_id):
+    if self.Coverage & 1 << bp_id > 0:
+        return True
+    return False
 
 
 class Ring(Item):
