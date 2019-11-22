@@ -106,23 +106,23 @@ items = {
         Weapon("hunting knife", QualityEnum.POR, MaterialEnum.STEEL_WOOD, 1,
                SkillEnum.DAGGER, 5, 0, 0, 1, 4, 0, DamageTypeEnum.PIERCE),
     ItemEnum.WEAPON_DAGGER:
-        Weapon("sharp dagger", QualityEnum.AVE, MaterialEnum.STEEL, 1,
+        Weapon("sharp dagger", QualityEnum.AVE, MaterialEnum.STEEL, 1.2,
                SkillEnum.DAGGER, 5, 5, 0, 1, 6, 0, DamageTypeEnum.PIERCE),
     ItemEnum.WEAPON_MAIN_GAUCHE:
-        Weapon("small parrying blade", QualityEnum.SUP, MaterialEnum.STEEL, 1,
+        Weapon("small parrying blade", QualityEnum.SUP, MaterialEnum.STEEL, 1.2,
                SkillEnum.DAGGER, 5, 10, 0, 1, 6, 0, DamageTypeEnum.PIERCE),
     # WEAPON [SWORD]
     ItemEnum.WEAPON_SHORTSWORD:
         Weapon("steel shortsword", QualityEnum.SUP, MaterialEnum.STEEL, 2.5,
                SkillEnum.SWORD, 10, 5, 0, 1, 6, 1, DamageTypeEnum.EDGE),
     ItemEnum.WEAPON_FALCHION:
-        Weapon("steel falchion", QualityEnum.SUP, MaterialEnum.STEEL, 3,
+        Weapon("steel falchion", QualityEnum.SUP, MaterialEnum.STEEL, 4,
                SkillEnum.SWORD, 15, 5, 0, 1, 6, 1, DamageTypeEnum.EDGE),
     ItemEnum.WEAPON_BROADSWORD:
-        Weapon("steel broadsword", QualityEnum.SUP, MaterialEnum.STEEL, 4,
+        Weapon("steel broadsword", QualityEnum.SUP, MaterialEnum.STEEL, 5,
                SkillEnum.SWORD, 15, 10, 0, 1, 6, 2, DamageTypeEnum.EDGE),
     ItemEnum.WEAPON_BASTARD_SWORD:
-        Weapon("steel bastard sword", QualityEnum.SUP, MaterialEnum.STEEL, 5,
+        Weapon("steel bastard sword", QualityEnum.SUP, MaterialEnum.STEEL, 6,
                SkillEnum.SWORD, 20, 10, -10, 1, 6, 2, DamageTypeEnum.EDGE),
     ItemEnum.WEAPON_BATTLESWORD:
         Weapon("steel battlesword", QualityEnum.SUP, MaterialEnum.STEEL, 9,
@@ -137,7 +137,7 @@ items = {
                SkillEnum.CLUB, 15, 5, 0, 1, 4, 0, DamageTypeEnum.BLUNT,
                flags=IFLAG_NO_SELL),
     ItemEnum.WEAPON_MACE:
-        Weapon("iron mace", QualityEnum.AVE, MaterialEnum.STEEL, 4,
+        Weapon("iron mace", QualityEnum.AVE, MaterialEnum.STEEL, 5,
                SkillEnum.CLUB, 15, 5, 0, 1, 6, 1, DamageTypeEnum.BLUNT),
     ItemEnum.WEAPON_MORNINGSTAR:
         Weapon("steel morningstar",
@@ -154,7 +154,7 @@ items = {
         Weapon("hatchet", QualityEnum.INF, MaterialEnum.STEEL_WOOD, 2,
                SkillEnum.AXE, 5, 5, 0, 1, 6, 0, DamageTypeEnum.EDGE),
     ItemEnum.WEAPON_HANDAXE:
-        Weapon("handaxe", QualityEnum.AVE, MaterialEnum.STEEL, 3,
+        Weapon("handaxe", QualityEnum.AVE, MaterialEnum.STEEL, 4,
                SkillEnum.AXE, 10, 5, 0, 1, 6, 1, DamageTypeEnum.EDGE),
     ItemEnum.WEAPON_WARHAMMER:
         Weapon("warhammer", QualityEnum.SUP, MaterialEnum.STEEL_WOOD, 6,
@@ -182,10 +182,11 @@ items = {
                QualityEnum.AVE, MaterialEnum.STEEL_WOOD, 3,
                SkillEnum.SHIELD, 5, 15),
     ItemEnum.SHIELD_BUCKLER_STEEL:
-        Shield("steel buckler", QualityEnum.AVE, MaterialEnum.STEEL, 3,
+        Shield("steel buckler", QualityEnum.AVE, MaterialEnum.STEEL_WOOD, 4,
                SkillEnum.SHIELD, 5, 15),
     ItemEnum.SHIELD_KNIGHT_STEEL:
-        Shield("steel knight shield", QualityEnum.AVE, MaterialEnum.STEEL, 5,
+        Shield("steel knight shield", QualityEnum.AVE,
+               MaterialEnum.STEEL_WOOD, 6,
                SkillEnum.SHIELD, 5, 20),
     ItemEnum.SHIELD_ROUND_WOOD:
         Shield("wooden round shield", QualityEnum.SUP, MaterialEnum.WOOD, 6,
@@ -195,7 +196,8 @@ items = {
                QualityEnum.AVE, MaterialEnum.STEEL_WOOD, 6,
                SkillEnum.SHIELD, 5, 20),
     ItemEnum.SHIELD_KITE_STEEL:
-        Shield("steel kite shield", QualityEnum.AVE, MaterialEnum.STEEL, 7,
+        Shield("steel kite shield", QualityEnum.AVE,
+               MaterialEnum.STEEL_WOOD, 8.5,
                SkillEnum.SHIELD, 5, 25),
     ItemEnum.SHIELD_TOWER_WOOD:
         Shield("wooden tower shield", QualityEnum.SUP, MaterialEnum.WOOD, 8,
@@ -366,7 +368,7 @@ items = {
     ItemEnum.ARMOR_COWL_MAIL:
         Armor("chainmail cowl",
               QualityEnum.AVE, MaterialEnum.MAIL, AL_4,
-              COV_Sk),
+              COV_Sk | COV_Nk),
     ItemEnum.ARMOR_BYRNIE_MAIL:
         Armor("chainmail byrnie",
               QualityEnum.AVE, MaterialEnum.MAIL, AL_4,
