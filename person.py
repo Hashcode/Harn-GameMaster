@@ -39,7 +39,7 @@ persons = {
                 ItemEnum.MISC_RAT_FUR: 75,
             }),
     PersonEnum.BL_KEEP_GUARD:
-        Mob("gatehouse guard", "An impassive guard stares ahead.", 60, 17, 40,
+        Mob("gatehouse guard", "An impassive guard stares ahead.", 60, 17, 50,
             cur=DiceRoll(1, 6, 40),
             attrs={
                 AttrEnum.STRENGTH: 14,
