@@ -18,7 +18,7 @@ from random import seed
 from time import (gmtime, sleep)
 from calendar import timegm
 
-from global_defines import (roll, logd, ItemEnum, ItemLink, Player,
+from global_defines import (logd, DiceRoll, ItemEnum, ItemLink, Player,
                             PERS_COMBAT, PERS_AGGRESSIVE,
                             RoomEnum, RoomFuncResponse, ANSI)
 from utils import (printRoomDescription, printRoomObjects, prompt)
@@ -90,7 +90,7 @@ while True:
         if count < s.MaxQuantity:
           logd("SpawnCheck [%s] in %s [<=%d]" % (persons[s.Person].Name,
                                                  rooms[r].Title, s.Chance))
-          if roll(1, 100) <= s.Chance:
+          if DiceRoll(1, 100).Result() <= s.Chance:
             rooms[r].AddPerson(s.Person)
 
   printRoomObjects(player.Room, rooms)

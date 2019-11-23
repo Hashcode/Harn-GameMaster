@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from global_defines import (MaterialEnum, QualityEnum, CoverageEnum,
+from global_defines import (DiceRoll, MaterialEnum, QualityEnum, CoverageEnum,
                             Effect, EffectTypeEnum, ItemFlagEnum, ItemTypeEnum,
                             ItemEnum, Item, Weapon, Shield, Armor, Ring,
                             DamageTypeEnum, SkillEnum, item_flags)
@@ -71,108 +71,104 @@ items = {
     # WEAPON [UNARMED]
     ItemEnum.WEAPON_HAND:
         Weapon("punch", QualityEnum.AVE, MaterialEnum.BONE, 0,
-               SkillEnum.UNARMED, 0, 5, 0, 1, 2, 0, DamageTypeEnum.BLUNT,
-               flags=IFLAG_NO_SELL | IFLAG_NO_DROP),
+               SkillEnum.UNARMED, 0, 5, 0, DiceRoll(1, 2),
+               DamageTypeEnum.BLUNT, flags=IFLAG_NO_SELL | IFLAG_NO_DROP),
     ItemEnum.WEAPON_FOOT:
         Weapon("kick", QualityEnum.AVE, MaterialEnum.BONE, 0,
-               SkillEnum.UNARMED, 5, 5, 0, 1, 2, 1, DamageTypeEnum.BLUNT,
-               flags=IFLAG_NO_SELL | IFLAG_NO_DROP),
-    ItemEnum.WEAPON_BITE_SMALL:
-        Weapon("bite", QualityEnum.AVE, MaterialEnum.BONE, 0,
-               SkillEnum.UNARMED, 0, 0, 0, 1, 2, 0, DamageTypeEnum.PIERCE,
-               flags=IFLAG_NO_SELL | IFLAG_NO_DROP),
-    ItemEnum.WEAPON_BITE_MED:
-        Weapon("bite", QualityEnum.AVE, MaterialEnum.BONE, 0,
-               SkillEnum.UNARMED, 0, 0, 0, 1, 4, 0, DamageTypeEnum.PIERCE,
-               flags=IFLAG_NO_SELL | IFLAG_NO_DROP),
-    ItemEnum.WEAPON_BITE_LARGE:
-        Weapon("large bite", QualityEnum.AVE, MaterialEnum.BONE, 0,
-               SkillEnum.UNARMED, 0, 0, 0, 1, 6, 0, DamageTypeEnum.PIERCE,
-               flags=IFLAG_NO_SELL | IFLAG_NO_DROP),
-    ItemEnum.WEAPON_CLAW_SMALL:
-        Weapon("small sharp claws", QualityEnum.INF, MaterialEnum.BONE, 0,
-               SkillEnum.UNARMED, 0, 0, 0, 1, 2, 0, DamageTypeEnum.EDGE,
-               flags=IFLAG_NO_SELL | IFLAG_NO_DROP),
-    ItemEnum.WEAPON_CLAW_MED:
-        Weapon("long claws", QualityEnum.INF, MaterialEnum.BONE, 0,
-               SkillEnum.UNARMED, 0, 0, 0, 1, 4, 0, DamageTypeEnum.EDGE,
-               flags=IFLAG_NO_SELL | IFLAG_NO_DROP),
-    ItemEnum.WEAPON_CLAW_LARGE:
-        Weapon("razor-sharp claws", QualityEnum.INF, MaterialEnum.BONE, 0,
-               SkillEnum.UNARMED, 0, 0, 0, 1, 6, 0, DamageTypeEnum.EDGE,
+               SkillEnum.UNARMED, 5, 5, 0, DiceRoll(1, 2),
+               DamageTypeEnum.BLUNT,
                flags=IFLAG_NO_SELL | IFLAG_NO_DROP),
     # WEAPON [DAGGER]
     ItemEnum.WEAPON_KNIFE:
         Weapon("hunting knife", QualityEnum.POR, MaterialEnum.STEEL_WOOD, 1,
-               SkillEnum.DAGGER, 5, 0, 0, 1, 4, 0, DamageTypeEnum.PIERCE),
+               SkillEnum.DAGGER, 5, 0, 0, DiceRoll(1, 4),
+               DamageTypeEnum.PIERCE),
     ItemEnum.WEAPON_DAGGER:
         Weapon("sharp dagger", QualityEnum.AVE, MaterialEnum.STEEL, 1.2,
-               SkillEnum.DAGGER, 5, 5, 0, 1, 6, 0, DamageTypeEnum.PIERCE),
+               SkillEnum.DAGGER, 5, 5, 0, DiceRoll(1, 6),
+               DamageTypeEnum.PIERCE),
     ItemEnum.WEAPON_MAIN_GAUCHE:
         Weapon("small parrying blade", QualityEnum.SUP,
                MaterialEnum.STEEL, 1.2,
-               SkillEnum.DAGGER, 5, 10, 0, 1, 6, 0, DamageTypeEnum.PIERCE),
+               SkillEnum.DAGGER, 5, 10, 0, DiceRoll(1, 6),
+               DamageTypeEnum.PIERCE),
     # WEAPON [SWORD]
     ItemEnum.WEAPON_SHORTSWORD:
         Weapon("steel shortsword", QualityEnum.SUP, MaterialEnum.STEEL, 2.5,
-               SkillEnum.SWORD, 10, 5, 0, 1, 6, 1, DamageTypeEnum.EDGE),
+               SkillEnum.SWORD, 10, 5, 0, DiceRoll(1, 6, 1),
+               DamageTypeEnum.EDGE),
     ItemEnum.WEAPON_FALCHION:
         Weapon("steel falchion", QualityEnum.SUP, MaterialEnum.STEEL, 4,
-               SkillEnum.SWORD, 15, 5, 0, 1, 6, 1, DamageTypeEnum.EDGE),
+               SkillEnum.SWORD, 15, 5, 0, DiceRoll(1, 6, 1),
+               DamageTypeEnum.EDGE),
     ItemEnum.WEAPON_BROADSWORD:
         Weapon("steel broadsword", QualityEnum.SUP, MaterialEnum.STEEL, 5,
-               SkillEnum.SWORD, 15, 10, 0, 1, 6, 2, DamageTypeEnum.EDGE),
+               SkillEnum.SWORD, 15, 10, 0, DiceRoll(1, 6, 2),
+               DamageTypeEnum.EDGE),
     ItemEnum.WEAPON_BASTARD_SWORD:
         Weapon("steel bastard sword", QualityEnum.SUP, MaterialEnum.STEEL, 6,
-               SkillEnum.SWORD, 20, 10, -10, 1, 6, 2, DamageTypeEnum.EDGE),
+               SkillEnum.SWORD, 20, 10, -10, DiceRoll(1, 6, 2),
+               DamageTypeEnum.EDGE),
     ItemEnum.WEAPON_BATTLESWORD:
         Weapon("steel battlesword", QualityEnum.SUP, MaterialEnum.STEEL, 9,
-               SkillEnum.SWORD, 25, 10, -20, 2, 6, 1, DamageTypeEnum.EDGE),
+               SkillEnum.SWORD, 25, 10, -20, DiceRoll(2, 6, 1),
+               DamageTypeEnum.EDGE),
     # WEAPON [CLUB]
     ItemEnum.WEAPON_STICK:
         Weapon("wooden stick", QualityEnum.TER, MaterialEnum.WOOD, 5,
-               SkillEnum.CLUB, 10, 5, 0, 0, 0, 2, DamageTypeEnum.BLUNT,
-               flags=IFLAG_NO_SELL),
+               SkillEnum.CLUB, 10, 5, 0, DiceRoll(0, 0, 2),
+               DamageTypeEnum.BLUNT, flags=IFLAG_NO_SELL),
     ItemEnum.WEAPON_CLUB:
         Weapon("wooden club", QualityEnum.AVE, MaterialEnum.WOOD, 3,
-               SkillEnum.CLUB, 15, 5, 0, 1, 4, 0, DamageTypeEnum.BLUNT,
-               flags=IFLAG_NO_SELL),
+               SkillEnum.CLUB, 15, 5, 0, DiceRoll(1, 4),
+               DamageTypeEnum.BLUNT, flags=IFLAG_NO_SELL),
     ItemEnum.WEAPON_MACE:
         Weapon("iron mace", QualityEnum.AVE, MaterialEnum.STEEL, 5,
-               SkillEnum.CLUB, 15, 5, 0, 1, 6, 1, DamageTypeEnum.BLUNT),
+               SkillEnum.CLUB, 15, 5, 0, DiceRoll(1, 6, 1),
+               DamageTypeEnum.BLUNT),
     ItemEnum.WEAPON_MORNINGSTAR:
         Weapon("steel morningstar",
                QualityEnum.INF, MaterialEnum.STEEL_WOOD, 7,
-               SkillEnum.CLUB, 20, 5, -10, 1, 6, 2, DamageTypeEnum.PIERCE),
+               SkillEnum.CLUB, 20, 5, -10, DiceRoll(1, 6, 2),
+               DamageTypeEnum.PIERCE),
     ItemEnum.WEAPON_MAUL:
         Weapon("spiked wooden maul", QualityEnum.SUP, MaterialEnum.WOOD, 8,
-               SkillEnum.CLUB, 20, 5, -20, 2, 6, 1, DamageTypeEnum.BLUNT),
+               SkillEnum.CLUB, 20, 5, -20, DiceRoll(2, 6, 1),
+               DamageTypeEnum.BLUNT),
     # WEAPON [AXE]
     ItemEnum.WEAPON_SICKLE:
         Weapon("sickle", QualityEnum.INF, MaterialEnum.STEEL_WOOD, 1,
-               SkillEnum.AXE, 5, 5, 0, 1, 4, 0, DamageTypeEnum.EDGE),
+               SkillEnum.AXE, 5, 5, 0, DiceRoll(1, 4, 0),
+               DamageTypeEnum.EDGE),
     ItemEnum.WEAPON_HATCHET:
         Weapon("hatchet", QualityEnum.INF, MaterialEnum.STEEL_WOOD, 2,
-               SkillEnum.AXE, 5, 5, 0, 1, 6, 0, DamageTypeEnum.EDGE),
+               SkillEnum.AXE, 5, 5, 0, DiceRoll(1, 6, 0),
+               DamageTypeEnum.EDGE),
     ItemEnum.WEAPON_HANDAXE:
         Weapon("handaxe", QualityEnum.AVE, MaterialEnum.STEEL, 4,
-               SkillEnum.AXE, 10, 5, 0, 1, 6, 1, DamageTypeEnum.EDGE),
+               SkillEnum.AXE, 10, 5, 0, DiceRoll(1, 6, 1),
+               DamageTypeEnum.EDGE),
     ItemEnum.WEAPON_WARHAMMER:
         Weapon("warhammer", QualityEnum.SUP, MaterialEnum.STEEL_WOOD, 6,
-               SkillEnum.AXE, 15, 5, -5, 1, 6, 1, DamageTypeEnum.BLUNT),
+               SkillEnum.AXE, 15, 5, -5, DiceRoll(1, 6, 1),
+               DamageTypeEnum.BLUNT),
     ItemEnum.WEAPON_BATTLEAXE:
         Weapon("battleaxe", QualityEnum.SUP, MaterialEnum.STEEL_WOOD, 7,
-               SkillEnum.AXE, 20, 10, -15, 1, 6, 2, DamageTypeEnum.EDGE),
+               SkillEnum.AXE, 20, 10, -15, DiceRoll(1, 6, 2),
+               DamageTypeEnum.EDGE),
     # WEAPON [FLAIL]
     ItemEnum.WEAPON_GRAINFLAIL:
         Weapon("grainflail", QualityEnum.AVE, MaterialEnum.WOOD, 6,
-               SkillEnum.FLAIL, 20, 5, 0, 1, 6, 0, DamageTypeEnum.BLUNT),
+               SkillEnum.FLAIL, 20, 5, 0, DiceRoll(1, 6),
+               DamageTypeEnum.BLUNT),
     ItemEnum.WEAPON_BALL_AND_CHAIN:
         Weapon("ball and chain", QualityEnum.AVE, MaterialEnum.STEEL_WOOD, 6,
-               SkillEnum.FLAIL, 20, 10, 0, 1, 6, 2, DamageTypeEnum.BLUNT),
+               SkillEnum.FLAIL, 20, 10, 0, DiceRoll(1, 6, 2),
+               DamageTypeEnum.BLUNT),
     ItemEnum.WEAPON_WARFLAIL:
         Weapon("warflail", QualityEnum.AVE, MaterialEnum.STEEL_WOOD, 6,
-               SkillEnum.FLAIL, 20, 10, -20, 2, 6, 0, DamageTypeEnum.BLUNT),
+               SkillEnum.FLAIL, 20, 10, -20, DiceRoll(2, 6),
+               DamageTypeEnum.BLUNT),
 
     # SHIELD
     ItemEnum.SHIELD_BUCKLER_WOOD:

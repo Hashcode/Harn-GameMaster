@@ -47,23 +47,31 @@ def logd(line):
 ROLLF_DROP_LOWEST = 1 << 0
 
 
-def roll(rolls, die_base, modifier=0, flags=0):
-  value = 0
-  roll_list = []
-  for x in range(rolls):
-    y = random.randint(1, die_base) + modifier
-    roll_list.append(y)
-  if flags & ROLLF_DROP_LOWEST > 0:
-    lowest = 99999
-    for r in roll_list:
-      if lowest > r:
-        lowest = r
-    roll_list.remove(lowest)
-  for r in roll_list:
-    value += r
-  logd("ROLL %dD%d+%d (flags:%x): %d" % (rolls, die_base, modifier,
-                                         flags, value))
-  return value
+class DiceRoll:
+  def __init__(self, num, roll_max, mod=0, roll_min=1, flags=0):
+    self.Num = num
+    self.Min = roll_min
+    self.Max = roll_max
+    self.Mod = mod
+    self.Flags = flags
+
+  def Result(self):
+    value = 0
+    rollList = []
+    for x in range(self.Num):
+      y = random.randint(self.Min, self.Max) + self.Mod
+      rollList.append(y)
+    if self.Flags & ROLLF_DROP_LOWEST > 0:
+      low = 99999
+      for r in rollList:
+        if low > r:
+          low = r
+      rollList.remove(low)
+    for r in rollList:
+      value += r
+    logd("DICE RESULT %dD%d+%d (flags:%x): %d" %
+         (self.Num, self.Max, self.Mod, self.Flags, value))
+    return value
 
 
 # NUMBER
@@ -553,17 +561,14 @@ class Shield(Item):
 
 class Weapon(Item):
   def __init__(self, name, qual, material, mass, skill, ar, dr, sh_penalty,
-               dmg_rolls=0, dmg_dice=0, dmg_mod=0,
-               dmg_type=DamageTypeEnum.NONE, flags=0, eff=None):
+               die_roll, dmg_type=DamageTypeEnum.NONE, flags=0, eff=None):
     super().__init__(ItemTypeEnum.WEAPON, name, qual, material, mass, flags,
                      eff)
     self.Skill = skill
     self.AttackRating = ar
     self.DefenseRating = dr
     self.SingleHandPenalty = sh_penalty
-    self.DamageRolls = dmg_rolls
-    self.DamageDice = dmg_dice
-    self.DamageMod = dmg_mod
+    self.DieRoll = die_roll
     self.DamageType = dmg_type
 
 
@@ -1422,7 +1427,7 @@ class ItemLink:
 
 class Person:
   def __init__(self, person_type, name, long_desc="", flags=0,
-               skin=MaterialEnum.NONE, cur=0, it=None):
+               skin=MaterialEnum.NONE, it=None):
     # None == Template
     self.PersonType = person_type
     self.Name = name
@@ -1431,7 +1436,6 @@ class Person:
     self.SkinMaterial = skin
     self.Action = CombatActionEnum.NONE
     self.CombatEnemy = None
-    self.Currency = cur
     self.Attr = dict()
     self.SkillLinks = dict()
     self.Effects = []
@@ -1446,15 +1450,15 @@ class Person:
     self.Flags = p.Flags
     self.Action = p.Action
     self.CombatEnemy = None
-    self.Currency = p.Currency
     self.Attr.clear()
     for attr_id, attr in attributes.items():
       if attr_id in p.Attr:
         self.Attr.update({attr_id: p.Attr[attr_id]})
       else:
         # add new attributes
-        self.Attr.update({attr_id: roll(attr.GenRolls, attr.GenDice,
-                                        flags=attr.GenFlags) + attr.GenMod})
+        self.Attr.update({attr_id: DiceRoll(attr.GenRolls, attr.GenDice,
+                                            flags=attr.GenFlags).Result() + \
+                          attr.GenMod})
     self.SkillLinks.clear()
     # copy all skills into skill training
     for skill_id, skill in skills.items():
@@ -1498,9 +1502,16 @@ class Person:
     return True
 
   def SkillBase(self, skill_id):
-    sb = round((self.Attr[skills[skill_id].Attr1] + \
-                self.Attr[skills[skill_id].Attr2] + \
-                self.Attr[skills[skill_id].Attr3]) / 3)
+    attr1 = 0
+    attr2 = 0
+    attr3 = 0
+    if skills[skill_id].Attr1 in self.Attr:
+      attr1 = self.Attr[skills[skill_id].Attr1]
+    if skills[skill_id].Attr2 in self.Attr:
+      attr2 = self.Attr[skills[skill_id].Attr2]
+    if skills[skill_id].Attr3 in self.Attr:
+      attr3 = self.Attr[skills[skill_id].Attr3]
+    sb = round((attr1 + attr2 + attr3) / 3)
     return sb
 
   def SkillAttempts(self, skill_id):
@@ -1511,7 +1522,8 @@ class Person:
 
   def SkillML(self, skill_id):
     ml = self.SkillBase(skill_id) * skills[skill_id].OMLMod
-    ml += self.SkillLinks[skill_id].Points
+    if skill_id in self.SkillLinks:
+      ml += self.SkillLinks[skill_id].Points
     return ml
 
   def SkillIndex(self, skill_id):
@@ -1521,37 +1533,46 @@ class Person:
     return 100 + self.SkillBase(skill_id)
 
 
-# MONSTER
+# MOB
 
-class Monster(Person):
-  def __init__(self, name, long_desc, flags=0, skin=MaterialEnum.NONE,
-               attacks=None, loot=None):
-    super().__init__(PersonTypeEnum.MONSTER, name, long_desc, flags, skin)
-    self.Attacks = dict()
-    self.Loot = dict()
-    if attacks is not None:
-      for item_id, chance in attacks.items():
-        self.Attacks.update({item_id: chance})
-    if loot is not None:
-      for item_id, chance in loot.items():
-        self.Loot.update({item_id: chance})
-    # TODO: Initiative Stat
-    # TODO: Currency drop
-    # TODO: Loot drop
+class MobAttack:
+  def __init__(self, name, chance, ml, dmg=None,
+               dmg_type=DamageTypeEnum.NONE):
+    self.Name = name,
+    self.ChanceMax = chance,
+    self.SkillML = ml,
+    self.Damage = dmg
+    self.DamageType = dmg_type
+
+
+class Mob(Person):
+  def __init__(self, name, long_desc, ini, end, dodge, flags=0,
+               skin=MaterialEnum.NONE, cur=None, attrs=None,
+               mob_attacks=None, mob_skills=None, eq=None, loot=None):
+    super().__init__(PersonTypeEnum.MONSTER, name, long_desc, flags, skin,
+                     it=eq)
+    self.CurrencyGen = cur
+    self.Initiative = ini
+    self.Endurance = end
+    self.Dodge = dodge
+    if attrs is not None:
+      for attr_id, value in attrs.items():
+        self.Attr.update({attr_id: value})
+    self.MobAttacks = mob_attacks
+    if mob_skills is not None:
+      for skill_id, points in mob_skills.items():
+        self.SkillLinks.update({skill_id: SkillLink(points)})
+    self.Loot = loot
     super().ResetStats()
 
+  def AttrInitiative(self):
+    return self.Initiative
 
-# NPC
+  def AttrEndurance(self):
+    return self.Endurance
 
-class NPC(Person):
-  def __init__(self, name, long_desc, flags=0, skin=MaterialEnum.NONE,
-               eq=None):
-    super().__init__(PersonTypeEnum.NPC, name, long_desc, flags, skin, it=eq)
-    # TODO: Items
-    # TODO: Initiative Stat
-    # TODO: Currency drop
-    # TODO: Loot drop
-    super().ResetStats()
+  def AttrDodge(self):
+    return self.Dodge
 
 
 # PLAYER
@@ -1564,11 +1585,13 @@ class Player(Person):
     self.Command = ""
     self.Room = None
     self.LastRoom = None
+    self.Currency = 0
 
   def Copy(self, p):
     super().Copy(p)
     self.Room = p.Room
     self.LastRoom = p.LastRoom
+    self.Currency = p.Currency
     self.CalcSunsign()
     super().ResetStats()
 
@@ -1588,8 +1611,9 @@ class Player(Person):
   def GenAttr(self):
     # Generate Attributes
     for attr_id, attr in attributes.items():
-      self.Attr.update({attr_id: roll(attr.GenRolls, attr.GenDice,
-                                      flags=attr.GenFlags) + attr.GenMod})
+      self.Attr.update({attr_id: DiceRoll(attr.GenRolls, attr.GenDice,
+                                          flags=attr.GenFlags).Result() + \
+                        attr.GenMod})
     # Adjustments
     # Frame: -3 Human Female
     if self.AttrSex() == SexEnum.FEMALE:
@@ -1727,8 +1751,14 @@ class Player(Person):
         break
     return ret
 
+  def AttrInitiative(self):
+    return self.SkillML(SkillEnum.INITIATIVE)
+
   def AttrEndurance(self):
     return round(self.SkillML(SkillEnum.CONDITIONING) / 5)
+
+  def AttrDodge(self):
+    return self.Attr[AttrEnum.AGILITY] * 5
 
   def EquipWeight(self, items):
     eq = 0
