@@ -486,7 +486,7 @@ def actionPrintHelp(player, rooms):
       printCombatActions()
 
 
-commands.append(GenericCommand(["armor"], actionArmor))
+commands.append(GenericCommand(["armor", "ac"], actionArmor))
 commands.append(GenericCommand(["close"], actionComingSoon))
 commands.append(GenericCommand(["drop"], actionDropItem))
 commands.append(GenericCommand(["equip"], actionEquipItem))
