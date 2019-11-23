@@ -75,12 +75,12 @@ def printItems(item_links, number=False, stats=False):
     else:
       weight = items[item_id].Weight * il.Quantity
       if il.Quantity > 1 and not il.Equipped:
-        print("%-40s : %5s lbs" %
+        print("%-30s : %5s lbs" %
               (("(%d) " % il.Quantity) + items[item_id].ItemName + \
                items[item_id].ItemFlagStr(" (%s)"),
                "{:3.1f}".format(weight)))
       else:
-        print("%-40s : %5s lbs" %
+        print("%-30s : %5s lbs" %
               (items[item_id].ItemName + items[item_id].ItemFlagStr(" (%s)"),
                "{:3.1f}".format(weight)))
 
@@ -245,24 +245,24 @@ def actionGetItem(player, rooms):
 
 
 def actionInventory(player, rooms):
-  print("\n%sCURRENCY%s: %dsp" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL,
+  print("\n%sCURRENCY%s: %d sp" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL,
                                   player.Currency))
-  print("\n%sEQUIPMENT:%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  print("\n%sEQUIPMENT%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   links = filterLinks(player.ItemLinks, equipped=True)
   if len(links) < 1:
     print("[NONE]")
   else:
     printItems(links)
-  print("%s%-40s : %5s lbs%s" % (ANSI.TEXT_BOLD, "EQUIPPED WEIGHT (1/2)",
+  print("%s%-30s : %5s lbs%s" % (ANSI.TEXT_BOLD, "EQUIPPED WEIGHT (1/2)",
                                  "{:3.1f}".format(player.EquipWeight(items)),
                                  ANSI.TEXT_NORMAL))
-  print("\n%sITEMS:%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  print("\n%sITEMS%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   links = filterLinks(player.ItemLinks, equipped=False)
   if len(links) < 1:
     print("[NONE]")
   else:
     printItems(links)
-  print("%s%-40s : %5s lbs%s" % (ANSI.TEXT_BOLD, "INVENTORY WEIGHT",
+  print("%s%-30s : %5s lbs%s" % (ANSI.TEXT_BOLD, "INVENTORY WEIGHT",
                                  "{:3.1f}".format(player.InvenWeight(items)),
                                  ANSI.TEXT_NORMAL))
 
@@ -287,7 +287,7 @@ def actionSkills(player, rooms):
         continue
       if sk.Hidden:
         continue
-      print("%-30s: %s/%s/%s  ML:%-3d" %
+      print("%-15s: %s/%s/%s  ML:%-3d" %
             (sk.Name,
              attributes[skills[sk_id].Attr1].Abbrev,
              attributes[skills[sk_id].Attr2].Abbrev,
@@ -360,7 +360,7 @@ def actionStats(player, rooms):
 
 def actionArmor(player, rooms):
   print("\n%sARMOR COVERAGE%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-  print("%s%-16s BLUNT EDGE PIERCE ELEMENTAL%s" %
+  print("%s%-15s  BLUNT EDGE PIERCE ELEMENTAL%s" %
         (ANSI.TEXT_BOLD, "LOCATION", ANSI.TEXT_NORMAL))
   m = Material(0, 0, 0, 0, 0, 0)
   for bp_id, bp in body_parts.items():
@@ -372,7 +372,7 @@ def actionArmor(player, rooms):
         continue
       if items[item_id].Covered(bp_id):
         m.Add(materials[items[item_id].Material])
-    print("%-16s %-5d %-4d %-6d %-9d" %
+    print("%-15s: %-5d %-4d %-6d %-9d" %
           (body_parts[bp_id].PartName, m.ProtBlunt, m.ProtEdge, m.ProtPierce,
            m.ProtElemental))
 
