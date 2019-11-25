@@ -10,14 +10,14 @@ from global_defines import (DiceRoll, DamageTypeEnum, ItemEnum, AttrEnum,
 
 persons = {
     PersonEnum.MON_RAT:
-        Mob("ugly rat", "An ugly rat scurries across the ground.", 45, 6, 80,
+        Mob("ugly rat", "An ugly rat scurries across the ground.", 45, 6, 35,
             PERS_AGGRESSIVE,
             MaterialEnum.FUR_LT,
             attrs={
                 AttrEnum.STRENGTH: 5,
                 AttrEnum.STAMINA: 8,
                 AttrEnum.DEXTERITY: 4,
-                AttrEnum.AGILITY: 16,
+                AttrEnum.AGILITY: 7,
                 AttrEnum.EYESIGHT: 12,
                 AttrEnum.HEARING: 20,
                 AttrEnum.SMELL: 15,
@@ -26,9 +26,9 @@ persons = {
                 AttrEnum.WILL: 8,
             },
             mob_attacks=[
-                MobAttack("Bite", 60, 65, DiceRoll(1, 2),
+                MobAttack("Bite", 60, 45, 0, 0, DiceRoll(1, 2),
                           DamageTypeEnum.PIERCE),
-                MobAttack("Claws", 100, 50, DiceRoll(1, 1),
+                MobAttack("Claws", 100, 30, 0, 0, DiceRoll(1, 1),
                           DamageTypeEnum.EDGE),
             ],
             mob_skills={
@@ -53,12 +53,6 @@ persons = {
                 AttrEnum.AURA: 12,
                 AttrEnum.WILL: 13,
             },
-            mob_attacks=[
-                MobAttack("Bastard Sword", 80, 65, DiceRoll(1, 6, 2),
-                          DamageTypeEnum.EDGE),
-                MobAttack("Kite Shield", 100, 50, DiceRoll(1, 1),
-                          DamageTypeEnum.BLUNT),
-            ],
             eq={
                 ItemEnum.WEAPON_BASTARD_SWORD: ItemLink(1, True),
                 ItemEnum.SHIELD_KITE_STEEL: ItemLink(1, True),
