@@ -18,10 +18,10 @@ COV_Ua = 1 << CoverageEnum.UPPER_ARMS
 COV_El = 1 << CoverageEnum.ELBOWS
 COV_Fo = 1 << CoverageEnum.FOREARMS
 COV_Ha = 1 << CoverageEnum.HANDS
-COV_Tx_F = 1 << CoverageEnum.FRONT_THORAX
-COV_Tx_R = 1 << CoverageEnum.REAR_THORAX
-COV_Ab_F = 1 << CoverageEnum.FRONT_ABDOMEN
-COV_Ab_R = 1 << CoverageEnum.REAR_ABDOMEN
+COV_Tx_F = 1 << CoverageEnum.THORAX_FRONT
+COV_Tx_R = 1 << CoverageEnum.THORAX_REAR
+COV_Ab_F = 1 << CoverageEnum.ABDOMEN_FRONT
+COV_Ab_R = 1 << CoverageEnum.ABDOMEN_REAR
 COV_Hp = 1 << CoverageEnum.HIPS
 COV_Gr = 1 << CoverageEnum.GROIN
 COV_Th = 1 << CoverageEnum.THIGHS
@@ -107,11 +107,11 @@ items = {
                DamageTypeEnum.EDGE),
     ItemEnum.WEAPON_BASTARD_SWORD:
         Weapon("steel bastard sword", QualityEnum.SUP, MaterialEnum.STEEL, 6,
-               SkillEnum.SWORD, 20, 10, -10, DiceRoll(1, 6, 2),
+               SkillEnum.SWORD, 20, 10, 10, DiceRoll(1, 6, 2),
                DamageTypeEnum.EDGE),
     ItemEnum.WEAPON_BATTLESWORD:
         Weapon("steel battlesword", QualityEnum.SUP, MaterialEnum.STEEL, 9,
-               SkillEnum.SWORD, 25, 10, -20, DiceRoll(2, 6, 1),
+               SkillEnum.SWORD, 25, 10, 20, DiceRoll(2, 6, 1),
                DamageTypeEnum.EDGE),
     # WEAPON [CLUB]
     ItemEnum.WEAPON_STICK:
@@ -129,11 +129,11 @@ items = {
     ItemEnum.WEAPON_MORNINGSTAR:
         Weapon("steel morningstar",
                QualityEnum.INF, MaterialEnum.STEEL_WOOD, 7,
-               SkillEnum.CLUB, 20, 5, -10, DiceRoll(1, 6, 2),
+               SkillEnum.CLUB, 20, 5, 10, DiceRoll(1, 6, 2),
                DamageTypeEnum.PIERCE),
     ItemEnum.WEAPON_MAUL:
         Weapon("spiked wooden maul", QualityEnum.SUP, MaterialEnum.WOOD, 8,
-               SkillEnum.CLUB, 20, 5, -20, DiceRoll(2, 6, 1),
+               SkillEnum.CLUB, 20, 5, 20, DiceRoll(2, 6, 1),
                DamageTypeEnum.BLUNT),
     # WEAPON [AXE]
     ItemEnum.WEAPON_SICKLE:
@@ -150,11 +150,11 @@ items = {
                DamageTypeEnum.EDGE),
     ItemEnum.WEAPON_WARHAMMER:
         Weapon("warhammer", QualityEnum.SUP, MaterialEnum.STEEL_WOOD, 6,
-               SkillEnum.AXE, 15, 5, -5, DiceRoll(1, 6, 1),
+               SkillEnum.AXE, 15, 5, 5, DiceRoll(1, 6, 1),
                DamageTypeEnum.BLUNT),
     ItemEnum.WEAPON_BATTLEAXE:
         Weapon("battleaxe", QualityEnum.SUP, MaterialEnum.STEEL_WOOD, 7,
-               SkillEnum.AXE, 20, 10, -15, DiceRoll(1, 6, 2),
+               SkillEnum.AXE, 20, 10, 15, DiceRoll(1, 6, 2),
                DamageTypeEnum.EDGE),
     # WEAPON [FLAIL]
     ItemEnum.WEAPON_GRAINFLAIL:
@@ -167,7 +167,7 @@ items = {
                DamageTypeEnum.BLUNT),
     ItemEnum.WEAPON_WARFLAIL:
         Weapon("warflail", QualityEnum.AVE, MaterialEnum.STEEL_WOOD, 6,
-               SkillEnum.FLAIL, 20, 10, -20, DiceRoll(2, 6),
+               SkillEnum.FLAIL, 20, 10, 20, DiceRoll(2, 6),
                DamageTypeEnum.BLUNT),
 
     # SHIELD

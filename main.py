@@ -19,7 +19,7 @@ from time import (gmtime, sleep)
 from calendar import timegm
 
 from global_defines import (logd, DiceRoll, ItemEnum, ItemLink, Player,
-                            PERS_COMBAT, PERS_AGGRESSIVE,
+                            PERS_AGGRESSIVE,
                             RoomEnum, RoomFuncResponse, ANSI)
 from utils import (printRoomDescription, printRoomObjects, prompt)
 from rooms import rooms
@@ -50,6 +50,7 @@ if TestMode:
 NextRoomEvent = 0
 
 while True:
+  enemies = []
   combat_flag = False
   res = RoomFuncResponse.NONE
   printRoomDescription(player.Room, rooms)
@@ -97,26 +98,20 @@ while True:
 
   # Check if the room persons need to attack
   for x in rooms[player.Room].Persons:
-    if persons[x.Person].Flags & PERS_COMBAT == 0 and \
-       persons[x.Person].Flags & PERS_AGGRESSIVE > 0:
-      combat_flag = True
-      x.CombatEnemy = player
-      player.Flags |= PERS_COMBAT
+    if persons[x.Person].IsAggressive():
+      enemies.append(x)
       print("[%s] attacks you!" % persons[x.Person].Name)
 
-  if player.Flags & PERS_COMBAT > 0:
-     combat_flag = True
-
-  if combat_flag:
-    combat(player, persons, rooms)
-    if player.HitPoints_Cur <= 0:
-      print("\nThe last of your strength slips away, and your vision\n"
-            "fades to black...")
-      print("\n%sYou have died!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-      sleep(2)
-      print("\nYou slow come back to your senses ...\n")
-      sleep(2)
-      player.SetRoom(ROOM_RESPAWN)
+  if len(enemies) > 0:
+    combat(player, enemies)
+#    if player.HitPoints_Cur <= 0:
+#      print("\nThe last of your strength slips away, and your vision\n"
+#            "fades to black...")
+#      print("\n%sYou have died!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+#      sleep(2)
+#      print("\nYou slow come back to your senses ...\n")
+#      sleep(2)
+#      player.SetRoom(ROOM_RESPAWN)
     continue
 
   # Handle Commands

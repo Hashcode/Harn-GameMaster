@@ -6,16 +6,18 @@
 
 from sys import exit
 from textwrap import TextWrapper
+from copy import copy
 
 from global_defines import (attribute_classes, attributes, months, sunsigns,
                             cultures, social_classes, sibling_ranks,
                             parent_statuses, player_frames, comelinesses,
                             complexions, color_hairs, color_eyes,
                             skill_classes, skills, item_flags, body_parts,
-                            materials, NumAdj, AttrEnum, Material,
+                            materials, NumAdj, DamageTypeEnum, AttrEnum,
+                            Material,
                             ItemTypeEnum, ItemFlagEnum,
                             ItemLink, DirectionEnum,
-                            PERS_COMBAT, ANSI)
+                            ANSI)
 from items import items
 from person import persons
 from db import (ListDB, SavePlayer)
@@ -36,13 +38,6 @@ def CalcEffect(player, eff_type):
       if y.EffectType == eff_type:
         value += y.Modifer
   return value
-
-
-def printCombatActions():
-  print("  ATTACK")
-  print("  DODGE")
-  print("  BLOCK")
-  print("  FLEE")
 
 
 def filterLinks(item_links, equipped=False, equippable=False, flags=0,
@@ -130,6 +125,25 @@ def printRoomObjects(room_id, rooms):
   if len(rooms[room_id].RoomItems) > 0:
     print("\nThe following items are here:")
     printItems(rooms[room_id].RoomItems)
+
+
+# COMBAT COMMANDS
+
+def printCombatAttackActions(player):
+  print("  ATTACK")
+  # print("  MISSILE")
+  # print("  GRAPPLE")
+  # print("  ESOTERIC")
+  print("  FLEE")
+
+
+def printCombatDefenseActions(player):
+  print("  BLOCK")
+  print("  DODGE")
+  # print("  COUNTERSTRIKE")
+  # print("  MISSILE")
+  # print("  GRAPPLE")
+  # print("  ESOTERIC")
 
 
 # GENERIC COMMAND FUNCTIONS
@@ -292,7 +306,7 @@ def actionSkills(player, rooms):
              attributes[skills[sk_id].Attr1].Abbrev,
              attributes[skills[sk_id].Attr2].Abbrev,
              attributes[skills[sk_id].Attr3].Abbrev,
-             player.SkillML(sk_id)))
+             player.SkillML(sk_id, items)))
 
 
 def actionInfo(player, rooms):
@@ -345,13 +359,7 @@ def actionStats(player, rooms):
         print("%-15s: %d" % (attributes[attr].Name, val))
 
   print("\n%sCHARACTER STATS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-  if player.Flags & PERS_COMBAT > 0:
-    fighting = []
-    for x in rooms[player.Room].Persons:
-      if x.CombatEnemy == player:
-        fighting.append(x.Name)
-    print("%-15s: %s" % ("Fighting", ", ".join(fighting)))
-  end = player.AttrEndurance()
+  end = player.AttrEndurance(items)
   enc = player.Encumbrance(items)
   print("%-15s: %d" % ("Endurance", end))
   print("%-15s: %d lbs" % ("Encumbrance", enc))
@@ -362,9 +370,9 @@ def actionArmor(player, rooms):
   print("\n%sARMOR COVERAGE%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   print("%s%-15s  BLUNT EDGE PIERCE ELEMENTAL%s" %
         (ANSI.TEXT_BOLD, "LOCATION", ANSI.TEXT_NORMAL))
-  m = Material(0, 0, 0, 0, 0, 0)
+  m = Material("None", 0, 0, [0, 0, 0, 0])
   for bp_id, bp in body_parts.items():
-    m.Clear()
+    m.Copy(materials[player.SkinMaterial])
     for item_id, il in player.ItemLinks.items():
       if items[item_id].ItemType != ItemTypeEnum.ARMOR:
         continue
@@ -373,8 +381,12 @@ def actionArmor(player, rooms):
       if items[item_id].Covered(bp_id):
         m.Add(materials[items[item_id].Material])
     print("%-15s: %-5d %-4d %-6d %-9d" %
-          (body_parts[bp_id].PartName, m.ProtBlunt, m.ProtEdge, m.ProtPierce,
-           m.ProtElemental))
+          (body_parts[bp_id].PartName,
+           m.Protection[DamageTypeEnum.BLUNT],
+           m.Protection[DamageTypeEnum.EDGE],
+           m.Protection[DamageTypeEnum.PIERCE],
+           m.Protection[DamageTypeEnum.ELEMENTAL]))
+    m.Clear()
 
 
 def actionRemoveItem(player, rooms):
@@ -420,7 +432,7 @@ def actionLook(player, rooms):
 
 
 def actionChangePassword(player, rooms):
-  if player.Flags & PERS_COMBAT > 0:
+  if player.InCombat():
     print("\n%sYou can't change your password in combat!%s" %
           (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   else:
@@ -435,7 +447,7 @@ def actionChangePassword(player, rooms):
 
 
 def actionQuit(player, rooms):
-  if player.Flags & PERS_COMBAT > 0:
+  if player.InCombat():
     print("\n%sYou can't QUIT in combat!%s" %
           (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   else:
@@ -449,7 +461,7 @@ def actionQuit(player, rooms):
 
 
 def actionSaveGeneric(player, rooms):
-    if player.Flags & PERS_COMBAT > 0:
+    if player.InCombat():
       print("\n%sYou can't SAVE in combat!%s" %
             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
     else:
@@ -480,10 +492,13 @@ def actionPrintHelp(player, rooms):
       print("\nDirection Commands:")
       for exit_dir, exit_names in directions.items():
         print("  %s" % exit_names[0].upper())
-    # combat commands
-    if player.Flags & PERS_COMBAT > 0:
-      print("\nCombat Commands:")
-      printCombatActions()
+    # combat
+    if player.IsCombatAttacker():
+      print("\nCombat commands:")
+      printCombatAttackActions(player)
+    elif player.IsCombatDefender():
+      print("\nCombat commands:")
+      printCombatDefenseActions(player)
 
 
 commands.append(GenericCommand(["armor", "ac"], actionArmor))
@@ -532,7 +547,7 @@ def prompt(player, rooms, command_func=None):
             break
 
       if match_dir != DirectionEnum.NONE:
-        if player.Flags & PERS_COMBAT > 0:
+        if player.InCombat():
           print("\n%sYou can't move in combat!  Try to FLEE!%s" %
                 (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
         else:

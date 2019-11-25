@@ -8,6 +8,7 @@ import random
 
 from enum import IntEnum
 from uuid import uuid4
+from copy import copy
 
 
 # Logging
@@ -18,7 +19,7 @@ LOG_WRN = 2
 LOG_INF = 3
 LOG_DBG = 4
 
-LogLevel = LOG_DBG
+LogLevel = LOG_INF
 
 
 def log(ll, line):
@@ -27,19 +28,19 @@ def log(ll, line):
 
 
 def loge(line):
-  log(LOG_ERR, "[error] %s" % line)
+  log(LOG_ERR, "> [error] %s" % line)
 
 
 def logw(line):
-  log(LOG_WRN, "[warn] %s" % line)
+  log(LOG_WRN, "> [warn] %s" % line)
 
 
 def logi(line):
-  log(LOG_INF, "[info] %s" % line)
+  log(LOG_INF, "> [info] %s" % line)
 
 
 def logd(line):
-  log(LOG_DBG, "[debug] %s" % line)
+  log(LOG_DBG, "> [debug] %s" % line)
 
 
 # ROLL
@@ -120,6 +121,16 @@ qualities = {
 }
 
 
+# DAMAGE
+
+class DamageTypeEnum(IntEnum):
+  BLUNT = 0
+  EDGE = 1
+  PIERCE = 2
+  ELEMENTAL = 3
+  MAX = 4
+
+
 # MATERIALS
 
 class MaterialFlagEnum(IntEnum):
@@ -163,98 +174,77 @@ class MaterialEnum(IntEnum):
 
 
 class Material:
-  def __init__(self, name, weight=0, cost=0, store_mod=1,
-               blunt=0, edge=0, pierce=0, ele=0, flags=0):
+  def __init__(self, name, weight, cost, prot, flags=0):
     self.Name = name
     self.WeightBase = weight
     self.CostBase = cost
-    self.StorageMod = store_mod
-    self.ProtBlunt = blunt
-    self.ProtEdge = edge
-    self.ProtPierce = pierce
-    self.ProtElemental = ele
+    self.Protection = []
+    if prot is not None:
+      for x in prot:
+        self.Protection.append(x)
     self.Flags = flags
 
   def Clear(self):
     self.WeightBase = 0
     self.CostBase = 0
-    self.StorageMod = 0
-    self.ProtBlunt = 0
-    self.ProtEdge = 0
-    self.ProtPierce = 0
-    self.ProtElemental = 0
+    self.Protection.clear()
     self.Flags = 0
 
   def Copy(self, m):
     self.Name = m.Name
     self.WeightBase = m.WeightBase
     self.CostBase = m.CostBase
-    self.StorageMod = m.StorageMod
-    self.ProtBlunt = m.ProtBlunt
-    self.ProtEdge = m.ProtEdge
-    self.ProtPierce = m.ProtPierce
-    self.ProtElemental = m.ProtElemental
+    self.Protection.clear()
+    for i, val in enumerate(m.Protection):
+      self.Protection.append(val)
     self.Flags = m.Flags
 
   def Add(self, m):
-    self.ProtBlunt += m.ProtBlunt
-    self.ProtEdge += m.ProtEdge
-    self.ProtPierce += m.ProtPierce
-    self.ProtElemental += m.ProtElemental
+    for i, val in enumerate(m.Protection):
+      self.Protection[i] += val
 
 
 materials = {
-    MaterialEnum.NONE: Material("None"),
+    MaterialEnum.NONE: Material("None", 0, 0, [0, 0, 0, 0]),
     # SKIN TYPES
-    MaterialEnum.FEATHERS_LT: Material("Feathers", 0, 0, 0, 3, 2, 1, 2),
-    MaterialEnum.FEATHERS_MD: Material("Feathers", 0, 0, 0, 3, 4, 2, 4),
-    MaterialEnum.FUR_LT: Material("Fur", 0, 0, 0, 2, 1, 1, 2),
-    MaterialEnum.FUR_MD: Material("Fur", 0, 0, 0, 4, 3, 1, 3),
-    MaterialEnum.FUR_HV: Material("Fur", 0, 0, 0, 5, 4, 1, 3),
-    MaterialEnum.HIDE: Material("Hide", 0, 0, 0, 5, 4, 1, 3),
-    MaterialEnum.HIDE_BEAR_LT: Material("Bear Hide", 0, 0, 0, 5, 3, 2, 4),
-    MaterialEnum.HIDE_BEAR_MD: Material("Bear Hide", 0, 0, 0, 6, 4, 3, 5),
-    MaterialEnum.HIDE_BEAR_HV: Material("Bear Hide", 0, 0, 0, 7, 5, 3, 6),
-    MaterialEnum.HIDE_DRAGON_LT: Material("Dragon Hide", 0.2, 4800, 0.5,
-                                          8, 5, 8, 7,
+    MaterialEnum.FEATHERS_LT: Material("Feathers", 0, 0, [3, 2, 1, 2]),
+    MaterialEnum.FEATHERS_MD: Material("Feathers", 0, 0, [3, 4, 2, 4]),
+    MaterialEnum.FUR_LT: Material("Fur", 0, 0, [2, 1, 1, 2]),
+    MaterialEnum.FUR_MD: Material("Fur", 0, 0, [4, 3, 1, 3]),
+    MaterialEnum.FUR_HV: Material("Fur", 0, 0, [5, 4, 1, 3]),
+    MaterialEnum.HIDE: Material("Hide", 0, 0, [5, 4, 1, 3]),
+    MaterialEnum.HIDE_BEAR_LT: Material("Bear Hide", 0, 0, [5, 3, 2, 4]),
+    MaterialEnum.HIDE_BEAR_MD: Material("Bear Hide", 0, 0, [6, 4, 3, 5]),
+    MaterialEnum.HIDE_BEAR_HV: Material("Bear Hide", 0, 0, [7, 5, 3, 6]),
+    MaterialEnum.HIDE_DRAGON_LT: Material("Dragon Hide", 0.2, 4800,
+                                          [8, 5, 8, 7],
                                           flags=1 << MaterialFlagEnum.MAGIC),
-    MaterialEnum.HIDE_DRAGON_MD: Material("Dragon Hide", 0.2, 6400, 0.5,
-                                          10, 8, 7, 9,
+    MaterialEnum.HIDE_DRAGON_MD: Material("Dragon Hide", 0.2, 6400,
+                                          [10, 8, 7, 9],
                                           flags=1 << MaterialFlagEnum.MAGIC),
-    MaterialEnum.HIDE_DRAGON_HV: Material("Dragon Hide", 0.2, 9600, 0.5,
-                                          12, 15, 12, 14,
+    MaterialEnum.HIDE_DRAGON_HV: Material("Dragon Hide", 0.2, 9600,
+                                          [12, 15, 12, 14],
                                           flags=1 << MaterialFlagEnum.MAGIC),
     # CRAFTED
-    MaterialEnum.CLOTH: Material("Cloth", 0.1, 2, 0.25,
-                                 1, 1, 1, 1),
-    MaterialEnum.QUILT: Material("Quilt", 0.3, 4, 0.5,
-                                 5, 3, 2, 4),
-    MaterialEnum.LEATHER: Material("Leather", 0.2, 4, 0.75,
-                                   2, 4, 3, 3),
-    MaterialEnum.KURBUL: Material("Hardened Leather", 0.25, 5, 1,
-                                  4, 5, 4, 3),
-    MaterialEnum.LEATHER_RING: Material("Studded Leather", 0.4, 7, 0.75,
-                                        3, 6, 4, 3),
-    MaterialEnum.MAIL: Material("Chainmail", 0.5, 15, 0.5,
-                                2, 8, 5, 1),
-    MaterialEnum.SCALE: Material("Scale Mail", 0.7, 10, 1,
-                                 5, 9, 4, 5),
-    MaterialEnum.STEEL: Material("Steel", 0.8, 25, 1,
-                                 6, 10, 6, 2),
-    MaterialEnum.STEEL_WOOD: Material("Steel & Wood", 0.8, 10, 1,
-                                      5, 8, 4, 1),
+    MaterialEnum.CLOTH: Material("Cloth", 0.1, 2, [1, 1, 1, 1]),
+    MaterialEnum.QUILT: Material("Quilt", 0.3, 4, [5, 3, 2, 4]),
+    MaterialEnum.LEATHER: Material("Leather", 0.2, 4, [2, 4, 3, 3]),
+    MaterialEnum.KURBUL: Material("Hardened Leather", 0.25, 5, [4, 5, 4, 3]),
+    MaterialEnum.LEATHER_RING: Material("Studded Leather", 0.4, 7,
+                                        [3, 6, 4, 3]),
+    MaterialEnum.MAIL: Material("Chainmail", 0.5, 15, [2, 8, 5, 1]),
+    MaterialEnum.SCALE: Material("Scale Mail", 0.7, 10, [5, 9, 4, 5]),
+    MaterialEnum.STEEL: Material("Steel", 0.8, 25, [6, 10, 6, 2]),
+    MaterialEnum.STEEL_WOOD: Material("Steel & Wood", 0.8, 10, [5, 8, 4, 1]),
     # PRECIOUS
-    MaterialEnum.SILVER: Material("Silver", 1.5, 60, 1,
-                                  3, 8, 3, 2),
-    MaterialEnum.GOLD: Material("Gold", 3.0, 120, 1,
-                                4, 9, 4, 3),
-    MaterialEnum.MITHRIL: Material("Mithril", 0.25, 1200, 0.5,
-                                   4, 10, 7, 8,
+    MaterialEnum.SILVER: Material("Silver", 1.5, 60, [3, 8, 3, 2]),
+    MaterialEnum.GOLD: Material("Gold", 3.0, 120, [4, 9, 4, 3]),
+    MaterialEnum.MITHRIL: Material("Mithril", 0.25, 1200, [4, 10, 7, 8],
                                    flags=1 << MaterialFlagEnum.MAGIC),
     # NATURAL
-    MaterialEnum.WOOD: Material("Wood", 1.0, 2, 1, 3, 4, 3, 1),
-    MaterialEnum.STONE: Material("Stone", 1.5, 0, 1, 6, 10, 6, 3),
-    MaterialEnum.BONE: Material("Bone", 0.3, 0, 1, 4, 7, 5, 2),
+    MaterialEnum.WOOD: Material("Wood", 1.0, 2, [3, 4, 3, 1]),
+    MaterialEnum.STONE: Material("Stone", 1.5, 0, [6, 10, 6, 3]),
+    MaterialEnum.BONE: Material("Bone", 0.3, 0, [4, 7, 5, 2]),
 }
 
 
@@ -269,10 +259,10 @@ class CoverageEnum(IntEnum):
   ELBOWS = 5
   FOREARMS = 6
   HANDS = 7
-  FRONT_THORAX = 8
-  REAR_THORAX = 9
-  FRONT_ABDOMEN = 10
-  REAR_ABDOMEN = 11
+  THORAX_FRONT = 8
+  THORAX_REAR = 9
+  ABDOMEN_FRONT = 10
+  ABDOMEN_REAR = 11
   HIPS = 12
   GROIN = 13
   THIGHS = 14
@@ -282,45 +272,37 @@ class CoverageEnum(IntEnum):
 
 
 class BodyPart:
-  def __init__(self, name, mass):
+  def __init__(self, name, mass, leftright=False, fumble=False,
+               stumble=False):
     self.PartName = name
     self.Mass = mass
+    self.LeftRight = leftright
+    self.Fumble = stumble
+    self.Stumble = fumble
 
 
 body_parts = {
+    # HUMAN PARTS
     CoverageEnum.SKULL: BodyPart("Skull", 4),
     CoverageEnum.FACE: BodyPart("Face", 3),
     CoverageEnum.NECK: BodyPart("Neck", 4),
-    CoverageEnum.SHOULDERS: BodyPart("Shoulders", 4),
-    CoverageEnum.UPPER_ARMS: BodyPart("Upper Arms", 6),
-    CoverageEnum.ELBOWS: BodyPart("Elbows", 6),
-    CoverageEnum.FOREARMS: BodyPart("Forearms", 6),
-    CoverageEnum.HANDS: BodyPart("Hands", 4),
-    CoverageEnum.FRONT_THORAX: BodyPart("Thorax (front)", 6),
-    CoverageEnum.REAR_THORAX: BodyPart("Thorax (back)", 6),
-    CoverageEnum.FRONT_ABDOMEN: BodyPart("Abdomen (front)", 6),
-    CoverageEnum.REAR_ABDOMEN: BodyPart("Abdomen (back)", 6),
-    CoverageEnum.HIPS: BodyPart("Hip", 8),
-    CoverageEnum.GROIN: BodyPart("Groin", 2),
-    CoverageEnum.THIGHS: BodyPart("Thighs", 7),
-    CoverageEnum.KNEES: BodyPart("Knee", 3),
-    CoverageEnum.CALVES: BodyPart("Calves", 8),
-    CoverageEnum.FEET: BodyPart("Feet", 6),
+    CoverageEnum.SHOULDERS: BodyPart("Shoulder", 4, True, fumble=True),
+    CoverageEnum.UPPER_ARMS: BodyPart("Upper Arm", 6, True, fumble=True),
+    CoverageEnum.ELBOWS: BodyPart("Elbow", 6, True, fumble=True),
+    CoverageEnum.FOREARMS: BodyPart("Forearm", 6, True, fumble=True),
+    CoverageEnum.HANDS: BodyPart("Hand", 4, True, fumble=True),
+    CoverageEnum.THORAX_FRONT: BodyPart("Thorax (front)", 6),
+    CoverageEnum.THORAX_REAR: BodyPart("Thorax (back)", 6),
+    CoverageEnum.ABDOMEN_FRONT: BodyPart("Abdomen (front)", 6),
+    CoverageEnum.ABDOMEN_REAR: BodyPart("Abdomen (back)", 6),
+    CoverageEnum.HIPS: BodyPart("Hip", 8, True, stumble=True),
+    CoverageEnum.GROIN: BodyPart("Groin", 2, stumble=True),
+    CoverageEnum.THIGHS: BodyPart("Thigh", 7, True, stumble=True),
+    CoverageEnum.KNEES: BodyPart("Knee", 3, True, stumble=True),
+    CoverageEnum.CALVES: BodyPart("Calf", 8, True, stumble=True),
+    CoverageEnum.FEET: BodyPart("Foot", 6, True, stumble=True),
+    # MOB PARTS
 }
-
-
-# DAMAGE
-
-class DamageTypeEnum(IntEnum):
-  NONE = 0
-  BLUNT = 1
-  EDGE = 2
-  PIERCE = 3
-  FIRE = 4
-  COLD = 5
-  SHOCK = 6
-  POISON = 7
-  MAGIC = 8
 
 
 # EFFECTS
@@ -530,7 +512,6 @@ class Item:
     self.Quality = qual
     self.Material = material
     self.Mass = mass
-    self.StorageMass = mass * materials[self.Material].StorageMod
     self.Flags = flags
     self.Effects = eff
     # Calculations
@@ -561,14 +542,14 @@ class Shield(Item):
 
 class Weapon(Item):
   def __init__(self, name, qual, material, mass, skill, ar, dr, sh_penalty,
-               die_roll, dmg_type=DamageTypeEnum.NONE, flags=0, eff=None):
+               dice_roll, dmg_type=DamageTypeEnum.BLUNT, flags=0, eff=None):
     super().__init__(ItemTypeEnum.WEAPON, name, qual, material, mass, flags,
                      eff)
     self.Skill = skill
     self.AttackRating = ar
     self.DefenseRating = dr
     self.SingleHandPenalty = sh_penalty
-    self.DieRoll = die_roll
+    self.Roll = dice_roll
     self.DamageType = dmg_type
 
 
@@ -607,14 +588,44 @@ class Ring(Item):
 
 # COMBAT
 
-class CombatActionEnum(IntEnum):
+class CombatAttack:
+  def __init__(self, name, ml, roll, dmg_type):
+    self.Name = name
+    self.SkillML = ml
+    self.Roll = roll
+    self.DamageType = dmg_type
+
+
+class CombatHit:
+  def __init__(self, high_max, mid_max, low_max):
+    self.High = high_max
+    self.Mid = mid_max
+    self.Low = low_max
+
+
+class ImpactActionEnum(IntEnum):
   NONE = 0
-  MELEE_ATTACK = 1
-  DODGE = 2
-  BLOCK = 3
-  SPELL = 4
-  ABILITY = 5
-  FLEE = 6
+  WOUND_MILD = 1
+  WOUND_SERIOUS = 2
+  WOUND_GRIEVOUS = 3
+  KILL_CHECK = 4
+  SHOCK = 5
+  FUMBLE = 6
+  STUMBLE = 7
+  AMPUTATE_CHECK = 8
+  BLEED = 9
+
+
+class ImpactAction:
+  def __init__(self, action, level=0):
+    self.Action = action
+    self.Level = level
+
+
+class ImpactResult:
+  def __init__(self, imp_max, actions):
+    self.ImpactMax = imp_max
+    self.ImpactActions = actions
 
 
 # TIME
@@ -1187,11 +1198,12 @@ class SkillEnum(IntEnum):
   CLIMBING = 101
   CONDITIONING = 102
   DANCING = 103
-  JUMPING = 104
-  LEGERDEMAIN = 105
-  STEALTH = 106
-  SWIMMING = 107
-  THROWING = 108
+  DODGE = 104
+  JUMPING = 105
+  LEGERDEMAIN = 106
+  STEALTH = 107
+  SWIMMING = 108
+  THROWING = 109
   # COMMUNICATION
   AWARENESS = 200
   INTRIGUE = 201
@@ -1275,6 +1287,10 @@ skills = {
         Skill("Dancing", SkillClassEnum.PHYSICAL,
               ATTR_DEX, ATTR_AGL, ATTR_AGL, 2,
               {SS_ULA: 1, SS_LAD: 1}, hidden=True),
+    SkillEnum.DODGE:
+        Skill("Dodge", SkillClassEnum.PHYSICAL,
+              ATTR_AGL, ATTR_AGL, ATTR_AGL, 5,
+              {SS_HIR: 1, SS_TAR: 1, SS_TAI: 1}),
     SkillEnum.JUMPING:
         Skill("Jumping", SkillClassEnum.PHYSICAL,
               ATTR_STR, ATTR_AGL, ATTR_AGL, 4,
@@ -1300,7 +1316,7 @@ skills = {
         Skill("Awareness", SkillClassEnum.COMMUNICATION,
               ATTR_EYE, ATTR_HRG, ATTR_SML, 4,
               {SS_HIR: 2, SS_TAR: 2}),
-    SkillEnum.AWARENESS:
+    SkillEnum.INTRIGUE:
         Skill("Intrigue", SkillClassEnum.COMMUNICATION,
               ATTR_INT, ATTR_AUR, ATTR_WIL, 3,
               {SS_TAI: 1, SS_TAR: 1, SS_SKO: 1}),
@@ -1409,12 +1425,17 @@ class PersonTypeEnum(IntEnum):
 
 
 class PersonFlagEnum(IntEnum):
-  COMBAT = 0
-  AGGRESSIVE = 1
-  SHOPKEEP = 2
+  COMBAT_ATT = 0
+  COMBAT_DEF = 1
+  COMBAT_WAIT = 0
+  AGGRESSIVE = 2
+  SHOPKEEP = 3
 
 
-PERS_COMBAT = 1 << PersonFlagEnum.COMBAT
+PERS_COMBAT_ATT = 1 << PersonFlagEnum.COMBAT_ATT
+PERS_COMBAT_DEF = 1 << PersonFlagEnum.COMBAT_DEF
+PERS_COMBAT_WAIT = 1 << PersonFlagEnum.COMBAT_WAIT
+PERS_COMBAT = PERS_COMBAT_ATT | PERS_COMBAT_DEF | PERS_COMBAT_WAIT
 PERS_AGGRESSIVE = 1 << PersonFlagEnum.AGGRESSIVE
 PERS_SHOPKEEP = 1 << PersonFlagEnum.SHOPKEEP
 
@@ -1434,8 +1455,6 @@ class Person:
     self.LongDescription = long_desc
     self.Flags = flags
     self.SkinMaterial = skin
-    self.Action = CombatActionEnum.NONE
-    self.CombatEnemy = None
     self.Attr = dict()
     self.SkillLinks = dict()
     self.Effects = []
@@ -1448,8 +1467,6 @@ class Person:
     self.PersonType = p.PersonType
     self.Name = p.Name
     self.Flags = p.Flags
-    self.Action = p.Action
-    self.CombatEnemy = None
     self.Attr.clear()
     for attr_id, attr in attributes.items():
       if attr_id in p.Attr:
@@ -1480,7 +1497,6 @@ class Person:
       self.AddItem(item_id, il)
 
   def ResetStats(self):
-    self.Action = CombatActionEnum.NONE
     self.Effects.clear()
 
   def AddItem(self, item_id, item):
@@ -1501,6 +1517,38 @@ class Person:
         self.ItemLinks.pop(item_id)
     return True
 
+  def UniversalPenalty(self):
+    # TODO: FatiguePenalty
+    # TODO: InjuryPenalty
+    return 0
+
+  def EquipWeight(self, items):
+    eq = 0
+    for item_id, il in self.ItemLinks.items():
+      if il.Equipped:
+        eq += items[item_id].Weight
+    return eq / 2
+
+  def InvenWeight(self, items):
+    inv = 0
+    for item_id, il in self.ItemLinks.items():
+      if il.Equipped:
+        if il.Quantity > 1:
+          inv += items[item_id].Weight * (il.Quantity - 1)
+      else:
+        inv += items[item_id].Weight * il.Quantity
+    return inv
+
+  def Encumbrance(self, items):
+    return self.EquipWeight(items) + self.InvenWeight(items)
+
+  def EncumbrancePenalty(self, items):
+    return round(self.Encumbrance(items) / self.AttrEndurance(items))
+
+  def PhysicalPenalty(self, items):
+    ret = self.UniversalPenalty() + self.EncumbrancePenalty(items)
+    return ret
+
   def SkillBase(self, skill_id):
     attr1 = 0
     attr2 = 0
@@ -1520,27 +1568,136 @@ class Person:
       ret = self.SkillLinks[skill_id].Attempts
     return ret
 
-  def SkillML(self, skill_id):
+  def SkillML(self, skill_id, items, skipPenalty=False):
     ml = self.SkillBase(skill_id) * skills[skill_id].OMLMod
     if skill_id in self.SkillLinks:
       ml += self.SkillLinks[skill_id].Points
+    if not skipPenalty:
+      if skills[skill_id].SkillClass == SkillClassEnum.PHYSICAL or \
+         skills[skill_id].SkillClass == SkillClassEnum.COMBAT:
+        ml -= (self.PhysicalPenalty(items) * 5)
+      else:
+        ml -= (self.UniversalPenalty() * 5)
+    if ml < 5:
+      ml = 5
     return ml
 
-  def SkillIndex(self, skill_id):
-    return round(self.SkillML(skill_id) / 10)
+  def SkillIndex(self, skill_id, items):
+    return round(self.SkillML(skill_id, items) / 10)
 
   def SkillMax(self, skill_id):
     return 100 + self.SkillBase(skill_id)
+
+  def Defense(self, items, bp_id, dmg_type):
+    m = copy(materials[self.SkinMaterial])
+    for item_id, il in self.ItemLinks.items():
+      if items[item_id].ItemType != ItemTypeEnum.ARMOR:
+        continue
+      if not il.Equipped:
+        continue
+      if items[item_id].Covered(bp_id):
+        m.Add(materials[items[item_id].Material])
+    return m.Protection[dmg_type]
+
+  def AttrInitiative(self, items):
+    return self.SkillML(SkillEnum.INITIATIVE, items)
+
+  def AttrEndurance(self, items):
+    return round(self.SkillML(SkillEnum.CONDITIONING, items,
+                              skipPenalty=True) / 5)
+
+  def AttrDodge(self, items):
+    return self.SkillML(SkillEnum.DODGE, items)
+
+  # COMBAT FLAGS
+
+  def InCombat(self):
+    return self.Flags & PERS_COMBAT > 0
+
+  def ClearCombat(self):
+    self.Flags &= ~PERS_COMBAT
+
+  def SetCombatWait(self):
+    self.ClearCombat()
+    self.Flags |= PERS_COMBAT_WAIT
+
+  def SetCombatAttacker(self):
+    self.ClearCombat()
+    self.Flags |= PERS_COMBAT_ATT
+
+  def IsCombatAttacker(self):
+    return self.Flags & PERS_COMBAT_ATT > 0
+
+  def SetCombatDefender(self):
+    self.ClearCombat()
+    self.Flags |= PERS_COMBAT_DEF
+
+  def IsCombatDefender(self):
+    return self.Flags & PERS_COMBAT_DEF > 0
+
+  def IsAggressive(self):
+    return self.Flags & PERS_AGGRESSIVE > 0
+
+  def GenerateCombatAttacks(self, items, block=False,
+                            default=ItemEnum.NONE):
+    attacks = []
+    # count hands used
+    count = 0
+    def_skill = 0
+    def_item_id = ItemEnum.NONE
+    for item_id, il in self.ItemLinks.items():
+      if not il.Equipped:
+        continue
+      if items[item_id].ItemType == ItemTypeEnum.WEAPON or \
+         items[item_id].ItemType == ItemTypeEnum.SHIELD:
+        if block:
+          skill = self.SkillML(items[item_id].Skill, items)
+          skill += items[item_id].DefenseRating
+          if skill > def_skill:
+            def_skill = skill
+            def_item_id = item_id
+        count += 1
+    # create attacks
+    # for BLOCK only generate the blocking weapon / shield
+    if block:
+      if def_item_id == ItemEnum.NONE:
+        return attacks
+      ml = self.SkillML(items[def_item_id].Skill, items)
+      ml += items[def_item_id].DefenseRating
+      attacks.append(CombatAttack(items[def_item_id].ItemName, ml,
+                                  items[def_item_id].Roll,
+                                  items[def_item_id].DamageType))
+    else:
+      for item_id, il in self.ItemLinks.items():
+        if not il.Equipped:
+          continue
+        if items[item_id].ItemType == ItemTypeEnum.WEAPON:
+          ml = self.SkillML(items[item_id].Skill, items)
+          ml += items[item_id].AttackRating
+          if count > 1:
+            ml -= items[item_id].SingleHandPenalty
+          attacks.append(CombatAttack(items[item_id].ItemName, ml,
+                                      items[item_id].Roll,
+                                      items[item_id].DamageType))
+    if len(attacks) < 1 and default != ItemEnum.NONE:
+          ml = self.SkillML(items[default].Skill, items)
+          ml += items[default].AttackRating
+          attacks.append(CombatAttack(items[default].ItemName, ml,
+                                      items[default].Roll,
+                                      items[default].DamageType))
+    return attacks
 
 
 # MOB
 
 class MobAttack:
-  def __init__(self, name, chance, ml, dmg=None,
-               dmg_type=DamageTypeEnum.NONE):
-    self.Name = name,
-    self.ChanceMax = chance,
-    self.SkillML = ml,
+  def __init__(self, name, chance, ml, ar=0, dr=0, dmg=None,
+               dmg_type=DamageTypeEnum.BLUNT):
+    self.Name = name
+    self.ChanceMax = chance
+    self.SkillML = ml
+    self.AttackRating = ar
+    self.DefenseRating = dr
     self.Damage = dmg
     self.DamageType = dmg_type
 
@@ -1548,31 +1705,51 @@ class MobAttack:
 class Mob(Person):
   def __init__(self, name, long_desc, ini, end, dodge, flags=0,
                skin=MaterialEnum.NONE, cur=None, attrs=None,
-               mob_attacks=None, mob_skills=None, eq=None, loot=None):
+               num_attacks=1, mob_attacks=None, mob_skills=None, eq=None,
+               loot=None):
     super().__init__(PersonTypeEnum.MONSTER, name, long_desc, flags, skin,
                      it=eq)
     self.CurrencyGen = cur
     self.Initiative = ini
     self.Endurance = end
     self.Dodge = dodge
+    self.NumAttacks = num_attacks
+    self.MobAttacks = mob_attacks
     if attrs is not None:
       for attr_id, value in attrs.items():
         self.Attr.update({attr_id: value})
-    self.MobAttacks = mob_attacks
     if mob_skills is not None:
       for skill_id, points in mob_skills.items():
         self.SkillLinks.update({skill_id: SkillLink(points)})
     self.Loot = loot
     super().ResetStats()
 
-  def AttrInitiative(self):
-    return self.Initiative
+  def AttrInitiative(self, items):
+    return self.Initiative - (self.PhysicalPenalty(items) * 5)
 
-  def AttrEndurance(self):
+  def AttrEndurance(self, items):
     return self.Endurance
 
-  def AttrDodge(self):
-    return self.Dodge
+  def AttrDodge(self, items):
+    return self.Dodge - (self.PhysicalPenalty(items) * 5)
+
+  def GenerateCombatAttacks(self, items, block=False,
+                            default=ItemEnum.NONE):
+    attacks = []
+    # Look for a "natural" attack
+    if not block and self.MobAttacks is not None:
+      for a in range(self.NumAttacks):
+        for ma in self.MobAttacks:
+          if DiceRoll(1, 100).Result() <= ma.ChanceMax:
+            ml = ma.SkillML + ma.AttackRating
+            ml -= (self.PhysicalPenalty(items) * 5)
+            ca = CombatAttack(ma.Name, ml, ma.Damage, ma.DamageType)
+            attacks.append(ca)
+            break
+    # Look for equipped weapons
+    if len(attacks) < 1:
+      attacks = super().GenerateCombatAttacks(items, block, default)
+    return attacks
 
 
 # PLAYER
@@ -1751,34 +1928,9 @@ class Player(Person):
         break
     return ret
 
-  def AttrInitiative(self):
-    return self.SkillML(SkillEnum.INITIATIVE)
-
-  def AttrEndurance(self):
-    return round(self.SkillML(SkillEnum.CONDITIONING) / 5)
-
-  def AttrDodge(self):
-    return self.Attr[AttrEnum.AGILITY] * 5
-
-  def EquipWeight(self, items):
-    eq = 0
-    for item_id, il in self.ItemLinks.items():
-      if il.Equipped:
-        eq += items[item_id].Weight
-    return eq / 2
-
-  def InvenWeight(self, items):
-    inv = 0
-    for item_id, il in self.ItemLinks.items():
-      if il.Equipped:
-        if il.Quantity > 1:
-          inv += items[item_id].Weight * (il.Quantity - 1)
-      else:
-        inv += items[item_id].Weight * il.Quantity
-    return inv
-
-  def Encumbrance(self, items):
-    return self.EquipWeight(items) + self.InvenWeight(items)
+  def GenerateCombatAttacks(self, items, block=False,
+                            default=ItemEnum.WEAPON_HAND):
+      return super().GenerateCombatAttacks(items, block, default)
 
 
 # ROOM
@@ -1854,7 +2006,6 @@ class PersonLink:
   def __init__(self, person_id, unique):
     self.Person = person_id
     self.UUID = unique
-    self.CombatEnemy = None
 
 
 class RoomSpawn:
