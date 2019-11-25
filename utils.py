@@ -6,7 +6,6 @@
 
 from sys import exit
 from textwrap import TextWrapper
-from copy import copy
 
 from global_defines import (attribute_classes, attributes, months, sunsigns,
                             cultures, social_classes, sibling_ranks,
@@ -260,7 +259,7 @@ def actionGetItem(player, rooms):
 
 def actionInventory(player, rooms):
   print("\n%sCURRENCY%s: %d sp" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL,
-                                  player.Currency))
+                                   player.Currency))
   print("\n%sEQUIPMENT%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   links = filterLinks(player.ItemLinks, equipped=True)
   if len(links) < 1:

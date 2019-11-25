@@ -277,7 +277,7 @@ def combat(player, enemies):
       # start of combat round
       att.Reset()
       defe.Reset()
-      
+
       logd("* START TURN: %s *" % order[i].Name)
 
       if order[i] == player:
@@ -391,7 +391,7 @@ def combat(player, enemies):
                     (defe.Person.Name, at.Name.lower()))
             else:
               print("\n[%s] MISSES you with [%s]." %
-                     (att.Person.Name, at.Name.lower()))
+                    (att.Person.Name, at.Name.lower()))
           elif res.Result == ResultEnum.BLOCK:
             if att.Person == player:
               print("\n[%s] BLOCKS your attack with [%s]." %
@@ -447,7 +447,7 @@ def combat(player, enemies):
                   print("[%s's %s] GLANCES off you with no effect!" %
                         (att.Person.Name, at.Name))
               else:
-                
+
                 # check impact effect
                 ia_list = None
                 for ir in dmg_table_melee[at.DamageType][loc]:

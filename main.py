@@ -15,11 +15,10 @@
 # Main setup
 
 from random import seed
-from time import (gmtime, sleep)
+from time import gmtime
 from calendar import timegm
 
 from global_defines import (logd, DiceRoll, ItemEnum, ItemLink, Player,
-                            PERS_AGGRESSIVE,
                             RoomEnum, RoomFuncResponse, ANSI)
 from utils import (printRoomDescription, printRoomObjects, prompt)
 from rooms import rooms
@@ -108,9 +107,7 @@ while True:
 #      print("\nThe last of your strength slips away, and your vision\n"
 #            "fades to black...")
 #      print("\n%sYou have died!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-#      sleep(2)
 #      print("\nYou slow come back to your senses ...\n")
-#      sleep(2)
 #      player.SetRoom(ROOM_RESPAWN)
     continue
 

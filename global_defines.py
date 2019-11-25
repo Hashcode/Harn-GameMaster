@@ -823,34 +823,34 @@ class Culture(AttrNameMax):
 
 cultures = {
     CultureEnum.FEUDAL: Culture("Feudal", 80,
-        {
-            SocialClassEnum.SLAVE: 15,
-            SocialClassEnum.SERF: 70,
-            SocialClassEnum.UNGUILDED: 93,
-            SocialClassEnum.GUILDED: 98,
-            SocialClassEnum.NOBLE: 100,
-        }),
+                                {
+                                    SocialClassEnum.SLAVE: 15,
+                                    SocialClassEnum.SERF: 70,
+                                    SocialClassEnum.UNGUILDED: 93,
+                                    SocialClassEnum.GUILDED: 98,
+                                    SocialClassEnum.NOBLE: 100,
+                                }),
     CultureEnum.IMPERIAL: Culture("Imperial", 90,
-        {
-            SocialClassEnum.SLAVE: 25,
-            SocialClassEnum.UNGUILDED: 90,
-            SocialClassEnum.GUILDED: 98,
-            SocialClassEnum.NOBLE: 100,
-        }),
+                                  {
+                                      SocialClassEnum.SLAVE: 25,
+                                      SocialClassEnum.UNGUILDED: 90,
+                                      SocialClassEnum.GUILDED: 98,
+                                      SocialClassEnum.NOBLE: 100,
+                                  }),
     CultureEnum.VIKING: Culture("Viking", 95,
-        {
-            SocialClassEnum.SLAVE: 15,
-            SocialClassEnum.FREEMAN: 80,
-            SocialClassEnum.UNGUILDED: 93,
-            SocialClassEnum.GUILDED: 98,
-            SocialClassEnum.NOBLE: 100,
-        }),
+                                {
+                                    SocialClassEnum.SLAVE: 15,
+                                    SocialClassEnum.FREEMAN: 80,
+                                    SocialClassEnum.UNGUILDED: 93,
+                                    SocialClassEnum.GUILDED: 98,
+                                    SocialClassEnum.NOBLE: 100,
+                                }),
     CultureEnum.TRIBAL: Culture("Tribal", 100,
-        {
-            SocialClassEnum.SLAVE: 10,
-            SocialClassEnum.UNGUILDED: 99,
-            SocialClassEnum.NOBLE: 100,
-        }),
+                                {
+                                    SocialClassEnum.SLAVE: 10,
+                                    SocialClassEnum.UNGUILDED: 99,
+                                    SocialClassEnum.NOBLE: 100,
+                                }),
 }
 
 
@@ -1473,8 +1473,10 @@ class Person:
         self.Attr.update({attr_id: p.Attr[attr_id]})
       else:
         # add new attributes
-        self.Attr.update({attr_id: DiceRoll(attr.GenRolls, attr.GenDice,
-                                            flags=attr.GenFlags).Result() + \
+        self.Attr.update({attr_id:
+                          DiceRoll(attr.GenRolls,
+                                   attr.GenDice,
+                                   flags=attr.GenFlags).Result() + \
                           attr.GenMod})
     self.SkillLinks.clear()
     # copy all skills into skill training
@@ -1680,11 +1682,11 @@ class Person:
                                       items[item_id].Roll,
                                       items[item_id].DamageType))
     if len(attacks) < 1 and default != ItemEnum.NONE:
-          ml = self.SkillML(items[default].Skill, items)
-          ml += items[default].AttackRating
-          attacks.append(CombatAttack(items[default].ItemName, ml,
-                                      items[default].Roll,
-                                      items[default].DamageType))
+      ml = self.SkillML(items[default].Skill, items)
+      ml += items[default].AttackRating
+      attacks.append(CombatAttack(items[default].ItemName, ml,
+                                  items[default].Roll,
+                                  items[default].DamageType))
     return attacks
 
 
@@ -1778,10 +1780,10 @@ class Player(Person):
 
   def CalcSunsign(self):
     for ss_id, ss in sunsigns.items():
-      if (self.Attr[AttrEnum.BIRTH_MONTH] == ss.StartMonth and \
-         self.Attr[AttrEnum.BIRTH_DAY] >= ss.StartDay) or \
-         (self.Attr[AttrEnum.BIRTH_MONTH] == ss.EndMonth and \
-         self.Attr[AttrEnum.BIRTH_DAY] <= ss.EndDay):
+      bm = self.Attr[AttrEnum.BIRTH_MONTH]
+      bd = self.Attr[AttrEnum.BIRTH_DAY]
+      if (bm == ss.StartMonth and bd >= ss.StartDay) or \
+         (bm == ss.EndMonth and bd <= ss.EndDay):
           self.Sunsign = ss_id
           break
 
