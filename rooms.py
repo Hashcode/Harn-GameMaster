@@ -188,7 +188,7 @@ rooms = {
                  DirectionEnum.EAST: Exit(RoomEnum.BL_EASTERN_WALK),
              },
              spawns=[
-                 RoomSpawn(PersonEnum.MON_RAT, 33, 1, 60),
+                 RoomSpawn(PersonEnum.MON_RAT, 100, 1, 60),
              ]),
     RoomEnum.BL_SOUTHEASTERN_WALK:
         Room("South-Eastern Walk", "the south-eastern walk",
