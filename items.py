@@ -55,6 +55,7 @@ ARMOR_LAYER3_5 = 5
 ARMOR_LAYER4 = 6
 ARMOR_LAYER4_5 = 7
 ARMOR_LAYER5 = 8
+ARMOR_LAYER5_5 = 9
 
 AL_1 = 1 << ARMOR_LAYER1
 AL_1_5 = 1 << ARMOR_LAYER1_5
@@ -65,6 +66,7 @@ AL_3_5 = 1 << ARMOR_LAYER3_5
 AL_4 = 1 << ARMOR_LAYER4
 AL_4_5 = 1 << ARMOR_LAYER4_5
 AL_5 = 1 << ARMOR_LAYER5
+AL_5_5 = 1 << ARMOR_LAYER5_5
 
 
 items = {
@@ -279,7 +281,7 @@ items = {
               COV_Sh | COV_Tx | COV_Ab | COV_Hp | COV_Gr | COV_Th),
     ItemEnum.ARMOR_LEGGINGS_LEATHER:
         Armor("leather leggings",
-              QualityEnum.AVE, MaterialEnum.LEATHER, AL_3,
+              QualityEnum.AVE, MaterialEnum.LEATHER, AL_3_5,
               COV_Hp | COV_Gr | COV_Th | COV_Kn | COV_Ca | COV_Ft),
     ItemEnum.ARMOR_SHOES_LEATHER:
         Armor("leather shoes",
@@ -355,7 +357,7 @@ items = {
     ItemEnum.ARMOR_LEGGINGS_LEATHER_RING:
         Armor("studded leather leggings",
               QualityEnum.AVE, MaterialEnum.LEATHER_RING,
-              AL_3_5 | AL_4_5 | AL_5,
+              AL_3_5 | AL_4_5 | AL_5_5,
               COV_Hp | COV_Gr | COV_Th | COV_Kn | COV_Ca | COV_Ft),
     ItemEnum.ARMOR_GAUNTLETS_LEATHER_RING:
         Armor("studded leather gauntlets",
@@ -431,11 +433,11 @@ items = {
               COV_Fo),
     ItemEnum.ARMOR_KNEECOPS_STEEL:
         Armor("steel kneecops",
-              QualityEnum.AVE, MaterialEnum.STEEL, AL_5,
+              QualityEnum.AVE, MaterialEnum.STEEL, AL_5_5,
               COV_Kn),
     ItemEnum.ARMOR_GREAVES_STEEL:
         Armor("steel greaves",
-              QualityEnum.AVE, MaterialEnum.STEEL, AL_5,
+              QualityEnum.AVE, MaterialEnum.STEEL, AL_5_5,
               COV_Ca),
 
     # RING
