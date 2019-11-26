@@ -13,7 +13,7 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             complexions, color_hairs, color_eyes,
                             skill_classes, skills, item_flags, body_parts,
                             materials, NumAdj, DamageTypeEnum, AttrEnum,
-                            Material, PlayerCombatState,
+                            Material, PlayerCombatState, PersonTypeEnum,
                             ItemTypeEnum, ItemFlagEnum,
                             ItemLink, DirectionEnum,
                             ANSI)
@@ -331,31 +331,36 @@ def actionInfo(player, rooms):
                        color_eyes[player.AttrColorEye()].Name))
 
 
-def actionStats(player, rooms):
-  for ac_id, ac in attribute_classes.items():
-    if ac.Hidden:
-      continue
-    print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, ac.Name.upper(),
+def actionStats(person, rooms):
+  if person.PersonType == PersonTypeEnum.PLAYER:
+    for ac_id, ac in attribute_classes.items():
+      if ac.Hidden:
+        continue
+      print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, ac.Name.upper(),
+                                  ANSI.TEXT_NORMAL))
+      for attr, val in person.Attr.items():
+        if not attributes[attr].Hidden:
+          if attributes[attr].AttrClass == ac_id:
+            print("%-15s: %d" % (attributes[attr].Name, val))
+    print("\n%sCHARACTER STATS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  else:
+    print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, person.Name.upper(),
                                 ANSI.TEXT_NORMAL))
-    for attr, val in player.Attr.items():
-      if not attributes[attr].Hidden and attributes[attr].AttrClass == ac_id:
-        print("%-15s: %d" % (attributes[attr].Name, val))
-  print("\n%sCHARACTER STATS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-  print("%-15s: %d" % ("Endurance", player.AttrEndurance(items)))
-  print("%-15s: %d lbs" % ("Total Weight", player.ItemWeight(items)))
-  print("%-15s: %d" % ("Enc. Points", player.EncumbrancePenalty(items)))
-  print("%-15s: %d" % ("Injury Points", player.InjuryPoints()))
-  print("%-15s: %d" % ("Fatigue Points", player.FatiguePoints()))
-  print("%-15s: %d" % ("Initiative", player.AttrInitiative(items)))
+  print("%-15s: %d" % ("Endurance", person.AttrEndurance(items)))
+  print("%-15s: %d lbs" % ("Total Weight", person.ItemWeight(items)))
+  print("%-15s: %d" % ("Enc. Points", person.EncumbrancePenalty(items)))
+  print("%-15s: %d" % ("Injury Points", person.IP()))
+  print("%-15s: %d" % ("Fatigue Points", person.FatiguePoints()))
+  print("%-15s: %d" % ("Initiative", person.AttrInitiative(items)))
   print("\n%s%-15s: %d%s" % (ANSI.TEXT_BOLD, "Universal Pen.",
-                             player.UniversalPenalty(), ANSI.TEXT_NORMAL))
+                             person.UniversalPenalty(), ANSI.TEXT_NORMAL))
   print("%s%-15s: %d%s" % (ANSI.TEXT_BOLD, "Physical Pen.",
-                           player.PhysicalPenalty(items), ANSI.TEXT_NORMAL))
+                           person.PhysicalPenalty(items), ANSI.TEXT_NORMAL))
   print("\n%sWOUND LIST%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-  if len(player.Wounds) < 1:
+  if len(person.Wounds) < 1:
     print("[NONE]")
   else:
-    for w in player.Wounds:
+    for w in person.Wounds:
       print("%s %s %s wound [%d IP]" %
             (wounds[w.WoundType].Name,
              wounds[w.WoundType].Verbs[w.DamageType].lower(),
@@ -437,6 +442,31 @@ def actionAttack(player, rooms):
       break
   if player.CombatTarget is not None:
     return True
+
+
+def actionExamine(player, rooms):
+  print("\nChoose a target:\n")
+  if len(rooms[player.Room].Persons) < 1:
+    print("[NONE]")
+    return
+  count = 0
+  for t in rooms[player.Room].Persons:
+    count += 1
+    print("%d. %s" % (count, t.Name))
+  x = input("\nWhich # to examine: ").lower()
+  if not x.isnumeric():
+    print("\nInvalid target.")
+    return
+  personNum = int(x)
+  if personNum < 1 or personNum > len(rooms[player.Room].Persons):
+    print("\nInvalid target.")
+    return
+  count = 0
+  for x in rooms[player.Room].Persons:
+    count += 1
+    if count == personNum:
+      actionStats(x, rooms)
+      break
 
 
 def actionListPlayers(player, rooms):
@@ -547,6 +577,7 @@ commands.append(GenericCommand(["attack", "a"], actionAttack))
 commands.append(GenericCommand(["close"], actionComingSoon))
 commands.append(GenericCommand(["drop"], actionDropItem))
 commands.append(GenericCommand(["equip", "eq"], actionEquipItem))
+commands.append(GenericCommand(["examine", "ex"], actionExamine))
 commands.append(GenericCommand(["get"], actionGetItem))
 commands.append(GenericCommand(["help", "?"], actionPrintHelp))
 commands.append(GenericCommand(["info", "inf"], actionInfo))
