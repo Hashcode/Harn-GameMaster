@@ -15,18 +15,18 @@
 # Main setup
 
 from random import seed
-from time import gmtime
-from calendar import timegm
 
-from global_defines import (logd, DiceRoll, ItemEnum, ItemLink, Player,
-                            RoomEnum, RoomFuncResponse, ANSI)
+from global_defines import (ItemEnum, ItemLink, Player,
+                            RoomEnum, RoomFuncResponse, ANSI, GameData)
 from utils import (printRoomDescription, printRoomObjects, prompt)
-from rooms import rooms
+from items import items
 from person import persons
+from rooms import rooms
 from combat import combat
 
 TestMode = True
 
+ROOM_START = RoomEnum.BL_KEEP_GATEHOUSE
 ROOM_RESPAWN = RoomEnum.BL_PRIEST_CHAMBER
 
 seed()
@@ -35,25 +35,18 @@ print(ANSI.CLEAR + ANSI.RESET_CURSOR, end='')
 player = Player("Unknown")
 player.SetRoom(RoomEnum.GAME_START)
 
+GameData.SetItems(items)
+GameData.SetPersons(persons)
+GameData.SetRooms(rooms)
+GameData.ROOM_START = ROOM_START
+GameData.ROOM_RESPAWN = ROOM_RESPAWN
+
+
 if TestMode:
-  player.AddItem(ItemEnum.WEAPON_DAGGER, ItemLink(1, equip=True))
-  player.AddItem(ItemEnum.WEAPON_CLUB, ItemLink(1))
-  player.AddItem(ItemEnum.SHIELD_BUCKLER_BANDED, ItemLink(1, equip=True))
+  player.AddItem(ItemEnum.WEAPON_CLUB, ItemLink(1, equip=True))
 
   player.AddItem(ItemEnum.ARMOR_TUNIC_CLOTH, ItemLink(1, equip=True))
   player.AddItem(ItemEnum.ARMOR_LEGGINGS_CLOTH, ItemLink(1, equip=True))
-
-  player.AddItem(ItemEnum.ARMOR_HALFHELM_LEATHER_RING, ItemLink(1, equip=True))
-  player.AddItem(ItemEnum.ARMOR_HAUBERK_LEATHER_RING, ItemLink(1, equip=True))
-  player.AddItem(ItemEnum.ARMOR_LEGGINGS_LEATHER_RING, ItemLink(1, equip=True))
-  player.AddItem(ItemEnum.ARMOR_GAUNTLETS_LEATHER_RING, ItemLink(1,
-                                                                 equip=True))
-  player.AddItem(ItemEnum.ARMOR_SHOES_LEATHER, ItemLink(1, equip=True))
-
-  player.AddItem(ItemEnum.RING_ATTACK_SILVER, ItemLink(1, equip=True))
-  player.AddItem(ItemEnum.MISC_STONE, ItemLink(2))
-
-NextRoomEvent = 0
 
 while True:
   enemies = []
@@ -68,36 +61,8 @@ while True:
   if res == RoomFuncResponse.SKIP:
     continue
 
-  # Check for room spawns
-  seconds = timegm(gmtime())
-  if NextRoomEvent < seconds:
-    logd("RoomEvents check")
-    # Set NextRoomEvent max 10mins
-    NextRoomEvent = seconds + (10 * 60)
-    for r in rooms:
-      if rooms[r].Spawns is None:
-        continue
-      for s in rooms[r].Spawns:
-        if s.LastSpawnCheck + s.SpawnDelaySeconds >= seconds:
-          if NextRoomEvent > s.LastSpawnCheck + s.SpawnDelaySeconds:
-            NextRoomEvent = s.LastSpawnCheck + s.SpawnDelaySeconds
-            logd("Next RoomEvents check in %d seconds" %
-                 (NextRoomEvent - seconds))
-          continue
-        s.LastSpawnCheck = seconds
-        if NextRoomEvent > seconds + s.SpawnDelaySeconds:
-          NextRoomEvent = seconds + s.SpawnDelaySeconds
-          logd("Next RoomEvents check in %d seconds" %
-               (NextRoomEvent - seconds))
-        count = 0
-        for p in rooms[r].Persons:
-          if p.PersonID == s.Person:
-            count += 1
-        if count < s.MaxQuantity:
-          logd("SpawnCheck [%s] in %s [<=%d]" % (persons[s.Person].Name,
-                                                 rooms[r].Title, s.Chance))
-          if DiceRoll(1, 100).Result() <= s.Chance:
-            rooms[r].AddPerson(s.Person, persons)
+  # Check for room events
+  GameData.ProcessRoomEvents()
 
   printRoomObjects(player.Room, rooms)
 
