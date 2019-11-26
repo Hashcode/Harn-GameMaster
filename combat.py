@@ -405,6 +405,8 @@ def combat(player, enemies):
                     if c.Flags & FLAG_DEAD == 0 and c.UUID == uid:
                       att.Target = c
                       break
+                if att.Target is not None:
+                  break
         defe = att.Target
 
         logd("PLAYER ACTION: %s vs. %s" %
