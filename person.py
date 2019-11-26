@@ -10,10 +10,12 @@ from global_defines import (DiceRoll, DamageTypeEnum, ItemEnum, AttrEnum,
 
 persons = {
     PersonEnum.MON_RAT:
-        Mob("ugly rat", "An ugly rat scurries across the ground.", 45, 6, 35,
+        Mob(PersonEnum.MON_RAT, "an ugly rat",
+            "An ugly rat scurries across the ground.", 45, 6, 35,
             PERS_AGGRESSIVE,
             MaterialEnum.FUR_LT,
             attrs={
+                AttrEnum.SEX: 0,
                 AttrEnum.STRENGTH: 5,
                 AttrEnum.STAMINA: 8,
                 AttrEnum.DEXTERITY: 4,
@@ -39,9 +41,11 @@ persons = {
                 ItemEnum.MISC_RAT_FUR: 75,
             }),
     PersonEnum.BL_KEEP_GUARD:
-        Mob("gatehouse guard", "An impassive guard stares ahead.", 60, 17, 50,
+        Mob(PersonEnum.BL_KEEP_GUARD, "a gatehouse guard",
+            "An impassive guard stares ahead.", 60, 17, 50,
             cur=DiceRoll(1, 6, 40),
             attrs={
+                AttrEnum.SEX: 1,
                 AttrEnum.STRENGTH: 14,
                 AttrEnum.STAMINA: 14,
                 AttrEnum.DEXTERITY: 12,

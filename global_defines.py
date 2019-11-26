@@ -8,7 +8,7 @@ import random
 
 from enum import IntEnum
 from uuid import uuid4
-from copy import copy
+from copy import deepcopy
 
 
 # Logging
@@ -605,9 +605,9 @@ class CombatHit:
 
 class ImpactActionEnum(IntEnum):
   NONE = 0
-  WOUND_MILD = 1
-  WOUND_SERIOUS = 2
-  WOUND_GRIEVOUS = 3
+  WOUND_MLD = 1
+  WOUND_SRS = 2
+  WOUND_GRV = 3
   KILL_CHECK = 4
   SHOCK = 5
   FUMBLE = 6
@@ -767,14 +767,23 @@ class AttrNameMax:
 
 # SEX
 
+class AttrSexNameMax(AttrNameMax):
+  def __init__(self, name, pronoun, posses, attr_max):
+    super().__init__(name, attr_max)
+    self.Pronoun = pronoun
+    self.PossessivePronoun = posses
+
+
 class SexEnum(IntEnum):
-  MALE = 0
-  FEMALE = 1
+  NONE = 0
+  MALE = 1
+  FEMALE = 2
 
 
 sexes = {
-    SexEnum.MALE: AttrNameMax("Male", 48),
-    SexEnum.FEMALE: AttrNameMax("Female", 100),
+    SexEnum.NONE: AttrSexNameMax("None", "It", "Its", 0),
+    SexEnum.MALE: AttrSexNameMax("Male", "He", "His", 48),
+    SexEnum.FEMALE: AttrSexNameMax("Female", "She", "Her", 100),
 }
 
 
@@ -1418,24 +1427,15 @@ class PersonEnum(IntEnum):
 
 
 class PersonTypeEnum(IntEnum):
-  NONE = 0
-  MONSTER = 1
-  NPC = 2
-  PLAYER = 4
+  PLAYER = 0
+  NPC = 1
 
 
 class PersonFlagEnum(IntEnum):
-  COMBAT_ATT = 0
-  COMBAT_DEF = 1
-  COMBAT_WAIT = 0
-  AGGRESSIVE = 2
-  SHOPKEEP = 3
+  AGGRESSIVE = 0
+  SHOPKEEP = 1
 
 
-PERS_COMBAT_ATT = 1 << PersonFlagEnum.COMBAT_ATT
-PERS_COMBAT_DEF = 1 << PersonFlagEnum.COMBAT_DEF
-PERS_COMBAT_WAIT = 1 << PersonFlagEnum.COMBAT_WAIT
-PERS_COMBAT = PERS_COMBAT_ATT | PERS_COMBAT_DEF | PERS_COMBAT_WAIT
 PERS_AGGRESSIVE = 1 << PersonFlagEnum.AGGRESSIVE
 PERS_SHOPKEEP = 1 << PersonFlagEnum.SHOPKEEP
 
@@ -1446,10 +1446,43 @@ class ItemLink:
     self.Equipped = equip
 
 
+class WoundDesc:
+  def __init__(self, name, verbs, ip_bonus=0):
+    self.Name = name
+    self.Verbs = verbs
+    self.IPBonus = ip_bonus
+
+
+wounds = {
+    ImpactActionEnum.WOUND_MLD: WoundDesc("Mild",
+                                          ["Bruised",
+                                           "Cut",
+                                           "Poked",
+                                           "Singed"], 0),
+    ImpactActionEnum.WOUND_SRS: WoundDesc("Serious",
+                                          ["Crushed",
+                                           "Slashed",
+                                           "Stabbed",
+                                           "Scorched"], 5),
+    ImpactActionEnum.WOUND_GRV: WoundDesc("Grievous",
+                                          ["Pulverized",
+                                           "Shredded",
+                                           "Skewered",
+                                           "Cremated"], 10),
+}
+
+
+class PersonWound:
+  def __init__(self, wound_type, dmg_type, loc, impact):
+    self.WoundType = wound_type
+    self.DamageType = dmg_type
+    self.Location = loc
+    self.Impact = impact
+
+
 class Person:
   def __init__(self, person_type, name, long_desc="", flags=0,
                skin=MaterialEnum.NONE, it=None):
-    # None == Template
     self.PersonType = person_type
     self.Name = name
     self.LongDescription = long_desc
@@ -1457,6 +1490,7 @@ class Person:
     self.SkinMaterial = skin
     self.Attr = dict()
     self.SkillLinks = dict()
+    self.Wounds = []
     self.Effects = []
     self.ItemLinks = dict()
     if it is not None:
@@ -1491,6 +1525,9 @@ class Person:
             break
         # add new skills
         self.SkillLinks.update({skill_id: SkillLink(points)})
+    self.Wounds.clear()
+    for x in p.Wounds:
+      self.Wounds.append(x)
     self.Effects.clear()
     for x in p.Effects:
       self.Effects.append(x)
@@ -1519,17 +1556,46 @@ class Person:
         self.ItemLinks.pop(item_id)
     return True
 
-  def UniversalPenalty(self):
-    # TODO: FatiguePenalty
-    # TODO: InjuryPenalty
+  def AttrSex(self):
+    ret = SexEnum.NONE
+    for s_id, s in sexes.items():
+      if self.Attr[AttrEnum.SEX] <= s.AttrMax:
+        ret = s_id
+        break
+    return ret
+
+  def AttrSexStr(self):
+    return sexes[self.AttrSex()].Name
+
+  def AttrSexPronounStr(self):
+    return sexes[self.AttrSex()].Pronoun
+
+  def AttrSexPossessivePronounStr(self):
+    return sexes[self.AttrSex()].PossessivePronoun
+
+  def InjuryPoints(self):
+    ret = 0
+    for x in self.Wounds:
+      ret += x.Impact
+    return ret
+
+  def FatiguePoints(self):
     return 0
+
+  def UniversalPenalty(self):
+    ret = self.InjuryPoints()
+    ret += self.FatiguePoints()
+    return int(ret / 10)
+
+  def UniversalPenaltyIndex(self):
+    return int(self.UniversalPenalty() / 10)
 
   def EquipWeight(self, items):
     eq = 0
     for item_id, il in self.ItemLinks.items():
       if il.Equipped:
         eq += items[item_id].Weight
-    return eq / 2
+    return eq
 
   def InvenWeight(self, items):
     inv = 0
@@ -1541,15 +1607,20 @@ class Person:
         inv += items[item_id].Weight * il.Quantity
     return inv
 
-  def Encumbrance(self, items):
+  def ItemWeight(self, items):
     return self.EquipWeight(items) + self.InvenWeight(items)
 
+  def FatigueRate(self, items):
+    return self.ItemWeight(items) / self.AttrEndurance(items)
+
   def EncumbrancePenalty(self, items):
-    return round(self.Encumbrance(items) / self.AttrEndurance(items))
+    return round(self.FatigueRate(items) * 3)
 
   def PhysicalPenalty(self, items):
-    ret = self.UniversalPenalty() + self.EncumbrancePenalty(items)
-    return ret
+    ret = self.InjuryPoints()
+    ret += self.FatiguePoints()
+    ret += self.EncumbrancePenalty(items)
+    return int(ret / 10)
 
   def SkillBase(self, skill_id):
     attr1 = 0
@@ -1591,7 +1662,8 @@ class Person:
     return 100 + self.SkillBase(skill_id)
 
   def Defense(self, items, bp_id, dmg_type):
-    m = copy(materials[self.SkinMaterial])
+    m = Material("None", 0, 0, [0, 0, 0, 0])
+    m.Copy(materials[self.SkinMaterial])
     for item_id, il in self.ItemLinks.items():
       if items[item_id].ItemType != ItemTypeEnum.ARMOR:
         continue
@@ -1605,37 +1677,13 @@ class Person:
     return self.SkillML(SkillEnum.INITIATIVE, items)
 
   def AttrEndurance(self, items):
-    return round(self.SkillML(SkillEnum.CONDITIONING, items,
-                              skipPenalty=True) / 5)
+    sb = self.SkillBase(SkillEnum.CONDITIONING)
+    ml = self.SkillML(SkillEnum.CONDITIONING, items,
+                      skipPenalty=True)
+    return round(sb + (ml / sb - 5))
 
   def AttrDodge(self, items):
     return self.SkillML(SkillEnum.DODGE, items)
-
-  # COMBAT FLAGS
-
-  def InCombat(self):
-    return self.Flags & PERS_COMBAT > 0
-
-  def ClearCombat(self):
-    self.Flags &= ~PERS_COMBAT
-
-  def SetCombatWait(self):
-    self.ClearCombat()
-    self.Flags |= PERS_COMBAT_WAIT
-
-  def SetCombatAttacker(self):
-    self.ClearCombat()
-    self.Flags |= PERS_COMBAT_ATT
-
-  def IsCombatAttacker(self):
-    return self.Flags & PERS_COMBAT_ATT > 0
-
-  def SetCombatDefender(self):
-    self.ClearCombat()
-    self.Flags |= PERS_COMBAT_DEF
-
-  def IsCombatDefender(self):
-    return self.Flags & PERS_COMBAT_DEF > 0
 
   def IsAggressive(self):
     return self.Flags & PERS_AGGRESSIVE > 0
@@ -1667,8 +1715,7 @@ class Person:
       ml = self.SkillML(items[def_item_id].Skill, items)
       ml += items[def_item_id].DefenseRating
       attacks.append(CombatAttack(items[def_item_id].ItemName, ml,
-                                  items[def_item_id].Roll,
-                                  items[def_item_id].DamageType))
+                                  None, DamageTypeEnum.BLUNT))
     else:
       for item_id, il in self.ItemLinks.items():
         if not il.Equipped:
@@ -1705,12 +1752,15 @@ class MobAttack:
 
 
 class Mob(Person):
-  def __init__(self, name, long_desc, ini, end, dodge, flags=0,
+  def __init__(self, person_id, name, long_desc, ini, end, dodge, flags=0,
                skin=MaterialEnum.NONE, cur=None, attrs=None,
                num_attacks=1, mob_attacks=None, mob_skills=None, eq=None,
                loot=None):
-    super().__init__(PersonTypeEnum.MONSTER, name, long_desc, flags, skin,
+    super().__init__(PersonTypeEnum.NPC, name, long_desc, flags, skin,
                      it=eq)
+    # None == Template / Char
+    self.UUID = None
+    self.PersonID = person_id
     self.CurrencyGen = cur
     self.Initiative = ini
     self.Endurance = end
@@ -1756,6 +1806,14 @@ class Mob(Person):
 
 # PLAYER
 
+
+class PlayerCombatState(IntEnum):
+  NONE = 0
+  WAIT = 1
+  ATTACK = 2
+  DEFEND = 3
+
+
 class Player(Person):
   def __init__(self, name=""):
     super().__init__(PersonTypeEnum.PLAYER, name, "player")
@@ -1765,6 +1823,8 @@ class Player(Person):
     self.Room = None
     self.LastRoom = None
     self.Currency = 0
+    self.CombatState = PlayerCombatState.NONE
+    self.CombatTarget = None
 
   def Copy(self, p):
     super().Copy(p)
@@ -1844,17 +1904,6 @@ class Player(Person):
           points += mod
           break
       self.SkillLinks.update({skill_id: SkillLink(points)})
-
-  def AttrSex(self):
-    ret = SexEnum.MALE
-    for s_id, s in sexes.items():
-      if self.Attr[AttrEnum.SEX] <= s.AttrMax:
-        ret = s_id
-        break
-    return ret
-
-  def AttrSexStr(self):
-    return sexes[self.AttrSex()].Name
 
   def AttrCulture(self):
     ret = CultureEnum.NONE
@@ -2004,12 +2053,6 @@ class Exit:
     self.Key = key_item
 
 
-class PersonLink:
-  def __init__(self, person_id, unique):
-    self.Person = person_id
-    self.UUID = unique
-
-
 class RoomSpawn:
   def __init__(self, person_id, chance, max_qty=1, delay=60):
     self.Person = person_id
@@ -2021,7 +2064,8 @@ class RoomSpawn:
 
 class Room:
   def __init__(self, title, short_desc="", long_desc=None, func=None,
-               persons=None, exits=None, room_items=None, spawns=None):
+               person_list=None, room_pers=None, exits=None, room_items=None,
+               spawns=None):
     self.Title = title
     self.ShortDescription = short_desc
     self.LongDescription = []
@@ -2040,9 +2084,9 @@ class Room:
       for item_id, qty in room_items.items():
         self.AddItem(item_id)
       self.RoomItems = room_items
-    if persons is not None:
-      for person_id in persons:
-        self.AddPerson(person_id)
+    if room_pers is not None:
+      for person_id in room_pers:
+        self.AddPerson(person_id, person_list)
     if spawns is not None:
       for s in spawns:
         self.Spawns.append(s)
@@ -2070,15 +2114,20 @@ class Room:
       else:
         self.RoomItems.pop(item_id)
 
-  def AddPerson(self, person_id):
-    x = PersonLink(person_id, uuid4())
-    self.Persons.append(x)
+  def AddPerson(self, person_id, person_list):
+    p = deepcopy(person_list[person_id])
+    p.UUID = uuid4()
+    self.Persons.append(p)
 
   def RemovePerson(self, uid):
+    rp = None
     for x in self.Persons:
-      if x == uid:
-        self.Persons.remove(x)
+      if x.UUID == uid:
+        rp = x
         break
+    if rp is not None:
+      self.Persons.remove(rp)
+      del rp
 
 
 # FORMATTING

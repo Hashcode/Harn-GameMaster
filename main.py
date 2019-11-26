@@ -37,10 +37,17 @@ player.SetRoom(RoomEnum.GAME_START)
 
 if TestMode:
   player.AddItem(ItemEnum.WEAPON_DAGGER, ItemLink(1, equip=True))
+  player.AddItem(ItemEnum.WEAPON_CLUB, ItemLink(1))
+  player.AddItem(ItemEnum.SHIELD_BUCKLER_BANDED, ItemLink(1, equip=True))
 
-  player.AddItem(ItemEnum.ARMOR_HALFHELM_LEATHER_RING, ItemLink(1, equip=True))
   player.AddItem(ItemEnum.ARMOR_TUNIC_CLOTH, ItemLink(1, equip=True))
   player.AddItem(ItemEnum.ARMOR_LEGGINGS_CLOTH, ItemLink(1, equip=True))
+
+  player.AddItem(ItemEnum.ARMOR_HALFHELM_LEATHER_RING, ItemLink(1, equip=True))
+  player.AddItem(ItemEnum.ARMOR_HAUBERK_LEATHER_RING, ItemLink(1, equip=True))
+  player.AddItem(ItemEnum.ARMOR_LEGGINGS_LEATHER_RING, ItemLink(1, equip=True))
+  player.AddItem(ItemEnum.ARMOR_GAUNTLETS_LEATHER_RING, ItemLink(1,
+                                                                 equip=True))
   player.AddItem(ItemEnum.ARMOR_SHOES_LEATHER, ItemLink(1, equip=True))
 
   player.AddItem(ItemEnum.RING_ATTACK_SILVER, ItemLink(1, equip=True))
@@ -50,7 +57,6 @@ NextRoomEvent = 0
 
 while True:
   enemies = []
-  combat_flag = False
   res = RoomFuncResponse.NONE
   printRoomDescription(player.Room, rooms)
 
@@ -85,30 +91,35 @@ while True:
                (NextRoomEvent - seconds))
         count = 0
         for p in rooms[r].Persons:
-          if p.Person == s.Person:
+          if p.PersonID == s.Person:
             count += 1
         if count < s.MaxQuantity:
           logd("SpawnCheck [%s] in %s [<=%d]" % (persons[s.Person].Name,
                                                  rooms[r].Title, s.Chance))
           if DiceRoll(1, 100).Result() <= s.Chance:
-            rooms[r].AddPerson(s.Person)
+            rooms[r].AddPerson(s.Person, persons)
 
   printRoomObjects(player.Room, rooms)
 
   # Check if the room persons need to attack
+  count = 0
   for x in rooms[player.Room].Persons:
-    if persons[x.Person].IsAggressive():
+    if x.IsAggressive():
+      count += 1
+      if count == 1:
+        print("")
       enemies.append(x)
-      print("[%s] attacks you!" % persons[x.Person].Name)
+      print("%s%s attacks you!%s" %
+            (ANSI.TEXT_BOLD, x.Name.capitalize(),
+             ANSI.TEXT_NORMAL))
+    if player.CombatTarget is not None:
+      if player.CombatTarget == x.UUID:
+        print("\nYou attack %s!" % x.Name)
+        enemies.append(x)
+        player.CombatTarget = None
 
   if len(enemies) > 0:
     combat(player, enemies)
-#    if player.HitPoints_Cur <= 0:
-#      print("\nThe last of your strength slips away, and your vision\n"
-#            "fades to black...")
-#      print("\n%sYou have died!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-#      print("\nYou slow come back to your senses ...\n")
-#      player.SetRoom(ROOM_RESPAWN)
     continue
 
   # Handle Commands

@@ -12,28 +12,28 @@ dmg_table_melee = {
         CoverageEnum.SKULL: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 5),
                              ImpactAction(ImpactActionEnum.SHOCK, 5),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -42,27 +42,27 @@ dmg_table_melee = {
         CoverageEnum.FACE: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -71,33 +71,33 @@ dmg_table_melee = {
         CoverageEnum.NECK: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -106,34 +106,34 @@ dmg_table_melee = {
         CoverageEnum.SHOULDERS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                          ]),
             ImpactResult(11,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                          ]),
             ImpactResult(14,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(19,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
@@ -143,28 +143,28 @@ dmg_table_melee = {
         CoverageEnum.UPPER_ARMS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                          ]),
             ImpactResult(11,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                          ]),
             ImpactResult(14,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -173,34 +173,34 @@ dmg_table_melee = {
         CoverageEnum.ELBOWS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 3),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 4),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 4),
                          ]),
             ImpactResult(13,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 5),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.AMPUTATE_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
@@ -210,28 +210,28 @@ dmg_table_melee = {
         CoverageEnum.FOREARMS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 3),
                          ]),
             ImpactResult(11,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 3),
                          ]),
             ImpactResult(14,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
@@ -240,34 +240,34 @@ dmg_table_melee = {
         CoverageEnum.HANDS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 3),
                          ]),
             ImpactResult(7,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 4),
                          ]),
             ImpactResult(9,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 4),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 5),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.AMPUTATE_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
@@ -277,27 +277,27 @@ dmg_table_melee = {
         CoverageEnum.THORAX_FRONT: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -306,27 +306,27 @@ dmg_table_melee = {
         CoverageEnum.THORAX_REAR: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -335,27 +335,27 @@ dmg_table_melee = {
         CoverageEnum.ABDOMEN_FRONT: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -364,27 +364,27 @@ dmg_table_melee = {
         CoverageEnum.ABDOMEN_REAR: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(11,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -393,27 +393,27 @@ dmg_table_melee = {
         CoverageEnum.GROIN: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
@@ -421,35 +421,35 @@ dmg_table_melee = {
         CoverageEnum.HIPS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(19,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
@@ -459,34 +459,34 @@ dmg_table_melee = {
         CoverageEnum.THIGHS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 1),
                          ]),
             ImpactResult(9,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                          ]),
             ImpactResult(11,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                          ]),
             ImpactResult(13,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(17,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -495,34 +495,34 @@ dmg_table_melee = {
         CoverageEnum.KNEES: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 3),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 4),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 4),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 5),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.AMPUTATE_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
@@ -532,34 +532,34 @@ dmg_table_melee = {
         CoverageEnum.CALVES: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 3),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 3),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -568,28 +568,28 @@ dmg_table_melee = {
         CoverageEnum.FEET: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 3),
                          ]),
             ImpactResult(7,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 4),
                          ]),
             ImpactResult(11,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 4),
                          ]),
             ImpactResult(15,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.AMPUTATE_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
@@ -601,28 +601,28 @@ dmg_table_melee = {
         CoverageEnum.SKULL: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 5),
                              ImpactAction(ImpactActionEnum.SHOCK, 5),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -631,28 +631,28 @@ dmg_table_melee = {
         CoverageEnum.FACE: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                              ImpactAction(ImpactActionEnum.BLEED, 2),
@@ -661,30 +661,30 @@ dmg_table_melee = {
         CoverageEnum.NECK: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(9,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                              ImpactAction(ImpactActionEnum.BLEED, 2),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                              ImpactAction(ImpactActionEnum.BLEED, 3),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.AMPUTATE_CHECK, 4),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 5),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
@@ -694,30 +694,30 @@ dmg_table_melee = {
         CoverageEnum.SHOULDERS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 1),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 1),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(19,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
@@ -727,35 +727,35 @@ dmg_table_melee = {
         CoverageEnum.UPPER_ARMS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.AMPUTATE_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
@@ -765,30 +765,30 @@ dmg_table_melee = {
         CoverageEnum.ELBOWS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 3),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 3),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.AMPUTATE_CHECK, 5),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
@@ -798,35 +798,35 @@ dmg_table_melee = {
         CoverageEnum.FOREARMS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.AMPUTATE_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
@@ -836,30 +836,30 @@ dmg_table_melee = {
         CoverageEnum.HANDS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 3),
                          ]),
             ImpactResult(9,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 3),
                          ]),
             ImpactResult(11,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(15,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.AMPUTATE_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.AMPUTATE_CHECK, 5),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
@@ -869,29 +869,29 @@ dmg_table_melee = {
         CoverageEnum.THORAX_FRONT: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 5),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                              ImpactAction(ImpactActionEnum.BLEED, 2),
@@ -900,29 +900,29 @@ dmg_table_melee = {
         CoverageEnum.THORAX_REAR: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 5),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                              ImpactAction(ImpactActionEnum.BLEED, 2),
@@ -931,30 +931,30 @@ dmg_table_melee = {
         CoverageEnum.ABDOMEN_FRONT: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(9,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                              ImpactAction(ImpactActionEnum.BLEED, 2),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 5),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                              ImpactAction(ImpactActionEnum.BLEED, 3),
@@ -963,29 +963,29 @@ dmg_table_melee = {
         CoverageEnum.ABDOMEN_REAR: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                              ImpactAction(ImpactActionEnum.BLEED, 2),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 5),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                              ImpactAction(ImpactActionEnum.BLEED, 3),
@@ -994,28 +994,28 @@ dmg_table_melee = {
         CoverageEnum.GROIN: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 5),
                              ImpactAction(ImpactActionEnum.BLEED, 2),
@@ -1024,30 +1024,30 @@ dmg_table_melee = {
         CoverageEnum.HIPS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 1),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 1),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(19,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
@@ -1057,30 +1057,30 @@ dmg_table_melee = {
         CoverageEnum.THIGHS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 1),
                          ]),
             ImpactResult(11,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 1),
                          ]),
             ImpactResult(13,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(17,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.AMPUTATE_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
@@ -1090,30 +1090,30 @@ dmg_table_melee = {
         CoverageEnum.KNEES: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 3),
                          ]),
             ImpactResult(9,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 3),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.AMPUTATE_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
@@ -1123,34 +1123,34 @@ dmg_table_melee = {
         CoverageEnum.CALVES: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.AMPUTATE_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
@@ -1160,30 +1160,30 @@ dmg_table_melee = {
         CoverageEnum.FEET: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 3),
                          ]),
             ImpactResult(9,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 3),
                          ]),
             ImpactResult(11,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(15,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.AMPUTATE_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.AMPUTATE_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
@@ -1195,34 +1195,34 @@ dmg_table_melee = {
         CoverageEnum.SKULL: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 5),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -1231,33 +1231,33 @@ dmg_table_melee = {
         CoverageEnum.FACE: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -1266,35 +1266,35 @@ dmg_table_melee = {
         CoverageEnum.NECK: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 2),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 5),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                              ImpactAction(ImpactActionEnum.BLEED, 3),
@@ -1303,28 +1303,28 @@ dmg_table_melee = {
         CoverageEnum.SHOULDERS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 1),
                          ]),
             ImpactResult(11,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 1),
                          ]),
             ImpactResult(14,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -1333,28 +1333,28 @@ dmg_table_melee = {
         CoverageEnum.UPPER_ARMS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 1),
                          ]),
             ImpactResult(11,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 1),
                          ]),
             ImpactResult(14,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -1363,28 +1363,28 @@ dmg_table_melee = {
         CoverageEnum.ELBOWS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                          ]),
             ImpactResult(14,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -1393,28 +1393,28 @@ dmg_table_melee = {
         CoverageEnum.FOREARMS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 1),
                          ]),
             ImpactResult(11,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 1),
                          ]),
             ImpactResult(14,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -1423,28 +1423,28 @@ dmg_table_melee = {
         CoverageEnum.HANDS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                          ]),
             ImpactResult(7,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                          ]),
             ImpactResult(9,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 2),
                          ]),
             ImpactResult(13,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.FUMBLE, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.FUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -1453,34 +1453,34 @@ dmg_table_melee = {
         CoverageEnum.THORAX_FRONT: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -1489,34 +1489,34 @@ dmg_table_melee = {
         CoverageEnum.THORAX_REAR: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -1525,30 +1525,30 @@ dmg_table_melee = {
         CoverageEnum.ABDOMEN_FRONT: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(9,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 2),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                              ImpactAction(ImpactActionEnum.BLEED, 3),
@@ -1557,30 +1557,30 @@ dmg_table_melee = {
         CoverageEnum.ABDOMEN_REAR: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(9,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 2),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                              ImpactAction(ImpactActionEnum.BLEED, 3),
@@ -1589,34 +1589,34 @@ dmg_table_melee = {
         CoverageEnum.GROIN: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                          ]),
             ImpactResult(16,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 4),
                              ImpactAction(ImpactActionEnum.SHOCK, 3),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.KILL_CHECK, 5),
                              ImpactAction(ImpactActionEnum.SHOCK, 4),
                              ImpactAction(ImpactActionEnum.BLEED, 2),
@@ -1625,28 +1625,28 @@ dmg_table_melee = {
         CoverageEnum.HIPS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 1),
                          ]),
             ImpactResult(11,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 1),
                          ]),
             ImpactResult(14,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -1655,28 +1655,28 @@ dmg_table_melee = {
         CoverageEnum.THIGHS: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 1),
                          ]),
             ImpactResult(9,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 1),
                          ]),
             ImpactResult(12,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 1),
                          ]),
             ImpactResult(14,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -1685,28 +1685,28 @@ dmg_table_melee = {
         CoverageEnum.KNEES: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                          ]),
             ImpactResult(10,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                          ]),
             ImpactResult(14,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -1715,28 +1715,28 @@ dmg_table_melee = {
         CoverageEnum.CALVES: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 1),
                          ]),
             ImpactResult(8,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 1),
                          ]),
             ImpactResult(11,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 1),
                          ]),
             ImpactResult(14,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),
@@ -1745,28 +1745,28 @@ dmg_table_melee = {
         CoverageEnum.FEET: [
             ImpactResult(4,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                          ]),
             ImpactResult(7,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_MILD),
+                             ImpactAction(ImpactActionEnum.WOUND_MLD),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                          ]),
             ImpactResult(9,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 2),
                          ]),
             ImpactResult(13,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_SERIOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_SRS),
                              ImpactAction(ImpactActionEnum.STUMBLE, 3),
                              ImpactAction(ImpactActionEnum.SHOCK, 1),
                          ]),
             ImpactResult(100,
                          [
-                             ImpactAction(ImpactActionEnum.WOUND_GRIEVOUS),
+                             ImpactAction(ImpactActionEnum.WOUND_GRV),
                              ImpactAction(ImpactActionEnum.STUMBLE, 100),
                              ImpactAction(ImpactActionEnum.SHOCK, 2),
                              ImpactAction(ImpactActionEnum.BLEED, 1),

@@ -9,6 +9,7 @@ from global_defines import (PersonEnum, Player, DirectionEnum,
                             ANSI)
 from utils import (actionSave)
 from db import (ExistsDB, LoadPlayer)
+from person import persons
 
 ROOM_START = RoomEnum.BL_KEEP_GATEHOUSE
 
@@ -113,7 +114,8 @@ rooms = {
              exits={
                  DirectionEnum.WEST: Exit(RoomEnum.BL_GATEHOUSE_PASSAGE),
              },
-             persons=[
+             person_list=persons,
+             room_pers=[
                  PersonEnum.BL_KEEP_GUARD,
              ]),
     RoomEnum.BL_PRIEST_CHAMBER:
