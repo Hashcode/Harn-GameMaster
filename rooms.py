@@ -6,12 +6,10 @@
 
 from global_defines import (PersonEnum, Player, DirectionEnum,
                             RoomFuncResponse, RoomEnum, Exit, Room, RoomSpawn,
-                            ANSI)
+                            ANSI, GameData)
 from utils import (actionSave)
 from db import (ExistsDB, LoadPlayer)
 from person import persons
-
-ROOM_START = RoomEnum.BL_KEEP_GATEHOUSE
 
 
 def room_StartGame(player):
@@ -67,7 +65,7 @@ def room_CreateCharacter(player):
   player.GenAttr()
   player.GenSkills()
   player.ResetStats()
-  player.SetRoom(ROOM_START)
+  player.SetRoom(GameData.ROOM_START)
 
   print("\nSaving character ...")
   if not actionSave(player, rooms):
