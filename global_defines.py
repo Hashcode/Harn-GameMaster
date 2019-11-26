@@ -9,6 +9,8 @@ import random
 from enum import IntEnum
 from uuid import uuid4
 from copy import deepcopy
+from time import gmtime
+from calendar import timegm
 
 
 # Logging
@@ -587,6 +589,25 @@ class Ring(Item):
 
 
 # COMBAT
+
+class AimEnum(IntEnum):
+  HIGH = 0
+  MID = 1
+  LOW = 2
+
+
+class Aim:
+  def __init__(self, name, penalty):
+    self.Name = name
+    self.Penalty = penalty
+
+
+aims = {
+    AimEnum.HIGH: Aim("High Zone", 10),
+    AimEnum.MID: Aim("Mid Zone", 0),
+    AimEnum.LOW: Aim("Low Zone", 10),
+}
+
 
 class CombatAttack:
   def __init__(self, name, ml, roll, dmg_type):
@@ -1486,6 +1507,7 @@ class Person:
     self.PersonType = person_type
     self.Name = name
     self.LongDescription = long_desc
+    self.DefaultAim = AimEnum.MID
     self.Flags = flags
     self.SkinMaterial = skin
     self.Attr = dict()
@@ -1573,17 +1595,23 @@ class Person:
   def AttrSexPossessivePronounStr(self):
     return sexes[self.AttrSex()].PossessivePronoun
 
-  def InjuryPoints(self):
+  def IP(self):
     ret = 0
     for x in self.Wounds:
       ret += x.Impact
     return ret
 
+  def IPIndex(self):
+    ret = 0
+    for x in self.Wounds:
+      ret += x.Impact
+    return int(ret / 10)
+
   def FatiguePoints(self):
     return 0
 
   def UniversalPenalty(self):
-    ret = self.InjuryPoints()
+    ret = self.IP()
     ret += self.FatiguePoints()
     return int(ret / 10)
 
@@ -1617,7 +1645,7 @@ class Person:
     return round(self.FatigueRate(items) * 3)
 
   def PhysicalPenalty(self, items):
-    ret = self.InjuryPoints()
+    ret = self.IP()
     ret += self.FatiguePoints()
     ret += self.EncumbrancePenalty(items)
     return int(ret / 10)
@@ -1752,7 +1780,8 @@ class MobAttack:
 
 
 class Mob(Person):
-  def __init__(self, person_id, name, long_desc, ini, end, dodge, flags=0,
+  def __init__(self, person_id, name, long_desc, ini, end, dodge,
+               aim=AimEnum.MID, flags=0,
                skin=MaterialEnum.NONE, cur=None, attrs=None,
                num_attacks=1, mob_attacks=None, mob_skills=None, eq=None,
                loot=None):
@@ -1765,6 +1794,7 @@ class Mob(Person):
     self.Initiative = ini
     self.Endurance = end
     self.Dodge = dodge
+    self.DefaultAim = aim
     self.NumAttacks = num_attacks
     self.MobAttacks = mob_attacks
     if attrs is not None:
@@ -2064,7 +2094,7 @@ class RoomSpawn:
 
 class Room:
   def __init__(self, title, short_desc="", long_desc=None, func=None,
-               person_list=None, room_pers=None, exits=None, room_items=None,
+               room_pers=None, exits=None, room_items=None,
                spawns=None):
     self.Title = title
     self.ShortDescription = short_desc
@@ -2086,7 +2116,7 @@ class Room:
       self.RoomItems = room_items
     if room_pers is not None:
       for person_id in room_pers:
-        self.AddPerson(person_id, person_list)
+        self.AddPerson(person_id)
     if spawns is not None:
       for s in spawns:
         self.Spawns.append(s)
@@ -2101,11 +2131,11 @@ class Room:
     if direction in self.Exits:
         self.Exits.pop(direction)
 
-  def AddItem(self, item_id, item):
+  def AddItem(self, item_id, room_item):
     if item_id in self.RoomItems:
-      self.RoomItems[item_id].Quantity += item.Quantity
+      self.RoomItems[item_id].Quantity += room_item.Quantity
     else:
-      self.RoomItems.update({item_id: item})
+      self.RoomItems.update({item_id: room_item})
 
   def RemoveItem(self, item_id, item):
     if item_id in self.RoomItems:
@@ -2114,8 +2144,9 @@ class Room:
       else:
         self.RoomItems.pop(item_id)
 
-  def AddPerson(self, person_id, person_list):
-    p = deepcopy(person_list[person_id])
+  def AddPerson(self, person_id):
+    persons = GameData.GetPersons()
+    p = deepcopy(persons[person_id])
     p.UUID = uuid4()
     self.Persons.append(p)
 
@@ -2137,6 +2168,79 @@ class ANSI:
   CLEAR = "\x1B[2J"
   TEXT_NORMAL = "\x1B[0m"
   TEXT_BOLD = "\x1B[1m"
+
+
+# Game Globals
+
+class GameData:
+  _rooms = None
+  _items = None
+  _persons = None
+  _NextRoomEvent = 0
+
+  ROOM_START = 0
+  ROOM_RESPAWN = 0
+
+  @staticmethod
+  def SetItems(items):
+    GameData._items = items
+
+  @staticmethod
+  def GetItems():
+    return GameData._items
+
+  @staticmethod
+  def SetPersons(persons):
+    GameData._persons = persons
+
+  @staticmethod
+  def GetPersons():
+    return GameData._persons
+
+  @staticmethod
+  def SetRooms(rooms):
+    GameData._rooms = rooms
+
+  @staticmethod
+  def GetRooms():
+    return GameData._rooms
+
+  @staticmethod
+  def ProcessRoomEvents():
+    rooms = GameData.GetRooms()
+    persons = GameData.GetPersons()
+
+    # Check for room spawns
+    seconds = timegm(gmtime())
+    if GameData._NextRoomEvent < seconds:
+      logd("RoomEvents check")
+      # Set NextRoomEvent max 10mins
+      GameData._NextRoomEvent = seconds + (10 * 60)
+      for r in rooms:
+        if rooms[r].Spawns is None:
+          continue
+        for s in rooms[r].Spawns:
+          next = s.LastSpawnCheck + s.SpawnDelaySeconds
+          if next >= seconds:
+            if GameData._NextRoomEvent > next:
+              GameData._NextRoomEvent = next
+              logd("Next RoomEvents check in %d seconds" %
+                   (GameData._NextRoomEvent - seconds))
+            continue
+          s.LastSpawnCheck = seconds
+          if GameData._NextRoomEvent > seconds + s.SpawnDelaySeconds:
+            GameData._NextRoomEvent = seconds + s.SpawnDelaySeconds
+            logd("Next RoomEvents check in %d seconds" %
+                 (GameData._NextRoomEvent - seconds))
+          count = 0
+          for p in rooms[r].Persons:
+            if p.PersonID == s.Person:
+              count += 1
+          if count < s.MaxQuantity:
+            logd("SpawnCheck [%s] in %s [<=%d]" % (persons[s.Person].Name,
+                                                   rooms[r].Title, s.Chance))
+            if DiceRoll(1, 100).Result() <= s.Chance:
+              rooms[r].AddPerson(s.Person, persons)
 
 
 # vim: tabstop=2 shiftwidth=2 expandtab:
