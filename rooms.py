@@ -9,7 +9,6 @@ from global_defines import (PersonEnum, Player, DirectionEnum,
                             ANSI, GameData)
 from utils import (actionSave)
 from db import (ExistsDB, LoadPlayer)
-from person import persons
 
 
 def room_StartGame(player):
