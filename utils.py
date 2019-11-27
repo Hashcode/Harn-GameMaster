@@ -17,7 +17,6 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             Material, PlayerCombatState, PersonTypeEnum,
                             ItemTypeEnum, ItemFlagEnum, DiceRoll,
                             ItemLink, DirectionEnum, ANSI, GameData)
-from items import items
 from db import (ListDB, SavePlayer)
 
 
@@ -25,6 +24,7 @@ wrapper = TextWrapper(width=70, fix_sentence_endings=True)
 
 
 def CalcEffect(player, eff_type):
+  items = GameData.GetItems()
   value = 0
   for item_id, il in player.ItemLinks.items():
     if not items[item_id].Effects is None:
@@ -40,6 +40,7 @@ def CalcEffect(player, eff_type):
 
 def filterLinks(item_links, equipped=False, equippable=False, flags=0,
                 noflags=0):
+  items = GameData.GetItems()
   item_dict = {}
   for item_id, il in item_links.items():
     if equippable:
@@ -59,6 +60,7 @@ def filterLinks(item_links, equipped=False, equippable=False, flags=0,
 
 
 def printItems(item_links, number=False, stats=False):
+  items = GameData.GetItems()
   count = 0
   for item_id, il in item_links.items():
     count += 1
@@ -134,6 +136,7 @@ def actionComingSoon(player, rooms):
 
 
 def actionDropItem(player, rooms):
+  items = GameData.GetItems()
   print("\nItems in your inventory:\n")
   links = filterLinks(player.ItemLinks, equipped=False)
   if len(links) < 1:
@@ -163,6 +166,7 @@ def actionDropItem(player, rooms):
 
 
 def actionEquipItem(player, rooms):
+  items = GameData.GetItems()
   print("\nEquippable items in your inventory:\n")
   links = filterLinks(player.ItemLinks, equipped=False, equippable=True)
   if len(links) < 1:
@@ -216,6 +220,7 @@ def actionEquipItem(player, rooms):
 
 
 def actionGetItem(player, rooms):
+  items = GameData.GetItems()
   print("\nItems in in the room:\n")
   links = filterLinks(rooms[player.Room].RoomItems, equipped=False)
   if len(links) < 1:
@@ -250,7 +255,7 @@ def actionInventory(player, rooms):
   else:
     printItems(links)
   print("%s%-30s : %5s lbs%s" % (ANSI.TEXT_BOLD, "EQUIPPED WEIGHT",
-                                 "{:3.1f}".format(player.EquipWeight(items)),
+                                 "{:3.1f}".format(player.EquipWeight()),
                                  ANSI.TEXT_NORMAL))
   print("\n%sITEMS%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   links = filterLinks(player.ItemLinks, equipped=False)
@@ -259,10 +264,10 @@ def actionInventory(player, rooms):
   else:
     printItems(links)
   print("%s%-30s : %5s lbs%s" % (ANSI.TEXT_BOLD, "INVENTORY WEIGHT",
-                                 "{:3.1f}".format(player.InvenWeight(items)),
+                                 "{:3.1f}".format(player.InvenWeight()),
                                  ANSI.TEXT_NORMAL))
   print("\n%s%-30s : %5s lbs%s" % (ANSI.TEXT_BOLD, "TOTAL WEIGHT",
-                                   "{:3.1f}".format(player.ItemWeight(items)),
+                                   "{:3.1f}".format(player.ItemWeight()),
                                    ANSI.TEXT_NORMAL))
 
 
@@ -291,7 +296,7 @@ def actionSkills(player, rooms):
              attributes[skills[sk_id].Attr1].Abbrev,
              attributes[skills[sk_id].Attr2].Abbrev,
              attributes[skills[sk_id].Attr3].Abbrev,
-             player.SkillML(sk_id, items)))
+             player.SkillML(sk_id)))
 
 
 def actionInfo(player, rooms):
@@ -348,16 +353,16 @@ def actionStats(person, rooms):
   else:
     print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, person.Name.upper(),
                                 ANSI.TEXT_NORMAL))
-  print("%-15s: %d" % ("Endurance", person.AttrEndurance(items)))
-  print("%-15s: %d lbs" % ("Inven. Weight", person.ItemWeight(items)))
-  print("%-15s: %d" % ("Enc. Points", person.EncumbrancePenalty(items)))
+  print("%-15s: %d" % ("Endurance", person.AttrEndurance()))
+  print("%-15s: %d lbs" % ("Inven. Weight", person.ItemWeight()))
+  print("%-15s: %d" % ("Enc. Points", person.EncumbrancePenalty()))
   print("%-15s: %d" % ("Injury Points", person.IP()))
   print("%-15s: %d" % ("Fatigue Points", person.FatiguePoints()))
-  print("%-15s: %d" % ("Initiative", person.AttrInitiative(items)))
+  print("%-15s: %d" % ("Initiative", person.AttrInitiative()))
   print("\n%s%-15s: %d%s" % (ANSI.TEXT_BOLD, "Universal Pen.",
                              person.UniversalPenalty(), ANSI.TEXT_NORMAL))
   print("%s%-15s: %d%s" % (ANSI.TEXT_BOLD, "Physical Pen.",
-                           person.PhysicalPenalty(items), ANSI.TEXT_NORMAL))
+                           person.PhysicalPenalty(), ANSI.TEXT_NORMAL))
   print("\n%sWOUND LIST%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   if len(person.Wounds) < 1:
     print("[NONE]")
@@ -370,6 +375,7 @@ def actionStats(person, rooms):
 
 
 def actionArmor(player, rooms):
+  items = GameData.GetItems()
   print("\n%sARMOR COVERAGE%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   print("%s%-15s  BLUNT EDGE PIERCE ELEMENTAL%s" %
         (ANSI.TEXT_BOLD, "LOCATION", ANSI.TEXT_NORMAL))
@@ -393,6 +399,7 @@ def actionArmor(player, rooms):
 
 
 def actionRemoveItem(player, rooms):
+  items = GameData.GetItems()
   print("\nYour equipped items:\n")
   links = filterLinks(player.ItemLinks, equipped=True)
   if len(links) < 1:
@@ -594,7 +601,7 @@ def actionTrain(player, rooms):
       if count == skillNum:
         # attempt to raise skill
         r = DiceRoll(1, 100).Result() + player.SkillBase(skill_id)
-        if r > player.SkillML(skill_id, items, skipPenalty=True):
+        if r > player.SkillML(skill_id, skipPenalty=True):
           print("\nYou GAIN an mastery level in %s!" %
                 (skills[skill_id].Name.lower()))
           sl.Points += 1

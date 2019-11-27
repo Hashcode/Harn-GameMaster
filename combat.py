@@ -15,8 +15,6 @@ from global_defines import (DiceRoll, Roll, CoverageEnum, body_parts,
 from logging import (logd)
 from dmg_table import dmg_table_melee
 from utils import prompt
-from rooms import rooms
-from items import items
 
 
 class Action(IntEnum):
@@ -67,7 +65,7 @@ FLAG_DEAD = 1 << 0
 
 
 class Combatant:
-  def __init__(self, person, uid, items):
+  def __init__(self, person, uid):
     self.Person = person
     self.UUID = uid
     self.Init = 0
@@ -83,12 +81,12 @@ class Combatant:
     self.Attacks = None
     self.TurnTaken = False
 
-  def Refresh(self, items):
+  def Refresh(self):
     if self.StunLevel > 0:
       self.Init = 0
     else:
       self.Init = DiceRoll(1, 100).Result()
-      self.Init += self.Person.AttrInitiative(items)
+      self.Init += self.Person.AttrInitiative()
     self.Action = Action.IGNORE
     self.Aim = AimEnum.MID
     self.TurnTaken = False
@@ -220,8 +218,8 @@ resolve_melee = {
 
 # COMBAT COMMANDS
 
-def printCombatAttackActions(combatant, target, items):
-  att = combatant.Person.GenerateCombatAttacks(items)
+def printCombatAttackActions(combatant, target):
+  att = combatant.Person.GenerateCombatAttacks()
   if len(att) > 0:
     att_name = "%s: %s ML" % (att[0].Name, att[0].SkillML)
   else:
@@ -233,13 +231,13 @@ def printCombatAttackActions(combatant, target, items):
     target_name = "[NO TARGET]"
   if combatant.Bloodloss > 0:
     print("\nBLOODLOSS POINTS: %d of %d" %
-          (combatant.Bloodloss, combatant.Person.AttrEndurance(items)))
+          (combatant.Bloodloss, combatant.Person.AttrEndurance()))
   print("\nOFFENSE COMMANDS:\n")
   print("%-10s %-3s : %s" % ("AIM", "", aims[combatant.Aim].Name))
   print("%-10s %-3s : %s" % ("ATTACK", "[A]", att_name))
   print("%-10s %-3s :" % ("CAST", "[C]"))
   print("%-10s %-3s : %d ML" % ("FLEE", "[F]",
-                                combatant.Person.AttrDodge(items)))
+                                combatant.Person.AttrDodge()))
   # print("  GRAPPLE")
   # print("  MISSILE")
   print("%-10s %-3s :" % ("PASS", "[P]"))
@@ -288,6 +286,8 @@ def HandlePlayerDeath(player):
 
 
 def HandleMobDeath(att, defe):
+  rooms = GameData.GameRooms()
+  items = GameData.GetItems()
   if defe.Person.CurrencyGen is not None:
     # currency
     r = defe.Person.CurrencyGen.Result()
@@ -326,7 +326,7 @@ def HandleImpactDMG(player, att, defe, at, res_level):
       break
   logd("%s LOC: %s" % (att.Person.Name, loc))
   # defender applies armor
-  impact -= defe.Person.Defense(items, loc, at.DamageType)
+  impact -= defe.Person.Defense(loc, at.DamageType)
   logd("%s ADJ. IMPACT: %d" % (att.Person.Name, impact))
   leftright = ""
   if body_parts[loc].LeftRight:
@@ -422,8 +422,8 @@ def HandleImpactDMG(player, att, defe, at, res_level):
         r = DiceRoll(num, 6).Result()
         logd("%s SHOCK check: %d vs. %d END" %
              (defe.Person.Name, r,
-              defe.Person.AttrEndurance(items)))
-        if r > defe.Person.AttrEndurance(items):
+              defe.Person.AttrEndurance()))
+        if r > defe.Person.AttrEndurance():
           if att.Person == player:
             print("%s%s is STUNNED!%s" %
                   (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
@@ -456,15 +456,16 @@ def HandleImpactDMG(player, att, defe, at, res_level):
 
 
 def combat(player, enemies):
+  items = GameData.GetItems()
   # start of combat checks?
   order = []
   round_count = 0
 
   # setup combatants
-  player_combatant = Combatant(player, 0, items)
+  player_combatant = Combatant(player, 0)
   order.append(player_combatant)
   for x in enemies:
-      order.append(Combatant(x, x.UUID, items))
+      order.append(Combatant(x, x.UUID))
 
   while True:
     logd("** START ROUND **")
@@ -487,7 +488,7 @@ def combat(player, enemies):
                   (ANSI.TEXT_BOLD, x.Person.Name.capitalize(),
                    ANSI.TEXT_NORMAL))
           x.Bloodloss += x.Bleed
-          if x.Bloodloss > x.Person.AttrEndurance(items):
+          if x.Bloodloss > x.Person.AttrEndurance():
             # death from blood loss
             if x.Person is player:
               print("%sYou EXPIRE from loss of blood!%s" %
@@ -525,7 +526,7 @@ def combat(player, enemies):
 
     player.CombatState = PlayerCombatState.WAIT
     for x in order:
-        x.Refresh(items)
+        x.Refresh()
         logd("%s init %d" % (x.Person.Name, x.Init))
 
     # TURN loop
@@ -580,12 +581,12 @@ def combat(player, enemies):
           defe.Action = Action.IGNORE
         else:
           defe.Action = Action.BLOCK
-          defe.Attacks = defe.Person.GenerateCombatAttacks(items, block=True)
+          defe.Attacks = defe.Person.GenerateCombatAttacks(block=True)
           if len(defe.Attacks) < 1:
             defe.Action = Action.DODGE
 
         while True:
-          printCombatAttackActions(att, defe, items)
+          printCombatAttackActions(att, defe)
           prompt(func_break=True)
           if player.Command == "aim":
             print("\nComing soon!")
@@ -594,7 +595,7 @@ def combat(player, enemies):
               print("\nYou have no target!")
             else:
               att.Action = Action.MELEE
-              att.Attacks = att.Person.GenerateCombatAttacks(items)
+              att.Attacks = att.Person.GenerateCombatAttacks()
               break
           elif player.Command == "cast" or player.Command == "c":
             print("\nComing soon!")
@@ -627,7 +628,7 @@ def combat(player, enemies):
         #   flee?
         att.Action = Action.MELEE
         logd("%s: Generate Attack" % (att.Person.Name))
-        att.Attacks = att.Person.GenerateCombatAttacks(items)
+        att.Attacks = att.Person.GenerateCombatAttacks()
         if len(att.Attacks) == 0:
           logd("MOB ERROR! %s no attack!" % (att.Person.Name))
           att.Action = Action.IGNORE
@@ -643,10 +644,10 @@ def combat(player, enemies):
         if defe.StunLevel > 0:
           defe.Action = Action.IGNORE
         else:
-          defe.Attacks = defe.Person.GenerateCombatAttacks(items, block=True)
+          defe.Attacks = defe.Person.GenerateCombatAttacks(block=True)
           if len(defe.Attacks) < 1:
             defe.Action = Action.DODGE
-          elif defe.Person.AttrDodge(items) > defe.Attacks[0].SkillML:
+          elif defe.Person.AttrDodge() > defe.Attacks[0].SkillML:
             defe.Action = Action.DODGE
           else:
             defe.Action = Action.BLOCK
@@ -671,7 +672,7 @@ def combat(player, enemies):
               defe.Roll = defe.Person.ResolveSkill(defe.Attacks[0].SkillML,
                                                    defe.Attacks[0].SkillID)
           if defe.Action == Action.DODGE:
-            defe.Roll = defe.Person.ResolveSkill(defe.Person.AttrDodge(items),
+            defe.Roll = defe.Person.ResolveSkill(defe.Person.AttrDodge(),
                                                  SkillEnum.DODGE)
           logd("DEFENDER %s %s" %
                (defe.Person.Name, defe.Roll))
@@ -712,24 +713,7 @@ def combat(player, enemies):
             print("\n*** %s ***" % res)
 
         if defe.Flags & FLAG_DEAD > 0 and defe.Person is not player:
-          if defe.Person.CurrencyGen is not None:
-            # currency
-            r = defe.Person.CurrencyGen.Result()
-            print("\nYou collect %d SP!" % (r))
-            att.Person.Currency += r
-          # handle loot
-          if defe.Person.Loot is not None:
-            logd("%s LOOT handling" % (defe.Person.Name))
-            for item_id, chance in defe.Person.Loot.items():
-              r = DiceRoll(1, 100).Result()
-              logd("%s LOOT_CHECK %s: %d vs. %d" %
-                   (defe.Person.Name, items[item_id].ItemName,
-                    r, chance))
-              if r <= chance:
-                rooms[player.Room].AddItem(item_id, ItemLink(1))
-          # remove enemy from room
-          rooms[player.Room].RemovePerson(defe.UUID)
-          att.Target = None
+          HandleMobDeath(att, defe)
 
       else:
         logd("\n***%s HAD NO ATTACKS ***\n" % res)

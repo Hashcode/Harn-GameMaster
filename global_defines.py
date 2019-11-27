@@ -1701,14 +1701,16 @@ class Person:
   def UniversalPenaltyIndex(self):
     return int(self.UniversalPenalty() / 10)
 
-  def EquipWeight(self, items):
+  def EquipWeight(self):
+    items = GameData.GetItems()
     eq = 0
     for item_id, il in self.ItemLinks.items():
       if il.Equipped:
         eq += items[item_id].Weight
     return eq
 
-  def InvenWeight(self, items):
+  def InvenWeight(self):
+    items = GameData.GetItems()
     inv = 0
     for item_id, il in self.ItemLinks.items():
       if il.Equipped:
@@ -1718,19 +1720,19 @@ class Person:
         inv += items[item_id].Weight * il.Quantity
     return inv
 
-  def ItemWeight(self, items):
-    return self.EquipWeight(items) + self.InvenWeight(items)
+  def ItemWeight(self):
+    return self.EquipWeight() + self.InvenWeight()
 
-  def FatigueRate(self, items):
-    return self.ItemWeight(items) / self.AttrEndurance(items)
+  def FatigueRate(self):
+    return self.ItemWeight() / self.AttrEndurance()
 
-  def EncumbrancePenalty(self, items):
-    return round(self.FatigueRate(items) * 3)
+  def EncumbrancePenalty(self):
+    return round(self.FatigueRate() * 3)
 
-  def PhysicalPenalty(self, items):
+  def PhysicalPenalty(self):
     ret = self.IP()
     ret += self.FatiguePoints()
-    ret += self.EncumbrancePenalty(items)
+    ret += self.EncumbrancePenalty()
     return int(ret / 10)
 
   def SkillBase(self, skill_id):
@@ -1752,22 +1754,22 @@ class Person:
       ret = self.SkillLinks[skill_id].Attempts
     return ret
 
-  def SkillML(self, skill_id, items, skipPenalty=False):
+  def SkillML(self, skill_id, skipPenalty=False):
     ml = self.SkillBase(skill_id) * skills[skill_id].OMLMod
     if skill_id in self.SkillLinks:
       ml += self.SkillLinks[skill_id].Points
     if not skipPenalty:
       if skills[skill_id].SkillClass == SkillClassEnum.PHYSICAL or \
          skills[skill_id].SkillClass == SkillClassEnum.COMBAT:
-        ml -= (self.PhysicalPenalty(items) * 5)
+        ml -= (self.PhysicalPenalty() * 5)
       else:
         ml -= (self.UniversalPenalty() * 5)
     if ml < 5:
       ml = 5
     return ml
 
-  def SkillIndex(self, skill_id, items):
-    return round(self.SkillML(skill_id, items) / 10)
+  def SkillIndex(self, skill_id):
+    return round(self.SkillML(skill_id) / 10)
 
   def SkillMax(self, skill_id):
     return 100 + self.SkillBase(skill_id)
@@ -1798,7 +1800,8 @@ class Person:
       else:
         return Roll.MF
 
-  def Defense(self, items, bp_id, dmg_type):
+  def Defense(self, bp_id, dmg_type):
+    items = GameData.GetItems()
     m = Material("None", 0, 0, [0, 0, 0, 0])
     m.Copy(materials[self.SkinMaterial])
     for item_id, il in self.ItemLinks.items():
@@ -1810,23 +1813,22 @@ class Person:
         m.Add(materials[items[item_id].Material])
     return m.Protection[dmg_type]
 
-  def AttrInitiative(self, items):
-    return self.SkillML(SkillEnum.INITIATIVE, items)
+  def AttrInitiative(self):
+    return self.SkillML(SkillEnum.INITIATIVE)
 
-  def AttrEndurance(self, items):
+  def AttrEndurance(self):
     sb = self.SkillBase(SkillEnum.CONDITIONING)
-    ml = self.SkillML(SkillEnum.CONDITIONING, items,
-                      skipPenalty=True)
+    ml = self.SkillML(SkillEnum.CONDITIONING, skipPenalty=True)
     return round(sb + (ml / sb - 5))
 
-  def AttrDodge(self, items):
-    return self.SkillML(SkillEnum.DODGE, items)
+  def AttrDodge(self):
+    return self.SkillML(SkillEnum.DODGE)
 
   def IsAggressive(self):
     return self.Flags & PERS_AGGRESSIVE > 0
 
-  def GenerateCombatAttacks(self, items, block=False,
-                            default=ItemEnum.NONE):
+  def GenerateCombatAttacks(self, block=False, default=ItemEnum.NONE):
+    items = GameData.GetItems()
     attacks = []
     # count hands used
     count = 0
@@ -1838,7 +1840,7 @@ class Person:
       if items[item_id].ItemType == ItemTypeEnum.WEAPON or \
          items[item_id].ItemType == ItemTypeEnum.SHIELD:
         if block:
-          skill = self.SkillML(items[item_id].Skill, items)
+          skill = self.SkillML(items[item_id].Skill)
           skill += items[item_id].DefenseRating
           if skill > def_skill:
             def_skill = skill
@@ -1850,7 +1852,7 @@ class Person:
       if def_item_id == ItemEnum.NONE:
         return attacks
       skill_id = items[def_item_id].Skill
-      ml = self.SkillML(skill_id, items)
+      ml = self.SkillML(skill_id)
       ml += items[def_item_id].DefenseRating
       attacks.append(CombatAttack(items[def_item_id].ItemName, ml, skill_id,
                                   None, DamageTypeEnum.BLUNT))
@@ -1860,7 +1862,7 @@ class Person:
           continue
         if items[item_id].ItemType == ItemTypeEnum.WEAPON:
           skill_id = items[item_id].Skill
-          ml = self.SkillML(skill_id, items)
+          ml = self.SkillML(skill_id)
           ml += items[item_id].AttackRating
           if count > 1:
             ml -= items[item_id].SingleHandPenalty
@@ -1869,7 +1871,7 @@ class Person:
                                       items[item_id].DamageType))
     if len(attacks) < 1 and default != ItemEnum.NONE:
       skill_id = items[default].Skill
-      ml = self.SkillML(skill_id, items)
+      ml = self.SkillML(skill_id)
       ml += items[default].AttackRating
       attacks.append(CombatAttack(items[default].ItemName, ml, skill_id,
                                   items[default].Roll,
@@ -1918,17 +1920,16 @@ class Mob(Person):
     self.Loot = loot
     super().ResetStats()
 
-  def AttrInitiative(self, items):
-    return self.Initiative - (self.PhysicalPenalty(items) * 5)
+  def AttrInitiative(self):
+    return self.Initiative - (self.PhysicalPenalty() * 5)
 
-  def AttrEndurance(self, items):
+  def AttrEndurance(self):
     return self.Endurance
 
-  def AttrDodge(self, items):
-    return self.Dodge - (self.PhysicalPenalty(items) * 5)
+  def AttrDodge(self):
+    return self.Dodge - (self.PhysicalPenalty() * 5)
 
-  def GenerateCombatAttacks(self, items, block=False,
-                            default=ItemEnum.NONE):
+  def GenerateCombatAttacks(self, block=False, default=ItemEnum.NONE):
     attacks = []
     # Look for a "natural" attack
     if not block and self.MobAttacks is not None:
@@ -1936,14 +1937,14 @@ class Mob(Person):
         for ma in self.MobAttacks:
           if DiceRoll(1, 100).Result() <= ma.ChanceMax:
             ml = ma.SkillML + ma.AttackRating
-            ml -= (self.PhysicalPenalty(items) * 5)
+            ml -= (self.PhysicalPenalty() * 5)
             ca = CombatAttack(ma.Name, ml, SkillEnum.NONE,
                               ma.Damage, ma.DamageType)
             attacks.append(ca)
             break
     # Look for equipped weapons
     if len(attacks) < 1:
-      attacks = super().GenerateCombatAttacks(items, block, default)
+      attacks = super().GenerateCombatAttacks(block, default)
     return attacks
 
 
@@ -2122,9 +2123,8 @@ class Player(Person):
         break
     return ret
 
-  def GenerateCombatAttacks(self, items, block=False,
-                            default=ItemEnum.WEAPON_HAND):
-      return super().GenerateCombatAttacks(items, block, default)
+  def GenerateCombatAttacks(self, block=False, default=ItemEnum.WEAPON_HAND):
+      return super().GenerateCombatAttacks(block, default)
 
 
 # ROOM
