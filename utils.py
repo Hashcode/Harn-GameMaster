@@ -94,7 +94,8 @@ directions = {
 }
 
 
-def printRoomDescription(room_id, rooms):
+def printRoomDescription(room_id):
+  rooms = GameData.GetRooms()
   print("")
   # Room Title
   if rooms[room_id].Title != "":
@@ -483,7 +484,8 @@ def actionListPlayers(player, rooms):
 
 
 def actionLook(player, rooms):
-  printRoomDescription(player.Room, rooms)
+  player = GameData.GetPlayer()
+  printRoomDescription(player.Room)
   printRoomObjects(player.Room, rooms)
 
 

@@ -52,7 +52,7 @@ if TestMode:
 
 while True:
   res = RoomFuncResponse.NONE
-  printRoomDescription(player.Room, rooms)
+  printRoomDescription(player.Room)
 
   # Call Room Function
   if rooms[player.Room].Function is not None:
