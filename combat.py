@@ -586,7 +586,7 @@ def combat(player, enemies):
 
         while True:
           printCombatAttackActions(att, defe, items)
-          prompt(player, rooms, func_break=True)
+          prompt(func_break=True)
           if player.Command == "aim":
             print("\nComing soon!")
           elif player.Command == "attack" or player.Command == "a":

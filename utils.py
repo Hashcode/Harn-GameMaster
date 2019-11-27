@@ -682,7 +682,9 @@ commands.append(GenericCommand(["unlock"], actionComingSoon))
 commands.append(GenericCommand(["who"], actionListPlayers))
 
 
-def prompt(player, rooms, func_break=False):
+def prompt(func_break=False):
+  player = GameData.GetPlayer()
+  rooms = GameData.GetRooms()
   player.Command = ""
   while True:
     x = input("\n[? = HELP] Command: ").lower()

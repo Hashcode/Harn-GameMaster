@@ -75,7 +75,7 @@ while True:
 
   # Handle Commands
   if res != RoomFuncResponse.NO_PROMPT:
-    prompt(player, rooms)
+    prompt()
     if player.Command != "":
       print("\n%sYou cannot do that here.%s" %
             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
