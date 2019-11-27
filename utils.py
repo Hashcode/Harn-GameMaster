@@ -520,37 +520,86 @@ def actionRest(player, rooms):
   if player.CombatState != PlayerCombatState.NONE:
     print("\n%sYou can't REST during combat!%s" %
           (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-  elif player.IP() < 1:
+    return
+  if player.IP() < 1:
     print("\nYou are well rested.")
-  else:
-    # health restore
-    print("\nYou take a moment to rest ...")
-    combat = False
-    for i in range(2):
-      sleep(5)
-      GameData.ProcessRoomEvents()
-      # Check if the room persons need to attack
-      enemies = GameData.ProcessRoomCombat(player)
-      if len(enemies) > 0:
-        print("")
-        combat = True
-        combat(player, enemies)
+    return
+  # health restore
+  print("\nYou take a moment to rest ...")
+  combat = False
+  for i in range(2):
+    sleep(5)
+    GameData.ProcessRoomEvents()
+    # Check if the room persons need to attack
+    enemies = GameData.ProcessRoomCombat(player)
+    if len(enemies) > 0:
+      print("")
+      combat = True
+      combat(player, enemies)
+      break
+    if not combat:
+      for w in sorted(player.Wounds, reverse=True):
+        print("\nYou clean and dress a %s %s %s wound." %
+              (wounds[w.WoundType].Name.lower(),
+               wounds[w.WoundType].Verbs[w.DamageType].lower(),
+               body_parts[w.Location].PartName.lower()))
+        sleep(5)
+        r = DiceRoll(1, player.Attr[AttrEnum.AURA]).Result()
+        w.Impact -= r
+        if w.Impact <= 0:
+          player.Wounds.remove(w)
+          print("It's all better!")
+        else:
+          print("It looks a bit better.")
         break
-      if not combat:
-        for w in sorted(player.Wounds, reverse=True):
-          print("\nYou clean and dress a %s %s %s wound." %
-                (wounds[w.WoundType].Name.lower(),
-                 wounds[w.WoundType].Verbs[w.DamageType].lower(),
-                 body_parts[w.Location].PartName.lower()))
-          sleep(5)
-          r = DiceRoll(1, player.Attr[AttrEnum.AURA]).Result()
-          w.Impact -= r
-          if w.Impact <= 0:
-            player.Wounds.remove(w)
-            print("It's all better!")
-          else:
-            print("It looks a bit better.")
-          break
+
+
+ATT_PER_TRAIN = 25
+
+
+def actionTrain(player, rooms):
+  if player.CombatState != PlayerCombatState.NONE:
+    print("\n%sYou can't TRAIN during combat!%s" %
+          (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    return
+  print("\nChoose a trainable skill (>%d attempts):\n" % ATT_PER_TRAIN)
+  count = 0
+  for skill_id, sl in player.SkillLinks.items():
+    if sl.Attempts > ATT_PER_TRAIN:
+      count += 1
+      attempts = int(sl.Attempts / ATT_PER_TRAIN)
+      plural = ""
+      if attempts > 1:
+        plural = "s"
+      print("%-3s %-15s [%d train%s]" %
+            ("%d." % count, skills[skill_id].Name, attempts, plural))
+  if count < 1:
+    print("No skills are ready to be trained. Use them more!")
+    return
+  x = input("\nWhich skill # to train: ").lower()
+  if not x.isnumeric():
+    print("\nInvalid skill.")
+    return
+  skillNum = int(x)
+  if skillNum < 1 or skillNum > count:
+    print("\nInvalid skill.")
+    return
+  count = 0
+  for skill_id, sl in player.SkillLinks.items():
+    if sl.Attempts > ATT_PER_TRAIN:
+      count += 1
+      if count == skillNum:
+        # attempt to raise skill
+        r = DiceRoll(1, 100).Result() + player.SkillBase(skill_id)
+        if r > player.SkillML(skill_id, items, skipPenalty=True):
+          print("\nYou GAIN an mastery level in %s!" %
+                (skills[skill_id].Name.lower()))
+          sl.Points += 1
+        else:
+          print("\nYour attempt to train %s FAILS!" %
+                (skills[skill_id].Name.lower()))
+        sl.Attempts -= ATT_PER_TRAIN
+        break
 
 
 def actionSaveGeneric(player, rooms):
@@ -628,6 +677,7 @@ commands.append(GenericCommand(["rest"], actionRest))
 commands.append(GenericCommand(["save"], actionSaveGeneric))
 commands.append(GenericCommand(["skills", "sk"], actionSkills))
 commands.append(GenericCommand(["stats", "st"], actionStats))
+commands.append(GenericCommand(["train"], actionTrain))
 commands.append(GenericCommand(["unlock"], actionComingSoon))
 commands.append(GenericCommand(["who"], actionListPlayers))
 
