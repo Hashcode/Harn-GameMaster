@@ -7,11 +7,12 @@
 from time import sleep
 from enum import IntEnum
 
-from global_defines import (logd, logi, DiceRoll, CoverageEnum, body_parts,
+from global_defines import (DiceRoll, CoverageEnum, body_parts,
                             AimEnum, aims,
                             PlayerCombatState, wounds, PersonWound,
                             AttrEnum, PersonTypeEnum, ItemLink,
                             ImpactActionEnum, ANSI, GameData)
+from logging import (logd)
 from dmg_table import dmg_table_melee
 from utils import prompt
 from rooms import rooms
