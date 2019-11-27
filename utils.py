@@ -347,7 +347,7 @@ def actionStats(person, rooms):
     print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, person.Name.upper(),
                                 ANSI.TEXT_NORMAL))
   print("%-15s: %d" % ("Endurance", person.AttrEndurance(items)))
-  print("%-15s: %d lbs" % ("Total Weight", person.ItemWeight(items)))
+  print("%-15s: %d lbs" % ("Inven. Weight", person.ItemWeight(items)))
   print("%-15s: %d" % ("Enc. Points", person.EncumbrancePenalty(items)))
   print("%-15s: %d" % ("Injury Points", person.IP()))
   print("%-15s: %d" % ("Fatigue Points", person.FatiguePoints()))
