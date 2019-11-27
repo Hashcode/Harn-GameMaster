@@ -2289,6 +2289,7 @@ class GameData:
   _rooms = None
   _items = None
   _persons = None
+  _player = None
   _NextRoomEvent = 0
 
   ROOM_START = 0
@@ -2317,6 +2318,14 @@ class GameData:
   @staticmethod
   def GetRooms():
     return GameData._rooms
+
+  @staticmethod
+  def SetPlayer(player):
+    GameData._player = player
+
+  @staticmethod
+  def GetPlayer():
+    return GameData._player
 
   @staticmethod
   def ProcessRoomEvents():
@@ -2356,7 +2365,8 @@ class GameData:
               rooms[r].AddPerson(s.Person)
 
   @staticmethod
-  def ProcessRoomCombat(player):
+  def ProcessRoomCombat():
+    player = GameData.GetPlayer()
     rooms = GameData.GetRooms()
     enemies = []
 

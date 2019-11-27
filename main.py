@@ -29,6 +29,7 @@ print(ANSI.CLEAR + ANSI.RESET_CURSOR, end='')
 
 player = Player("Unknown")
 player.SetRoom(RoomEnum.GAME_START)
+GameData.SetPlayer(player)
 
 from items import items
 GameData.SetItems(items)
@@ -67,7 +68,7 @@ while True:
   printRoomObjects(player.Room, rooms)
 
   # Check if the room persons need to attack
-  enemies = GameData.ProcessRoomCombat(player)
+  enemies = GameData.ProcessRoomCombat()
   if len(enemies) > 0:
     combat(player, enemies)
     continue

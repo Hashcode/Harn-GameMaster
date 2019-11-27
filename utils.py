@@ -531,7 +531,7 @@ def actionRest(player, rooms):
     sleep(5)
     GameData.ProcessRoomEvents()
     # Check if the room persons need to attack
-    enemies = GameData.ProcessRoomCombat(player)
+    enemies = GameData.ProcessRoomCombat()
     if len(enemies) > 0:
       print("")
       combat = True
