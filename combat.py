@@ -266,21 +266,6 @@ def printCombatAttackActions(combatant, target, items):
         ("TARGET", "[T]", target_name))
 
 
-def printCombatDefenseActions(combatant, items):
-  block = combatant.Person.GenerateCombatAttacks(items, block=True)
-  if len(block) > 0:
-    block_name = "%s: %s ML" % (block[0].Name, block[0].SkillML)
-  else:
-    block_name = "no weapon / shield!"
-  print("\nDEFENSE COMMANDS:\n")
-  print("%-10s %-3s : %s" % ("BLOCK", "[B]", block_name))
-  print("%-10s %-3s : %d ML" % ("DODGE", "",
-                                combatant.Person.AttrDodge(items)))
-  # print("  MISSILE")
-  # print("  GRAPPLE")
-  # print("  ESOTERIC")
-
-
 def chooseTarget(player, enemies):
   ret = None
   print("\nChoose a target:\n")
