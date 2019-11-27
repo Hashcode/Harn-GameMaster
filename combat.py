@@ -250,7 +250,8 @@ def printCombatAttackActions(combatant, target, items):
   else:
     att_name = "no weapon!"
   if combatant.Target is not None:
-    target_name = combatant.Target.Person.Name
+    target_name = "%s [%d IP}" % (combatant.Target.Person.Name,
+                                  combatant.Target.Person.IP())
   else:
     target_name = "[NO TARGET]"
   print("\nOFFENSE COMMANDS:\n")
@@ -274,7 +275,7 @@ def chooseTarget(player, enemies):
     if c.Person.PersonType == PersonTypeEnum.NPC:
       if c.Flags & FLAG_DEAD == 0:
         count += 1
-        print("%d. %s" % (count, c.Person.Name))
+        print("%d. %s [%d IP]" % (count, c.Person.Name, c.Person.IP()))
   if count < 1:
     print("[NONE]")
     return ret
