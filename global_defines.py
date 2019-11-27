@@ -1186,7 +1186,7 @@ skill_classes = {
     SkillClassEnum.COMMUNICATION: AttrClass("Communication"),
     SkillClassEnum.RELIGION: AttrClass("Religion", hidden=True),
     SkillClassEnum.COMBAT: AttrClass("Combat"),
-    SkillClassEnum.LORE_CRAFTS: AttrClass("Lore & Crafts", hidden=True),
+    SkillClassEnum.LORE_CRAFTS: AttrClass("Lore & Crafts"),
 }
 
 
@@ -1399,6 +1399,86 @@ skills = {
               ATTR_DEX, ATTR_DEX, ATTR_EYE, 1,
               {SS_HIR: 1, SS_NAD: 1}),
     # LORE / CRAFT
+    SkillEnum.AGRICULTURE:
+        Skill("Agriculture", SkillClassEnum.LORE_CRAFTS,
+              ATTR_STR, ATTR_STA, ATTR_WIL, 2,
+              {SS_ULA: 2, SS_ARA: 2}),
+    SkillEnum.ALCHEMY:
+        Skill("Alchemy", SkillClassEnum.LORE_CRAFTS,
+              ATTR_SML, ATTR_INT, ATTR_AUR, 1,
+              {SS_SKO: 3, SS_TAI: 2, SS_MAS: 2}),
+    SkillEnum.ANIMALCRAFT:
+        Skill("Animalcraft", SkillClassEnum.LORE_CRAFTS,
+              ATTR_AGL, ATTR_VOI, ATTR_WIL, 1,
+              {SS_ULA: 1, SS_ARA: 1}),
+    SkillEnum.BREWING:
+        Skill("Brewing", SkillClassEnum.LORE_CRAFTS,
+              ATTR_DEX, ATTR_SML, ATTR_SML, 2,
+              {SS_SKO: 3, SS_TAI: 2, SS_MAS: 2}),
+    SkillEnum.COOKERY:
+        Skill("Cookery", SkillClassEnum.LORE_CRAFTS,
+              ATTR_DEX, ATTR_SML, ATTR_SML, 3,
+              {SS_SKO: 1}),
+    SkillEnum.FISHING:
+        Skill("Fishing", SkillClassEnum.LORE_CRAFTS,
+              ATTR_DEX, ATTR_EYE, ATTR_WIL, 3,
+              {SS_MAS: 2, SS_LAD: 2}),
+    SkillEnum.FLETCHING:
+        Skill("Fletching", SkillClassEnum.LORE_CRAFTS,
+              ATTR_DEX, ATTR_DEX, ATTR_EYE, 1,
+              {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
+    SkillEnum.FORAGING:
+        Skill("Foraging", SkillClassEnum.LORE_CRAFTS,
+              ATTR_DEX, ATTR_SML, ATTR_INT, 3,
+              {SS_ULA: 2, SS_ARA: 2}),
+    SkillEnum.HERBLORE:
+        Skill("Herblore", SkillClassEnum.LORE_CRAFTS,
+              ATTR_EYE, ATTR_SML, ATTR_INT, 1,
+              {SS_ULA: 3, SS_ARA: 2}),
+    SkillEnum.HIDEWORK:
+        Skill("Hidework", SkillClassEnum.LORE_CRAFTS,
+              ATTR_EYE, ATTR_SML, ATTR_WIL, 2,
+              {SS_ULA: 1, SS_ARA: 1}),
+    SkillEnum.JEWELCRAFT:
+        Skill("Jewelcraft", SkillClassEnum.LORE_CRAFTS,
+              ATTR_DEX, ATTR_EYE, ATTR_WIL, 1,
+              {SS_FEN: 3, SS_TAR: 1, SS_ARA: 1}),
+    SkillEnum.LOCKCRAFT:
+        Skill("Lockcraft", SkillClassEnum.LORE_CRAFTS,
+              ATTR_DEX, ATTR_EYE, ATTR_WIL, 1,
+              {SS_FEN: 3}),
+    SkillEnum.METALCRAFT:
+        Skill("Metalcraft", SkillClassEnum.LORE_CRAFTS,
+              ATTR_STR, ATTR_DEX, ATTR_WIL, 1,
+              {SS_FEN: 3, SS_AHN: 1, SS_ANG: 1}),
+    SkillEnum.MINING:
+        Skill("Mining", SkillClassEnum.LORE_CRAFTS,
+              ATTR_STR, ATTR_DEX, ATTR_INT, 1,
+              {SS_ULA: 2, SS_ARA: 2, SS_FEN: 1}),
+    SkillEnum.PHYSICIAN:
+        Skill("Physician", SkillClassEnum.LORE_CRAFTS,
+              ATTR_DEX, ATTR_EYE, ATTR_INT, 1,
+              {SS_MAS: 2, SS_SKO: 1, SS_TAI: 1}),
+    SkillEnum.SURVIVAL:
+        Skill("Survival", SkillClassEnum.LORE_CRAFTS,
+              ATTR_STR, ATTR_DEX, ATTR_INT, 3,
+              {SS_ULA: 2, SS_ARA: 1}),
+    SkillEnum.TIMBERCRAFT:
+        Skill("Timbercraft", SkillClassEnum.LORE_CRAFTS,
+              ATTR_STR, ATTR_DEX, ATTR_AGL, 2,
+              {SS_ULA: 3, SS_ARA: 1}),
+    SkillEnum.TRACKING:
+        Skill("Tracking", SkillClassEnum.LORE_CRAFTS,
+              ATTR_EYE, ATTR_SML, ATTR_WIL, 2,
+              {SS_ULA: 3, SS_ARA: 3}),
+    SkillEnum.WEAPONCRAFT:
+        Skill("Weaponcraft", SkillClassEnum.LORE_CRAFTS,
+              ATTR_STR, ATTR_DEX, ATTR_WIL, 1,
+              {SS_FEN: 3, SS_AHN: 1, SS_ANG: 1}),
+    SkillEnum.WOODCRAFT:
+        Skill("Woodcraft", SkillClassEnum.LORE_CRAFTS,
+              ATTR_DEX, ATTR_DEX, ATTR_WIL, 2,
+              {SS_ULA: 2, SS_ARA: 2, SS_LAD: 1}),
 }
 
 
