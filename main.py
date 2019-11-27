@@ -18,11 +18,6 @@ from random import seed
 
 from global_defines import (ItemEnum, ItemLink, Player,
                             RoomEnum, RoomFuncResponse, ANSI, GameData)
-from utils import (printRoomDescription, printRoomObjects, prompt)
-from items import items
-from person import persons
-from rooms import rooms
-from combat import combat
 
 TestMode = True
 
@@ -35,11 +30,17 @@ print(ANSI.CLEAR + ANSI.RESET_CURSOR, end='')
 player = Player("Unknown")
 player.SetRoom(RoomEnum.GAME_START)
 
+from items import items
 GameData.SetItems(items)
+from person import persons
 GameData.SetPersons(persons)
+from rooms import rooms
 GameData.SetRooms(rooms)
 GameData.ROOM_START = ROOM_START
 GameData.ROOM_RESPAWN = ROOM_RESPAWN
+
+from utils import (printRoomDescription, printRoomObjects, prompt)
+from combat import combat
 
 
 if TestMode:
@@ -49,7 +50,6 @@ if TestMode:
   player.AddItem(ItemEnum.ARMOR_LEGGINGS_CLOTH, ItemLink(1, equip=True))
 
 while True:
-  enemies = []
   res = RoomFuncResponse.NONE
   printRoomDescription(player.Room, rooms)
 
@@ -67,22 +67,7 @@ while True:
   printRoomObjects(player.Room, rooms)
 
   # Check if the room persons need to attack
-  count = 0
-  for x in rooms[player.Room].Persons:
-    if x.IsAggressive():
-      count += 1
-      if count == 1:
-        print("")
-      enemies.append(x)
-      print("%s%s attacks you!%s" %
-            (ANSI.TEXT_BOLD, x.Name.capitalize(),
-             ANSI.TEXT_NORMAL))
-    if player.CombatTarget is not None:
-      if player.CombatTarget == x.UUID:
-        print("\nYou attack %s!" % x.Name)
-        enemies.append(x)
-        player.CombatTarget = None
-
+  enemies = GameData.ProcessRoomCombat(player)
   if len(enemies) > 0:
     combat(player, enemies)
     continue

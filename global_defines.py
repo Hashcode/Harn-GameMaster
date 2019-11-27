@@ -2240,7 +2240,30 @@ class GameData:
             logd("SpawnCheck [%s] in %s [<=%d]" % (persons[s.Person].Name,
                                                    rooms[r].Title, s.Chance))
             if DiceRoll(1, 100).Result() <= s.Chance:
-              rooms[r].AddPerson(s.Person, persons)
+              rooms[r].AddPerson(s.Person)
+
+  @staticmethod
+  def ProcessRoomCombat(player):
+    rooms = GameData.GetRooms()
+    enemies = []
+
+    # Check if the room persons need to attack
+    count = 0
+    for x in rooms[player.Room].Persons:
+      if x.IsAggressive():
+        count += 1
+        if count == 1:
+          print("")
+        enemies.append(x)
+        print("%s%s attacks you!%s" %
+              (ANSI.TEXT_BOLD, x.Name.capitalize(),
+               ANSI.TEXT_NORMAL))
+      if player.CombatTarget is not None:
+        if player.CombatTarget == x.UUID:
+          print("\nYou attack %s!" % x.Name)
+          enemies.append(x)
+          player.CombatTarget = None
+    return enemies
 
 
 # vim: tabstop=2 shiftwidth=2 expandtab:
