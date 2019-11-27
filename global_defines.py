@@ -1604,6 +1604,7 @@ class Person:
     self.PersonType = p.PersonType
     self.Name = p.Name
     self.Flags = p.Flags
+    self.SkinMaterial = p.SkinMaterial
     self.Attr.clear()
     for attr_id, attr in attributes.items():
       if attr_id in p.Attr:
