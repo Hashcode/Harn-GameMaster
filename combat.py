@@ -329,7 +329,7 @@ def combat(player, enemies):
     for x in order:
       if x is not player_combatant and x.Flags & FLAG_DEAD == 0:
         all_dead = False
-      if x.StunLevel > 0:
+      if x.StunLevel > 0 and x.Flags & FLAG_DEAD == 0:
         x.StunLevel -= 1
         logd("%s STUN_LEVEL %d" %
              (x.Person.Name, x.StunLevel))
@@ -660,19 +660,19 @@ def combat(player, enemies):
             r = defe.Person.CurrencyGen.Result()
             print("\nYou collect %d SP!" % (r))
             att.Person.Currency += r
-            # handle loot
-            if defe.Person.Loot is not None:
-              logi("%s LOOT handling" % (defe.Person.Name))
-              for item_id, chance in defe.Person.Loot.items():
-                r = DiceRoll(1, 100).Result()
-                logi("%s LOOT_CHECK %s: %d vs. %d" %
-                     (defe.Person.Name, items[item_id].ItemName,
-                      r, chance))
-                if r <= chance:
-                  rooms[player.Room].AddItem(item_id, ItemLink(1))
-            # remove enemy from room
-            rooms[player.Room].RemovePerson(defe.UUID)
-            att.Target = None
+          # handle loot
+          if defe.Person.Loot is not None:
+            logd("%s LOOT handling" % (defe.Person.Name))
+            for item_id, chance in defe.Person.Loot.items():
+              r = DiceRoll(1, 100).Result()
+              logd("%s LOOT_CHECK %s: %d vs. %d" %
+                   (defe.Person.Name, items[item_id].ItemName,
+                    r, chance))
+              if r <= chance:
+                rooms[player.Room].AddItem(item_id, ItemLink(1))
+          # remove enemy from room
+          rooms[player.Room].RemovePerson(defe.UUID)
+          att.Target = None
 
       else:
         logd("\n***%s HAD NO ATTACKS ***\n" % res)
