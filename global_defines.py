@@ -46,6 +46,14 @@ class DiceRoll:
     return value
 
 
+class Roll(IntEnum):
+  NONE = 0
+  CS = 1
+  MS = 2
+  MF = 3
+  CF = 4
+
+
 # NUMBER
 
 def NumAdj(num):
@@ -1761,6 +1769,26 @@ class Person:
 
   def SkillMax(self, skill_id):
     return 100 + self.SkillBase(skill_id)
+
+  def ResolveSkill(self, ml):
+    r = DiceRoll(1, 100).Result()
+    logd("%s RESOLVE SKILL: %d, ROLL: %d" % (self.Name, ml, r))
+    if ml < 5:
+      ml = 5
+    elif ml > 95:
+      ml = 95
+    # success
+    if r <= ml:
+      if r % 5 == 0:
+        return Roll.CS
+      else:
+        return Roll.MS
+    # failure
+    else:
+      if r % 5 == 0:
+        return Roll.CF
+      else:
+        return Roll.MF
 
   def Defense(self, items, bp_id, dmg_type):
     m = Material("None", 0, 0, [0, 0, 0, 0])

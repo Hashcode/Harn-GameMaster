@@ -7,7 +7,7 @@
 from time import sleep
 from enum import IntEnum
 
-from global_defines import (DiceRoll, CoverageEnum, body_parts,
+from global_defines import (DiceRoll, Roll, CoverageEnum, body_parts,
                             AimEnum, aims,
                             PlayerCombatState, wounds, PersonWound,
                             AttrEnum, PersonTypeEnum, ItemLink,
@@ -28,14 +28,6 @@ class Action(IntEnum):
   GRAPPLE = 6
   ESOTERIC = 7
   FLEE = 8
-
-
-class Roll(IntEnum):
-  NONE = 0
-  CS = 1
-  MS = 2
-  MF = 3
-  CF = 4
 
 
 class ResultEnum(IntEnum):
@@ -116,23 +108,6 @@ class Combatant:
       return True
     else:
       return False
-
-
-def ResolveSkill(c, ml):
-  r = DiceRoll(1, 100).Result()
-  logd("%s RESOLVE SKILL: %d, ROLL: %d" % (c.Person.Name, ml, r))
-  # success
-  if r <= ml:
-    if r % 5 == 0:
-      return Roll.CS
-    else:
-      return Roll.MS
-  # failure
-  else:
-    if r % 5 == 0:
-      return Roll.CF
-    else:
-      return Roll.MF
 
 
 hit_table_melee_default = {
@@ -469,16 +444,16 @@ def combat(player, enemies):
 
       if att.Attacks is not None:
         for at in att.Attacks:
-          att.Roll = ResolveSkill(att, at.SkillML)
+          att.Roll = att.Person.ResolveSkill(at.SkillML)
           logd("ATTACKER %s %s" %
                (att.Person.Name, att.Roll))
           if defe.Action == Action.BLOCK:
             if len(defe.Attacks) < 1:
               defe.Action = Action.DODGE
             else:
-              defe.Roll = ResolveSkill(defe, defe.Attacks[0].SkillML)
+              defe.Roll = defe.Person.ResolveSkill(defe.Attacks[0].SkillML)
           if defe.Action == Action.DODGE:
-            defe.Roll = ResolveSkill(defe, defe.Person.AttrDodge(items))
+            defe.Roll = defe.Person.ResolveSkill(defe.Person.AttrDodge(items))
           logd("DEFENDER %s %s" %
                (defe.Person.Name, defe.Roll))
           # use resolve_melee for now
