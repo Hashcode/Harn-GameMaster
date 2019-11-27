@@ -6,6 +6,7 @@
 
 from sys import exit
 from textwrap import TextWrapper
+from time import sleep
 
 from global_defines import (attribute_classes, attributes, months, sunsigns,
                             cultures, social_classes, sibling_ranks, wounds,
@@ -14,9 +15,8 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             skill_classes, skills, item_flags, body_parts,
                             materials, NumAdj, DamageTypeEnum, AttrEnum,
                             Material, PlayerCombatState, PersonTypeEnum,
-                            ItemTypeEnum, ItemFlagEnum,
-                            ItemLink, DirectionEnum,
-                            ANSI)
+                            ItemTypeEnum, ItemFlagEnum, DiceRoll,
+                            ItemLink, DirectionEnum, ANSI, GameData)
 from items import items
 from db import (ListDB, SavePlayer)
 
@@ -516,6 +516,43 @@ def actionQuit(player, rooms):
       print("\nQuit aborted.")
 
 
+def actionRest(player, rooms):
+  if player.CombatState != PlayerCombatState.NONE:
+    print("\n%sYou can't REST during combat!%s" %
+          (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  elif player.IP() < 1:
+    print("\nYou are well rested.")
+  else:
+    # health restore
+    print("\nYou take a moment to rest ...")
+    combat = False
+    for i in range(2):
+      sleep(5)
+      GameData.ProcessRoomEvents()
+      # Check if the room persons need to attack
+      enemies = GameData.ProcessRoomCombat(player)
+      if len(enemies) > 0:
+        print("")
+        combat = True
+        combat(player, enemies)
+        break
+      if not combat:
+        for w in sorted(player.Wounds, reverse=True):
+          print("\nYou clean and dress a %s %s %s wound." %
+                (wounds[w.WoundType].Name.lower(),
+                 wounds[w.WoundType].Verbs[w.DamageType].lower(),
+                 body_parts[w.Location].PartName.lower()))
+          sleep(5)
+          r = DiceRoll(1, player.Attr[AttrEnum.AURA]).Result()
+          w.Impact -= r
+          if w.Impact <= 0:
+            player.Wounds.remove(w)
+            print("It's all better!")
+          else:
+            print("It looks a bit better.")
+          break
+
+
 def actionSaveGeneric(player, rooms):
   if player.CombatState != PlayerCombatState.NONE:
     print("\n%sYou can't SAVE in combat!%s" %
@@ -586,7 +623,8 @@ commands.append(GenericCommand(["look", "l"], actionLook))
 commands.append(GenericCommand(["open"], actionComingSoon))
 commands.append(GenericCommand(["password"], actionChangePassword))
 commands.append(GenericCommand(["quit", "q"], actionQuit))
-commands.append(GenericCommand(["remove", "re", "rem"], actionRemoveItem))
+commands.append(GenericCommand(["remove", "rm"], actionRemoveItem))
+commands.append(GenericCommand(["rest"], actionRest))
 commands.append(GenericCommand(["save"], actionSaveGeneric))
 commands.append(GenericCommand(["skills", "sk"], actionSkills))
 commands.append(GenericCommand(["stats", "st"], actionStats))
