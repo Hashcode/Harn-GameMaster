@@ -587,9 +587,10 @@ aims = {
 
 
 class CombatAttack:
-  def __init__(self, name, ml, roll, dmg_type):
+  def __init__(self, name, ml, skill_id, roll, dmg_type):
     self.Name = name
     self.SkillML = ml
+    self.SkillID = skill_id
     self.Roll = roll
     self.DamageType = dmg_type
 
@@ -1771,7 +1772,13 @@ class Person:
   def SkillMax(self, skill_id):
     return 100 + self.SkillBase(skill_id)
 
-  def ResolveSkill(self, ml):
+  def ResolveSkill(self, ml, skill_id):
+    # store attempts
+    if skill_id != SkillEnum.NONE:
+      if skill_id in self.SkillLinks:
+        self.SkillLinks[skill_id].Attempts += 1
+      else:
+        self.SkillLinks.update({skill_id: SkillLink(0, 1)})
     r = DiceRoll(1, 100).Result()
     logd("%s RESOLVE SKILL: %d, ROLL: %d" % (self.Name, ml, r))
     if ml < 5:
@@ -1842,26 +1849,29 @@ class Person:
     if block:
       if def_item_id == ItemEnum.NONE:
         return attacks
-      ml = self.SkillML(items[def_item_id].Skill, items)
+      skill_id = items[def_item_id].Skill
+      ml = self.SkillML(skill_id, items)
       ml += items[def_item_id].DefenseRating
-      attacks.append(CombatAttack(items[def_item_id].ItemName, ml,
+      attacks.append(CombatAttack(items[def_item_id].ItemName, ml, skill_id,
                                   None, DamageTypeEnum.BLUNT))
     else:
       for item_id, il in self.ItemLinks.items():
         if not il.Equipped:
           continue
         if items[item_id].ItemType == ItemTypeEnum.WEAPON:
-          ml = self.SkillML(items[item_id].Skill, items)
+          skill_id = items[item_id].Skill
+          ml = self.SkillML(skill_id, items)
           ml += items[item_id].AttackRating
           if count > 1:
             ml -= items[item_id].SingleHandPenalty
-          attacks.append(CombatAttack(items[item_id].ItemName, ml,
+          attacks.append(CombatAttack(items[item_id].ItemName, ml, skill_id,
                                       items[item_id].Roll,
                                       items[item_id].DamageType))
     if len(attacks) < 1 and default != ItemEnum.NONE:
-      ml = self.SkillML(items[default].Skill, items)
+      skill_id = items[default].Skill
+      ml = self.SkillML(skill_id, items)
       ml += items[default].AttackRating
-      attacks.append(CombatAttack(items[default].ItemName, ml,
+      attacks.append(CombatAttack(items[default].ItemName, ml, skill_id,
                                   items[default].Roll,
                                   items[default].DamageType))
     return attacks
@@ -1927,7 +1937,8 @@ class Mob(Person):
           if DiceRoll(1, 100).Result() <= ma.ChanceMax:
             ml = ma.SkillML + ma.AttackRating
             ml -= (self.PhysicalPenalty(items) * 5)
-            ca = CombatAttack(ma.Name, ml, ma.Damage, ma.DamageType)
+            ca = CombatAttack(ma.Name, ml, SkillEnum.NONE,
+                              ma.Damage, ma.DamageType)
             attacks.append(ca)
             break
     # Look for equipped weapons

@@ -8,7 +8,7 @@ from time import sleep
 from enum import IntEnum
 
 from global_defines import (DiceRoll, Roll, CoverageEnum, body_parts,
-                            AimEnum, aims,
+                            AimEnum, aims, SkillEnum,
                             PlayerCombatState, wounds, PersonWound,
                             AttrEnum, PersonTypeEnum, ItemLink,
                             ImpactActionEnum, ANSI, GameData)
@@ -496,7 +496,7 @@ def combat(player, enemies):
               print("%s%s EXPIRES from loss of blood!%s" %
                     (ANSI.TEXT_BOLD, x.Person.Name.capitalize(),
                      ANSI.TEXT_NORMAL))
-            defe.Flags |= FLAG_DEAD
+            x.Flags |= FLAG_DEAD
             if x.Person is player:
               HandlePlayerDeath(player)
               break
@@ -660,16 +660,19 @@ def combat(player, enemies):
 
       if att.Attacks is not None:
         for at in att.Attacks:
-          att.Roll = att.Person.ResolveSkill(at.SkillML)
+          att.Roll = att.Person.ResolveSkill(at.SkillML,
+                                             at.SkillID)
           logd("ATTACKER %s %s" %
                (att.Person.Name, att.Roll))
           if defe.Action == Action.BLOCK:
             if len(defe.Attacks) < 1:
               defe.Action = Action.DODGE
             else:
-              defe.Roll = defe.Person.ResolveSkill(defe.Attacks[0].SkillML)
+              defe.Roll = defe.Person.ResolveSkill(defe.Attacks[0].SkillML,
+                                                   defe.Attacks[0].SkillID)
           if defe.Action == Action.DODGE:
-            defe.Roll = defe.Person.ResolveSkill(defe.Person.AttrDodge(items))
+            defe.Roll = defe.Person.ResolveSkill(defe.Person.AttrDodge(items),
+                                                 SkillEnum.DODGE)
           logd("DEFENDER %s %s" %
                (defe.Person.Name, defe.Roll))
           # use resolve_melee for now
