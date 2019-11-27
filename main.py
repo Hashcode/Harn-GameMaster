@@ -65,7 +65,7 @@ while True:
   # Check for room events
   GameData.ProcessRoomEvents()
 
-  printRoomObjects(player.Room, rooms)
+  printRoomObjects(player.Room)
 
   # Check if the room persons need to attack
   enemies = GameData.ProcessRoomCombat()

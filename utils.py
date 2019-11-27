@@ -114,7 +114,8 @@ def printRoomDescription(room_id):
                                        rooms[ex.Room].ShortDescription))
 
 
-def printRoomObjects(room_id, rooms):
+def printRoomObjects(room_id):
+  rooms = GameData.GetRooms()
   # Persons
   if len(rooms[room_id].Persons) > 0:
     print("")
@@ -486,7 +487,7 @@ def actionListPlayers(player, rooms):
 def actionLook(player, rooms):
   player = GameData.GetPlayer()
   printRoomDescription(player.Room)
-  printRoomObjects(player.Room, rooms)
+  printRoomObjects(player.Room)
 
 
 def actionChangePassword(player, rooms):
