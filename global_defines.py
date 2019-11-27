@@ -1500,6 +1500,30 @@ class PersonWound:
     self.Location = loc
     self.Impact = impact
 
+  def __eq__(self, other):
+    if self.Impact == other.Impact:
+      if self.WoundType == other.WoundType:
+        if self.Location == other.Location:
+          if self.DamageType == other.DamageType:
+            return True
+    return False
+
+  def __gt__(self, other):
+    if self.Impact <= other.Impact:
+      if self.WoundType <= other.WoundType:
+        if self.Location <= other.Location:
+          if self.DamageType <= other.DamageType:
+            return False
+    return True
+
+  def __lt__(self, other):
+    if self.Impact >= other.Impact:
+      if self.WoundType >= other.WoundType:
+        if self.Location >= other.Location:
+          if self.DamageType >= other.DamageType:
+            return False
+    return True
+
 
 class Person:
   def __init__(self, person_type, name, long_desc="", flags=0,
