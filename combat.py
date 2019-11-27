@@ -74,6 +74,8 @@ class Combatant:
     self.TAdvCount = 0
     self.Flags = 0
     self.StunLevel = 0
+    self.Bleed = 0
+    self.Bloodloss = 0
     self.Action = Action.IGNORE
     self.Aim = AimEnum.MID
     self.Target = None
@@ -229,6 +231,9 @@ def printCombatAttackActions(combatant, target, items):
                                   combatant.Target.Person.IP())
   else:
     target_name = "[NO TARGET]"
+  if combatant.Bloodloss > 0:
+    print("\nBLOODLOSS POINTS: %d of %d" %
+          (combatant.Bloodloss, combatant.Person.AttrEndurance(items)))
   print("\nOFFENSE COMMANDS:\n")
   print("%-10s %-3s : %s" % ("AIM", "", aims[combatant.Aim].Name))
   print("%-10s %-3s : %s" % ("ATTACK", "[A]", att_name))
@@ -271,6 +276,36 @@ def chooseTarget(player, enemies):
           ret = c.Person.UUID
           break
   return ret
+
+
+def HandlePlayerDeath(player):
+  # penalties?
+  sleep(2)
+  print("\nYou slowly come back to your senses ...")
+  sleep(2)
+  player.CombatState = PlayerCombatState.NONE
+  player.SetRoom(GameData.ROOM_RESPAWN)
+
+
+def HandleMobDeath(att, defe):
+  if defe.Person.CurrencyGen is not None:
+    # currency
+    r = defe.Person.CurrencyGen.Result()
+    print("\nYou collect %d SP!" % (r))
+    att.Person.Currency += r
+  # handle loot
+  if defe.Person.Loot is not None:
+    logd("%s LOOT handling" % (defe.Person.Name))
+    for item_id, chance in defe.Person.Loot.items():
+      r = DiceRoll(1, 100).Result()
+      logd("%s LOOT_CHECK %s: %d vs. %d" %
+           (defe.Person.Name, items[item_id].ItemName,
+            r, chance))
+      if r <= chance:
+        rooms[att.Person.Room].AddItem(item_id, ItemLink(1))
+  # remove enemy from room
+  rooms[att.Person.Room].RemovePerson(defe.UUID)
+  att.Target = None
 
 
 def HandleImpactDMG(player, att, defe, at, res_level):
@@ -397,8 +432,18 @@ def HandleImpactDMG(player, att, defe, at, res_level):
             print("%sYou are STUNNED!%s" %
                   (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
           defe.StunLevel += 2
-          logd("%s STUN_LEVEL %d" %
-               (defe.Person.Name, defe.StunLevel))
+          logd("%s STUN_LEVEL %d" % (defe.Person.Name, defe.StunLevel))
+
+      elif ia.Action == ImpactActionEnum.BLEED:
+        if att.Person == player:
+          print("%s%s's wound is BLEEDING!%s" %
+                (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
+                 ANSI.TEXT_NORMAL))
+        else:
+          print("%sYour wound is BLEEDING!%s" %
+                (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+        defe.Bleed += ia.Level
+        logd("%s BLEED %d" % (defe.Person.Name, defe.Bleed))
 
       else:
         print("IMPACT_ACTION: %s LEVEL:%d" %
@@ -413,6 +458,7 @@ def HandleImpactDMG(player, att, defe, at, res_level):
 def combat(player, enemies):
   # start of combat checks?
   order = []
+  round_count = 0
 
   # setup combatants
   player_combatant = Combatant(player, 0, items)
@@ -422,26 +468,59 @@ def combat(player, enemies):
 
   while True:
     logd("** START ROUND **")
+    round_count += 1
 
-    # Check for end of combat and reduce stun levels
+    # checks for:
+    # - end of combat
+    # - reduce stun levels
+    # - bloodloss
     all_dead = True
     for x in order:
-      if x is not player_combatant and x.Flags & FLAG_DEAD == 0:
-        all_dead = False
+      # check for bleed every 6 rounds (1 minute)
+      if round_count % 6 == 0:
+        if x.Bleed > 0:
+          if x.Person is player:
+            print("\n%sYou are BLEEDING!%s" %
+                  (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+          else:
+            print("\n%s%s is BLEEDING!%s" %
+                  (ANSI.TEXT_BOLD, x.Person.Name.capitalize(),
+                   ANSI.TEXT_NORMAL))
+          x.Bloodloss += x.Bleed
+          if x.Bloodloss > x.Person.AttrEndurance(items):
+            # death from blood loss
+            if x.Person is player:
+              print("%sYou EXPIRE from loss of blood!%s" %
+                    (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+            else:
+              print("%s%s EXPIRES from loss of blood!%s" %
+                    (ANSI.TEXT_BOLD, x.Person.Name.capitalize(),
+                     ANSI.TEXT_NORMAL))
+            defe.Flags |= FLAG_DEAD
+            if x.Person is player:
+              HandlePlayerDeath(player)
+              break
+            else:
+              HandleMobDeath(player_combatant, x)
       if x.StunLevel > 0 and x.Flags & FLAG_DEAD == 0:
         x.StunLevel -= 1
         logd("%s STUN_LEVEL %d" %
              (x.Person.Name, x.StunLevel))
         if x.StunLevel < 1:
           if x.Person is player:
-            print("%sYour stun WEARS OFF!%s" %
+            print("\n%sYour stun WEARS OFF!%s" %
                   (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
           else:
-            print("%s%s's stun WEARS OFF!%s" %
+            print("\n%s%s's stun WEARS OFF!%s" %
                   (ANSI.TEXT_BOLD, x.Person.Name.capitalize(),
                    ANSI.TEXT_NORMAL))
+      if x is not player_combatant and x.Flags & FLAG_DEAD == 0:
+        all_dead = False
     if all_dead:
       player.CombatState = PlayerCombatState.NONE
+      return
+
+    if player_combatant.Flags & FLAG_DEAD > 0:
       return
 
     player.CombatState = PlayerCombatState.WAIT
@@ -657,12 +736,7 @@ def combat(player, enemies):
         break
 
     if player_combatant.Flags & FLAG_DEAD > 0:
-      # penalties?
-      sleep(2)
-      print("\nYou slowly come back to your senses ...")
-      sleep(2)
-      player.CombatState = PlayerCombatState.NONE
-      player.SetRoom(GameData.ROOM_RESPAWN)
+      HandlePlayerDeath(player)
       break
 
     if att.Action == Action.FLEE:
