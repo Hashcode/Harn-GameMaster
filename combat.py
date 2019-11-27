@@ -7,18 +7,15 @@
 from time import sleep
 from enum import IntEnum
 
-from global_defines import (logd, DiceRoll, CoverageEnum, body_parts,
-                            DamageTypeEnum, PlayerCombatState, wounds,
-                            PersonWound, AttrEnum, PersonTypeEnum,
-                            SkillEnum, ImpactResult, ImpactActionEnum,
-                            ImpactAction, CombatAttack, ANSI, RoomEnum)
+from global_defines import (logd, logi, DiceRoll, CoverageEnum, body_parts,
+                            AimEnum, aims,
+                            PlayerCombatState, wounds, PersonWound,
+                            AttrEnum, PersonTypeEnum, ItemLink,
+                            ImpactActionEnum, ANSI, GameData)
 from dmg_table import dmg_table_melee
 from utils import prompt
 from rooms import rooms
 from items import items
-
-
-ROOM_RESPAWN = RoomEnum.BL_PRIEST_CHAMBER
 
 
 class Action(IntEnum):
@@ -30,25 +27,6 @@ class Action(IntEnum):
   GRAPPLE = 6
   ESOTERIC = 7
   FLEE = 8
-
-
-class AimEnum(IntEnum):
-  HIGH = 0
-  MID = 1
-  LOW = 2
-
-
-class Aim:
-  def __init__(self, name, penalty):
-    self.Name = name
-    self.Penalty = penalty
-
-
-aims = {
-    AimEnum.HIGH: Aim("High Zone", 10),
-    AimEnum.MID: Aim("Mid Zone", 0),
-    AimEnum.LOW: Aim("Low Zone", 10),
-}
 
 
 class Roll(IntEnum):
@@ -108,12 +86,17 @@ class Combatant:
     self.Target = None
     self.Roll = Roll.NONE
     self.Attacks = None
+    self.TurnTaken = False
 
   def Refresh(self, items):
-    self.Init = DiceRoll(1, 100).Result()
-    self.Init += self.Person.AttrInitiative(items)
+    if self.StunLevel > 0:
+      self.Init = 0
+    else:
+      self.Init = DiceRoll(1, 100).Result()
+      self.Init += self.Person.AttrInitiative(items)
     self.Action = Action.IGNORE
     self.Aim = AimEnum.MID
+    self.TurnTaken = False
 
   def __eq__(self, other):
     if self.Init == other.Init:
@@ -341,44 +324,43 @@ def combat(player, enemies):
   while True:
     logd("** START ROUND **")
 
-    # Check for end of combat
+    # Check for end of combat and reduce stun levels
     all_dead = True
     for x in order:
       if x is not player_combatant and x.Flags & FLAG_DEAD == 0:
         all_dead = False
+      if x.StunLevel > 0:
+        x.StunLevel -= 1
+        logd("%s STUN_LEVEL %d" %
+             (x.Person.Name, x.StunLevel))
+        if x.StunLevel < 1:
+          if x.Person is player:
+            print("%sYour stun WEARS OFF!%s" %
+                  (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+          else:
+            print("%s%s's stun WEARS OFF!%s" %
+                  (ANSI.TEXT_BOLD, x.Person.Name.capitalize(),
+                   ANSI.TEXT_NORMAL))
     if all_dead:
+      player.CombatState = PlayerCombatState.NONE
       return
 
     player.CombatState = PlayerCombatState.WAIT
     for x in order:
         x.Refresh(items)
+        logd("%s init %d" % (x.Person.Name, x.Init))
 
     # TURN loop
     for att in sorted(order, reverse=True):
+      logd("** TURN %s **" % att.Person.Name)
+      att.TurnTaken = True
 
       if att.Flags & FLAG_DEAD > 0:
+        logd("skip %s == DEAD" % att.Person.Name)
         continue
 
-      # chance to recover from stun
       if att.StunLevel > 0:
-        att.StunLevel -= 1
-        if att.StunLevel > 0:
-          if att.Person == player:
-            print("%sYou are still STUNNED!%s" %
-                  (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-          else:
-            print("%s%s is still STUNNED!%s" %
-                  (ANSI.TEXT_BOLD, att.Person.Name.capitalize(),
-                   ANSI.TEXT_NORMAL))
-          continue
-        else:
-          if att.Person == player:
-            print("%sYour stun WEARS OFF!%s" %
-                  (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-          else:
-            print("%s%s's stun WEARS OFF!%s" %
-                  (ANSI.TEXT_BOLD, att.Person.Name.capitalize(),
-                   ANSI.TEXT_NORMAL))
+        continue
 
       elif att.Person == player:
         player.CombatState = PlayerCombatState.ATTACK
@@ -413,12 +395,16 @@ def combat(player, enemies):
              (att.Person.Name, defe.Person.Name))
 
         # target mob chooses action
+        #   ignore if stunned
         #   block if available (equipment)
         #   dodge if not
-        defe.Action = Action.BLOCK
-        defe.Attacks = defe.Person.GenerateCombatAttacks(items, block=True)
-        if len(defe.Attacks) < 1:
-          defe.Action = Action.DODGE
+        if defe.StunLevel > 0:
+          defe.Action = Action.IGNORE
+        else:
+          defe.Action = Action.BLOCK
+          defe.Attacks = defe.Person.GenerateCombatAttacks(items, block=True)
+          if len(defe.Attacks) < 1:
+            defe.Action = Action.DODGE
 
         while True:
           printCombatAttackActions(att, defe, items)
@@ -462,35 +448,30 @@ def combat(player, enemies):
         # mob chooses attack action
         #   flee?
         att.Action = Action.MELEE
+        logd("%s: Generate Attack" % (att.Person.Name))
         att.Attacks = att.Person.GenerateCombatAttacks(items)
         if len(att.Attacks) == 0:
           logd("MOB ERROR! %s no attack!" % (att.Person.Name))
           att.Action = Action.IGNORE
+        else:
+          logd("%s attack: %s" % (att.Person.Name, att.Attacks[0].Name))
+        # use default Aim zone
+        att.Aim = att.Person.DefaultAim
 
-        logd("MOB ACTION: %s vs. %s" %
-             (att.Person.Name, defe.Person.Name))
-        # TODO: [mob chooses aiming zone]
-        att.Aim = AimEnum.MID
+        # pause scroll momentarily
+        sleep(1)
 
+        # determine player defense
         if defe.StunLevel > 0:
           defe.Action = Action.IGNORE
         else:
-          while True:
-            printCombatDefenseActions(defe, items)
-            prompt(player, rooms, func_break=True)
-            if player.Command == "block" or player.Command == "b":
-              defe.Action = Action.BLOCK
-              defe.Attacks = defe.Person.GenerateCombatAttacks(items,
-                                                               block=True)
-              if len(defe.Attacks) < 1:
-                defe.Action = Action.DODGE
-              break
-            elif player.Command == "dodge":
-              defe.Action = Action.DODGE
-              break
-            elif player.Command != "help" and player.Command != "?":
-              print("\n%sYou cannot do that here.%s" %
-                    (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+          defe.Attacks = defe.Person.GenerateCombatAttacks(items, block=True)
+          if len(defe.Attacks) < 1:
+            defe.Action = Action.DODGE
+          elif defe.Person.AttrDodge(items) > defe.Attacks[0].SkillML:
+            defe.Action = Action.DODGE
+          else:
+            defe.Action = Action.BLOCK
 
       # RESOLUTION PHASE
       if att.Action == Action.FLEE:
@@ -611,17 +592,34 @@ def combat(player, enemies):
                     w = PersonWound(ia.Action, at.DamageType, loc,
                                     impact + wounds[ia.Action].IPBonus)
                     defe.Person.Wounds.append(w)
+
+                    # determine if the Injury Point Index is > END == DEATH
+                    logd("%s WOUND DEATH check: %d vs. %d STA" %
+                         (defe.Person.Name, defe.Person.IPIndex(),
+                          defe.Person.Attr[AttrEnum.STAMINA]))
+                    if defe.Person.IPIndex() > \
+                       defe.Person.Attr[AttrEnum.STAMINA]:
+                      if att.Person == player:
+                        print("%s%s DIES from %s wounds!%s" %
+                              (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
+                               defe.Person.AttrSexPossessivePronounStr(),
+                               ANSI.TEXT_NORMAL))
+                      else:
+                        print("%sYou DIE from your wounds!%s" %
+                              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+                      defe.Flags |= FLAG_DEAD
+                      break
                   elif ia.Action == ImpactActionEnum.KILL_CHECK:
                     r = DiceRoll(ia.Level, 6).Result()
+                    logd("%s DEATH check: %d vs. %d STA" %
+                         (defe.Person.Name, r,
+                          defe.Person.Attr[AttrEnum.STAMINA]))
                     if r > defe.Person.Attr[AttrEnum.STAMINA]:
                       # DEATH!
                       if att.Person == player:
                         print("%s%s DIES instantly!%s" %
                               (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
                                ANSI.TEXT_NORMAL))
-                        # remove enemy from room
-                        rooms[player.Room].RemovePerson(defe.UUID)
-                        att.Target = None
                       else:
                         print("%sYou DIE instantly!%s" %
                               (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
@@ -632,6 +630,9 @@ def combat(player, enemies):
                   elif ia.Action == ImpactActionEnum.SHOCK:
                     num = ia.Level + defe.Person.UniversalPenaltyIndex()
                     r = DiceRoll(num, 6).Result()
+                    logd("%s SHOCK check: %d vs. %d END" %
+                         (defe.Person.Name, r,
+                          defe.Person.AttrEndurance(items)))
                     if r > defe.Person.AttrEndurance(items):
                       if att.Person == player:
                         print("%s%s is STUNNED!%s" %
@@ -640,7 +641,9 @@ def combat(player, enemies):
                       else:
                         print("%sYou are STUNNED!%s" %
                               (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-                      defe.StunLevel += 1
+                      defe.StunLevel += 2
+                      logd("%s STUN_LEVEL %d" %
+                           (defe.Person.Name, defe.StunLevel))
                   else:
                     print("IMPACT_ACTION: %s LEVEL:%d" %
                           (ia.Action, ia.Level))
@@ -651,15 +654,25 @@ def combat(player, enemies):
           else:
             print("\n*** %s ***" % res)
 
-        if att.Person == player and defe.Flags & FLAG_DEAD > 0:
-          if defe.Person.Currency > 0:
-            p = "penny"
-            if defe.Person.Currency > 1:
-              p = "pennies"
-            print("You collect %d silver %s" %
-                  (defe.Person.Currency, p))
-            att.Person.Currency += defe.Person.Currency
-            defe.Person.Currency = 0
+        if defe.Flags & FLAG_DEAD > 0 and defe.Person is not player:
+          if defe.Person.CurrencyGen is not None:
+            # currency
+            r = defe.Person.CurrencyGen.Result()
+            print("\nYou collect %d SP!" % (r))
+            att.Person.Currency += r
+            # handle loot
+            if defe.Person.Loot is not None:
+              logi("%s LOOT handling" % (defe.Person.Name))
+              for item_id, chance in defe.Person.Loot.items():
+                r = DiceRoll(1, 100).Result()
+                logi("%s LOOT_CHECK %s: %d vs. %d" %
+                     (defe.Person.Name, items[item_id].ItemName,
+                      r, chance))
+                if r <= chance:
+                  rooms[player.Room].AddItem(item_id, ItemLink(1))
+            # remove enemy from room
+            rooms[player.Room].RemovePerson(defe.UUID)
+            att.Target = None
 
       else:
         logd("\n***%s HAD NO ATTACKS ***\n" % res)
@@ -674,7 +687,7 @@ def combat(player, enemies):
       print("\nYou slowly come back to your senses ...\n")
       sleep(2)
       player.CombatState = PlayerCombatState.NONE
-      player.SetRoom(ROOM_RESPAWN)
+      player.SetRoom(GameData.ROOM_RESPAWN)
       break
 
     if att.Action == Action.FLEE:
