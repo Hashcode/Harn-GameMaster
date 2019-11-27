@@ -23,7 +23,8 @@ from db import (ListDB, SavePlayer)
 wrapper = TextWrapper(width=70, fix_sentence_endings=True)
 
 
-def CalcEffect(player, eff_type):
+def CalcEffect(eff_type):
+  player = GameData.GetPlayer()
   items = GameData.GetItems()
   value = 0
   for item_id, il in player.ItemLinks.items():
@@ -129,14 +130,52 @@ def printRoomObjects(room_id):
     printItems(rooms[room_id].RoomItems)
 
 
+def printStats(person):
+  if person.PersonType == PersonTypeEnum.PLAYER:
+    for ac_id, ac in attribute_classes.items():
+      if ac.Hidden:
+        continue
+      print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, ac.Name.upper(),
+                                  ANSI.TEXT_NORMAL))
+      for attr, val in person.Attr.items():
+        if not attributes[attr].Hidden:
+          if attributes[attr].AttrClass == ac_id:
+            print("%-15s: %d" % (attributes[attr].Name, val))
+    print("\n%sCHARACTER STATS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  else:
+    print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, person.Name.upper(),
+                                ANSI.TEXT_NORMAL))
+  print("%-15s: %d" % ("Endurance", person.AttrEndurance()))
+  print("%-15s: %d lbs" % ("Inven. Weight", person.ItemWeight()))
+  print("%-15s: %d" % ("Enc. Points", person.EncumbrancePenalty()))
+  print("%-15s: %d" % ("Injury Points", person.IP()))
+  print("%-15s: %d" % ("Fatigue Points", person.FatiguePoints()))
+  print("%-15s: %d" % ("Initiative", person.AttrInitiative()))
+  print("\n%s%-15s: %d%s" % (ANSI.TEXT_BOLD, "Universal Pen.",
+                             person.UniversalPenalty(), ANSI.TEXT_NORMAL))
+  print("%s%-15s: %d%s" % (ANSI.TEXT_BOLD, "Physical Pen.",
+                           person.PhysicalPenalty(), ANSI.TEXT_NORMAL))
+  print("\n%sWOUND LIST%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  if len(person.Wounds) < 1:
+    print("[NONE]")
+  else:
+    for w in person.Wounds:
+      print("%s %s %s wound [%d IP]" %
+            (wounds[w.WoundType].Name,
+             wounds[w.WoundType].Verbs[w.DamageType].lower(),
+             body_parts[w.Location].PartName.lower(), w.Impact))
+
+
 # GENERIC COMMAND FUNCTIONS
 
-def actionComingSoon(player, rooms):
+def actionComingSoon():
   print("\nComing soon!")
 
 
-def actionDropItem(player, rooms):
+def actionDropItem():
+  player = GameData.GetPlayer()
   items = GameData.GetItems()
+  rooms = GameData.GetRooms()
   print("\nItems in your inventory:\n")
   links = filterLinks(player.ItemLinks, equipped=False)
   if len(links) < 1:
@@ -165,7 +204,8 @@ def actionDropItem(player, rooms):
     break
 
 
-def actionEquipItem(player, rooms):
+def actionEquipItem():
+  player = GameData.GetPlayer()
   items = GameData.GetItems()
   print("\nEquippable items in your inventory:\n")
   links = filterLinks(player.ItemLinks, equipped=False, equippable=True)
@@ -219,8 +259,10 @@ def actionEquipItem(player, rooms):
   print("\n%s equipped." % items[equip_id].ItemName.capitalize())
 
 
-def actionGetItem(player, rooms):
+def actionGetItem():
+  player = GameData.GetPlayer()
   items = GameData.GetItems()
+  rooms = GameData.GetRooms()
   print("\nItems in in the room:\n")
   links = filterLinks(rooms[player.Room].RoomItems, equipped=False)
   if len(links) < 1:
@@ -245,7 +287,8 @@ def actionGetItem(player, rooms):
       break
 
 
-def actionInventory(player, rooms):
+def actionInventory():
+  player = GameData.GetPlayer()
   print("\n%sCURRENCY%s: %d SP" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL,
                                    player.Currency))
   print("\n%sEQUIPMENT%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
@@ -271,7 +314,9 @@ def actionInventory(player, rooms):
                                    ANSI.TEXT_NORMAL))
 
 
-def actionSave(player, rooms):
+def actionSave():
+  player = GameData.GetPlayer()
+  rooms = GameData.GetRooms()
   if SavePlayer(player, rooms[player.Room].Title, player.Password):
     return True
   else:
@@ -280,7 +325,8 @@ def actionSave(player, rooms):
     return False
 
 
-def actionSkills(player, rooms):
+def actionSkills():
+  player = GameData.GetPlayer()
   for skc_id, skc in skill_classes.items():
     if skc.Hidden:
       continue
@@ -299,7 +345,8 @@ def actionSkills(player, rooms):
              player.SkillML(sk_id)))
 
 
-def actionInfo(player, rooms):
+def actionInfo():
+  player = GameData.GetPlayer()
   print("\n%sBIRTH INFORMATION%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   # TODO: hardcoded Human for now
   print("%-15s: %s" % ("Name", player.Name))
@@ -338,43 +385,8 @@ def actionInfo(player, rooms):
                        color_eyes[player.AttrColorEye()].Name))
 
 
-def actionStats(person, rooms):
-  if person.PersonType == PersonTypeEnum.PLAYER:
-    for ac_id, ac in attribute_classes.items():
-      if ac.Hidden:
-        continue
-      print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, ac.Name.upper(),
-                                  ANSI.TEXT_NORMAL))
-      for attr, val in person.Attr.items():
-        if not attributes[attr].Hidden:
-          if attributes[attr].AttrClass == ac_id:
-            print("%-15s: %d" % (attributes[attr].Name, val))
-    print("\n%sCHARACTER STATS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-  else:
-    print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, person.Name.upper(),
-                                ANSI.TEXT_NORMAL))
-  print("%-15s: %d" % ("Endurance", person.AttrEndurance()))
-  print("%-15s: %d lbs" % ("Inven. Weight", person.ItemWeight()))
-  print("%-15s: %d" % ("Enc. Points", person.EncumbrancePenalty()))
-  print("%-15s: %d" % ("Injury Points", person.IP()))
-  print("%-15s: %d" % ("Fatigue Points", person.FatiguePoints()))
-  print("%-15s: %d" % ("Initiative", person.AttrInitiative()))
-  print("\n%s%-15s: %d%s" % (ANSI.TEXT_BOLD, "Universal Pen.",
-                             person.UniversalPenalty(), ANSI.TEXT_NORMAL))
-  print("%s%-15s: %d%s" % (ANSI.TEXT_BOLD, "Physical Pen.",
-                           person.PhysicalPenalty(), ANSI.TEXT_NORMAL))
-  print("\n%sWOUND LIST%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-  if len(person.Wounds) < 1:
-    print("[NONE]")
-  else:
-    for w in person.Wounds:
-      print("%s %s %s wound [%d IP]" %
-            (wounds[w.WoundType].Name,
-             wounds[w.WoundType].Verbs[w.DamageType].lower(),
-             body_parts[w.Location].PartName.lower(), w.Impact))
-
-
-def actionArmor(player, rooms):
+def actionArmor():
+  player = GameData.GetPlayer()
   items = GameData.GetItems()
   print("\n%sARMOR COVERAGE%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   print("%s%-15s  BLUNT EDGE PIERCE ELEMENTAL%s" %
@@ -398,7 +410,8 @@ def actionArmor(player, rooms):
     m.Clear()
 
 
-def actionRemoveItem(player, rooms):
+def actionRemoveItem():
+  player = GameData.GetPlayer()
   items = GameData.GetItems()
   print("\nYour equipped items:\n")
   links = filterLinks(player.ItemLinks, equipped=True)
@@ -423,7 +436,9 @@ def actionRemoveItem(player, rooms):
       break
 
 
-def actionAttack(player, rooms):
+def actionAttack():
+  player = GameData.GetPlayer()
+  rooms = GameData.GetRooms()
   # let combat "attack" handle work if in combat
   if player.CombatState != PlayerCombatState.NONE:
     return False
@@ -453,7 +468,9 @@ def actionAttack(player, rooms):
     return True
 
 
-def actionExamine(player, rooms):
+def actionExamine():
+  player = GameData.GetPlayer()
+  rooms = GameData.GetRooms()
   print("\nChoose a target:\n")
   if len(rooms[player.Room].Persons) < 1:
     print("[NONE]")
@@ -474,11 +491,11 @@ def actionExamine(player, rooms):
   for x in rooms[player.Room].Persons:
     count += 1
     if count == personNum:
-      actionStats(x, rooms)
+      printStats(x)
       break
 
 
-def actionListPlayers(player, rooms):
+def actionListPlayers():
   pinfo = ListDB()
   if len(pinfo) == 0:
     print("\nThere are no saved characters!")
@@ -491,13 +508,14 @@ def actionListPlayers(player, rooms):
       print("%-20s %s" % (x, pinfo[x]))
 
 
-def actionLook(player, rooms):
+def actionLook():
   player = GameData.GetPlayer()
   printRoomDescription(player.Room)
   printRoomObjects(player.Room)
 
 
-def actionChangePassword(player, rooms):
+def actionChangePassword():
+  player = GameData.GetPlayer()
   if player.CombatState != PlayerCombatState.NONE:
     print("\n%sYou can't change your password in combat!%s" %
           (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
@@ -508,25 +526,27 @@ def actionChangePassword(player, rooms):
     if len(x.Password) < 3 or len(x.Password) > 10:
       print("\nPassword needs to be between 3 and 10 characters long.")
     player.Password = x
-    if actionSave(player, rooms):
+    if actionSave():
       print("\nCharacter updated.")
 
 
-def actionQuit(player, rooms):
+def actionQuit():
+  player = GameData.GetPlayer()
   if player.CombatState != PlayerCombatState.NONE:
     print("\n%sYou can't QUIT in combat!%s" %
           (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   else:
     y = input("\nAre you sure you wish to QUIT? ").lower()
     if y == "y" or y == "yes":
-      actionSave(player, rooms)
+      actionSave()
       print("\nGoodbye!\n")
       exit()
     else:
       print("\nQuit aborted.")
 
 
-def actionRest(player, rooms):
+def actionRest():
+  player = GameData.GetPlayer()
   if player.CombatState != PlayerCombatState.NONE:
     print("\n%sYou can't REST during combat!%s" %
           (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
@@ -567,7 +587,8 @@ def actionRest(player, rooms):
 ATT_PER_TRAIN = 25
 
 
-def actionTrain(player, rooms):
+def actionTrain():
+  player = GameData.GetPlayer()
   if player.CombatState != PlayerCombatState.NONE:
     print("\n%sYou can't TRAIN during combat!%s" %
           (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
@@ -612,12 +633,16 @@ def actionTrain(player, rooms):
         break
 
 
-def actionSaveGeneric(player, rooms):
-  if player.CombatState != PlayerCombatState.NONE:
+def actionStatsGeneric():
+  printStats(GameData.GetPlayer())
+
+
+def actionSaveGeneric():
+  if GameData.GetPlayer().CombatState != PlayerCombatState.NONE:
     print("\n%sYou can't SAVE in combat!%s" %
           (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   else:
-    if actionSave(player, rooms):
+    if actionSave():
       print("\nCharacter saved.")
 
 
@@ -634,38 +659,37 @@ class GenericCommand:
 commands = []
 
 
-def actionPrintHelp(player, rooms):
-    print("\nGENERAL COMMANDS:\n")
-    # generic commands
-    for cmd in commands:
-      cmd_len = len(cmd.Commands)
-      if cmd_len > 1:
-        abbrevs = " ["
-        for x in range(1, cmd_len):
-          if x > 1:
-            abbrevs += ", "
-          abbrevs += cmd.Commands[x].upper()
-        abbrevs += "]"
-      else:
-        abbrevs = ""
-      print("%-10s%s" % (cmd.Commands[0].upper(), abbrevs))
-    # exits
-    if not rooms[player.Room].Exits is None:
-      print("\nMOVE DIRECTION:\n")
-      for exit_dir, exit_names in directions.items():
-        dir_len = len(exit_names)
-        if dir_len > 1:
-          abbrevs = " ["
-          for x in range(1, dir_len):
-            if x > 1:
-              abbrevs += ", "
-            abbrevs += exit_names[x].upper()
-          abbrevs += "]"
-        else:
-          abbrevs = ""
-        print("%-10s%s" % (exit_names[0].upper(), abbrevs))
-    # break prompt loop to let other sections add commands
-    return False
+def actionPrintHelp():
+  print("\nGENERAL COMMANDS:\n")
+  # generic commands
+  for cmd in commands:
+    cmd_len = len(cmd.Commands)
+    if cmd_len > 1:
+      abbrevs = " ["
+      for x in range(1, cmd_len):
+        if x > 1:
+          abbrevs += ", "
+        abbrevs += cmd.Commands[x].upper()
+      abbrevs += "]"
+    else:
+      abbrevs = ""
+    print("%-10s%s" % (cmd.Commands[0].upper(), abbrevs))
+  # exits
+  print("\nMOVE DIRECTION:\n")
+  for exit_dir, exit_names in directions.items():
+    dir_len = len(exit_names)
+    if dir_len > 1:
+      abbrevs = " ["
+      for x in range(1, dir_len):
+        if x > 1:
+          abbrevs += ", "
+        abbrevs += exit_names[x].upper()
+      abbrevs += "]"
+    else:
+      abbrevs = ""
+    print("%-10s%s" % (exit_names[0].upper(), abbrevs))
+  # break prompt loop to let other sections add commands
+  return False
 
 
 commands.append(GenericCommand(["armor", "ac"], actionArmor))
@@ -686,7 +710,7 @@ commands.append(GenericCommand(["remove", "rm"], actionRemoveItem))
 commands.append(GenericCommand(["rest"], actionRest))
 commands.append(GenericCommand(["save"], actionSaveGeneric))
 commands.append(GenericCommand(["skills", "sk"], actionSkills))
-commands.append(GenericCommand(["stats", "st"], actionStats))
+commands.append(GenericCommand(["stats", "st"], actionStatsGeneric))
 commands.append(GenericCommand(["train"], actionTrain))
 commands.append(GenericCommand(["unlock"], actionComingSoon))
 commands.append(GenericCommand(["who"], actionListPlayers))
@@ -709,7 +733,7 @@ def prompt(func_break=False):
           cmd_match = gen_cmd
           break
     if cmd_match is not None:
-      res = cmd_match.Function(player, rooms)
+      res = cmd_match.Function()
       if func_break and res == False:
         player.Command = x
         break

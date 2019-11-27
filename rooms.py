@@ -70,7 +70,7 @@ def room_CreateCharacter():
   player.SetRoom(GameData.ROOM_START)
 
   print("\nSaving character ...")
-  if not actionSave(player, rooms):
+  if not actionSave():
     return RoomFuncResponse.SKIP
   print("Done.")
 
