@@ -468,7 +468,7 @@ def actionAttack():
     return True
 
 
-def actionExamine():
+def actionInspect():
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
   print("\nChoose a target:\n")
@@ -479,7 +479,7 @@ def actionExamine():
   for t in rooms[player.Room].Persons:
     count += 1
     print("%d. %s" % (count, t.Name))
-  x = input("\nWhich # to examine: ").lower()
+  x = input("\nWhich # to inspect: ").lower()
   if not x.isnumeric():
     print("\nInvalid target.")
     return
@@ -697,7 +697,7 @@ commands.append(GenericCommand(["attack", "a"], actionAttack))
 commands.append(GenericCommand(["close"], actionComingSoon))
 commands.append(GenericCommand(["drop"], actionDropItem))
 commands.append(GenericCommand(["equip", "eq"], actionEquipItem))
-commands.append(GenericCommand(["examine", "ex"], actionExamine))
+commands.append(GenericCommand(["inspect"], actionInspect))
 commands.append(GenericCommand(["get"], actionGetItem))
 commands.append(GenericCommand(["help", "?"], actionPrintHelp))
 commands.append(GenericCommand(["info", "inf"], actionInfo))
