@@ -273,6 +273,143 @@ def chooseTarget(player, enemies):
   return ret
 
 
+def HandleImpactDMG(player, att, defe, at, res_level):
+  break_loop = False
+
+  # attacker lands impact
+  impact = at.Roll.Result()
+  for x in range(res_level):
+    impact += DiceRoll(1, 6).Result()
+
+  logd("%s IMPACT CALC: %d" % (att.Person.Name, impact))
+  # roll hit location
+  loc = CoverageEnum.THORAX_FRONT
+  r = DiceRoll(1, 100).Result()
+  for l, hit_table in hit_table_melee_default.items():
+    if hit_table[att.Aim] > 0 and r <= hit_table[att.Aim]:
+      loc = l
+      break
+  logd("%s LOC: %s" % (att.Person.Name, loc))
+  # defender applies armor
+  impact -= defe.Person.Defense(items, loc, at.DamageType)
+  logd("%s ADJ. IMPACT: %d" % (att.Person.Name, impact))
+  leftright = ""
+  if body_parts[loc].LeftRight:
+    if r % 2 == 1:
+      leftright = "left "
+    else:
+      leftright = "right "
+  if att.Person == player:
+    print("\nYou HIT %s's %s%s with your %s!" %
+          (defe.Person.Name, leftright,
+           body_parts[loc].PartName.lower(), at.Name.lower()))
+  else:
+    print("\n%s HITS your %s%s with %s %s!" %
+          (att.Person.Name.capitalize(), leftright,
+           body_parts[loc].PartName.lower(),
+           att.Person.AttrSexPossessivePronounStr().lower(),
+           at.Name.lower()))
+
+  if (impact <= 0):
+    s = "S"
+    if at.Name.lower().endswith("s"):
+      s = ""
+    if att.Person == player:
+      print("Your %s GLANCE%s off %s with no effect!" %
+            (at.Name.lower(), s, defe.Person.Name))
+    else:
+      print("%s's %s GLANCE%s off you with no effect!" %
+            (att.Person.Name.capitalize(), at.Name.lower(), s))
+  else:
+    # check impact effect
+    ia_list = None
+    for ir in dmg_table_melee[at.DamageType][loc]:
+      if impact <= ir.ImpactMax:
+        ia_list = ir.ImpactActions
+        break
+
+    for ia in ia_list:
+      if ia.Action in [ImpactActionEnum.WOUND_MLD,
+                       ImpactActionEnum.WOUND_SRS,
+                       ImpactActionEnum.WOUND_GRV]:
+        if att.Person == player:
+          print("%s%s suffers a %s wound!%s" %
+                (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
+                 wounds[ia.Action].Name.lower(),
+                 ANSI.TEXT_NORMAL))
+        else:
+          print("%sYou suffer a %s wound!%s" %
+                (ANSI.TEXT_BOLD, wounds[ia.Action].Name.lower(),
+                 ANSI.TEXT_NORMAL))
+        w = PersonWound(ia.Action, at.DamageType, loc,
+                        impact + wounds[ia.Action].IPBonus)
+        defe.Person.Wounds.append(w)
+
+        # determine if the Injury Point Index is > END == DEATH
+        logd("%s WOUND DEATH check: %d vs. %d STA" %
+             (defe.Person.Name, defe.Person.IPIndex(),
+              defe.Person.Attr[AttrEnum.STAMINA]))
+        if defe.Person.IPIndex() > \
+           defe.Person.Attr[AttrEnum.STAMINA]:
+          if att.Person == player:
+            print("%s%s DIES from %s wounds!%s" %
+                  (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
+                   defe.Person.AttrSexPossessivePronounStr(),
+                   ANSI.TEXT_NORMAL))
+          else:
+            print("%sYou DIE from your wounds!%s" %
+                  (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+          defe.Flags |= FLAG_DEAD
+          return True
+
+      elif ia.Action == ImpactActionEnum.KILL_CHECK:
+        r = DiceRoll(ia.Level, 6).Result()
+        logd("%s DEATH check: %d vs. %d STA" %
+             (defe.Person.Name, r,
+              defe.Person.Attr[AttrEnum.STAMINA]))
+        if r > defe.Person.Attr[AttrEnum.STAMINA]:
+          # DEATH!
+          if att.Person == player:
+            print("%s%s DIES instantly!%s" %
+                  (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
+                   ANSI.TEXT_NORMAL))
+          else:
+            print("%sYou DIE instantly!%s" %
+                  (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+          defe.Flags |= FLAG_DEAD
+          return True
+
+      # elif ia.Action == ImpactActionEnum.AMPUTATE_CHECK:
+        # TODO
+
+      elif ia.Action == ImpactActionEnum.SHOCK:
+        num = ia.Level + defe.Person.UniversalPenaltyIndex()
+        r = DiceRoll(num, 6).Result()
+        logd("%s SHOCK check: %d vs. %d END" %
+             (defe.Person.Name, r,
+              defe.Person.AttrEndurance(items)))
+        if r > defe.Person.AttrEndurance(items):
+          if att.Person == player:
+            print("%s%s is STUNNED!%s" %
+                  (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
+                   ANSI.TEXT_NORMAL))
+          else:
+            print("%sYou are STUNNED!%s" %
+                  (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+          defe.StunLevel += 2
+          logd("%s STUN_LEVEL %d" %
+               (defe.Person.Name, defe.StunLevel))
+
+      else:
+        print("IMPACT_ACTION: %s LEVEL:%d" %
+              (ia.Action, ia.Level))
+
+  if defe.Flags & FLAG_DEAD > 0:
+    break_loop = True
+
+  return break_loop
+
+
 def combat(player, enemies):
   # start of combat checks?
   order = []
@@ -485,133 +622,9 @@ def combat(player, enemies):
             # TODO:
           # Only the current attacker can do damage
           elif res.Result == ResultEnum.DMG:
-
             if res.TargetFlag & T_ATK > 0:
-              # attacker lands impact
-              impact = at.Roll.Result()
-              for x in range(res.Level):
-                impact += DiceRoll(1, 6).Result()
-              logd("%s IMPACT CALC: %d" % (att.Person.Name, impact))
-              # roll hit location
-              loc = CoverageEnum.THORAX_FRONT
-              r = DiceRoll(1, 100).Result()
-              for l, hit_table in hit_table_melee_default.items():
-                if hit_table[att.Aim] > 0 and r <= hit_table[att.Aim]:
-                  loc = l
-                  break
-              logd("%s LOC: %s" % (att.Person.Name, loc))
-              # defender applies armor
-              impact -= defe.Person.Defense(items, loc, at.DamageType)
-              logd("%s ADJ. IMPACT: %d" % (att.Person.Name, impact))
-              leftright = ""
-              if body_parts[loc].LeftRight:
-                if r % 2 == 1:
-                  leftright = "left "
-                else:
-                  leftright = "right "
-              if att.Person == player:
-                print("\nYou HIT %s's %s%s with your %s!" %
-                      (defe.Person.Name, leftright,
-                       body_parts[loc].PartName.lower(), at.Name.lower()))
-              else:
-                print("\n%s HITS your %s%s with %s %s!" %
-                      (att.Person.Name.capitalize(), leftright,
-                       body_parts[loc].PartName.lower(),
-                       att.Person.AttrSexPossessivePronounStr().lower(),
-                       at.Name.lower()))
-
-              if (impact <= 0):
-                s = "S"
-                if at.Name.lower().endswith("s"):
-                  s = ""
-                if att.Person == player:
-                  print("Your %s GLANCE%s off %s with no effect!" %
-                        (at.Name.lower(), s, defe.Person.Name))
-                else:
-                  print("%s's %s GLANCE%s off you with no effect!" %
-                        (att.Person.Name.capitalize(), at.Name.lower(), s))
-              else:
-
-                # check impact effect
-                ia_list = None
-                for ir in dmg_table_melee[at.DamageType][loc]:
-                  if impact <= ir.ImpactMax:
-                    ia_list = ir.ImpactActions
-                    break
-                for ia in ia_list:
-                  if ia.Action in [ImpactActionEnum.WOUND_MLD,
-                                   ImpactActionEnum.WOUND_SRS,
-                                   ImpactActionEnum.WOUND_GRV]:
-                    if att.Person == player:
-                      print("%s%s suffers a %s wound!%s" %
-                            (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
-                             wounds[ia.Action].Name.lower(),
-                             ANSI.TEXT_NORMAL))
-                    else:
-                      print("%sYou suffer a %s wound!%s" %
-                            (ANSI.TEXT_BOLD, wounds[ia.Action].Name.lower(),
-                             ANSI.TEXT_NORMAL))
-                    w = PersonWound(ia.Action, at.DamageType, loc,
-                                    impact + wounds[ia.Action].IPBonus)
-                    defe.Person.Wounds.append(w)
-
-                    # determine if the Injury Point Index is > END == DEATH
-                    logd("%s WOUND DEATH check: %d vs. %d STA" %
-                         (defe.Person.Name, defe.Person.IPIndex(),
-                          defe.Person.Attr[AttrEnum.STAMINA]))
-                    if defe.Person.IPIndex() > \
-                       defe.Person.Attr[AttrEnum.STAMINA]:
-                      if att.Person == player:
-                        print("%s%s DIES from %s wounds!%s" %
-                              (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
-                               defe.Person.AttrSexPossessivePronounStr(),
-                               ANSI.TEXT_NORMAL))
-                      else:
-                        print("%sYou DIE from your wounds!%s" %
-                              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-                      defe.Flags |= FLAG_DEAD
-                      break
-                  elif ia.Action == ImpactActionEnum.KILL_CHECK:
-                    r = DiceRoll(ia.Level, 6).Result()
-                    logd("%s DEATH check: %d vs. %d STA" %
-                         (defe.Person.Name, r,
-                          defe.Person.Attr[AttrEnum.STAMINA]))
-                    if r > defe.Person.Attr[AttrEnum.STAMINA]:
-                      # DEATH!
-                      if att.Person == player:
-                        print("%s%s DIES instantly!%s" %
-                              (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
-                               ANSI.TEXT_NORMAL))
-                      else:
-                        print("%sYou DIE instantly!%s" %
-                              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-                      defe.Flags |= FLAG_DEAD
-                      break
-                  # elif ia.Action == ImpactActionEnum.AMPUTATE_CHECK:
-                    # TODO
-                  elif ia.Action == ImpactActionEnum.SHOCK:
-                    num = ia.Level + defe.Person.UniversalPenaltyIndex()
-                    r = DiceRoll(num, 6).Result()
-                    logd("%s SHOCK check: %d vs. %d END" %
-                         (defe.Person.Name, r,
-                          defe.Person.AttrEndurance(items)))
-                    if r > defe.Person.AttrEndurance(items):
-                      if att.Person == player:
-                        print("%s%s is STUNNED!%s" %
-                              (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
-                               ANSI.TEXT_NORMAL))
-                      else:
-                        print("%sYou are STUNNED!%s" %
-                              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-                      defe.StunLevel += 2
-                      logd("%s STUN_LEVEL %d" %
-                           (defe.Person.Name, defe.StunLevel))
-                  else:
-                    print("IMPACT_ACTION: %s LEVEL:%d" %
-                          (ia.Action, ia.Level))
-
-                if defe.Flags & FLAG_DEAD > 0:
-                  break
+              if HandleImpactDMG(player, att, defe, at, res.Level):
+                break
 
           else:
             print("\n*** %s ***" % res)
