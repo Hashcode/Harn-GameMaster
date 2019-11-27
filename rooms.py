@@ -112,7 +112,6 @@ rooms = {
              exits={
                  DirectionEnum.WEST: Exit(RoomEnum.BL_GATEHOUSE_PASSAGE),
              },
-             person_list=persons,
              room_pers=[
                  PersonEnum.BL_KEEP_GUARD,
              ]),
