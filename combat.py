@@ -245,35 +245,33 @@ def printCombatAttackActions(combatant, target):
         ("TARGET", "[T]", target_name))
 
 
-def chooseTarget(player, enemies):
-  ret = None
+def chooseTarget(att, combatants):
   print("\nChoose a target:\n")
   count = 0
-  for c in enemies:
+  for c in combatants:
     if c.Person.PersonType == PersonTypeEnum.NPC:
       if c.Flags & FLAG_DEAD == 0:
         count += 1
         print("%d. %s [%d IP]" % (count, c.Person.Name, c.Person.IP()))
   if count < 1:
     print("[NONE]")
-    return ret
+    return
   x = input("\nWhich # to attack: ").lower()
   if not x.isnumeric():
     print("\nInvalid target.")
-    return ret
+    return
   personNum = int(x)
   if personNum < 1 or personNum > count:
     print("\nInvalid target.")
-    return ret
+    return
   count = 0
-  for c in enemies:
+  for c in combatants:
     if c.Person.PersonType == PersonTypeEnum.NPC:
       if c.Flags & FLAG_DEAD == 0:
         count += 1
         if count == personNum:
-          ret = c.Person.UUID
+          att.Target = c
           break
-  return ret
 
 
 def HandlePlayerDeath(player):
@@ -456,7 +454,6 @@ def HandleImpactDMG(player, att, defe, at, res_level):
 
 
 def combat(player, enemies):
-  items = GameData.GetItems()
   # start of combat checks?
   order = []
   round_count = 0
@@ -559,15 +556,9 @@ def combat(player, enemies):
             att.Target = m
           else:
             while True:
-              uid = chooseTarget(player, order)
-              if uid is not None:
-                for c in order:
-                  if c.Person.PersonType == PersonTypeEnum.NPC:
-                    if c.Flags & FLAG_DEAD == 0 and c.UUID == uid:
-                      att.Target = c
-                      break
-                if att.Target is not None:
-                  break
+              chooseTarget(att, order)
+              if att.Target is not None:
+                break
         defe = att.Target
 
         logd("PLAYER ACTION: %s vs. %s" %
@@ -608,13 +599,7 @@ def combat(player, enemies):
             att.Action = Action.IGNORE
             break
           elif player.Command == "target" or player.Command == "t":
-            uid = chooseTarget(player, order)
-            if uid is not None:
-              for c in order:
-                if c.Person.PersonType == PersonTypeEnum.NPC:
-                  if c.Flags & FLAG_DEAD == 0 and c.UUID == uid:
-                    att.Target = c
-                    break
+            chooseTarget(att, order)
           elif player.Command != "help" and player.Command != "?":
             print("\n%sYou cannot do that here.%s" %
                   (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
