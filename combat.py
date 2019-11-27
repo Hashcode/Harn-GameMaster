@@ -684,7 +684,7 @@ def combat(player, enemies):
     if player_combatant.Flags & FLAG_DEAD > 0:
       # penalties?
       sleep(2)
-      print("\nYou slowly come back to your senses ...\n")
+      print("\nYou slowly come back to your senses ...")
       sleep(2)
       player.CombatState = PlayerCombatState.NONE
       player.SetRoom(GameData.ROOM_RESPAWN)
