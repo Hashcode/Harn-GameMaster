@@ -11,7 +11,8 @@ from utils import (actionSave)
 from db import (ExistsDB, LoadPlayer)
 
 
-def room_StartGame(player):
+def room_StartGame():
+  player = GameData.GetPlayer()
   while True:
     desc = ANSI.TEXT_BOLD + "CREATE" + ANSI.TEXT_NORMAL + \
         " a new character or " + ANSI.TEXT_BOLD + "RESTORE" + \
@@ -26,7 +27,8 @@ def room_StartGame(player):
   return RoomFuncResponse.SKIP
 
 
-def room_RestoreSave(player):
+def room_RestoreSave():
+  player = GameData.GetPlayer()
   name = input("\nCharacter name: ")
   pwd = input("Password: ")
 
@@ -43,7 +45,8 @@ def room_RestoreSave(player):
   return RoomFuncResponse.SKIP
 
 
-def room_CreateCharacter(player):
+def room_CreateCharacter():
+  player = GameData.GetPlayer()
   player.Name = input("\nChoose a character name: ")
   if len(player.Name) < 3 or len(player.Name) > 20:
     print("\nCharacter name needs between 3 and 20 characters long.")

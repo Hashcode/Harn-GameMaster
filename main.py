@@ -57,7 +57,7 @@ while True:
   # Call Room Function
   if rooms[player.Room].Function is not None:
     # Return value means: True == Print Prompt, False == Skip Prompt
-    res = rooms[player.Room].Function(player)
+    res = rooms[player.Room].Function()
 
   if res == RoomFuncResponse.SKIP:
     continue
