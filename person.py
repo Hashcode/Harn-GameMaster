@@ -6,31 +6,31 @@
 
 from global_defines import (DiceRoll, DamageTypeEnum, ItemEnum, AttrEnum,
                             SkillEnum, PersonEnum, ItemLink, Mob, MobAttack,
-                            MaterialEnum, PERS_AGGRESSIVE)
+                            MaterialEnum, AimEnum, PERS_AGGRESSIVE)
 
 persons = {
     PersonEnum.MON_RAT:
         Mob(PersonEnum.MON_RAT, "an ugly rat",
-            "An ugly rat scurries across the ground.", 45, 6, 35,
+            "An ugly rat scurries across the ground.", 35, 4, 25, AimEnum.LOW,
             PERS_AGGRESSIVE,
             MaterialEnum.FUR_LT,
             attrs={
                 AttrEnum.SEX: 0,
                 AttrEnum.STRENGTH: 5,
-                AttrEnum.STAMINA: 8,
+                AttrEnum.STAMINA: 4,
                 AttrEnum.DEXTERITY: 4,
                 AttrEnum.AGILITY: 7,
-                AttrEnum.EYESIGHT: 12,
+                AttrEnum.EYESIGHT: 8,
                 AttrEnum.HEARING: 20,
                 AttrEnum.SMELL: 15,
                 AttrEnum.INTELLIGENCE: 4,
                 AttrEnum.AURA: 5,
-                AttrEnum.WILL: 8,
+                AttrEnum.WILL: 7,
             },
             mob_attacks=[
-                MobAttack("Bite", 60, 45, 0, 0, DiceRoll(1, 2),
+                MobAttack("Bite", 60, 34, 0, 0, DiceRoll(1, 2),
                           DamageTypeEnum.PIERCE),
-                MobAttack("Claws", 100, 30, 0, 0, DiceRoll(1, 1),
+                MobAttack("Claws", 100, 24, 0, 0, DiceRoll(1, 1),
                           DamageTypeEnum.EDGE),
             ],
             mob_skills={
