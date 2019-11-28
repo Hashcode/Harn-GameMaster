@@ -12,7 +12,7 @@ from global_defines import (DiceRoll, Roll, CoverageEnum, body_parts,
                             PlayerCombatState, wounds, PersonWound,
                             AttrEnum, PersonTypeEnum, ItemLink,
                             ImpactActionEnum, ANSI, GameData)
-from logging import (logd)
+from logger import (logd)
 from dmg_table import dmg_table_melee
 from utils import prompt
 

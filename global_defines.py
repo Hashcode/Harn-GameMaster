@@ -12,7 +12,7 @@ from copy import deepcopy
 from time import gmtime
 from calendar import timegm
 
-from logging import logd
+from logger import logd
 
 # ROLL
 
