@@ -5,60 +5,61 @@
 import pickle
 import codecs
 
-from tinydb import TinyDB, Query
-from simplecrypt import encrypt, decrypt
+import requests
+import re
 
-DATABASE_FILE = "game.json"
+# from simplecrypt import encrypt, decrypt
 
-global_db = None
-global_id = -1
-global_use_encrypt = True
+URL_BASE = "https://www.jsonstore.io"
+DB_UUID = "f4dd28e6f701809382924215197653375ae7bfeedadc1485196e72697392bc2c"
 
 
-def GetDB():
-  global global_db
-  global global_id
-  if global_db is not None:
-    return global_db
-  global_db = TinyDB(DATABASE_FILE)
-  for row in global_db.all():
-    if row["id"] > global_id:
-      global_id = row["id"]
-  return global_db
+global_use_encrypt = False
+
+
+def get_valid_filename(s):
+  s = str(s).strip().replace(' ', '_')
+  return re.sub(r'(?u)[^-\w.]', '', s)
 
 
 def ExistsDB(name):
-  return GetDB().contains(Query().name == name.upper())
-
-
-def DeleteDB(name):
-  return GetDB().remove(Query().name == name.upper())
+  r = requests.get("%s/%s/%s" % (URL_BASE, DB_UUID, name.upper()))
+  if r.status_code != 200:
+    return False
+  try:
+    dict = r.json()
+    if dict["result"] is not None:
+      return True
+  except:
+    return False
+  return False
 
 
 def SaveDB(name, info, state):
-  global global_id
-  db = GetDB()
-  if ExistsDB(name):
-    db.update({'info': info, 'state': state}, Query().name == name.upper())
-  else:
-    global_id += 1
-    db.insert({'id': global_id, 'name': name.upper(), 'info': info,
-               'state': state})
-  return True
+  payload = {'name': name.upper(), 'info': info, 'state': state}
+  url = "%s/%s/%s" % (URL_BASE, DB_UUID, get_valid_filename(name.upper()))
+  try:
+    r = requests.put(url, json=payload)
+    if r.status_code in [200,201]:
+      return True
+  except:
+    return False
 
 
 def LoadDB(name):
-  state = ""
-  for row in GetDB().search(Query().name == name.upper()):
-    state = row["state"]
-    break
-  return state
+  url = "%s/%s/%s" % (URL_BASE, DB_UUID, get_valid_filename(name.upper()))
+  r = requests.get(url)
+  try:
+    dict = r.json()
+    if dict["result"] is not None:
+      payload = dict["result"]
+      return payload["state"]
+  except:
+    return ""
 
 
 def ListDB():
   players = {}
-  for row in GetDB().all():
-    players.update({row["name"]: row["info"]})
   return players
 
 
