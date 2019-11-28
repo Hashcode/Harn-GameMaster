@@ -226,7 +226,7 @@ def printCombatAttackActions(combatant, target):
   else:
     att_name = "no weapon!"
   if combatant.Target is not None:
-    target_name = "%s [%d IP}" % (combatant.Target.Person.Name,
+    target_name = "%s [%d IP]" % (combatant.Target.Person.Name,
                                   combatant.Target.Person.IP())
   else:
     target_name = "[NO TARGET]"
