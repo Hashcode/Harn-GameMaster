@@ -35,6 +35,7 @@ class ResultEnum(IntEnum):
   STUMBLE = 3
   TADV = 4
   DMG = 5
+  DODGE = 6
 
 
 T_ATK = 1 << 0
@@ -163,7 +164,7 @@ resolve_melee = {
         Action.DODGE: {
             Roll.CF: Result(T_DEF, ResultEnum.STUMBLE, 3),
             Roll.MF: Result(T_BOTH, ResultEnum.MISS),
-            Roll.MS: Result(T_BOTH, ResultEnum.MISS),
+            Roll.MS: Result(T_BOTH, ResultEnum.DODGE),
             Roll.CS: Result(T_DEF, ResultEnum.TADV),
         },
         Action.IGNORE: {
@@ -183,8 +184,8 @@ resolve_melee = {
         Action.DODGE: {
             Roll.CF: Result(T_ATK, ResultEnum.DMG, 2),
             Roll.MF: Result(T_ATK, ResultEnum.DMG, 1),
-            Roll.MS: Result(T_BOTH, ResultEnum.MISS),
-            Roll.CS: Result(T_BOTH, ResultEnum.MISS),
+            Roll.MS: Result(T_BOTH, ResultEnum.DODGE),
+            Roll.CS: Result(T_BOTH, ResultEnum.DODGE),
         },
         Action.IGNORE: {
             Roll.CF: Result(T_ATK, ResultEnum.DMG, 3),
@@ -204,7 +205,7 @@ resolve_melee = {
             Roll.CF: Result(T_ATK, ResultEnum.DMG, 3),
             Roll.MF: Result(T_ATK, ResultEnum.DMG, 2),
             Roll.MS: Result(T_ATK, ResultEnum.DMG, 1),
-            Roll.CS: Result(T_BOTH, ResultEnum.MISS),
+            Roll.CS: Result(T_BOTH, ResultEnum.DODGE),
         },
         Action.IGNORE: {
             Roll.CF: Result(T_ATK, ResultEnum.DMG, 4),
@@ -673,6 +674,11 @@ def combat(player, enemies):
                     (att.Person.Name.capitalize(),
                      att.Person.AttrSexPossessivePronounStr().lower(),
                      at.Name.lower()))
+          elif res.Result == ResultEnum.DODGE:
+            if att.Person == player:
+              print("\n%s DODGES you." % defe.Person.Name.capitalize())
+            else:
+              print("\nYou DODGE %s." % att.Person.Name)
           elif res.Result == ResultEnum.BLOCK:
             if att.Person == player:
               print("\n%s BLOCKS your attack with %s %s." %
