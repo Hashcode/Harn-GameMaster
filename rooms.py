@@ -82,7 +82,7 @@ def room_CreateCharacter():
 
 doors = {
     DoorEnum.WAREHOUSE_DBL_DOOR:
-        Door("double doors", True, True, ItemEnum.KEY_WAREHOUSE_DBL_DOOR),
+        Door("double doors", True, False, ItemEnum.KEY_WAREHOUSE_DBL_DOOR),
 }
 
 rooms = {
