@@ -35,7 +35,8 @@ from items import items
 GameData.SetItems(items)
 from person import persons
 GameData.SetPersons(persons)
-from rooms import rooms
+from rooms import (doors, rooms)
+GameData.SetDoors(doors)
 GameData.SetRooms(rooms)
 GameData.ROOM_START = ROOM_START
 GameData.ROOM_RESPAWN = ROOM_RESPAWN

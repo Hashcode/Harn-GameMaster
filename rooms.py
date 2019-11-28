@@ -4,7 +4,8 @@
 
 # Room Functions
 
-from global_defines import (PersonEnum, Player, DirectionEnum,
+from global_defines import (PersonEnum, Player, ItemEnum, DoorEnum, Door,
+                            DirectionEnum,
                             RoomFuncResponse, RoomEnum, Exit, Room, RoomSpawn,
                             ANSI, GameData)
 from utils import (actionSave)
@@ -77,6 +78,11 @@ def room_CreateCharacter():
   print("\nGood luck, %s!" % (player.Name))
   return RoomFuncResponse.SKIP
 
+
+doors = {
+    DoorEnum.WAREHOUSE_DBL_DOOR:
+        Door("double doors", True, True, ItemEnum.KEY_WAREHOUSE_DBL_DOOR),
+}
 
 rooms = {
     # GAME ROOMS
@@ -174,7 +180,8 @@ rooms = {
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_ENTRY_YARD),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHEASTERN_WALK),
-                 DirectionEnum.WEST: Exit(RoomEnum.BL_WAREHOUSE),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_WAREHOUSE,
+                                          DoorEnum.WAREHOUSE_DBL_DOOR),
              }),
     RoomEnum.BL_S_GATEHOUSE_TOWER:
         Room("South Gatehouse Tower", "the south gatehouse tower",
@@ -184,9 +191,17 @@ rooms = {
              }),
     RoomEnum.BL_WAREHOUSE:
         Room("Common Warehouse", "a common warehouse",
-             ["** TODO **"],
+             [
+                 "Visiting merchants and other travelers who have "
+                 "quantities of goods are required to keep their materials "
+                 "here until they are either sold to the persons at the "
+                 "keep or taken elsewhere.  Stored here are several covered "
+                 "carts, many boxes, barrels, and bales."
+                 "Large rat droppings can be seen in several corners."
+             ],
              exits={
-                 DirectionEnum.EAST: Exit(RoomEnum.BL_EASTERN_WALK),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_EASTERN_WALK,
+                                          DoorEnum.WAREHOUSE_DBL_DOOR),
              },
              spawns=[
                  RoomSpawn(PersonEnum.MON_RAT, 100, 1, 360),

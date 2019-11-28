@@ -458,6 +458,12 @@ items = {
     ItemEnum.MISC_RAT_FUR:
         Item(ItemTypeEnum.MISC, "rat fur", QualityEnum.POR,
              MaterialEnum.FUR_LT, 1),
+
+    # KEYS
+
+    ItemEnum.KEY_WAREHOUSE_DBL_DOOR:
+        Item(ItemTypeEnum.MISC, "a large bronze key", QualityEnum.AVE,
+             MaterialEnum.BRONZE, 1),
 }
 
 # vim: tabstop=2 shiftwidth=2 expandtab:

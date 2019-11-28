@@ -144,8 +144,9 @@ class MaterialEnum(IntEnum):
   STEEL_WOOD = 108
   # PRECIOUS
   SILVER = 200
-  GOLD = 201
-  MITHRIL = 202
+  BRONZE = 201
+  GOLD = 202
+  MITHRIL = 203
   # NATURAL
   WOOD = 300
   STONE = 301
@@ -216,6 +217,7 @@ materials = {
     MaterialEnum.STEEL: Material("Steel", 0.8, 25, [6, 10, 6, 2]),
     MaterialEnum.STEEL_WOOD: Material("Steel & Wood", 0.8, 10, [5, 8, 4, 1]),
     # PRECIOUS
+    MaterialEnum.BRONZE: Material("Bronze", 0.8, 10, [2, 6, 2, 1]),
     MaterialEnum.SILVER: Material("Silver", 1.5, 60, [3, 8, 3, 2]),
     MaterialEnum.GOLD: Material("Gold", 3.0, 120, [4, 9, 4, 3]),
     MaterialEnum.MITHRIL: Material("Mithril", 0.25, 1200, [4, 10, 7, 8],
@@ -442,6 +444,8 @@ class ItemEnum(IntEnum):
   # MISC
   MISC_STONE = 50000
   MISC_RAT_FUR = 50001
+  # KEYS
+  KEY_WAREHOUSE_DBL_DOOR = 60000
 
 
 class ItemTypeEnum(IntEnum):
@@ -2127,6 +2131,13 @@ class Player(Person):
       return super().GenerateCombatAttacks(block, default)
 
 
+# DOOR
+
+class DoorEnum(IntEnum):
+  NONE = 0
+  WAREHOUSE_DBL_DOOR = 1
+
+
 # ROOM
 
 class RoomEnum(IntEnum):
@@ -2188,12 +2199,25 @@ class DirectionEnum(IntEnum):
   DOWN = 10
 
 
-class Exit:
-  def __init__(self, room_id, name="", lock=False, key_item=ItemEnum.NONE):
-    self.Room = room_id
-    self.ExitName = name
-    self.Locked = lock
+class Door:
+  def __init__(self, name, closed=False, locked=False,
+               key_item=ItemEnum.NONE):
+    self.Name = name
+    self.Closed = closed
+    self.Locked = locked
     self.Key = key_item
+
+  def Verb(self):
+    if self.Name.endswith("s"):
+      return "are"
+    else:
+      return "is"
+
+
+class Exit:
+  def __init__(self, room_id, door_id=DoorEnum.NONE):
+    self.Room = room_id
+    self.Door = door_id
 
 
 class RoomSpawn:
@@ -2286,6 +2310,7 @@ class ANSI:
 # Game Globals
 
 class GameData:
+  _doors = None
   _rooms = None
   _items = None
   _persons = None
@@ -2310,6 +2335,14 @@ class GameData:
   @staticmethod
   def GetPersons():
     return GameData._persons
+
+  @staticmethod
+  def SetDoors(doors):
+    GameData._doors = doors
+
+  @staticmethod
+  def GetDoors():
+    return GameData._doors
 
   @staticmethod
   def SetRooms(rooms):
