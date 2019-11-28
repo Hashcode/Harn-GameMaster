@@ -284,7 +284,7 @@ def HandlePlayerDeath(player):
 
 
 def HandleMobDeath(att, defe):
-  rooms = GameData.GameRooms()
+  rooms = GameData.GetRooms()
   items = GameData.GetItems()
   if defe.Person.CurrencyGen is not None:
     # currency
