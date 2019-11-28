@@ -802,7 +802,7 @@ commands.append(GenericCommand(["skills", "sk"], actionSkills))
 commands.append(GenericCommand(["stats", "st"], actionStatsGeneric))
 commands.append(GenericCommand(["train"], actionTrain))
 commands.append(GenericCommand(["unlock"], actionUnlock))
-commands.append(GenericCommand(["who"], actionListPlayers))
+# commands.append(GenericCommand(["who"], actionListPlayers))
 
 
 def prompt(func_break=False):
