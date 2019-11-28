@@ -36,7 +36,8 @@ def room_RestoreSave():
   print("\nPlease wait while saved data is loaded ...")
   ret = LoadPlayer(player, name, pwd)
   if not ret:
-    print("Unable to find save data for %s." % name)
+    print("%sUnable to find save data for %s!%s" %
+          (ANSI.TEXT_BOLD, name, ANSI.TEXT_NORMAL))
     player.SetRoom(RoomEnum.GAME_START)
     return RoomFuncResponse.SKIP
 
