@@ -324,6 +324,173 @@ def HandleImpactDMG(player, att, defe, at, res_level):
   return break_loop
 
 
+def DetermineDefense(combatant):
+  if combatant.StunLevel > 0:
+    combatant.Action = Action.IGNORE
+  else:
+    combatant.Attacks = combatant.Person.GenerateCombatAttacks(block=True)
+    if len(combatant.Attacks) < 1:
+      combatant.Action = Action.DODGE
+    elif combatant.Person.AttrDodge() > combatant.Attacks[0].SkillML:
+      combatant.Action = Action.DODGE
+    else:
+      combatant.Action = Action.BLOCK
+
+
+def HandleAttack(att, order, player_combatant):
+  player = GameData.GetPlayer()
+  defe = None
+
+  if att.Person == player:
+    player.CombatState = PlayerCombatState.ATTACK
+
+    if att.Target is None:
+      count = 0
+      m = None
+      for x in order:
+        if x.Person.PersonType == PersonTypeEnum.NPC and \
+           x.Flags & FLAG_DEAD == 0:
+          count += 1
+          m = x
+          if player.CombatTarget == x.Person.UUID:
+            att.Target = x
+            break
+      if att.Target is None and count == 1:
+        att.Target = m
+      else:
+        while True:
+          chooseTarget(att, order)
+          if att.Target is not None:
+            break
+    defe = att.Target
+
+    logd("PLAYER ACTION: %s vs. %s" %
+         (att.Person.Name, defe.Person.Name))
+
+    DetermineDefense(defe)
+
+    while True:
+      printCombatAttackActions(att, defe)
+      prompt(func_break=True)
+      if player.Command == "aim":
+        print("\nComing soon!")
+      elif player.Command == "attack" or player.Command == "a":
+        if att.Target is None:
+          print("\nYou have no target!")
+        else:
+          att.Action = Action.MELEE
+          att.Attacks = att.Person.GenerateCombatAttacks()
+          break
+      elif player.Command == "cast" or player.Command == "c":
+        print("\nComing soon!")
+      elif player.Command == "flee" or player.Command == "f":
+        # TODO: implement skill check
+        att.Action = Action.FLEE
+        break
+      elif player.Command == "pass" or player.Command == "p":
+        print("\nYou choose to skip your action.")
+        att.Action = Action.IGNORE
+        break
+      elif player.Command == "target" or player.Command == "t":
+        chooseTarget(att, order)
+      elif player.Command != "help" and player.Command != "?":
+        print("\n%sYou cannot do that here.%s" %
+              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+      # if player == FLEE, choose dodge automatically
+
+  else:
+    player.CombatState = PlayerCombatState.DEFEND
+    defe = player_combatant
+
+    # mob chooses attack action
+    #   flee?
+    att.Action = Action.MELEE
+    logd("%s: Generate Attack" % (att.Person.Name))
+    att.Attacks = att.Person.GenerateCombatAttacks()
+    if len(att.Attacks) == 0:
+      logd("MOB ERROR! %s no attack!" % (att.Person.Name))
+      att.Action = Action.IGNORE
+    else:
+      logd("%s attack: %s" % (att.Person.Name, att.Attacks[0].Name))
+    # use default Aim zone
+    att.Aim = att.Person.DefaultAim
+
+    # pause scroll momentarily
+    sleep(1)
+    DetermineDefense(defe)
+
+  # RESOLUTION PHASE
+
+  if att.Action == Action.FLEE:
+    return
+
+  if att.Action == Action.IGNORE:
+    return
+
+  if att.Attacks is not None:
+    for at in att.Attacks:
+      att.Roll = att.Person.ResolveSkill(at.SkillML, at.SkillID)
+      logd("ATTACKER %s %s" %
+           (att.Person.Name, att.Roll))
+      if defe.Action == Action.BLOCK:
+        if len(defe.Attacks) < 1:
+          defe.Action = Action.DODGE
+        else:
+          defe.Roll = defe.Person.ResolveSkill(defe.Attacks[0].SkillML,
+                                               defe.Attacks[0].SkillID)
+      if defe.Action == Action.DODGE:
+        defe.Roll = defe.Person.ResolveSkill(defe.Person.AttrDodge(),
+                                             SkillEnum.DODGE)
+      logd("DEFENDER %s %s" %
+           (defe.Person.Name, defe.Roll))
+
+      # use resolve_melee for now
+      res = resolve_melee[att.Roll][defe.Action][defe.Roll]
+
+      if res.Result == ResultEnum.MISS:
+        if att.Person == player:
+          print("\nYou MISS %s with your %s." %
+                (defe.Person.Name, at.Name.lower()))
+        else:
+          print("\n%s MISSES you with %s %s." %
+                (att.Person.Name.capitalize(),
+                 att.Person.AttrSexPossessivePronounStr().lower(),
+                 at.Name.lower()))
+      elif res.Result == ResultEnum.DODGE:
+        if att.Person == player:
+          print("\n%s DODGES you." % defe.Person.Name.capitalize())
+        else:
+          print("\nYou DODGE %s." % att.Person.Name)
+      elif res.Result == ResultEnum.BLOCK:
+        if att.Person == player:
+          print("\n%s BLOCKS your attack with %s %s." %
+                (defe.Person.Name.capitalize(),
+                 defe.Person.AttrSexPossessivePronounStr().lower(),
+                 defe.Attacks[0].Name.lower()))
+        else:
+          print("\nYou BLOCK %s with your %s." %
+                (att.Person.Name, defe.Attacks[0].Name.lower()))
+      # elif res.Result == ResultEnum.FUMBLE:
+        # TODO:
+      # elif res.Result == ResultEnum.STUMBLE:
+        # TODO:
+      # elif res.Result == ResultEnum.TADV:
+        # TODO:
+      # Only the current attacker can do damage
+      elif res.Result == ResultEnum.DMG:
+        if HandleImpactDMG(player, att, defe, at, res.Level):
+          break
+
+      else:
+        print("\n*** %s ***" % res)
+
+    if defe.Flags & FLAG_DEAD > 0 and defe.Person is not player:
+      HandleMobDeath(att, defe)
+
+  else:
+    logd("\n***%s HAD NO ATTACKS ***\n" % res)
+
+
 def combat(player, enemies):
   # start of combat checks?
   order = []
@@ -409,174 +576,7 @@ def combat(player, enemies):
       if att.StunLevel > 0:
         continue
 
-      elif att.Person == player:
-        player.CombatState = PlayerCombatState.ATTACK
-
-        if att.Target is None:
-          count = 0
-          m = None
-          for x in order:
-            if x.Person.PersonType == PersonTypeEnum.NPC and \
-               x.Flags & FLAG_DEAD == 0:
-              count += 1
-              m = x
-              if player.CombatTarget == x.Person.UUID:
-                att.Target = x
-                break
-          if att.Target is None and count == 1:
-            att.Target = m
-          else:
-            while True:
-              chooseTarget(att, order)
-              if att.Target is not None:
-                break
-        defe = att.Target
-
-        logd("PLAYER ACTION: %s vs. %s" %
-             (att.Person.Name, defe.Person.Name))
-
-        # target mob chooses action
-        #   ignore if stunned
-        #   block if available (equipment)
-        #   dodge if not
-        if defe.StunLevel > 0:
-          defe.Action = Action.IGNORE
-        else:
-          defe.Action = Action.BLOCK
-          defe.Attacks = defe.Person.GenerateCombatAttacks(block=True)
-          if len(defe.Attacks) < 1:
-            defe.Action = Action.DODGE
-
-        while True:
-          printCombatAttackActions(att, defe)
-          prompt(func_break=True)
-          if player.Command == "aim":
-            print("\nComing soon!")
-          elif player.Command == "attack" or player.Command == "a":
-            if att.Target is None:
-              print("\nYou have no target!")
-            else:
-              att.Action = Action.MELEE
-              att.Attacks = att.Person.GenerateCombatAttacks()
-              break
-          elif player.Command == "cast" or player.Command == "c":
-            print("\nComing soon!")
-          elif player.Command == "flee" or player.Command == "f":
-            # TODO: implement skill check
-            att.Action = Action.FLEE
-            break
-          elif player.Command == "pass" or player.Command == "p":
-            print("\nYou choose to skip your action.")
-            att.Action = Action.IGNORE
-            break
-          elif player.Command == "target" or player.Command == "t":
-            chooseTarget(att, order)
-          elif player.Command != "help" and player.Command != "?":
-            print("\n%sYou cannot do that here.%s" %
-                  (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-          # if player == FLEE, choose dodge automatically
-
-      else:
-        player.CombatState = PlayerCombatState.DEFEND
-        defe = player_combatant
-
-        # mob chooses attack action
-        #   flee?
-        att.Action = Action.MELEE
-        logd("%s: Generate Attack" % (att.Person.Name))
-        att.Attacks = att.Person.GenerateCombatAttacks()
-        if len(att.Attacks) == 0:
-          logd("MOB ERROR! %s no attack!" % (att.Person.Name))
-          att.Action = Action.IGNORE
-        else:
-          logd("%s attack: %s" % (att.Person.Name, att.Attacks[0].Name))
-        # use default Aim zone
-        att.Aim = att.Person.DefaultAim
-
-        # pause scroll momentarily
-        sleep(1)
-
-        # determine player defense
-        if defe.StunLevel > 0:
-          defe.Action = Action.IGNORE
-        else:
-          defe.Attacks = defe.Person.GenerateCombatAttacks(block=True)
-          if len(defe.Attacks) < 1:
-            defe.Action = Action.DODGE
-          elif defe.Person.AttrDodge() > defe.Attacks[0].SkillML:
-            defe.Action = Action.DODGE
-          else:
-            defe.Action = Action.BLOCK
-
-      # RESOLUTION PHASE
-      if att.Action == Action.FLEE:
-        break
-
-      if att.Action == Action.IGNORE:
-        continue
-
-      if att.Attacks is not None:
-        for at in att.Attacks:
-          att.Roll = att.Person.ResolveSkill(at.SkillML,
-                                             at.SkillID)
-          logd("ATTACKER %s %s" %
-               (att.Person.Name, att.Roll))
-          if defe.Action == Action.BLOCK:
-            if len(defe.Attacks) < 1:
-              defe.Action = Action.DODGE
-            else:
-              defe.Roll = defe.Person.ResolveSkill(defe.Attacks[0].SkillML,
-                                                   defe.Attacks[0].SkillID)
-          if defe.Action == Action.DODGE:
-            defe.Roll = defe.Person.ResolveSkill(defe.Person.AttrDodge(),
-                                                 SkillEnum.DODGE)
-          logd("DEFENDER %s %s" %
-               (defe.Person.Name, defe.Roll))
-          # use resolve_melee for now
-          res = resolve_melee[att.Roll][defe.Action][defe.Roll]
-
-          if res.Result == ResultEnum.MISS:
-            if att.Person == player:
-              print("\nYou MISS %s with your %s." %
-                    (defe.Person.Name, at.Name.lower()))
-            else:
-              print("\n%s MISSES you with %s %s." %
-                    (att.Person.Name.capitalize(),
-                     att.Person.AttrSexPossessivePronounStr().lower(),
-                     at.Name.lower()))
-          elif res.Result == ResultEnum.DODGE:
-            if att.Person == player:
-              print("\n%s DODGES you." % defe.Person.Name.capitalize())
-            else:
-              print("\nYou DODGE %s." % att.Person.Name)
-          elif res.Result == ResultEnum.BLOCK:
-            if att.Person == player:
-              print("\n%s BLOCKS your attack with %s %s." %
-                    (defe.Person.Name.capitalize(),
-                     defe.Person.AttrSexPossessivePronounStr().lower(),
-                     defe.Attacks[0].Name.lower()))
-            else:
-              print("\nYou BLOCK %s with your %s." %
-                    (att.Person.Name, defe.Attacks[0].Name.lower()))
-          # elif res.Result == ResultEnum.FUMBLE:
-            # TODO:
-          # elif res.Result == ResultEnum.STUMBLE:
-            # TODO:
-          # elif res.Result == ResultEnum.TADV:
-            # TODO:
-          # Only the current attacker can do damage
-          elif res.Result == ResultEnum.DMG:
-            if HandleImpactDMG(player, att, defe, at, res.Level):
-              break
-
-          else:
-            print("\n*** %s ***" % res)
-
-        if defe.Flags & FLAG_DEAD > 0 and defe.Person is not player:
-          HandleMobDeath(att, defe)
-
-      else:
-        logd("\n***%s HAD NO ATTACKS ***\n" % res)
+      HandleAttack(att, order, player_combatant)
 
       # check if dead
       if player_combatant.Flags & FLAG_DEAD > 0:
