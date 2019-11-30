@@ -266,7 +266,12 @@ def actionEquipItem():
           print("\nAlready wielding 2 rings.")
           return
   player.ItemLinks[equip_id].Equipped = True
-  print("\n%s equipped." % items[equip_id].ItemName.capitalize())
+  # use a player's "attack" if in combat
+  if player.CombatState != PlayerCombatState.NONE:
+    print("\nYou take a moment to equip %s." % items[equip_id].ItemName)
+    return False
+  else:
+    print("\n%s equipped." % items[equip_id].ItemName.capitalize())
 
 
 def actionGetItem():

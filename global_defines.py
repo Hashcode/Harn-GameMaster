@@ -585,10 +585,11 @@ aims = {
 
 
 class CombatAttack:
-  def __init__(self, name, ml, skill_id, roll, dmg_type):
+  def __init__(self, name, ml, skill_id, item_id, roll, dmg_type):
     self.Name = name
     self.SkillML = ml
     self.SkillID = skill_id
+    self.ItemID = item_id
     self.Roll = roll
     self.DamageType = dmg_type
 
@@ -1853,7 +1854,7 @@ class Person:
       ml = self.SkillML(skill_id)
       ml += items[def_item_id].DefenseRating
       attacks.append(CombatAttack(items[def_item_id].ItemName, ml, skill_id,
-                                  None, DamageTypeEnum.BLUNT))
+                                  def_item_id, None, DamageTypeEnum.BLUNT))
     else:
       for item_id, il in self.ItemLinks.items():
         if not il.Equipped:
@@ -1865,6 +1866,7 @@ class Person:
           if count > 1:
             ml -= items[item_id].SingleHandPenalty
           attacks.append(CombatAttack(items[item_id].ItemName, ml, skill_id,
+                                      item_id,
                                       items[item_id].Roll,
                                       items[item_id].DamageType))
     if len(attacks) < 1 and default != ItemEnum.NONE:
@@ -1872,7 +1874,7 @@ class Person:
       ml = self.SkillML(skill_id)
       ml += items[default].AttackRating
       attacks.append(CombatAttack(items[default].ItemName, ml, skill_id,
-                                  items[default].Roll,
+                                  default, items[default].Roll,
                                   items[default].DamageType))
     return attacks
 
@@ -1937,6 +1939,7 @@ class Mob(Person):
             ml = ma.SkillML + ma.AttackRating
             ml -= (self.PhysicalPenalty() * 5)
             ca = CombatAttack(ma.Name, ml, SkillEnum.UNARMED,
+                              ItemEnum.NONE,
                               ma.Damage, ma.DamageType)
             attacks.append(ca)
             break
