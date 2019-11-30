@@ -318,12 +318,6 @@ class ItemEnum(IntEnum):
   # WEAPON [UNARMED]
   WEAPON_HAND = 10000
   WEAPON_FOOT = 10001
-  WEAPON_BITE_SMALL = 10010
-  WEAPON_BITE_MED = 10011
-  WEAPON_BITE_LARGE = 10012
-  WEAPON_CLAW_SMALL = 10020
-  WEAPON_CLAW_MED = 10021
-  WEAPON_CLAW_LARGE = 10022
   # WEAPON [DAGGER]
   WEAPON_KNIFE = 10200
   WEAPON_DAGGER = 10210
@@ -1942,7 +1936,7 @@ class Mob(Person):
           if DiceRoll(1, 100).Result() <= ma.ChanceMax:
             ml = ma.SkillML + ma.AttackRating
             ml -= (self.PhysicalPenalty() * 5)
-            ca = CombatAttack(ma.Name, ml, SkillEnum.NONE,
+            ca = CombatAttack(ma.Name, ml, SkillEnum.UNARMED,
                               ma.Damage, ma.DamageType)
             attacks.append(ca)
             break

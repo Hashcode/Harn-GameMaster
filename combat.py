@@ -12,7 +12,8 @@ from global_defines import (DiceRoll, Roll, CoverageEnum, body_parts,
                             AttrEnum, PersonTypeEnum, ItemLink,
                             ImpactActionEnum, ANSI, GameData)
 from logger import (logd)
-from table_melee_attack import (Action, ResultEnum, resolve_melee)
+from table_melee_attack import (Action, ResultEnum, T_ATK, T_DEF,
+                                resolve_melee)
 from table_dmg import dmg_table_melee
 from utils import prompt
 
@@ -31,6 +32,7 @@ class Combatant:
     self.StunLevel = 0
     self.Bleed = 0
     self.Bloodloss = 0
+    self.Prone = False
     self.Action = Action.IGNORE
     self.Aim = AimEnum.MID
     self.Target = None
@@ -105,13 +107,16 @@ def printCombatAttackActions(combatant, target):
           (combatant.Bloodloss, combatant.Person.AttrEndurance()))
   print("\nOFFENSE COMMANDS:\n")
   print("%-10s %-3s : %s" % ("AIM", "", aims[combatant.Aim].Name))
-  print("%-10s %-3s : %s" % ("ATTACK", "[A]", att_name))
+  if not combatant.Prone:
+    print("%-10s %-3s : %s" % ("ATTACK", "[A]", att_name))
   print("%-10s %-3s :" % ("CAST", "[C]"))
   print("%-10s %-3s : %d ML" % ("FLEE", "[F]",
                                 combatant.Person.AttrDodge()))
   # print("  GRAPPLE")
   # print("  MISSILE")
   print("%-10s %-3s :" % ("PASS", "[P]"))
+  if combatant.Prone:
+    print("%-10s %-3s :" % ("STAND", ""))
   print("%-10s %-3s : %s" %
         ("TARGET", "[T]", target_name))
 
@@ -175,6 +180,34 @@ def HandleMobDeath(att, defe):
   # remove enemy from room
   rooms[att.Person.Room].RemovePerson(defe.UUID)
   att.Target = None
+
+
+def CombatantFumble(combatant, ca):
+  if combatant.Person is GameData.GetPlayer():
+    print("\n%s%s FUMBLE your %s!%s" %
+          (ANSI.TEXT_BOLD, ca.Name.capitalize(), ca.Name.lower(),
+           ANSI.TEXT_NORMAL))
+  else:
+    print("\n%s%s FUMBLES %s %s!%s" %
+          (ANSI.TEXT_BOLD, combatant.Person.Name.capitalize(),
+           combatant.Person.AttrSexPossessivePronounStr().lower(),
+           combatant.Attacks[0].Name.lower(), ANSI.TEXT_NORMAL))
+  # unequip weapon
+  for item_id, il in combatant.Person.ItemLinks.items():
+    if il.Item == item_id and il.Equipped:
+      il.Equipped = False
+      break
+
+
+def CombatantStumble(combatant):
+  if combatant.Person is GameData.GetPlayer():
+    print("%sYou STUMBLE to the ground!%s" %
+          (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  else:
+    print("%s%s STUMBLES to the ground!%s" %
+          (ANSI.TEXT_BOLD, combatant.Person.Name.capitalize(),
+           ANSI.TEXT_NORMAL))
+  combatant.Prone = True
 
 
 def HandleImpactDMG(player, att, defe, at, res_level):
@@ -284,7 +317,6 @@ def HandleImpactDMG(player, att, defe, at, res_level):
           return True
 
       # elif ia.Action == ImpactActionEnum.AMPUTATE_CHECK:
-        # TODO
 
       elif ia.Action == ImpactActionEnum.SHOCK:
         num = ia.Level + defe.Person.UniversalPenaltyIndex()
@@ -303,7 +335,21 @@ def HandleImpactDMG(player, att, defe, at, res_level):
           defe.StunLevel += 2
           logd("%s STUN_LEVEL %d" % (defe.Person.Name, defe.StunLevel))
 
-      elif ia.Action == ImpactActionEnum.BLEED:
+      if ia.Action == ImpactActionEnum.FUMBLE:
+        # treat unarmed fumble as stumble
+        if len(defe.Attacks) < 1:
+          ia.Action = ResultEnum.STUMBLE
+        elif defe.Attacks[0].SkillID == SkillEnum.UNARMED:
+          ia.Action = ResultEnum.STUMBLE
+        else:
+          r = DiceRoll(ia.Level, 6).Result() + defe.Person.PhysicalPenalty()
+          if r > defe.Person.Attr[AttrEnum.DEXTERITY]:
+            CombatantFumble(defe)
+      if ia.Action == ImpactActionEnum.STUMBLE:
+        r = DiceRoll(ia.Level, 6).Result() + defe.Person.PhysicalPenalty()
+        if r > defe.Person.Attr[AttrEnum.AGILITY]:
+          CombatantStumble(defe)
+      if ia.Action == ImpactActionEnum.BLEED:
         if att.Person == player:
           print("%s%s's wound is BLEEDING!%s" %
                 (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
@@ -313,10 +359,6 @@ def HandleImpactDMG(player, att, defe, at, res_level):
                 (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
         defe.Bleed += ia.Level
         logd("%s BLEED %d" % (defe.Person.Name, defe.Bleed))
-
-      else:
-        print("IMPACT_ACTION: %s LEVEL:%d" %
-              (ia.Action, ia.Level))
 
   if defe.Flags & FLAG_DEAD > 0:
     break_loop = True
@@ -372,15 +414,22 @@ def HandleAttack(att, order, player_combatant):
     while True:
       printCombatAttackActions(att, defe)
       prompt(func_break=True)
+      if att.Prone:
+        if player.Command == "stand":
+          print("\nYou stand up.")
+          att.Prone = False
+          att.Action = Action.IGNORE
+          break
+      else:
+        if player.Command == "attack" or player.Command == "a":
+          if att.Target is None:
+            print("\nYou have no target!")
+          else:
+            att.Action = Action.MELEE
+            att.Attacks = att.Person.GenerateCombatAttacks()
+            break
       if player.Command == "aim":
         print("\nComing soon!")
-      elif player.Command == "attack" or player.Command == "a":
-        if att.Target is None:
-          print("\nYou have no target!")
-        else:
-          att.Action = Action.MELEE
-          att.Attacks = att.Person.GenerateCombatAttacks()
-          break
       elif player.Command == "cast" or player.Command == "c":
         print("\nComing soon!")
       elif player.Command == "flee" or player.Command == "f":
@@ -404,20 +453,26 @@ def HandleAttack(att, order, player_combatant):
 
     # mob chooses attack action
     #   flee?
-    att.Action = Action.MELEE
-    logd("%s: Generate Attack" % (att.Person.Name))
-    att.Attacks = att.Person.GenerateCombatAttacks()
-    if len(att.Attacks) == 0:
-      logd("MOB ERROR! %s no attack!" % (att.Person.Name))
+    if att.Prone:
+      att.Prone = False
       att.Action = Action.IGNORE
+      print("\n%s gets up." % (att.Person.Name.capitalize()))
     else:
-      logd("%s attack: %s" % (att.Person.Name, att.Attacks[0].Name))
-    # use default Aim zone
-    att.Aim = att.Person.DefaultAim
+      att.Action = Action.MELEE
+      logd("%s: Generate Attack" % (att.Person.Name))
+      att.Attacks = att.Person.GenerateCombatAttacks()
+      # TODO: check for weapon to equip (FUMBLE)
+      if len(att.Attacks) == 0:
+        logd("MOB ERROR! %s no attack!" % (att.Person.Name))
+        att.Action = Action.IGNORE
+      else:
+        logd("%s attack: %s" % (att.Person.Name, att.Attacks[0].Name))
+      # use default Aim zone
+      att.Aim = att.Person.DefaultAim
 
-    # pause scroll momentarily
-    sleep(1)
-    DetermineDefense(defe)
+      # pause scroll momentarily
+      sleep(1)
+      DetermineDefense(defe)
 
   # RESOLUTION PHASE
 
@@ -470,19 +525,56 @@ def HandleAttack(att, order, player_combatant):
         else:
           print("\nYou BLOCK %s with your %s." %
                 (att.Person.Name, defe.Attacks[0].Name.lower()))
-      # elif res.Result == ResultEnum.FUMBLE:
-        # TODO:
-      # elif res.Result == ResultEnum.STUMBLE:
-        # TODO:
-      # elif res.Result == ResultEnum.TADV:
-        # TODO:
+      elif res.Result == ResultEnum.FUMBLE:
+        if res.TargetFlag & T_ATK > 0:
+          if at.SkillID == SkillEnum.UNARMED:
+            res.Result = ResultEnum.STUMBLE
+          else:
+            # handled attacker flag
+            res.TargetFlag &= ~T_ATK
+            r = DiceRoll(res.Level, 6).Result()
+            r += att.Person.PhysicalPenalty()
+            if r > att.Person.Attr[AttrEnum.DEXTERITY]:
+              CombatantFumble(att)
+        if res.TargetFlag & T_DEF > 0:
+          if defe.Attacks[0].SkillID == SkillEnum.UNARMED:
+            res.Result = ResultEnum.STUMBLE
+          else:
+            # handled defender flag
+            res.TargetFlag &= ~T_DEF
+            r = DiceRoll(res.Level, 6).Result()
+            r += defe.Person.PhysicalPenalty()
+            if r > defe.Person.Attr[AttrEnum.DEXTERITY]:
+              CombatantFumble(defe)
+      # handle outside if/elif blocks in case FUMBLE -> STUMBLE
+      if res.Result == ResultEnum.STUMBLE:
+        if res.TargetFlag & T_ATK > 0:
+          r = DiceRoll(res.Level, 6).Result() + att.Person.PhysicalPenalty()
+          if r > att.Person.Attr[AttrEnum.AGILITY]:
+            CombatantStumble(att)
+        if res.TargetFlag & T_DEF > 0:
+          r = DiceRoll(res.Level, 6).Result() + defe.Person.PhysicalPenalty()
+          if r > defe.Person.Attr[AttrEnum.AGILITY]:
+            CombatantStumble(defe)
+      if res.Result == ResultEnum.TADV:
+        if res.TargetFlag & T_ATK > 0:
+          if att.Person == player:
+            print("\nDefender FAILURE! You get a free action!")
+          else:
+            print("\nDefender FAILURE! %s gets a free action!" %
+                  att.Person.Name)
+          # TODO
+        if res.TargetFlag & T_DEF > 0:
+          if defe.Person == player:
+            print("\nAttacker FAILURE! You get a free action!")
+          else:
+            print("\nAttacker FAILURE! %s gets a free action!" %
+                  defe.Person.Name.capitalize())
+          # TODO
       # Only the current attacker can do damage
       elif res.Result == ResultEnum.DMG:
         if HandleImpactDMG(player, att, defe, at, res.Level):
           break
-
-      else:
-        print("\n*** %s ***" % res)
 
     if defe.Flags & FLAG_DEAD > 0 and defe.Person is not player:
       HandleMobDeath(att, defe)
