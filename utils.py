@@ -15,7 +15,8 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             skill_classes, skills, item_flags, body_parts,
                             materials, NumAdj, DamageTypeEnum, AttrEnum,
                             Material, PlayerCombatState, PersonTypeEnum,
-                            ItemTypeEnum, ItemFlagEnum, DiceRoll, DoorEnum,
+                            ItemTypeEnum, ItemFlagEnum, ItemEnum,
+                            DiceRoll, DoorEnum,
                             ItemLink, DirectionEnum, ANSI, GameData)
 from db import (ListDB, SavePlayer)
 
@@ -70,15 +71,18 @@ def printItems(item_links, number=False, stats=False):
                           items[item_id].ItemFlagStr(" (%s)")))
     else:
       weight = items[item_id].Weight * il.Quantity
-      if il.Quantity > 1 and not il.Equipped:
-        print("%-30s : %5s lbs" %
-              (("(%d) " % il.Quantity) + items[item_id].ItemName + \
-               items[item_id].ItemFlagStr(" (%s)"),
-               "{:3.1f}".format(weight)))
+      if stats:
+        item_info = " : %5s lbs" % "{:3.1f}".format(weight)
       else:
-        print("%-30s : %5s lbs" %
+        item_info = ""
+      if il.Quantity > 1 and not il.Equipped:
+        print("%-30s%s" %
+              (("(%d) " % il.Quantity) + items[item_id].ItemName + \
+               items[item_id].ItemFlagStr(" (%s)"), item_info))
+      else:
+        print("%-30s%s" %
               (items[item_id].ItemName + items[item_id].ItemFlagStr(" (%s)"),
-               "{:3.1f}".format(weight)))
+               item_info))
 
 
 # Directions
@@ -166,6 +170,11 @@ def printStats(person):
                              person.UniversalPenalty(), ANSI.TEXT_NORMAL))
   print("%s%-15s: %d%s" % (ANSI.TEXT_BOLD, "Physical Pen.",
                            person.PhysicalPenalty(), ANSI.TEXT_NORMAL))
+  if person.PersonType == PersonTypeEnum.NPC:
+    links = filterLinks(person.ItemLinks, equipped=True)
+    if len(links) > 0:
+      print("\n%sEQUIPMENT%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+      printItems(links, stats=True)
   print("\n%sWOUND LIST%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   if len(person.Wounds) < 1:
     print("[NONE]")
@@ -183,60 +192,70 @@ def actionComingSoon():
   print("\nComing soon!")
 
 
+def chooseItem(links, verb):
+  print("\nItems:\n")
+  printItems(links, number=True)
+  x = input("\nWhich item # to %s: " % verb).lower()
+  if not x.isnumeric():
+    print("\nInvalid item.")
+    return ItemEnum.NONE
+  itemNum = int(x)
+  if itemNum < 1 or itemNum > len(links):
+    print("\nInvalid item.")
+    return ItemEnum.NONE
+  count = 0
+  for item_id, il in links.items():
+    count += 1
+    if count == itemNum:
+      return item_id
+  return ItemEnum.NONE
+
+
+def actionGetItem():
+  player = GameData.GetPlayer()
+  items = GameData.GetItems()
+  rooms = GameData.GetRooms()
+  links = filterLinks(rooms[player.Room].RoomItems, equipped=False)
+  if len(links) < 1:
+    print("\nThere are no items in the room.")
+    return
+  item_id = chooseItem(links, "pick up")
+  if item_id == ItemEnum.NONE:
+    return
+  rooms[player.Room].RemoveItem(item_id, ItemLink(1))
+  player.AddItem(item_id, ItemLink(1))
+  print("\n%s picked up." % items[item_id].ItemName.capitalize())
+
+
 def actionDropItem():
   player = GameData.GetPlayer()
   items = GameData.GetItems()
   rooms = GameData.GetRooms()
-  print("\nItems in your inventory:\n")
   links = filterLinks(player.ItemLinks, equipped=False)
   if len(links) < 1:
-    print("Nothing is droppable at the moment.")
+    print("\nNothing is droppable at the moment.")
     return
-  printItems(links, number=True)
-  x = input("\nWhich item # to drop: ").lower()
-  if not x.isnumeric():
-    print("\nInvalid item.")
+  item_id = chooseItem(links, "drop")
+  if item_id == ItemEnum.NONE:
     return
-  itemNum = int(x)
-  if itemNum < 1 or itemNum > len(links):
-    print("\nInvalid item.")
+  if items[item_id].Flags & item_flags[ItemFlagEnum.NO_DROP].Bit > 0:
+    print("\n%s cannot be dropped." % items[item_id].ItemName.capitalize())
     return
-  count = 0
-  for item_id, il in links.items():
-    count += 1
-    if count != itemNum:
-      continue
-    if items[item_id].Flags & item_flags[ItemFlagEnum.NO_DROP].Bit > 0:
-      print("\n%s cannot be dropped." % items[item_id].ItemName.capitalize())
-      return
-    player.RemoveItem(item_id, ItemLink(1))
-    rooms[player.Room].AddItem(item_id, ItemLink(1))
-    print("\n%s dropped." % items[item_id].ItemName.capitalize())
-    break
+  player.RemoveItem(item_id, ItemLink(1))
+  rooms[player.Room].AddItem(item_id, ItemLink(1))
+  print("\n%s dropped." % items[item_id].ItemName.capitalize())
 
 
 def actionEquipItem():
   player = GameData.GetPlayer()
   items = GameData.GetItems()
-  print("\nEquippable items in your inventory:\n")
   links = filterLinks(player.ItemLinks, equipped=False, equippable=True)
   if len(links) < 1:
-    print("Nothing is equippable at the moment.")
+    print("\nNothing is equippable at the moment.")
     return
-  printItems(links, number=True)
-  x = input("\nWhich item # to equip: ").lower()
-  if not x.isnumeric():
-    print("\nInvalid item.")
+  equip_id = chooseItem(links, "equip")
+  if equip_id == ItemEnum.NONE:
     return
-  itemNum = int(x)
-  if itemNum < 0 or itemNum > len(links):
-    print("\nInvalid item.")
-    return
-  count = 0
-  for item_id, il in links.items():
-    count += 1
-    if count == itemNum:
-      equip_id = item_id
   # check for item conflicts
   count = 0
   for item_id, il in player.ItemLinks.items():
@@ -275,32 +294,18 @@ def actionEquipItem():
     print("\n%s equipped." % items[equip_id].ItemName.capitalize())
 
 
-def actionGetItem():
+def actionRemoveItem():
   player = GameData.GetPlayer()
   items = GameData.GetItems()
-  rooms = GameData.GetRooms()
-  print("\nItems in in the room:\n")
-  links = filterLinks(rooms[player.Room].RoomItems, equipped=False)
+  links = filterLinks(player.ItemLinks, equipped=True)
   if len(links) < 1:
-    print("There are no items in the room.")
+    print("\nNothing is equipped.")
     return
-  printItems(links, number=True)
-  x = input("\nWhich item # to pick up: ").lower()
-  if not x.isnumeric():
-    print("\nInvalid item.")
+  item_id = chooseItem(links, "remove")
+  if item_id == ItemEnum.NONE:
     return
-  itemNum = int(x)
-  if itemNum < 1 or itemNum > len(links):
-    print("\nInvalid item.")
-    return
-  count = 0
-  for item_id, il in links.items():
-    count += 1
-    if count == itemNum:
-      rooms[player.Room].RemoveItem(item_id, ItemLink(1))
-      player.AddItem(item_id, ItemLink(1))
-      print("\n%s picked up." % items[item_id].ItemName.capitalize())
-      break
+  player.ItemLinks[item_id].Equipped = False
+  print("\n%s removed." % items[item_id].ItemName.capitalize())
 
 
 def actionInventory():
@@ -312,7 +317,7 @@ def actionInventory():
   if len(links) < 1:
     print("[NONE]")
   else:
-    printItems(links)
+    printItems(links, stats=True)
   print("%s%-30s : %5s lbs%s" % (ANSI.TEXT_BOLD, "EQUIPPED WEIGHT",
                                  "{:3.1f}".format(player.EquipWeight()),
                                  ANSI.TEXT_NORMAL))
@@ -321,7 +326,7 @@ def actionInventory():
   if len(links) < 1:
     print("[NONE]")
   else:
-    printItems(links)
+    printItems(links, stats=True)
   print("%s%-30s : %5s lbs%s" % (ANSI.TEXT_BOLD, "INVENTORY WEIGHT",
                                  "{:3.1f}".format(player.InvenWeight()),
                                  ANSI.TEXT_NORMAL))
@@ -426,62 +431,54 @@ def actionArmor():
     m.Clear()
 
 
-def actionRemoveItem():
-  player = GameData.GetPlayer()
-  items = GameData.GetItems()
-  print("\nYour equipped items:\n")
-  links = filterLinks(player.ItemLinks, equipped=True)
-  if len(links) < 1:
-    print("Nothing is equipped.")
-    return
-  printItems(links, number=True)
-  x = input("\nWhich item # to remove: ").lower()
-  if not x.isnumeric():
-    print("\nInvalid item.")
-    return
-  itemNum = int(x)
-  if itemNum < 0 or itemNum > len(links):
-    print("\nInvalid item.")
-    return
+def chooseNPC(npcs, noun):
+  print("\nChoose a target:\n")
   count = 0
-  for item_id, il in links.items():
+  for npc in npcs:
     count += 1
-    if count == itemNum:
-      player.ItemLinks[item_id].Equipped = False
-      print("\n%s removed." % items[item_id].ItemName.capitalize())
-      break
+    print("%d. %s" % (count, npc.Name))
+  x = input("\nWhich # to %s: " % noun).lower()
+  if not x.isnumeric():
+    print("\nInvalid target.")
+    return None
+  personNum = int(x)
+  if personNum < 1 or personNum > len(npcs):
+    print("\nInvalid target.")
+    return None
+  return npcs[personNum - 1]
 
 
 def actionAttack():
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
+  npcs = []
   # let combat "attack" handle work if in combat
   if player.CombatState != PlayerCombatState.NONE:
     return False
-  print("\nChoose a target:\n")
-  if len(rooms[player.Room].Persons) < 1:
-    print("[NONE]")
+  for npc in rooms[player.Room].Persons:
+    npcs.append(npc)
+  if len(npcs) < 1:
+    print("\nThere is nothing to attack nearby!")
     return
-  count = 0
-  for t in rooms[player.Room].Persons:
-    count += 1
-    print("%d. %s" % (count, t.Name))
-  x = input("\nWhich # to attack: ").lower()
-  if not x.isnumeric():
-    print("\nInvalid target.")
-    return
-  personNum = int(x)
-  if personNum < 1 or personNum > len(rooms[player.Room].Persons):
-    print("\nInvalid target.")
-    return
-  count = 0
-  for x in rooms[player.Room].Persons:
-    count += 1
-    if count == personNum:
-      player.CombatTarget = x.UUID
-      break
+  p = chooseNPC(npcs, "target")
+  if p is not None:
+    player.CombatTarget = p.UUID
   if player.CombatTarget is not None:
     return True
+
+
+def actionInspect():
+  player = GameData.GetPlayer()
+  rooms = GameData.GetRooms()
+  npcs = []
+  for npc in rooms[player.Room].Persons:
+    npcs.append(npc)
+  if len(npcs) < 1:
+    print("\nThere is no one to inspect nearby!")
+    return
+  p = chooseNPC(npcs, "inspect")
+  if p is not None:
+    printStats(p)
 
 
 def chooseDoor(room_id, action, door_closed=None, door_locked=None):
@@ -567,33 +564,6 @@ def actionOpen():
     else:
       player.SetDoorState(door_id).Closed = False
       print("\nYou open the %s." % doors[door_id].Name)
-
-
-def actionInspect():
-  player = GameData.GetPlayer()
-  rooms = GameData.GetRooms()
-  print("\nChoose a target:\n")
-  if len(rooms[player.Room].Persons) < 1:
-    print("[NONE]")
-    return
-  count = 0
-  for t in rooms[player.Room].Persons:
-    count += 1
-    print("%d. %s" % (count, t.Name))
-  x = input("\nWhich # to inspect: ").lower()
-  if not x.isnumeric():
-    print("\nInvalid target.")
-    return
-  personNum = int(x)
-  if personNum < 1 or personNum > len(rooms[player.Room].Persons):
-    print("\nInvalid target.")
-    return
-  count = 0
-  for x in rooms[player.Room].Persons:
-    count += 1
-    if count == personNum:
-      printStats(x)
-      break
 
 
 def actionListPlayers():
