@@ -1511,10 +1511,12 @@ class PersonTypeEnum(IntEnum):
 
 class PersonFlagEnum(IntEnum):
   AGGRESSIVE = 0
-  SHOPKEEP = 1
+  TALKING = 1
+  SHOPKEEP = 2
 
 
 PERS_AGGRESSIVE = 1 << PersonFlagEnum.AGGRESSIVE
+PERS_TALKING = 1 << PersonFlagEnum.TALKING
 PERS_SHOPKEEP = 1 << PersonFlagEnum.SHOPKEEP
 
 
@@ -1603,7 +1605,7 @@ class Person:
   def Copy(self, p):
     self.PersonType = p.PersonType
     self.Name = p.Name
-    self.Flags = p.Flags
+    self.Flags = p.Flags & ~PERS_TALKING
     self.SkinMaterial = p.SkinMaterial
     self.Attr.clear()
     for attr_id, attr in attributes.items():
@@ -1826,6 +1828,15 @@ class Person:
   def IsAggressive(self):
     return self.Flags & PERS_AGGRESSIVE > 0
 
+  def IsTalking(self):
+    return self.Flags & PERS_TALKING > 0
+
+  def SetTalking(self, talk):
+    if talk:
+      self.Flags |= PERS_TALKING
+    else:
+      self.Flags &= ~PERS_TALKING
+
   def GenerateCombatAttacks(self, block=False, default=ItemEnum.NONE):
     items = GameData.GetItems()
     attacks = []
@@ -1879,6 +1890,37 @@ class Person:
     return attacks
 
 
+# CONDITIONALS
+
+class ConditionCheckEnum(IntEnum):
+  NONE = 0
+  HAS = 1
+  HAS_NOT = 2
+
+
+class TargetTypeEnum(IntEnum):
+  NONE = 0
+  PLAYER = 1
+  NPC = 2
+  ITEM = 2
+
+
+class Condition:
+  def __init__(self, target_type, cond, obj):
+    self.TargetType = target_type
+    self.ConditionCheck = cond
+    self.Object = obj
+
+
+# TALK
+
+class MobTalk:
+  def __init__(self, keyword, cond=None, text=""):
+    self.Keyword = keyword
+    self.Conditions = cond
+    self.Texts = text
+
+
 # MOB
 
 class MobAttack:
@@ -1898,7 +1940,7 @@ class Mob(Person):
                aim=AimEnum.MID, flags=0,
                skin=MaterialEnum.NONE, cur=None, attrs=None,
                num_attacks=1, mob_attacks=None, mob_skills=None, eq=None,
-               loot=None):
+               loot=None, talk=None):
     super().__init__(PersonTypeEnum.NPC, name, long_desc, flags, skin,
                      it=eq)
     # None == Template / Char
@@ -1918,6 +1960,7 @@ class Mob(Person):
       for skill_id, points in mob_skills.items():
         self.SkillLinks.update({skill_id: SkillLink(points)})
     self.Loot = loot
+    self.Talks = talk
     super().ResetStats()
 
   def AttrInitiative(self):

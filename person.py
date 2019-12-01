@@ -5,7 +5,8 @@
 # Person Definitions
 
 from global_defines import (DiceRoll, DamageTypeEnum, ItemEnum, AttrEnum,
-                            SkillEnum, PersonEnum, ItemLink, Mob, MobAttack,
+                            SkillEnum, PersonEnum, ItemLink,
+                            Mob, MobTalk, MobAttack,
                             MaterialEnum, AimEnum, PERS_AGGRESSIVE)
 
 persons = {
@@ -70,7 +71,36 @@ persons = {
             },
             loot={
                 ItemEnum.MISC_STONE: 50,
-            }),
+            },
+            talk=[
+                MobTalk("",
+                        text=[
+                            "The guard turns to look at you. "
+                            "\"Oh ... Hello Traveller. I didn't notice you "
+                            "there. Welcome to Stonehaven KEEP. If you need "
+                            "to know where to STAY or EAT, let me know.\""
+                        ]),
+                MobTalk("keep",
+                        text=[
+                            "\"Ah, Stonehaven Keep, the last bastion of "
+                            "civilization before the wild forests off to the "
+                            "northeast.\"  At this the guard glances out "
+                            "across the great crevice towards the forest in "
+                            "the distance.", "\"Castellan Danly oversees the "
+                            "Keep with a firm but fair hand.  Mind that you "
+                            "don't go causing any trouble or you'll see the "
+                            "keep's prison from the inside.\"", "He turns "
+                            "and points down the passage leading into the "
+                            "Keep. \"Inside we have a bevy of shops and "
+                            "services to choose from.  Just follow the "
+                            "Southern Walk once you're inside.\""
+                        ]),
+                MobTalk("~",
+                        text=[
+                            "\"Stay safe while in the Keep.\" The guard "
+                            "resumes his post."
+                        ]),
+            ]),
 }
 
 # vim: tabstop=2 shiftwidth=2 expandtab:

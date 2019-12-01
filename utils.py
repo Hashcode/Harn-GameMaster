@@ -455,6 +455,11 @@ def actionAttack():
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
   npcs = []
+  if player.IsTalking():
+    print("\n%sYou are talking! Enter \"DONE\" "
+          "to end conversation.%s" %
+          (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    return
   # let combat "attack" handle work if in combat
   if player.CombatState != PlayerCombatState.NONE:
     return False
@@ -482,6 +487,43 @@ def actionInspect():
   p = chooseNPC(npcs, "inspect")
   if p is not None:
     printStats(p)
+
+
+def printNPCTalk(p, keyword):
+  for tk in p.Talks:
+    if tk.Keyword.lower() == keyword:
+      # TODO: handle conditionals
+      for t in tk.Texts:
+        print("\n" + wrapper.fill(t))
+
+
+def actionTalk():
+  player = GameData.GetPlayer()
+  rooms = GameData.GetRooms()
+  npcs = []
+  for npc in rooms[player.Room].Persons:
+    npcs.append(npc)
+  if len(npcs) < 1:
+    print("\nThere is no one to inspect nearby!")
+    return
+  p = chooseNPC(npcs, "talk to")
+  if p is None:
+    return
+  if p.Talks is None:
+    print("\n%s ignores your attempts to talk." % p.Name.capitalize())
+    return
+  player.SetTalking(True)
+  printNPCTalk(p, "")
+  while True:
+    # Check for room events
+    GameData.ProcessRoomEvents()
+    prompt()
+    if player.Command == "done":
+      player.SetTalking(False)
+      printNPCTalk(p, "~")
+      break
+    else:
+      printNPCTalk(p, player.Command)
 
 
 def chooseDoor(room_id, action, door_closed=None, door_locked=None):
@@ -593,15 +635,20 @@ def actionChangePassword():
   if player.CombatState != PlayerCombatState.NONE:
     print("\n%sYou can't change your password in combat!%s" %
           (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-  else:
-    print("\nYour password is used to encrypt SAVE data.")
-    print("It should NOT be a password used for anything important.")
-    x = input("\nEnter a password: ").upper
-    if len(x.Password) < 3 or len(x.Password) > 10:
-      print("\nPassword needs to be between 3 and 10 characters long.")
-    player.Password = x
-    if actionSave():
-      print("\nCharacter updated.")
+    return
+  if player.IsTalking():
+    print("\n%sYou are talking! Enter \"DONE\" "
+          "to end conversation.%s" %
+          (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    return
+  print("\nYour password is used to encrypt SAVE data.")
+  print("It should NOT be a password used for anything important.")
+  x = input("\nEnter a password: ").upper
+  if len(x.Password) < 3 or len(x.Password) > 10:
+    print("\nPassword needs to be between 3 and 10 characters long.")
+  player.Password = x
+  if actionSave():
+    print("\nCharacter updated.")
 
 
 def actionQuit():
@@ -609,20 +656,30 @@ def actionQuit():
   if player.CombatState != PlayerCombatState.NONE:
     print("\n%sYou can't QUIT in combat!%s" %
           (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    return
+  if player.IsTalking():
+    print("\n%sYou are talking! Enter \"DONE\" "
+          "to end conversation.%s" %
+          (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    return
+  y = input("\nAre you sure you wish to QUIT? ").lower()
+  if y == "y" or y == "yes":
+    actionSave()
+    print("\nGoodbye!\n")
+    exit()
   else:
-    y = input("\nAre you sure you wish to QUIT? ").lower()
-    if y == "y" or y == "yes":
-      actionSave()
-      print("\nGoodbye!\n")
-      exit()
-    else:
-      print("\nQuit aborted.")
+    print("\nQuit aborted.")
 
 
 def actionRest():
   player = GameData.GetPlayer()
   if player.CombatState != PlayerCombatState.NONE:
     print("\n%sYou can't REST during combat!%s" %
+          (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    return
+  if player.IsTalking():
+    print("\n%sYou are talking! Enter \"DONE\" "
+          "to end conversation.%s" %
           (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
     return
   if player.IP() < 1:
@@ -665,6 +722,11 @@ def actionTrain():
   player = GameData.GetPlayer()
   if player.CombatState != PlayerCombatState.NONE:
     print("\n%sYou can't TRAIN during combat!%s" %
+          (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    return
+  if player.IsTalking():
+    print("\n%sYou are talking! Enter \"DONE\" "
+          "to end conversation.%s" %
           (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
     return
   print("\nChoose a trainable skill (>%d attempts):\n" % ATT_PER_TRAIN)
@@ -712,12 +774,18 @@ def actionStatsGeneric():
 
 
 def actionSaveGeneric():
-  if GameData.GetPlayer().CombatState != PlayerCombatState.NONE:
+  player = GameData.GetPlayer()
+  if player.CombatState != PlayerCombatState.NONE:
     print("\n%sYou can't SAVE in combat!%s" %
           (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-  else:
-    if actionSave():
-      print("\nCharacter saved.")
+    return
+  if player.IsTalking():
+    print("\n%sYou are talking! Enter \"DONE\" "
+          "to end conversation.%s" %
+          (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    return
+  if actionSave():
+    print("\nCharacter saved.")
 
 
 class GenericCommand:
@@ -785,6 +853,7 @@ commands.append(GenericCommand(["rest"], actionRest))
 commands.append(GenericCommand(["save"], actionSaveGeneric))
 commands.append(GenericCommand(["skills", "sk"], actionSkills))
 commands.append(GenericCommand(["stats", "st"], actionStatsGeneric))
+commands.append(GenericCommand(["talk"], actionTalk))
 commands.append(GenericCommand(["train"], actionTrain))
 commands.append(GenericCommand(["unlock"], actionUnlock))
 # commands.append(GenericCommand(["who"], actionListPlayers))
@@ -796,7 +865,10 @@ def prompt(func_break=False):
   rooms = GameData.GetRooms()
   player.Command = ""
   while True:
-    x = input("\n[? = HELP] Command: ").lower()
+    if player.IsTalking():
+      x = input("\n[? = HELP, \"DONE\" = Exit Talk] Command: ").lower()
+    else:
+      x = input("\n[? = HELP] Command: ").lower()
     if x == "":
       continue
 
@@ -827,6 +899,10 @@ def prompt(func_break=False):
       if match_dir != DirectionEnum.NONE:
         if player.CombatState != PlayerCombatState.NONE:
           print("\n%sYou can't move in combat!  Try to FLEE!%s" %
+                (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+        if player.IsTalking():
+          print("\n%sYou are talking! Enter \"DONE\" "
+                "to end conversation.%s" %
                 (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
         else:
           for exit_dir, ex in rooms[player.Room].Exits.items():
