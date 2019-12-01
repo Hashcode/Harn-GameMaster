@@ -1970,6 +1970,7 @@ class Player(Person):
     self.Currency = 0
     self.CombatState = PlayerCombatState.NONE
     self.CombatTarget = None
+    self.Doors = {}
 
   def Copy(self, p):
     super().Copy(p)
@@ -1977,6 +1978,12 @@ class Player(Person):
     self.LastRoom = p.LastRoom
     self.Currency = p.Currency
     self.CalcSunsign()
+    try:
+      if p.Doors is not None:
+        for door_id, state in p.Doors.items():
+          self.Doors.update({door_id: deepcopy(state)})
+    except AttributeError:
+      logd("player missing doors")
     super().ResetStats()
 
   def SetRoom(self, room_id):
@@ -2125,7 +2132,19 @@ class Player(Person):
     return ret
 
   def GenerateCombatAttacks(self, block=False, default=ItemEnum.WEAPON_HAND):
-      return super().GenerateCombatAttacks(block, default)
+    return super().GenerateCombatAttacks(block, default)
+
+  def DoorState(self, door_id):
+    doors = GameData.GetDoors()
+    if door_id in self.Doors.keys():
+      return self.Doors[door_id]
+    return doors[door_id].State
+
+  def SetDoorState(self, door_id):
+    doors = GameData.GetDoors()
+    if door_id not in self.Doors.keys():
+      self.Doors.update({door_id: deepcopy(doors[door_id].State)})
+    return self.Doors[door_id]
 
 
 # DOOR
@@ -2242,12 +2261,16 @@ class DirectionEnum(IntEnum):
   DOWN = 10
 
 
-class Door:
-  def __init__(self, name, closed=False, locked=False,
-               key_item=ItemEnum.NONE):
-    self.Name = name
+class DoorState:
+  def __init__(self, closed=False, locked=False):
     self.Closed = closed
     self.Locked = locked
+
+
+class Door:
+  def __init__(self, name, state, key_item=ItemEnum.NONE):
+    self.Name = name
+    self.State = state
     self.Key = key_item
 
   def Verb(self):

@@ -5,7 +5,7 @@
 # Room Functions
 
 from global_defines import (PersonEnum, Player, ItemEnum, DoorEnum, Door,
-                            DirectionEnum,
+                            DoorState, DirectionEnum,
                             RoomFuncResponse, RoomEnum, Exit, Room, RoomSpawn,
                             ANSI, GameData)
 from utils import (actionSave)
@@ -82,9 +82,10 @@ def room_CreateCharacter():
 
 doors = {
     DoorEnum.KEEP_DRAWBRIDGE:
-        Door("drawbridge", True, True, ItemEnum.NONE),
+        Door("drawbridge", DoorState(True, True), ItemEnum.NONE),
     DoorEnum.WAREHOUSE_DBL_DOOR:
-        Door("double doors", True, False, ItemEnum.KEY_WAREHOUSE_DBL_DOOR),
+        Door("double doors", DoorState(True, False),
+             ItemEnum.KEY_WAREHOUSE_DBL_DOOR),
 }
 
 rooms = {

@@ -98,6 +98,7 @@ directions = {
 
 
 def printRoomDescription(room_id):
+  player = GameData.GetPlayer()
   doors = GameData.GetDoors()
   rooms = GameData.GetRooms()
   print("")
@@ -118,7 +119,7 @@ def printRoomDescription(room_id):
         if ex.Door == DoorEnum.NONE:
           print("%s is %s" % (exit_str, rooms[ex.Room].ShortDescription))
         else:
-          if doors[ex.Door].Closed:
+          if player.DoorState(ex.Door).Closed:
             print("%s %s closed %s" %
                   (exit_str, doors[ex.Door].Verb(), doors[ex.Door].Name))
           else:
@@ -493,10 +494,12 @@ def chooseDoor(room_id, action, door_closed=None, door_locked=None):
   for exit_id, ex in rooms[player.Room].Exits.items():
     if ex.Door != DoorEnum.NONE:
       match = True
-      if door_closed is not None and doors[ex.Door].Closed != door_closed:
-        match = False
-      if door_locked is not None and doors[ex.Door].Locked != door_locked:
-        match = False
+      if door_closed is not None:
+        if player.DoorState(ex.Door).Closed != door_closed:
+          match = False
+      if door_locked is not None:
+        if player.DoorState(ex.Door).Locked != door_locked:
+          match = False
       if match:
           count += 1
           print("%d. %s" % (count, doors[ex.Door].Name))
@@ -512,10 +515,12 @@ def chooseDoor(room_id, action, door_closed=None, door_locked=None):
   for exit_id, ex in rooms[player.Room].Exits.items():
     if ex.Door != DoorEnum.NONE:
       match = True
-      if door_closed is not None and doors[ex.Door].Closed != door_closed:
-        match = False
-      if door_locked is not None and doors[ex.Door].Locked != door_locked:
-        match = False
+      if door_closed is not None:
+        if player.DoorState(ex.Door).Closed != door_closed:
+          match = False
+      if door_locked is not None:
+        if player.DoorState(ex.Door).Locked != door_locked:
+          match = False
       if match:
         count += 1
         if count == doorNum:
@@ -533,7 +538,7 @@ def actionUnlock():
   if door_id != DoorEnum.NONE:
     key = doors[door_id].Key
     if key in player.ItemLinks.keys():
-      doors[door_id].Locked = False
+      player.SetDoorState(door_id).Locked = False
       print("\nYou unlock the %s with %s." %
             (doors[door_id].Name, items[key].ItemName))
     else:
@@ -542,23 +547,25 @@ def actionUnlock():
 
 
 def actionClose():
+  player = GameData.GetPlayer()
   doors = GameData.GetDoors()
   door_id = chooseDoor(GameData.GetPlayer().Room, "close", door_closed=True)
   if door_id != DoorEnum.NONE:
-    doors[door_id].Closed = True
+    player.SetDoorState(door_id).Closed = True
     print("\nYou close the %s." % doors[door_id].Name)
 
 
 def actionOpen():
+  player = GameData.GetPlayer()
   doors = GameData.GetDoors()
   door_id = chooseDoor(GameData.GetPlayer().Room, "open")
   if door_id != DoorEnum.NONE:
-    if doors[door_id].Locked:
+    if player.DoorState(door_id).Locked:
       print("\n%sThe %s %s locked!%s" %
             (ANSI.TEXT_BOLD, doors[door_id].Name, doors[door_id].Verb(),
              ANSI.TEXT_NORMAL))
     else:
-      doors[door_id].Closed = False
+      player.SetDoorState(door_id).Closed = False
       print("\nYou open the %s." % doors[door_id].Name)
 
 
@@ -852,7 +859,7 @@ def prompt(func_break=False):
           for exit_dir, ex in rooms[player.Room].Exits.items():
             if match_dir == exit_dir:
               if ex.Door != DoorEnum.NONE:
-                if doors[ex.Door].Closed:
+                if player.DoorState(ex.Door).Closed:
                   print("\n%sThe %s %s closed.%s" %
                         (ANSI.TEXT_BOLD, doors[ex.Door].Name,
                          doors[ex.Door].Verb(), ANSI.TEXT_NORMAL))
