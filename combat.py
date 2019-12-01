@@ -6,8 +6,8 @@
 
 from time import sleep
 
-from global_defines import (DiceRoll, Roll, CoverageEnum, body_parts,
-                            AimEnum, aims, SkillEnum, ItemEnum,
+from global_defines import (DiceRoll, Roll, CoverageEnum, body_parts, aims,
+                            AimEnum, SkillEnum, ItemEnum, ItemTypeEnum,
                             PlayerCombatState, wounds, PersonWound,
                             AttrEnum, PersonTypeEnum, ItemLink,
                             ImpactActionEnum, ANSI, GameData)
@@ -15,7 +15,6 @@ from logger import (logd)
 from table_melee_attack import (Action, ResultEnum, T_ATK, T_DEF,
                                 resolve_melee)
 from table_dmg import dmg_table_melee
-from items import items
 from utils import prompt
 
 
@@ -215,7 +214,7 @@ def HandleMobDeath(att, defe):
   att.Target = None
 
 
-def CombatantFumble(combatant):
+def CombatantFumble(combatant, item_id):
   if combatant.Person is GameData.GetPlayer():
     print("\n%sYou FUMBLE your %s!%s" %
           (ANSI.TEXT_BOLD, combatant.Attacks[0].Name.lower(),
@@ -226,8 +225,8 @@ def CombatantFumble(combatant):
            combatant.Person.AttrSexPossessivePronounStr().lower(),
            combatant.Attacks[0].Name.lower(), ANSI.TEXT_NORMAL))
   # unequip weapon
-  for item_id, il in combatant.Person.ItemLinks.items():
-    if item_id == combatant.Attacks[0].ItemID and il.Equipped:
+  for it_id, il in combatant.Person.ItemLinks.items():
+    if it_id == item_id and il.Equipped:
       combatant.FumbleItemID = item_id
       il.Equipped = False
       break
@@ -378,7 +377,7 @@ def HandleImpactDMG(player, att, defe, at, res_level):
         else:
           r = DiceRoll(ia.Level, 6).Result() + defe.Person.PhysicalPenalty()
           if r > defe.Person.Attr[AttrEnum.DEXTERITY]:
-            CombatantFumble(defe)
+            CombatantFumble(defe, defe.Attacks[0].ItemID)
       if ia.Action == ImpactActionEnum.STUMBLE:
         r = DiceRoll(ia.Level, 6).Result() + defe.Person.PhysicalPenalty()
         if r > defe.Person.Attr[AttrEnum.AGILITY]:
@@ -421,6 +420,7 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
   ret = None
 
   player = GameData.GetPlayer()
+  items = GameData.GetItems()
   defe = None
 
   if att.Flags & FLAG_DEAD > 0:
@@ -481,10 +481,11 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
             break
       if player.Command == "defense" or player.Command == "def":
         chooseDefense(att)
-      if player.Command == "equip" or player.Command == "eq":
+      elif player.Command == "equip" or player.Command == "eq":
         # equipped an item == lose a turn
         att.Action = Action.IGNORE
-      if player.Command == "aim":
+        break
+      elif player.Command == "aim":
         print("\nComing soon!")
       elif player.Command == "cast" or player.Command == "c":
         print("\nComing soon!")
@@ -587,8 +588,11 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
             res.TargetFlag &= ~T_ATK
             r = DiceRoll(res.Level, 6).Result()
             r += att.Person.PhysicalPenalty()
+            # account for strapped on shield
+            if items[at.ItemID].ItemType == ItemTypeEnum.SHIELD:
+              r -= 5
             if r > att.Person.Attr[AttrEnum.DEXTERITY]:
-              CombatantFumble(att)
+              CombatantFumble(att, at.ItemID)
             else:
               res.Result = ResultEnum.MISS
         if T_DEF & res.TargetFlag > 0:
@@ -599,8 +603,12 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
             res.TargetFlag &= ~T_DEF
             r = DiceRoll(res.Level, 6).Result()
             r += defe.Person.PhysicalPenalty()
+            # account for strapped on shield
+            if items[defe.Attacks[0].ItemID].ItemType == \
+               ItemTypeEnum.SHIELD:
+              r -= 5
             if r > defe.Person.Attr[AttrEnum.DEXTERITY]:
-              CombatantFumble(defe)
+              CombatantFumble(defe, defe.Attacks[0].ItemID)
 
       # handle outside if/elif blocks in case FUMBLE -> STUMBLE
       if res.Result == ResultEnum.STUMBLE:
