@@ -220,6 +220,7 @@ rooms = {
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_EASTERN_WALK),
                  DirectionEnum.SOUTHEAST: Exit(RoomEnum.BL_BAILIFF_TOWER),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHERN_WALK),
              }),
     RoomEnum.BL_BAILIFF_TOWER:
         Room("Bailiff's Tower", "the Bailiff's tower",
@@ -227,9 +228,134 @@ rooms = {
              exits={
                  DirectionEnum.NORTHWEST: Exit(RoomEnum.BL_SOUTHEASTERN_WALK),
              }),
+    RoomEnum.BL_SOUTHERN_WALK:
+        Room("Southern Walk", "the southern walk",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_SMITHY),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_SOUTHEASTERN_WALK),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_APARMENT_1),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHERN_WALK_2),
+             }),
+    RoomEnum.BL_SMITHY:
+        Room("The Smithy", "the smithy",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHERN_WALK),
+             }),
+    RoomEnum.BL_APARMENT_1:
+        Room("A Private Apartment", "a private apartment",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK),
+             }),
+    RoomEnum.BL_SOUTHERN_WALK_2:
+        Room("Southern Walk", "the southern walk",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_MAIN_WALK),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_SOUTHERN_WALK),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_APARMENT_2),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHERN_WALK_3),
+             }),
+    RoomEnum.BL_APARMENT_2:
+        Room("A Private Apartment", "a private apartment",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK_2),
+             }),
+    RoomEnum.BL_SOUTHERN_WALK_3:
+        Room("Southern Walk", "the southern walk",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.NORTHWEST: Exit(RoomEnum.BL_WEAPONSMITH),
+                 DirectionEnum.NORTHEAST: Exit(RoomEnum.BL_PROVISIONS),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_SOUTHERN_WALK_2),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_APARMENT_3),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
+             }),
+    RoomEnum.BL_WEAPONSMITH:
+        Room("The Weaponsmith", "the weaponsmith",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.SOUTHEAST: Exit(RoomEnum.BL_SOUTHERN_WALK_3),
+             }),
+    RoomEnum.BL_PROVISIONS:
+        Room("Provisions Shop", "a provisions shop",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.SOUTHWEST: Exit(RoomEnum.BL_SOUTHERN_WALK_3),
+             }),
+    RoomEnum.BL_APARMENT_3:
+        Room("A Private Apartment", "a private apartment",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK_3),
+             }),
+    RoomEnum.BL_SOUTHWESTERN_WALK:
+        Room("South-Western Walk", "the south-western walk",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.NORTHWEST: Exit(RoomEnum.BL_FOUNTAIN_SQUARE),
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_APARMENT_4),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_SOUTHERN_WALK_3),
+                 DirectionEnum.SOUTHEAST: Exit(RoomEnum.BL_BANK),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_WATCH_TOWER),
+             }),
+    RoomEnum.BL_APARMENT_4:
+        Room("A Private Apartment", "a private apartment",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
+             }),
+    RoomEnum.BL_BANK:
+        Room("The Bank & Loan", "the bank & loan",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.NORTHWEST: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
+             }),
+    RoomEnum.BL_WATCH_TOWER:
+        Room("Southwest Watch Tower", "the southwest watch tower",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
+             }),
+    RoomEnum.BL_FOUNTAIN_SQUARE:
+        Room("Fountain Square", "fountain square",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_TAVERN_MAINROOM),
+                 DirectionEnum.SOUTHEAST: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
+             }),
+    RoomEnum.BL_TAVERN_MAINROOM:
+        Room("The Tavern", "the tavern",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_FOUNTAIN_SQUARE),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_TAVERN_KITCHEN),
+             }),
+    RoomEnum.BL_TAVERN_KITCHEN:
+        Room("Tavern Kitchen", "the tavern kitchen",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_TAVERN_MAINROOM),
+                 DirectionEnum.UP: Exit(RoomEnum.BL_TAVERN_LOFT),
+             }),
+    RoomEnum.BL_TAVERN_LOFT:
+        Room("Tavern Loft", "a loft above the tavern",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.DOWN: Exit(RoomEnum.BL_TAVERN_KITCHEN),
+             }),
+    RoomEnum.BL_MAIN_WALK:
+        Room("Main Walk", "a main thorough fair",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHERN_WALK_2),
+             }),
 
-    # TODO: Fill in Keep
 
+    # OUTSIDE KEEP
     RoomEnum.BL_ROAD_TO_KEEP:
         Room("Road to the Keep", "on a steep road",
              ["** TODO **"],
