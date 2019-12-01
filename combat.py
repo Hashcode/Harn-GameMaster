@@ -503,7 +503,6 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
         print("\n%sYou cannot do that here.%s" %
               (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
       # if player == FLEE, choose dodge automatically
-
   else:
     player.CombatState = PlayerCombatState.DEFEND
     defe = player_combatant
@@ -756,6 +755,9 @@ def combat(player, enemies):
 
       # check if dead
       if player_combatant.Flags & FLAG_DEAD > 0:
+        break
+
+      if att.Action == Action.FLEE:
         break
 
     if player_combatant.Flags & FLAG_DEAD > 0:
