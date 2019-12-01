@@ -81,6 +81,8 @@ def room_CreateCharacter():
 
 
 doors = {
+    DoorEnum.KEEP_DRAWBRIDGE:
+        Door("drawbridge", True, True, ItemEnum.NONE),
     DoorEnum.WAREHOUSE_DBL_DOOR:
         Door("double doors", True, False, ItemEnum.KEY_WAREHOUSE_DBL_DOOR),
 }
@@ -109,7 +111,7 @@ rooms = {
              [
                  "Two 30' high towers complete with battlements, flank a 20' "
                  "high gatehouse. All have holes for bow and crossbow fire. "
-                 "A deep crevice in front of the place is spanned by a "
+                 "A deep crevice in front of the place can be spanned by a "
                  "drawbridge.",
                  "There is a portcullis at the entry way to the gatehouse, "
                  "inside of which a passage leads to large gates. The passage "
@@ -120,6 +122,8 @@ rooms = {
              ],
              exits={
                  DirectionEnum.WEST: Exit(RoomEnum.BL_GATEHOUSE_PASSAGE),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_ROAD_TO_KEEP,
+                                          DoorEnum.KEEP_DRAWBRIDGE),
              },
              room_pers=[
                  PersonEnum.BL_KEEP_GUARD,
@@ -222,6 +226,16 @@ rooms = {
              ["** TODO **"],
              exits={
                  DirectionEnum.NORTHWEST: Exit(RoomEnum.BL_SOUTHEASTERN_WALK),
+             }),
+
+    # TODO: Fill in Keep
+
+    RoomEnum.BL_ROAD_TO_KEEP:
+        Room("Road to the Keep", "on a steep road",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_KEEP_GATEHOUSE,
+                                          DoorEnum.KEEP_DRAWBRIDGE),
              }),
 }
 

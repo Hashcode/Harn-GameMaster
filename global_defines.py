@@ -2132,7 +2132,8 @@ class Player(Person):
 
 class DoorEnum(IntEnum):
   NONE = 0
-  WAREHOUSE_DBL_DOOR = 1
+  KEEP_DRAWBRIDGE = 1
+  WAREHOUSE_DBL_DOOR = 2
 
 
 # ROOM
@@ -2174,6 +2175,7 @@ class RoomEnum(IntEnum):
   BL_INN_ROOM_3 = 10079
   BL_INN_ROOM_4 = 10080
   BL_INN_OWNER_ROOM = 10081
+  BL_ROAD_TO_KEEP = 11000
 
 
 class RoomFuncResponse(IntEnum):
