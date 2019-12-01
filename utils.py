@@ -493,9 +493,9 @@ def chooseDoor(room_id, action, door_closed=None, door_locked=None):
   for exit_id, ex in rooms[player.Room].Exits.items():
     if ex.Door != DoorEnum.NONE:
       match = True
-      if door_closed != None and doors[ex.Door].Closed != door_closed:
+      if door_closed is not None and doors[ex.Door].Closed != door_closed:
         match = False
-      if door_locked != None and doors[ex.Door].Locked != door_locked:
+      if door_locked is not None and doors[ex.Door].Locked != door_locked:
         match = False
       if match:
           count += 1
@@ -512,9 +512,9 @@ def chooseDoor(room_id, action, door_closed=None, door_locked=None):
   for exit_id, ex in rooms[player.Room].Exits.items():
     if ex.Door != DoorEnum.NONE:
       match = True
-      if door_closed != None and doors[ex.Door].Closed != door_closed:
+      if door_closed is not None and doors[ex.Door].Closed != door_closed:
         match = False
-      if door_locked != None and doors[ex.Door].Locked != door_locked:
+      if door_locked is not None and doors[ex.Door].Locked != door_locked:
         match = False
       if match:
         count += 1

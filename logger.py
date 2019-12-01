@@ -32,4 +32,3 @@ def logi(line):
 
 def logd(line):
   log(LOG_DBG, "> [debug] %s" % line)
-

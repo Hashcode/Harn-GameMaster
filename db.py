@@ -40,7 +40,7 @@ def SaveDB(name, info, state):
   url = "%s/%s/%s" % (URL_BASE, DB_UUID, get_valid_filename(name.upper()))
   try:
     r = requests.put(url, json=payload)
-    if r.status_code in [200,201]:
+    if r.status_code in [200, 201]:
       return True
   except:
     return False
