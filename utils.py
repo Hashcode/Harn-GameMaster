@@ -431,12 +431,15 @@ def actionArmor():
     m.Clear()
 
 
-def chooseNPC(npcs, noun):
+def chooseNPC(npcs, noun, stats=False):
   print("\nChoose a target:\n")
   count = 0
   for npc in npcs:
     count += 1
-    print("%d. %s" % (count, npc.Name))
+    if stats:
+      print("%d. %s [%d IP]" % (count, npc.Name, npc.IP()))
+    else:
+      print("%d. %s" % (count, npc.Name))
   x = input("\nWhich # to %s: " % noun).lower()
   if not x.isnumeric():
     print("\nInvalid target.")

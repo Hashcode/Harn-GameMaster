@@ -15,7 +15,7 @@ from logger import (logd)
 from table_melee_attack import (Action, ResultEnum, T_ATK, T_DEF,
                                 resolve_melee)
 from table_dmg import dmg_table_melee
-from utils import prompt
+from utils import (chooseNPC, prompt)
 
 
 # Combat Flags
@@ -154,32 +154,22 @@ def chooseDefense(combatant):
 
 
 def chooseTarget(att, combatants):
-  print("\nChoose a target:\n")
-  count = 0
+  npcs = []
   for c in combatants:
     if c.Person.PersonType == PersonTypeEnum.NPC:
       if c.Flags & FLAG_DEAD == 0:
-        count += 1
-        print("%d. %s [%d IP]" % (count, c.Person.Name, c.Person.IP()))
-  if count < 1:
-    print("[NONE]")
+        npcs.append(c.Person)
+  if len(npcs) < 1:
+    print("\nThere is nothing to attack nearby!")
     return
-  x = input("\nWhich # to attack: ").lower()
-  if not x.isnumeric():
-    print("\nInvalid target.")
-    return
-  personNum = int(x)
-  if personNum < 1 or personNum > count:
-    print("\nInvalid target.")
-    return
-  count = 0
-  for c in combatants:
-    if c.Person.PersonType == PersonTypeEnum.NPC:
-      if c.Flags & FLAG_DEAD == 0:
-        count += 1
-        if count == personNum:
-          att.Target = c
-          break
+  p = chooseNPC(npcs, "attack", stats=True)
+  if p is not None:
+    for c in combatants:
+      if c.Person.PersonType == PersonTypeEnum.NPC:
+        if c.Flags & FLAG_DEAD == 0:
+          if c.UUID == p.UUID:
+            att.Target = c
+            break
 
 
 def HandlePlayerDeath(player):
