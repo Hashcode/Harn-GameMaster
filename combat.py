@@ -41,6 +41,7 @@ class Combatant:
     self.Attacks = None
     self.TurnTaken = False
     self.FumbleItemID = ItemEnum.NONE
+    self.DefAction = Action.IGNORE
 
   def Refresh(self):
     if self.StunLevel > 0:
@@ -96,7 +97,7 @@ hit_table_melee_default = {
 def printCombatAttackActions(combatant, target):
   att = combatant.Person.GenerateCombatAttacks()
   if len(att) > 0:
-    att_name = "%s: %s ML" % (att[0].Name, att[0].SkillML)
+    att_name = "%d ML [%s]" % (att[0].SkillML, att[0].Name)
   else:
     att_name = "no weapon!"
   if combatant.Target is not None:
@@ -108,19 +109,49 @@ def printCombatAttackActions(combatant, target):
     print("\nBLOODLOSS POINTS: %d of %d" %
           (combatant.Bloodloss, combatant.Person.AttrEndurance()))
   print("\nOFFENSE COMMANDS:\n")
-  print("%-10s %-3s : %s" % ("AIM", "", aims[combatant.Aim].Name))
+  print("%-8s %-5s : %s" % ("AIM", "", aims[combatant.Aim].Name))
   if not combatant.Prone:
-    print("%-10s %-3s : %s" % ("ATTACK", "[A]", att_name))
-  print("%-10s %-3s :" % ("CAST", "[C]"))
-  print("%-10s %-3s : %d ML" % ("FLEE", "[F]",
-                                combatant.Person.AttrDodge()))
+    print("%-8s %-5s : %s" % ("ATTACK", "[A]", att_name))
+  print("%-8s %-5s :" % ("CAST", "[C]"))
+  defe_att = combatant.Person.GenerateCombatAttacks(block=True)
+  if combatant.DefAction == Action.DODGE or len(defe_att) < 1:
+    defe_name = "%d ML [%s]" % (combatant.Person.AttrDodge(), "DODGE")
+  else:
+    defe_name = "%s ML [BLOCK with %s" % (defe_att[0].SkillML,
+                                          defe_att[0].Name)
+  print("%-8s %-5s : %s" % ("DEFENSE", "[DEF]", defe_name))
+  print("%-8s %-5s : %d ML" % ("FLEE", "[F]",
+                               combatant.Person.AttrDodge()))
   # print("  GRAPPLE")
   # print("  MISSILE")
-  print("%-10s %-3s :" % ("PASS", "[P]"))
+  print("%-8s %-5s :" % ("PASS", "[P]"))
   if combatant.Prone:
-    print("%-10s %-3s :" % ("STAND", ""))
-  print("%-10s %-3s : %s" %
+    print("%-8s %-5s :" % ("STAND", ""))
+  print("%-8s %-5s : %s" %
         ("TARGET", "[T]", target_name))
+
+
+def chooseDefense(combatant):
+  count = 1
+  print("\nChoose a defense:\n")
+  print("1. DODGE [%d ML]" % combatant.Person.AttrDodge())
+  defe_att = combatant.Person.GenerateCombatAttacks(block=True)
+  if len(defe_att) > 0:
+    count = 2
+    print("2. BLOCK with %s [%d ML]" %
+          (defe_att[0].Name.lower(), defe_att[0].SkillML))
+  x = input("\nWhich defense #: ").lower()
+  if not x.isnumeric():
+    print("\nInvalid defense.")
+    return
+  defeNum = int(x)
+  if defeNum < 1 or defeNum > count:
+    print("\nInvalid defense.")
+    return
+  if defeNum == 1:
+    combatant.DefAction = Action.DODGE
+  elif count > 1 and defeNum == 2:
+    combatant.DefAction = Action.BLOCK
 
 
 def chooseTarget(att, combatants):
@@ -376,6 +407,9 @@ def DetermineDefense(combatant):
     combatant.Attacks = combatant.Person.GenerateCombatAttacks(block=True)
     if len(combatant.Attacks) < 1:
       combatant.Action = Action.DODGE
+    # check player defense preference
+    elif combatant.DefAction != Action.IGNORE:
+      combatant.Action = combatant.DefAction
     elif combatant.Person.AttrDodge() > combatant.Attacks[0].SkillML:
       combatant.Action = Action.DODGE
     else:
@@ -445,6 +479,8 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
             att.Action = Action.MELEE
             att.Attacks = att.Person.GenerateCombatAttacks()
             break
+      if player.Command == "defense" or player.Command == "def":
+        chooseDefense(att)
       if player.Command == "equip" or player.Command == "eq":
         # equipped an item == lose a turn
         att.Action = Action.IGNORE
@@ -624,6 +660,8 @@ def combat(player, enemies):
 
   # setup combatants
   player_combatant = Combatant(player, 0)
+  DetermineDefense(player_combatant)
+  player_combatant.DefAction = player_combatant.Action
   order.append(player_combatant)
   for x in enemies:
       order.append(Combatant(x, x.UUID))
