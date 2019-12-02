@@ -533,6 +533,17 @@ def processConditions(conditions):
         if c.ConditionCheck == ConditionCheckEnum.HAS_NOT:
           if player.HasQuest(c.Data):
             return False
+      elif c.TargetType == TargetTypeEnum.PLAYER_QUEST_COMPLETE:
+        if c.ConditionCheck == ConditionCheckEnum.HAS:
+          if not player.HasQuest(c.Data):
+            return False
+          if player.HasQuest(c.Data, completed=False):
+            return False
+        if c.ConditionCheck == ConditionCheckEnum.HAS_NOT:
+          if not player.HasQuest(c.Data):
+            return False
+          if player.HasQuest(c.Data, completed=True):
+            return False
   return True
 
 
@@ -570,6 +581,10 @@ def actionTalk():
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
   npcs = []
+  if player.IsTalking():
+    print("\n%sYou are already talking!!%s" %
+          (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    return
   for npc in rooms[player.Room].Persons:
     npcs.append(npc)
   if len(npcs) < 1:

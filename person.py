@@ -176,8 +176,8 @@ persons = {
                         ]),
                 MobTalk("",
                         condition=[
-                            Condition(ConditionCheckEnum.HAS,
-                                      TargetTypeEnum.PLAYER_QUEST,
+                            Condition(ConditionCheckEnum.HAS_NOT,
+                                      TargetTypeEnum.PLAYER_QUEST_COMPLETE,
                                       QuestEnum.GUARD_DELIVERY),
                         ],
                         text=[

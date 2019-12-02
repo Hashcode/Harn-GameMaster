@@ -1902,7 +1902,7 @@ class TargetTypeEnum(IntEnum):
   NONE = 0
   PLAYER_INVEN = 1
   PLAYER_QUEST = 2
-  PLAYER_QUEST_NOT_COMPLETE = 3
+  PLAYER_QUEST_COMPLETE = 3
 
 
 class ConditionCheckEnum(IntEnum):
@@ -1922,9 +1922,9 @@ class TriggerTypeEnum(IntEnum):
 
 
 class Condition:
-  def __init__(self, target_type, cond, data):
-    self.TargetType = target_type
+  def __init__(self, cond, target_type, data):
     self.ConditionCheck = cond
+    self.TargetType = target_type
     self.Data = data
 
 
