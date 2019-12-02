@@ -591,7 +591,7 @@ def actionUnlock():
 def actionClose():
   player = GameData.GetPlayer()
   doors = GameData.GetDoors()
-  door_id = chooseDoor(GameData.GetPlayer().Room, "close", door_closed=True)
+  door_id = chooseDoor(GameData.GetPlayer().Room, "close", door_closed=False)
   if door_id != DoorEnum.NONE:
     player.SetDoorState(door_id).Closed = True
     print("\nYou close the %s." % doors[door_id].Name)
@@ -600,7 +600,7 @@ def actionClose():
 def actionOpen():
   player = GameData.GetPlayer()
   doors = GameData.GetDoors()
-  door_id = chooseDoor(GameData.GetPlayer().Room, "open")
+  door_id = chooseDoor(GameData.GetPlayer().Room, "open", door_closed=True)
   if door_id != DoorEnum.NONE:
     if player.DoorState(door_id).Locked:
       print("\n%sThe %s %s locked!%s" %
