@@ -1892,33 +1892,49 @@ class Person:
 
 # CONDITIONALS
 
+class TargetTypeEnum(IntEnum):
+  NONE = 0
+  PLAYER_INVEN = 1
+  PLAYER_QUEST = 2
+
+
 class ConditionCheckEnum(IntEnum):
   NONE = 0
   HAS = 1
   HAS_NOT = 2
 
 
-class TargetTypeEnum(IntEnum):
+class TriggerTypeEnum(IntEnum):
   NONE = 0
-  PLAYER = 1
-  NPC = 2
-  ITEM = 2
+  ITEM_GIVE = 1
+  ITEM_TAKE = 2
+  CURRENCY_GIVE = 3
+  CURRENCY_TAKE = 4
+  QUEST_GIVE = 5
+  QUEST_COMPLETE = 6
 
 
 class Condition:
-  def __init__(self, target_type, cond, obj):
+  def __init__(self, target_type, cond, data):
     self.TargetType = target_type
     self.ConditionCheck = cond
-    self.Object = obj
+    self.Data = data
+
+
+class Trigger:
+  def __init__(self, trigger_type, data):
+    self.TriggerType = trigger_type
+    self.Data = data
 
 
 # TALK
 
 class MobTalk:
-  def __init__(self, keyword, cond=None, text=""):
+  def __init__(self, keyword, condition=None, text="", triggers=None):
     self.Keyword = keyword
-    self.Conditions = cond
+    self.Conditions = condition
     self.Texts = text
+    self.Triggers = triggers
 
 
 # MOB

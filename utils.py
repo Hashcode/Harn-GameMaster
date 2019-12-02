@@ -17,6 +17,8 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             Material, PlayerCombatState, PersonTypeEnum,
                             ItemTypeEnum, ItemFlagEnum, ItemEnum,
                             DiceRoll, DoorEnum,
+                            TargetTypeEnum, ConditionCheckEnum,
+                            TriggerTypeEnum,
                             ItemLink, DirectionEnum, ANSI, GameData)
 from db import (ListDB, SavePlayer)
 
@@ -489,12 +491,47 @@ def actionInspect():
     printStats(p)
 
 
+def processConditions(conditions):
+  player = GameData.GetPlayer()
+  if conditions is not None:
+    for c in conditions:
+      if c.TargetType == TargetTypeEnum.PLAYER_INVEN:
+        if c.ConditionCheck == ConditionCheckEnum.HAS:
+          if c.Data not in player.ItemLinks.keys():
+            return False
+        if c.ConditionCheck == ConditionCheckEnum.HAS_NOT:
+          if c.Data in player.ItemLinks.keys():
+            return False
+      # elif c.TargetType == TargetTypeEnum.PLAYER_INVEN:
+  return True
+
+
+def processTriggers(triggers):
+  player = GameData.GetPlayer()
+  for tr in triggers:
+    if tr.TriggerType == TriggerTypeEnum.ITEM_GIVE:
+      player.AddItem(tr.Data, ItemLink())
+    elif tr.TriggerType == TriggerTypeEnum.ITEM_TAKE:
+      player.RemoveItem(tr.Data, ItemLink())
+    elif tr.TriggerType == TriggerTypeEnum.CURRENCY_GIVE:
+      player.Currency += int(tr.Data)
+    elif tr.TriggerType == TriggerTypeEnum.CURRENCY_TAKE:
+      player.Currency -= int(tr.Data)
+    # elif tr.TriggerType == QUEST_GIVE:
+    # elif tr.TriggerType == QUEST_COMPLETE:
+
+
 def printNPCTalk(p, keyword):
+  ret = False
   for tk in p.Talks:
     if tk.Keyword.lower() == keyword:
-      # TODO: handle conditionals
-      for t in tk.Texts:
-        print("\n" + wrapper.fill(t))
+      if processConditions(tk.Conditions):
+        ret = True
+        for t in tk.Texts:
+          print("\n" + wrapper.fill(t))
+        if tk.Triggers is not None:
+          processTriggers(tk.Triggers)
+  return ret
 
 
 def actionTalk():
@@ -523,7 +560,9 @@ def actionTalk():
       printNPCTalk(p, "~")
       break
     else:
-      printNPCTalk(p, player.Command)
+      if not printNPCTalk(p, player.Command):
+        print("\n%s doesn't know anything about that." %
+              p.Name.capitalize())
 
 
 def chooseDoor(room_id, action, door_closed=None, door_locked=None):
