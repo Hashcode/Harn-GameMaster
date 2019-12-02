@@ -438,6 +438,8 @@ class ItemEnum(IntEnum):
   # MISC
   MISC_STONE = 50000
   MISC_RAT_FUR = 50001
+  # QUEST
+  QUEST_WEATHERED_PACKAGE = 51000
   # KEYS
   KEY_WAREHOUSE_DBL_DOOR = 60000
 
@@ -451,6 +453,7 @@ class ItemTypeEnum(IntEnum):
   MISSILE = 5
   CONTAINER = 6
   MISC = 7
+  QUEST = 8
 
 
 class ItemFlagEnum(IntEnum):
@@ -461,6 +464,7 @@ class ItemFlagEnum(IntEnum):
   MAGIC = 3
   HIDDEN = 4
   INVIS = 5
+  QUEST = 5
 
 
 class ItemFlag:
@@ -477,6 +481,7 @@ item_flags = {
     ItemFlagEnum.MAGIC: ItemFlag("magic", 1 << ItemFlagEnum.MAGIC),
     ItemFlagEnum.HIDDEN: ItemFlag("hidden", 1 << ItemFlagEnum.HIDDEN),
     ItemFlagEnum.INVIS: ItemFlag("invisible", 1 << ItemFlagEnum.INVIS),
+    ItemFlagEnum.QUEST: ItemFlag("quest", 1 << ItemFlagEnum.QUEST),
 }
 
 
@@ -1502,6 +1507,7 @@ class PersonEnum(IntEnum):
   NONE = 0
   MON_RAT = 100
   BL_KEEP_GUARD = 10000
+  BL_PROVISIONER = 10020
 
 
 class PersonTypeEnum(IntEnum):
@@ -1896,6 +1902,7 @@ class TargetTypeEnum(IntEnum):
   NONE = 0
   PLAYER_INVEN = 1
   PLAYER_QUEST = 2
+  PLAYER_QUEST_NOT_COMPLETE = 3
 
 
 class ConditionCheckEnum(IntEnum):
@@ -2007,8 +2014,30 @@ class Mob(Person):
       attacks = super().GenerateCombatAttacks(block, default)
     return attacks
 
-
 # PLAYER
+
+class QuestEnum(IntEnum):
+  NONE = 0
+  GUARD_DELIVERY = 1
+
+
+class Quest:
+  def __init__(self, name, hidden=False, triggers=None):
+    self.Name = name
+    self.Hidden = hidden
+    self.Triggers = triggers
+
+
+quests = {
+    QuestEnum.GUARD_DELIVERY:
+        Quest("Deliver a weathered package to the provisioner."),
+}
+
+
+class PlayerQuest:
+  def __init__(self, quest, complete=False):
+    self.Quest = quest
+    self.Complete = complete
 
 
 class PlayerCombatState(IntEnum):
@@ -2030,6 +2059,7 @@ class Player(Person):
     self.CombatState = PlayerCombatState.NONE
     self.CombatTarget = None
     self.Doors = {}
+    self.Quests = {}
 
   def Copy(self, p):
     super().Copy(p)
@@ -2043,6 +2073,12 @@ class Player(Person):
           self.Doors.update({door_id: deepcopy(state)})
     except AttributeError:
       logd("player missing doors")
+    try:
+      if p.Quests is not None:
+        for quest_id, complete in p.Quests.items():
+          self.Quests.update({quest_id: complete})
+    except AttributeError:
+      logd("player missing quests")
     super().ResetStats()
 
   def SetRoom(self, room_id):
@@ -2204,6 +2240,25 @@ class Player(Person):
     if door_id not in self.Doors.keys():
       self.Doors.update({door_id: deepcopy(doors[door_id].State)})
     return self.Doors[door_id]
+
+  def AddQuest(self, quest_id):
+    if quest_id not in self.Quests.keys():
+      self.Quests.update({quest_id: False})
+
+  def CompleteQuest(self, quest_id):
+    if quest_id in self.Quests.keys():
+      self.Quests[quest_id] = True
+
+  def HasQuest(self, quest_id, completed=None):
+    for q_id, q_completed in self.Quests.items():
+      if q_id == quest_id:
+        if completed is not None:
+          if completed == True and not q_completed:
+            return False
+          if completed == False and q_completed:
+            return False
+        return True
+    return False
 
 
 # DOOR
@@ -2438,6 +2493,7 @@ class GameData:
   _doors = None
   _rooms = None
   _items = None
+  _quests = None
   _persons = None
   _player = None
   _NextRoomEvent = 0
@@ -2484,6 +2540,14 @@ class GameData:
   @staticmethod
   def GetPlayer():
     return GameData._player
+
+  @staticmethod
+  def SetQuests(quests):
+    GameData._quests = quests
+
+  @staticmethod
+  def GetQuests():
+    return GameData._quests
 
   @staticmethod
   def ProcessRoomEvents():

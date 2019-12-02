@@ -286,7 +286,10 @@ rooms = {
              ["** TODO **"],
              exits={
                  DirectionEnum.SOUTHWEST: Exit(RoomEnum.BL_SOUTHERN_WALK_3),
-             }),
+             },
+             room_pers=[
+                 PersonEnum.BL_PROVISIONER,
+             ]),
     RoomEnum.BL_APARMENT_3:
         Room("A Private Apartment", "a private apartment",
              ["** TODO **"],

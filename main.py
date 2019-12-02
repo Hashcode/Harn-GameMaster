@@ -16,7 +16,7 @@
 
 from random import seed
 
-from global_defines import (ItemEnum, ItemLink, Player,
+from global_defines import (quests, ItemEnum, ItemLink, Player,
                             RoomEnum, RoomFuncResponse, ANSI, GameData)
 
 TestMode = True
@@ -33,6 +33,7 @@ GameData.SetPlayer(player)
 
 from items import items
 GameData.SetItems(items)
+GameData.SetQuests(quests)
 from person import persons
 GameData.SetPersons(persons)
 from rooms import (doors, rooms)

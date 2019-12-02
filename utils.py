@@ -243,6 +243,9 @@ def actionDropItem():
   if items[item_id].Flags & item_flags[ItemFlagEnum.NO_DROP].Bit > 0:
     print("\n%s cannot be dropped." % items[item_id].ItemName.capitalize())
     return
+  if items[item_id].Flags & item_flags[ItemFlagEnum.QUEST].Bit > 0:
+    print("\n%s cannot be dropped." % items[item_id].ItemName.capitalize())
+    return
   player.RemoveItem(item_id, ItemLink(1))
   rooms[player.Room].AddItem(item_id, ItemLink(1))
   print("\n%s dropped." % items[item_id].ItemName.capitalize())
@@ -433,6 +436,27 @@ def actionArmor():
     m.Clear()
 
 
+def actionQuest():
+  player = GameData.GetPlayer()
+  quests = GameData.GetQuests()
+  count = 0
+  print("\n%sCOMPLETED QUESTS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  for quest_id, completed in player.Quests.items():
+    if completed:
+      count += 1
+      print("%s" % quests[quest_id].Name)
+  if count < 1:
+    print("[NONE]")
+  count = 0
+  print("\n%sCURRENT QUESTS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  for quest_id, completed in player.Quests.items():
+    if not completed:
+      count += 1
+      print("%s" % quests[quest_id].Name)
+  if count < 1:
+    print("[NONE]")
+
+
 def chooseNPC(npcs, noun, stats=False):
   print("\nChoose a target:\n")
   count = 0
@@ -502,7 +526,13 @@ def processConditions(conditions):
         if c.ConditionCheck == ConditionCheckEnum.HAS_NOT:
           if c.Data in player.ItemLinks.keys():
             return False
-      # elif c.TargetType == TargetTypeEnum.PLAYER_INVEN:
+      elif c.TargetType == TargetTypeEnum.PLAYER_QUEST:
+        if c.ConditionCheck == ConditionCheckEnum.HAS:
+          if not player.HasQuest(c.Data):
+            return False
+        if c.ConditionCheck == ConditionCheckEnum.HAS_NOT:
+          if player.HasQuest(c.Data):
+            return False
   return True
 
 
@@ -517,8 +547,10 @@ def processTriggers(triggers):
       player.Currency += int(tr.Data)
     elif tr.TriggerType == TriggerTypeEnum.CURRENCY_TAKE:
       player.Currency -= int(tr.Data)
-    # elif tr.TriggerType == QUEST_GIVE:
-    # elif tr.TriggerType == QUEST_COMPLETE:
+    elif tr.TriggerType == TriggerTypeEnum.QUEST_GIVE:
+      player.AddQuest(tr.Data)
+    elif tr.TriggerType == TriggerTypeEnum.QUEST_COMPLETE:
+      player.CompleteQuest(tr.Data)
 
 
 def printNPCTalk(p, keyword):
@@ -558,6 +590,7 @@ def actionTalk():
     if player.Command == "done":
       player.SetTalking(False)
       printNPCTalk(p, "~")
+      player.Command = ""
       break
     else:
       if not printNPCTalk(p, player.Command):
@@ -886,6 +919,7 @@ commands.append(GenericCommand(["inventory", "i"], actionInventory))
 commands.append(GenericCommand(["look", "l"], actionLook))
 commands.append(GenericCommand(["open"], actionOpen))
 commands.append(GenericCommand(["password"], actionChangePassword))
+commands.append(GenericCommand(["quests", "quest"], actionQuest))
 commands.append(GenericCommand(["quit", "q"], actionQuit))
 commands.append(GenericCommand(["remove", "rm"], actionRemoveItem))
 commands.append(GenericCommand(["rest"], actionRest))

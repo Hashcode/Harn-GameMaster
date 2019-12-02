@@ -42,6 +42,7 @@ IFLAG_LIGHT = item_flags[ItemFlagEnum.LIGHT].Bit
 IFLAG_MAGIC = item_flags[ItemFlagEnum.MAGIC].Bit
 IFLAG_HIDDEN = item_flags[ItemFlagEnum.HIDDEN].Bit
 IFLAG_INVIS = item_flags[ItemFlagEnum.INVIS].Bit
+IFLAG_QUEST = item_flags[ItemFlagEnum.QUEST].Bit
 
 
 # Armor Layer Abbreviations
@@ -492,6 +493,12 @@ items = {
     ItemEnum.MISC_RAT_FUR:
         Item(ItemTypeEnum.MISC, "rat fur", QualityEnum.POR,
              MaterialEnum.FUR_LT, 1),
+
+    # QUEST
+
+    ItemEnum.QUEST_WEATHERED_PACKAGE:
+        Item(ItemTypeEnum.QUEST, "weathered package", QualityEnum.AVE,
+             MaterialEnum.LEATHER, 0.1, flags=IFLAG_QUEST),
 
     # KEYS
 
