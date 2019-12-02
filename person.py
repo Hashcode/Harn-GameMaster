@@ -6,6 +6,8 @@
 
 from global_defines import (DiceRoll, DamageTypeEnum, ItemEnum, AttrEnum,
                             SkillEnum, PersonEnum, ItemLink,
+                            TargetTypeEnum, ConditionCheckEnum, Condition,
+                            TriggerTypeEnum, Trigger,
                             Mob, MobTalk, MobAttack,
                             MaterialEnum, AimEnum, PERS_AGGRESSIVE)
 
@@ -58,9 +60,11 @@ persons = {
                 AttrEnum.AURA: 12,
                 AttrEnum.WILL: 13,
             },
+            mob_skills={
+                SkillEnum.POLEARM: 50, # 21 Based + 50 Train
+            },
             eq={
-                ItemEnum.WEAPON_BASTARD_SWORD: ItemLink(1, True),
-                ItemEnum.SHIELD_KITE_STEEL: ItemLink(1, True),
+                ItemEnum.WEAPON_PIKE: ItemLink(1, True),
                 ItemEnum.ARMOR_COWL_QUILT: ItemLink(1, True),
                 ItemEnum.ARMOR_TUNIC_QUILT: ItemLink(1, True),
                 ItemEnum.ARMOR_LEGGINGS_QUILT: ItemLink(1, True),
@@ -68,9 +72,6 @@ persons = {
                 ItemEnum.ARMOR_HAUBERK_LEATHER_RING: ItemLink(1, True),
                 ItemEnum.ARMOR_LEGGINGS_LEATHER_RING: ItemLink(1, True),
                 ItemEnum.ARMOR_GAUNTLETS_LEATHER_RING: ItemLink(1, True),
-            },
-            loot={
-                ItemEnum.MISC_STONE: 50,
             },
             talk=[
                 MobTalk("",
