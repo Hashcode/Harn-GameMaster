@@ -171,6 +171,40 @@ items = {
         Weapon("warflail", QualityEnum.AVE, MaterialEnum.STEEL_WOOD, 6,
                SkillEnum.FLAIL, 20, 10, 20, DiceRoll(2, 6),
                DamageTypeEnum.BLUNT),
+    # WEAPON [SPEAR]
+    ItemEnum.WEAPON_STAFF:
+        Weapon("wooden staff", QualityEnum.AVE, MaterialEnum.WOOD, 4,
+               SkillEnum.SPEAR, 20, 15, 10, DiceRoll(1, 6),
+               DamageTypeEnum.BLUNT),
+    ItemEnum.WEAPON_JAVELIN:
+        Weapon("javelin", QualityEnum.SUP, MaterialEnum.STEEL_WOOD, 3,
+               SkillEnum.SPEAR, 15, 5, 0, DiceRoll(1, 6, 1),
+               DamageTypeEnum.PIERCE),
+    ItemEnum.WEAPON_SPEAR:
+        Weapon("spear", QualityEnum.SUP, MaterialEnum.STEEL_WOOD, 5,
+               SkillEnum.SPEAR, 20, 10, 5, DiceRoll(1, 6, 2),
+               DamageTypeEnum.PIERCE),
+    ItemEnum.WEAPON_TRIDENT:
+        Weapon("trident", QualityEnum.SUP, MaterialEnum.STEEL_WOOD, 7,
+               SkillEnum.SPEAR, 20, 15, 10, DiceRoll(1, 6, 3),
+               DamageTypeEnum.PIERCE),
+    # WEAPON [POLEARM]
+    ItemEnum.WEAPON_LANCE:
+        Weapon("lance", QualityEnum.EXC, MaterialEnum.STEEL, 7,
+               SkillEnum.POLEARM, 25, 5, 15, DiceRoll(2, 6),
+               DamageTypeEnum.PIERCE),
+    ItemEnum.WEAPON_GLAIVE:
+        Weapon("glaive", QualityEnum.AVE, MaterialEnum.STEEL, 7,
+               SkillEnum.POLEARM, 25, 10, 20, DiceRoll(1, 6, 2),
+               DamageTypeEnum.EDGE),
+    ItemEnum.WEAPON_POLEAXE:
+        Weapon("poleaxe", QualityEnum.SUP, MaterialEnum.STEEL, 8,
+               SkillEnum.POLEARM, 25, 5, 20, DiceRoll(2, 6, 3),
+               DamageTypeEnum.EDGE),
+    ItemEnum.WEAPON_PIKE:
+        Weapon("pike", QualityEnum.SUP, MaterialEnum.STEEL_WOOD, 10,
+               SkillEnum.POLEARM, 25, 5, 25, DiceRoll(1, 6, 3),
+               DamageTypeEnum.PIERCE),
 
     # SHIELD
     ItemEnum.SHIELD_BUCKLER_WOOD:
