@@ -4,9 +4,10 @@
 
 import pickle
 import codecs
-
 import requests
 import re
+
+from hashlib import sha256
 
 # from simplecrypt import encrypt, decrypt
 
@@ -22,8 +23,16 @@ def get_valid_filename(s):
   return re.sub(r'(?u)[^-\w.]', '', s)
 
 
-def ExistsDB(name):
-  r = requests.get("%s/%s/%s" % (URL_BASE, DB_UUID, name.upper()))
+def get_char_url(name, password):
+  m = sha256()
+  m.update(name.upper().encode('utf-8'))
+  m.update(password.upper().encode('utf-8'))
+  url = "%s/%s/%s" % (URL_BASE, DB_UUID, m.digest().hex())
+  return url
+
+
+def ExistsDB(name, password):
+  r = requests.get(get_char_url(name, password))
   if r.status_code != 200:
     return False
   try:
@@ -35,32 +44,29 @@ def ExistsDB(name):
   return False
 
 
-def SaveDB(name, info, state):
-  payload = {'name': name.upper(), 'info': info, 'state': state}
-  url = "%s/%s/%s" % (URL_BASE, DB_UUID, get_valid_filename(name.upper()))
+def SaveDB(name, password, info, state):
+  payload = {'state': state}
   try:
-    r = requests.put(url, json=payload)
+    r = requests.put(get_char_url(name, password), json=payload)
     if r.status_code in [200, 201]:
       return True
   except:
     return False
 
 
-def LoadDB(name):
-  url = "%s/%s/%s" % (URL_BASE, DB_UUID, get_valid_filename(name.upper()))
-  r = requests.get(url)
+def LoadDB(name, password, legacy=False):
+  if legacy:
+    r = requests.get("%s/%s/%s" % (URL_BASE, DB_UUID,
+                                   get_valid_filename(name.upper())))
+  else:
+    r = requests.get(get_char_url(name, password))
   try:
-    dict = r.json()
-    if dict["result"] is not None:
-      payload = dict["result"]
+    record = r.json()
+    if record["result"] is not None:
+      payload = record["result"]
       return payload["state"]
-  except:
+  finally:
     return ""
-
-
-def ListDB():
-  players = {}
-  return players
 
 
 def SavePlayer(save_obj, info, password):
@@ -70,11 +76,12 @@ def SavePlayer(save_obj, info, password):
     state_str = codecs.encode(enc_state_bytes, "base64").decode("utf-8")
   else:
     state_str = codecs.encode(state_bytes, "base64").decode("utf-8")
-  return SaveDB(save_obj.Name, info, state_str)
+  return SaveDB(save_obj.Name, password, info, state_str)
 
 
-def LoadPlayer(player, name, password):
-  state_str = LoadDB(name)
+def LoadPlayer(player, name, password, legacy=False):
+  state_str = LoadDB(name, password, legacy)
+  print(state_str)
   if state_str == "":
     return False
   state_bytes = codecs.decode(state_str.encode("utf-8"), "base64")
@@ -85,6 +92,7 @@ def LoadPlayer(player, name, password):
       return False
   p = pickle.loads(state_bytes)
   player.Copy(p)
+  player.Password = password
   return True
 
 # vim: set tabstop=2 shiftwidth=2 expandtab:

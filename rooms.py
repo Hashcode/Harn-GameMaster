@@ -54,16 +54,16 @@ def room_CreateCharacter():
     print("\nCharacter name needs between 3 and 20 characters long.")
     return RoomFuncResponse.SKIP
 
-  if ExistsDB(player.Name):
-    print("\nCharacter aready exists.")
-    player.SetRoom(RoomEnum.GAME_START)
-    return RoomFuncResponse.SKIP
-
-  print("\nYour password is used to encrypt your SAVE data.")
+  print("\nA password is used to encrypt your SAVE data.")
   print("It should NOT be a password used for anything important.")
   player.Password = input("\nEnter a password: ").upper()
   if len(player.Password) < 3 or len(player.Password) > 10:
     print("\nPassword needs to be between 3 and 10 characters long.")
+    return RoomFuncResponse.SKIP
+
+  if ExistsDB(player.Name, player.Password):
+    print("\nCharacter aready exists.")
+    player.SetRoom(RoomEnum.GAME_START)
     return RoomFuncResponse.SKIP
 
   player.GenAttr()
