@@ -1,4 +1,0 @@
-tinydb
-pycrypto
-simple-crypt
-
