@@ -20,7 +20,7 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             TargetTypeEnum, ConditionCheckEnum,
                             TriggerTypeEnum,
                             ItemLink, DirectionEnum, ANSI, GameData)
-from db import (ListDB, SavePlayer)
+from db import (LoadStatsDB, SavePlayer)
 
 
 wrapper = TextWrapper(width=70, fix_sentence_endings=True)
@@ -699,16 +699,16 @@ def actionOpen():
 
 
 def actionListPlayers():
-  pinfo = ListDB()
+  pinfo = LoadStatsDB()
   if len(pinfo) == 0:
     print("\nThere are no saved characters!")
   else:
-    print("\n%s%-20s %s%s" % (ANSI.TEXT_BOLD, "CHARACTER NAME",
-                              "SAVED IN ROOM", ANSI.TEXT_NORMAL))
-    print("%s%-20s %s%s" % (ANSI.TEXT_BOLD, "--------------",
-                            "-------------", ANSI.TEXT_NORMAL))
+    print("\n%s%-20s %s %s%s" % (ANSI.TEXT_BOLD, "CHARACTER NAME",
+                                 "SCORE", "SAVED IN ROOM", ANSI.TEXT_NORMAL))
+    print("%s%-20s %s %s%s" % (ANSI.TEXT_BOLD, "--------------", "-----",
+                               "-------------", ANSI.TEXT_NORMAL))
     for x in sorted(pinfo):
-      print("%-20s %s" % (x, pinfo[x]))
+      print("%-20s %-5s %s" % (x, str(pinfo[x]["score"]), pinfo[x]["info"]))
 
 
 def actionLook():
@@ -731,7 +731,7 @@ def actionChangePassword():
   print("\nYour password is used to encrypt SAVE data.")
   print("It should NOT be a password used for anything important.")
   x = input("\nEnter a password: ").upper
-  if len(x.Password) < 3 or len(x.Password) > 10:
+  if len(x) < 3 or len(x) > 10:
     print("\nPassword needs to be between 3 and 10 characters long.")
   player.Password = x
   if actionSave():
@@ -944,7 +944,7 @@ commands.append(GenericCommand(["stats", "st"], actionStatsGeneric))
 commands.append(GenericCommand(["talk"], actionTalk))
 commands.append(GenericCommand(["train"], actionTrain))
 commands.append(GenericCommand(["unlock"], actionUnlock))
-# commands.append(GenericCommand(["who"], actionListPlayers))
+commands.append(GenericCommand(["who"], actionListPlayers))
 
 
 def prompt(func_break=False):

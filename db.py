@@ -6,6 +6,7 @@ import pickle
 import codecs
 import requests
 import re
+import json
 
 from hashlib import sha256
 
@@ -13,6 +14,7 @@ from hashlib import sha256
 
 URL_BASE = "https://www.jsonstore.io"
 DB_UUID = "f4dd28e6f701809382924215197653375ae7bfeedadc1485196e72697392bc2c"
+STATS_FILE = "stats"
 
 
 global_use_encrypt = False
@@ -69,6 +71,33 @@ def LoadDB(name, password, legacy=False):
     return ""
 
 
+# STATS structure
+
+def LoadStatsDB():
+  players = {}
+  url = "%s/%s/%s" % (URL_BASE, DB_UUID, STATS_FILE)
+  r = requests.get(url)
+  try:
+    record = r.json()
+    if record["result"] is not None:
+      players = json.loads(record["result"])
+  finally:
+    return players
+
+
+def SaveStatsDB(name, info, score):
+  url = "%s/%s/%s" % (URL_BASE, DB_UUID, STATS_FILE)
+  name = name.upper()
+  players = LoadStatsDB()
+  players.update({name: {"info": info, "score": score}})
+  try:
+    r = requests.put(url, json=json.dumps(players, indent=4))
+    if r.status_code in [200, 201]:
+      return True
+  except:
+    return False
+
+
 def SavePlayer(save_obj, info, password):
   state_bytes = pickle.dumps(save_obj)
   if global_use_encrypt:
@@ -76,7 +105,9 @@ def SavePlayer(save_obj, info, password):
     state_str = codecs.encode(enc_state_bytes, "base64").decode("utf-8")
   else:
     state_str = codecs.encode(state_bytes, "base64").decode("utf-8")
-  return SaveDB(save_obj.Name, password, info, state_str)
+  if SaveDB(save_obj.Name, password, info, state_str):
+    SaveStatsDB(save_obj.Name, info, 0)
+  return True
 
 
 def LoadPlayer(player, name, password, legacy=False):
