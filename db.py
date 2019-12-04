@@ -57,6 +57,7 @@ def SaveDB(name, password, info, state):
 
 
 def LoadDB(name, password, legacy=False):
+  ret = ""
   if legacy:
     r = requests.get("%s/%s/%s" % (URL_BASE, DB_UUID,
                                    get_valid_filename(name.upper())))
@@ -66,9 +67,10 @@ def LoadDB(name, password, legacy=False):
     record = r.json()
     if record["result"] is not None:
       payload = record["result"]
-      return payload["state"]
-  finally:
-    return ""
+      ret = payload["state"]
+  except:
+    print("An error occurred during character load")
+  return ret
 
 
 # STATS structure
@@ -112,7 +114,6 @@ def SavePlayer(save_obj, info, password):
 
 def LoadPlayer(player, name, password, legacy=False):
   state_str = LoadDB(name, password, legacy)
-  print(state_str)
   if state_str == "":
     return False
   state_bytes = codecs.decode(state_str.encode("utf-8"), "base64")
