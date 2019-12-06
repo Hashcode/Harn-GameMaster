@@ -1930,9 +1930,10 @@ class Condition:
 
 
 class Trigger:
-  def __init__(self, trigger_type, data=None):
+  def __init__(self, trigger_type, data=None, chance=100):
     self.TriggerType = trigger_type
     self.Data = data
+    self.Chance = chance
 
 
 # TALK

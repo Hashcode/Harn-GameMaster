@@ -551,24 +551,26 @@ def processConditions(conditions):
 def processTriggers(p, triggers):
   player = GameData.GetPlayer()
   for tr in triggers:
-    if tr.TriggerType == TriggerTypeEnum.ITEM_GIVE:
-      player.AddItem(tr.Data, ItemLink())
-    elif tr.TriggerType == TriggerTypeEnum.ITEM_TAKE:
-      player.RemoveItem(tr.Data, ItemLink())
-    elif tr.TriggerType == TriggerTypeEnum.CURRENCY_GIVE:
-      player.Currency += int(tr.Data)
-    elif tr.TriggerType == TriggerTypeEnum.CURRENCY_TAKE:
-      player.Currency -= int(tr.Data)
-    elif tr.TriggerType == TriggerTypeEnum.QUEST_GIVE:
-      player.AddQuest(tr.Data)
-    elif tr.TriggerType == TriggerTypeEnum.QUEST_COMPLETE:
-      player.CompleteQuest(tr.Data)
-    elif tr.TriggerType == TriggerTypeEnum.PERSON_ATTACK:
-      player.SetTalking(False)
-      print("%s%s attacks you!%s" %
-            (ANSI.TEXT_BOLD, p.Name.capitalize(),
-             ANSI.TEXT_NORMAL))
-      player.CombatTarget = p.UUID
+    r = DiceRoll(1, 100).Result()
+    if r <= tr.Chance:
+      if tr.TriggerType == TriggerTypeEnum.ITEM_GIVE:
+        player.AddItem(tr.Data, ItemLink())
+      elif tr.TriggerType == TriggerTypeEnum.ITEM_TAKE:
+        player.RemoveItem(tr.Data, ItemLink())
+      elif tr.TriggerType == TriggerTypeEnum.CURRENCY_GIVE:
+        player.Currency += int(tr.Data)
+      elif tr.TriggerType == TriggerTypeEnum.CURRENCY_TAKE:
+        player.Currency -= int(tr.Data)
+      elif tr.TriggerType == TriggerTypeEnum.QUEST_GIVE:
+        player.AddQuest(tr.Data)
+      elif tr.TriggerType == TriggerTypeEnum.QUEST_COMPLETE:
+        player.CompleteQuest(tr.Data)
+      elif tr.TriggerType == TriggerTypeEnum.PERSON_ATTACK:
+        player.SetTalking(False)
+        print("%s%s attacks you!%s" %
+              (ANSI.TEXT_BOLD, p.Name.capitalize(),
+               ANSI.TEXT_NORMAL))
+        player.CombatTarget = p.UUID
 
 
 def printNPCTalk(p, keyword):
