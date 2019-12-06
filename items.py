@@ -5,7 +5,8 @@
 from global_defines import (DiceRoll, MaterialEnum, QualityEnum, CoverageEnum,
                             Effect, EffectTypeEnum, ItemFlagEnum, ItemTypeEnum,
                             ItemEnum, Item, Weapon, Shield, Armor, Ring,
-                            DamageTypeEnum, SkillEnum, item_flags)
+                            DamageTypeEnum, SkillEnum, item_flags,
+                            Trigger, TriggerTypeEnum)
 
 
 # Coverage Abbreviations
@@ -492,7 +493,17 @@ items = {
              MaterialEnum.STONE, 1),
     ItemEnum.MISC_RAT_FUR:
         Item(ItemTypeEnum.MISC, "rat fur", QualityEnum.POR,
-             MaterialEnum.FUR_LT, 1),
+             MaterialEnum.FUR_LT, 1,
+             onDrop=[
+                 Trigger(TriggerTypeEnum.MESSAGE,
+                         "With a sigh of relief you drop a rate fur."),
+             ],
+             onGet=[
+                 Trigger(TriggerTypeEnum.MESSAGE,
+                         "You pinch your nose and attempt to get a rate fur."),
+                 Trigger(TriggerTypeEnum.DENY,
+                         chance=50),
+             ]),
 
     # QUEST
 

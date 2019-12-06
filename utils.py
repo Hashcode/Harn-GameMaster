@@ -16,7 +16,7 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             materials, NumAdj, DamageTypeEnum, AttrEnum,
                             Material, PlayerCombatState, PersonTypeEnum,
                             ItemTypeEnum, ItemFlagEnum, ItemEnum,
-                            DiceRoll, DoorEnum,
+                            DiceRoll, DoorEnum, Mob,
                             TargetTypeEnum, ConditionCheckEnum,
                             TriggerTypeEnum,
                             ItemLink, DirectionEnum, ANSI, GameData)
@@ -224,6 +224,10 @@ def actionGetItem():
   item_id = chooseItem(links, "pick up")
   if item_id == ItemEnum.NONE:
     return
+  if processTriggers(None, items[item_id].OnGet) == False:
+    print("\nYou can't seem to pick up %s." %
+          items[item_id].ItemName)
+    return
   rooms[player.Room].RemoveItem(item_id, ItemLink(1))
   player.AddItem(item_id, ItemLink(1))
   print("\n%s picked up." % items[item_id].ItemName.capitalize())
@@ -245,6 +249,10 @@ def actionDropItem():
     return
   if items[item_id].Flags & item_flags[ItemFlagEnum.QUEST].Bit > 0:
     print("\n%s cannot be dropped." % items[item_id].ItemName.capitalize())
+    return
+  if processTriggers(None, items[item_id].OnDrop) == False:
+    print("\nYou can't seem to drop %s." %
+          items[item_id].ItemName)
     return
   player.RemoveItem(item_id, ItemLink(1))
   rooms[player.Room].AddItem(item_id, ItemLink(1))
@@ -290,6 +298,10 @@ def actionEquipItem():
       if count > 1:
           print("\nAlready wielding 2 rings.")
           return
+  if processTriggers(None, items[item_id].OnEquip) == False:
+    print("\nYou can't seem to eqiup %s." %
+          items[item_id].ItemName)
+    return
   player.ItemLinks[equip_id].Equipped = True
   # use a player's "attack" if in combat
   if player.CombatState != PlayerCombatState.NONE:
@@ -308,6 +320,10 @@ def actionRemoveItem():
     return
   item_id = chooseItem(links, "remove")
   if item_id == ItemEnum.NONE:
+    return
+  if processTriggers(None, items[item_id].OnRemove) == False:
+    print("\nYou can't seem to remove %s." %
+          items[item_id].ItemName)
     return
   player.ItemLinks[item_id].Equipped = False
   print("\n%s removed." % items[item_id].ItemName.capitalize())
@@ -548,7 +564,7 @@ def processConditions(conditions):
   return True
 
 
-def processTriggers(p, triggers):
+def processTriggers(obj, triggers):
   player = GameData.GetPlayer()
   for tr in triggers:
     r = DiceRoll(1, 100).Result()
@@ -566,11 +582,16 @@ def processTriggers(p, triggers):
       elif tr.TriggerType == TriggerTypeEnum.QUEST_COMPLETE:
         player.CompleteQuest(tr.Data)
       elif tr.TriggerType == TriggerTypeEnum.PERSON_ATTACK:
-        player.SetTalking(False)
-        print("%s%s attacks you!%s" %
-              (ANSI.TEXT_BOLD, p.Name.capitalize(),
-               ANSI.TEXT_NORMAL))
-        player.CombatTarget = p.UUID
+        if type(obj) is Mob:
+          player.SetTalking(False)
+          print("%s%s attacks you!%s" %
+                (ANSI.TEXT_BOLD, obj.Name.capitalize(),
+                 ANSI.TEXT_NORMAL))
+          player.CombatTarget = obj.UUID
+      elif tr.TriggerType == TriggerTypeEnum.MESSAGE:
+        print("\n" + wrapper.fill(tr.Data))
+      elif tr.TriggerType == TriggerTypeEnum.DENY:
+        return False
 
 
 def printNPCTalk(p, keyword):

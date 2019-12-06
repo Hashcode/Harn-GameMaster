@@ -488,7 +488,8 @@ item_flags = {
 class Item:
   def __init__(self, item_type=ItemTypeEnum.NONE, name="",
                qual=QualityEnum.NONE, material=MaterialEnum.NONE, mass=0,
-               flags=0, eff=None):
+               flags=0, eff=None, onGet=None, onDrop=None,
+               onEquip=None, onRemove=None):
     self.ItemType = item_type
     self.ItemName = name
     self.Quality = qual
@@ -500,6 +501,10 @@ class Item:
     self.Weight = self.Mass * materials[self.Material].WeightBase
     self.Value = self.Mass * materials[self.Material].CostBase * \
         qualities[self.Quality].CostModifier
+    self.OnGet = onGet
+    self.OnDrop = onDrop
+    self.OnEquip = onEquip
+    self.OnRemove = onRemove
 
   def ItemFlagStr(self, format="%s"):
     flag_list = []
@@ -1920,6 +1925,8 @@ class TriggerTypeEnum(IntEnum):
   QUEST_GIVE = 5
   QUEST_COMPLETE = 6
   PERSON_ATTACK = 7
+  MESSAGE = 8
+  DENY = 9
 
 
 class Condition:
@@ -2015,6 +2022,7 @@ class Mob(Person):
     if len(attacks) < 1:
       attacks = super().GenerateCombatAttacks(block, default)
     return attacks
+
 
 # PLAYER
 
