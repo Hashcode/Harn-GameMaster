@@ -1919,6 +1919,7 @@ class TriggerTypeEnum(IntEnum):
   CURRENCY_TAKE = 4
   QUEST_GIVE = 5
   QUEST_COMPLETE = 6
+  PERSON_ATTACK = 7
 
 
 class Condition:
@@ -1929,7 +1930,7 @@ class Condition:
 
 
 class Trigger:
-  def __init__(self, trigger_type, data):
+  def __init__(self, trigger_type, data=None):
     self.TriggerType = trigger_type
     self.Data = data
 
@@ -2605,7 +2606,6 @@ class GameData:
                ANSI.TEXT_NORMAL))
       if player.CombatTarget is not None:
         if player.CombatTarget == x.UUID:
-          print("\nYou attack %s!" % x.Name)
           enemies.append(x)
           player.CombatTarget = None
     return enemies

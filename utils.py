@@ -496,6 +496,7 @@ def actionAttack():
     return
   p = chooseNPC(npcs, "target")
   if p is not None:
+    print("\nYou attack %s!" % p.Name)
     player.CombatTarget = p.UUID
   if player.CombatTarget is not None:
     return True
@@ -547,7 +548,7 @@ def processConditions(conditions):
   return True
 
 
-def processTriggers(triggers):
+def processTriggers(p, triggers):
   player = GameData.GetPlayer()
   for tr in triggers:
     if tr.TriggerType == TriggerTypeEnum.ITEM_GIVE:
@@ -562,6 +563,12 @@ def processTriggers(triggers):
       player.AddQuest(tr.Data)
     elif tr.TriggerType == TriggerTypeEnum.QUEST_COMPLETE:
       player.CompleteQuest(tr.Data)
+    elif tr.TriggerType == TriggerTypeEnum.PERSON_ATTACK:
+      player.SetTalking(False)
+      print("%s%s attacks you!%s" %
+            (ANSI.TEXT_BOLD, p.Name.capitalize(),
+             ANSI.TEXT_NORMAL))
+      player.CombatTarget = p.UUID
 
 
 def printNPCTalk(p, keyword):
@@ -573,13 +580,17 @@ def printNPCTalk(p, keyword):
         for t in tk.Texts:
           print("\n" + wrapper.fill(t))
         if tk.Triggers is not None:
-          processTriggers(tk.Triggers)
+          processTriggers(p, tk.Triggers)
   return ret
 
 
 def actionTalk():
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
+  if player.CombatState != PlayerCombatState.NONE:
+    print("\n%sYou can't TALK during combat!%s" %
+          (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    return
   npcs = []
   if player.IsTalking():
     print("\n%sYou are already talking!!%s" %
@@ -598,7 +609,7 @@ def actionTalk():
     return
   player.SetTalking(True)
   printNPCTalk(p, "")
-  while True:
+  while player.IsTalking():
     # Check for room events
     GameData.ProcessRoomEvents()
     prompt()
@@ -607,10 +618,12 @@ def actionTalk():
       printNPCTalk(p, "~")
       player.Command = ""
       break
-    else:
+    elif player.Command != "":
       if not printNPCTalk(p, player.Command):
         print("\n%s doesn't know anything about that." %
               p.Name.capitalize())
+  if player.CombatTarget is not None:
+    return True
 
 
 def chooseDoor(room_id, action, door_closed=None, door_locked=None):
@@ -973,7 +986,8 @@ def prompt(func_break=False):
         player.Command = x
         break
       elif res == True:
-        player.Command = x
+        # attack and talk cmds can return true to re-enter main for combat
+        player.Command = ""
         break
     else:
       # Handle directions
@@ -988,7 +1002,7 @@ def prompt(func_break=False):
         if player.CombatState != PlayerCombatState.NONE:
           print("\n%sYou can't move in combat!  Try to FLEE!%s" %
                 (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-        if player.IsTalking():
+        elif player.IsTalking():
           print("\n%sYou are talking! Enter \"DONE\" "
                 "to end conversation.%s" %
                 (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
