@@ -28,7 +28,7 @@ def get_valid_filename(s):
 def get_char_url(name, password):
   m = sha256()
   m.update(name.upper().encode('utf-8'))
-  m.update(password.upper().encode('utf-8'))
+  m.update(password.encode('utf-8'))
   url = "%s/%s/%s" % (URL_BASE, DB_UUID, m.digest().hex())
   return url
 
@@ -101,6 +101,7 @@ def SaveStatsDB(name, info, score):
 
 
 def SavePlayer(save_obj, info, password):
+  password = password.upper()
   state_bytes = pickle.dumps(save_obj)
   if global_use_encrypt:
     enc_state_bytes = encrypt(password, state_bytes)
@@ -113,6 +114,7 @@ def SavePlayer(save_obj, info, password):
 
 
 def LoadPlayer(player, name, password, legacy=False):
+  password = password.upper()
   state_str = LoadDB(name, password, legacy)
   if state_str == "":
     return False

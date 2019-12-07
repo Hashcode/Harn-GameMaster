@@ -766,9 +766,10 @@ def actionChangePassword():
     return
   print("\nYour password is used to encrypt SAVE data.")
   print("It should NOT be a password used for anything important.")
-  x = input("\nEnter a password: ").upper
+  x = input("\nEnter a password: ").upper()
   if len(x) < 3 or len(x) > 10:
     print("\nPassword needs to be between 3 and 10 characters long.")
+    return
   player.Password = x
   if actionSave():
     print("\nCharacter updated.")
