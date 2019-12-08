@@ -269,8 +269,8 @@ body_parts = {
     CoverageEnum.NECK: BodyPart("Neck", 4),
     CoverageEnum.SHOULDERS: BodyPart("Shoulder", 4, True, fumble=True),
     CoverageEnum.UPPER_ARMS: BodyPart("Upper Arm", 6, True, fumble=True),
-    CoverageEnum.ELBOWS: BodyPart("Elbow", 6, True, fumble=True),
-    CoverageEnum.FOREARMS: BodyPart("Forearm", 6, True, fumble=True),
+    CoverageEnum.ELBOWS: BodyPart("Elbow", 2, True, fumble=True),
+    CoverageEnum.FOREARMS: BodyPart("Forearm", 5, True, fumble=True),
     CoverageEnum.HANDS: BodyPart("Hand", 4, True, fumble=True),
     CoverageEnum.THORAX_FRONT: BodyPart("Thorax (front)", 6),
     CoverageEnum.THORAX_REAR: BodyPart("Thorax (back)", 6),
@@ -278,9 +278,9 @@ body_parts = {
     CoverageEnum.ABDOMEN_REAR: BodyPart("Abdomen (back)", 6),
     CoverageEnum.GROIN: BodyPart("Groin", 2, stumble=True),
     CoverageEnum.HIPS: BodyPart("Hip", 8, True, stumble=True),
-    CoverageEnum.THIGHS: BodyPart("Thigh", 7, True, stumble=True),
+    CoverageEnum.THIGHS: BodyPart("Thigh", 14, True, stumble=True),
     CoverageEnum.KNEES: BodyPart("Knee", 3, True, stumble=True),
-    CoverageEnum.CALVES: BodyPart("Calf", 8, True, stumble=True),
+    CoverageEnum.CALVES: BodyPart("Calf", 10, True, stumble=True),
     CoverageEnum.FEET: BodyPart("Foot", 6, True, stumble=True),
     # MOB PARTS
 }
@@ -366,7 +366,7 @@ class ItemEnum(IntEnum):
   SHIELD_KNIGHT_STEEL = 15010
   SHIELD_ROUND_WOOD = 15020
   SHIELD_ROUND_BANDED = 15021
-  SHIELD_KITE_STEEL = 15030
+  SHIELD_KITE_BANDED = 15030
   SHIELD_TOWER_WOOD = 15040
   SHIELD_TOWER_BANDED = 15041
   # ARMOR [CLOTH]
