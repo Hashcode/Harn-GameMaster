@@ -1908,6 +1908,8 @@ class TargetTypeEnum(IntEnum):
   PLAYER_INVEN = 1
   PLAYER_QUEST = 2
   PLAYER_QUEST_COMPLETE = 3
+  ITEM_IN_ROOM = 4
+  MOB_IN_ROOM = 5
 
 
 class ConditionCheckEnum(IntEnum):
@@ -1920,13 +1922,15 @@ class TriggerTypeEnum(IntEnum):
   NONE = 0
   ITEM_GIVE = 1
   ITEM_TAKE = 2
-  CURRENCY_GIVE = 3
-  CURRENCY_TAKE = 4
-  QUEST_GIVE = 5
-  QUEST_COMPLETE = 6
-  PERSON_ATTACK = 7
-  MESSAGE = 8
-  DENY = 9
+  ITEM_BUY = 3
+  ITEM_SELL = 4
+  CURRENCY_GIVE = 5
+  CURRENCY_TAKE = 6
+  QUEST_GIVE = 7
+  QUEST_COMPLETE = 8
+  PERSON_ATTACK = 9
+  MESSAGE = 10
+  DENY = 11
 
 
 class Condition:
@@ -1972,7 +1976,7 @@ class Mob(Person):
                aim=AimEnum.MID, flags=0,
                skin=MaterialEnum.NONE, cur=None, attrs=None,
                num_attacks=1, mob_attacks=None, mob_skills=None, eq=None,
-               loot=None, talk=None):
+               loot=None, sell_items=None, buy_items=None, talk=None):
     super().__init__(PersonTypeEnum.NPC, name, long_desc, flags, skin,
                      it=eq)
     # None == Template / Char
@@ -1992,6 +1996,8 @@ class Mob(Person):
       for skill_id, points in mob_skills.items():
         self.SkillLinks.update({skill_id: SkillLink(points)})
     self.Loot = loot
+    self.SellItemLinks = sell_items
+    self.BuyItemLinks = buy_items
     self.Talks = talk
     super().ResetStats()
 

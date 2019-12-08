@@ -62,7 +62,7 @@ persons = {
                 AttrEnum.WILL: 13,
             },
             mob_skills={
-                SkillEnum.POLEARM: 50, # 21 Based + 50 Train
+                SkillEnum.POLEARM: 50,  # 21 Based + 50 Train
             },
             eq={
                 ItemEnum.WEAPON_PIKE: ItemLink(1, True),
@@ -169,10 +169,17 @@ persons = {
                 ItemEnum.ARMOR_SURCOAT_LEATHER: ItemLink(1, True),
                 ItemEnum.ARMOR_SHOES_LEATHER: ItemLink(1, True),
             },
+            sell_items={
+                ItemEnum.WEAPON_KNIFE: ItemLink(1),
+                ItemEnum.WEAPON_SICKLE: ItemLink(1),
+                ItemEnum.WEAPON_STAFF: ItemLink(1),
+            },
             talk=[
                 MobTalk("",
                         text=[
-                            "\"Hello! Welcome to my humble shop.\""
+                            "\"Hello! Welcome to my humble SHOP.  Feel free "
+                            "to look around for something to BUY or you can "
+                            "SELL various items to me.\""
                         ]),
                 MobTalk("",
                         condition=[
@@ -196,6 +203,25 @@ persons = {
                             Trigger(TriggerTypeEnum.CURRENCY_GIVE, 5),
                             Trigger(TriggerTypeEnum.QUEST_COMPLETE,
                                     QuestEnum.GUARD_DELIVERY),
+                        ]),
+                MobTalk("shop",
+                        text=[
+                            "\"Ah a customer! Are you here to BUY or "
+                            "SELL?\"",
+                        ]),
+                MobTalk("buy",
+                        text=[
+                            "\"Excellent!  Here's what I have:\"",
+                        ],
+                        triggers=[
+                            Trigger(TriggerTypeEnum.ITEM_BUY),
+                        ]),
+                MobTalk("sell",
+                        text=[
+                            "\"Let's see if you have anything I need ...\"",
+                        ],
+                        triggers=[
+                            Trigger(TriggerTypeEnum.ITEM_SELL),
                         ]),
                 MobTalk("~",
                         text=[

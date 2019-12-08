@@ -63,28 +63,31 @@ def filterLinks(item_links, equipped=False, equippable=False, flags=0,
   return item_dict
 
 
-def printItems(item_links, number=False, stats=False):
+def printItems(item_links, number=False, stats=False, shop=False,
+               valueAdj=1):
   items = GameData.GetItems()
   count = 0
   for item_id, il in item_links.items():
     count += 1
-    if number:
-      print("%d. %s%s" % (count, items[item_id].ItemName,
-                          items[item_id].ItemFlagStr(" (%s)")))
-    else:
+    item_name = items[item_id].ItemName.capitalize()
+    item_name += items[item_id].ItemFlagStr(" (%s)")
+    if stats:
       weight = items[item_id].Weight * il.Quantity
-      if stats:
-        item_info = " : %5s lbs" % "{:3.1f}".format(weight)
-      else:
-        item_info = ""
+      item_info = " : %5s lbs" % "{:3.1f}".format(weight)
+    else:
+      item_info = ""
+    if shop:
+      item_value = " [%d SP]" % int(items[item_id].Value * valueAdj)
+    else:
+      item_value = ""
+    if number:
+      print("%2d. %-30s%s%s" % (count, item_name, item_info, item_value))
+    else:
       if il.Quantity > 1 and not il.Equipped:
-        print("%-30s%s" %
-              (("(%d) " % il.Quantity) + items[item_id].ItemName + \
-               items[item_id].ItemFlagStr(" (%s)"), item_info))
+        print("%-30s%s%s" %
+              (("(%d) " % il.Quantity) + item_name, item_info, item_value))
       else:
-        print("%-30s%s" %
-              (items[item_id].ItemName + items[item_id].ItemFlagStr(" (%s)"),
-               item_info))
+        print("%-30s%s%s" % (item_name, item_info, item_value))
 
 
 # Directions
@@ -194,9 +197,9 @@ def actionComingSoon():
   print("\nComing soon!")
 
 
-def chooseItem(links, verb):
+def chooseItem(links, verb, stats=False, shop=False, valueAdj=1):
   print("\nItems:\n")
-  printItems(links, number=True)
+  printItems(links, number=True, stats=stats, shop=shop, valueAdj=valueAdj)
   x = input("\nWhich item # to %s: " % verb).lower()
   if not x.isnumeric():
     print("\nInvalid item.")
@@ -534,6 +537,7 @@ def actionInspect():
 
 def processConditions(conditions):
   player = GameData.GetPlayer()
+  rooms = GameData.GetRooms()
   if conditions is not None:
     for c in conditions:
       if c.TargetType == TargetTypeEnum.PLAYER_INVEN:
@@ -561,11 +565,30 @@ def processConditions(conditions):
             return False
           if player.HasQuest(c.Data, completed=True):
             return False
+      elif c.TargetType == TargetTypeEnum.ITEM_IN_ROOM:
+        if c.ConditionCheck == ConditionCheckEnum.HAS:
+          if c.Data not in rooms[player.Room].RoomItems.keys():
+            return False
+        if c.ConditionCheck == ConditionCheckEnum.HAS_NOT:
+          if c.Data in rooms[player.Room].RoomItems.keys():
+            return False
+      elif c.TargetType == TargetTypeEnum.MOB_IN_ROOM:
+        match = False
+        for p in rooms[player.Room].Persons:
+          if p.PersonID == c.Data:
+            match = True
+            break
+        if c.ConditionCheck == ConditionCheckEnum.HAS and not match:
+            return False
+        if c.ConditionCheck == ConditionCheckEnum.HAS_NOT and match:
+            return False
   return True
 
 
 def processTriggers(obj, triggers):
   player = GameData.GetPlayer()
+  if triggers is None:
+    return
   for tr in triggers:
     r = DiceRoll(1, 100).Result()
     if r <= tr.Chance:
@@ -573,6 +596,10 @@ def processTriggers(obj, triggers):
         player.AddItem(tr.Data, ItemLink())
       elif tr.TriggerType == TriggerTypeEnum.ITEM_TAKE:
         player.RemoveItem(tr.Data, ItemLink())
+      elif tr.TriggerType == TriggerTypeEnum.ITEM_SELL:
+        actionShopSell(obj)
+      elif tr.TriggerType == TriggerTypeEnum.ITEM_BUY:
+        actionShopBuy(obj)
       elif tr.TriggerType == TriggerTypeEnum.CURRENCY_GIVE:
         player.Currency += int(tr.Data)
       elif tr.TriggerType == TriggerTypeEnum.CURRENCY_TAKE:
@@ -607,7 +634,99 @@ def printNPCTalk(p, keyword):
   return ret
 
 
-def actionTalk():
+def actionShopBuy(shopkeep):
+  player = GameData.GetPlayer()
+  items = GameData.GetItems()
+  if player.CombatState != PlayerCombatState.NONE:
+    print("\n%sYou can't BUY during combat!%s" %
+          (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    return
+  links = filterLinks(shopkeep.SellItemLinks)
+  if len(links) < 1:
+    print("\nThere is nothing to buy.")
+    return
+  item_id = chooseItem(links, "buy", stats=True, shop=True)
+  if item_id == ItemEnum.NONE:
+    return
+  if items[item_id].Value > player.Currency:
+    print("\n%sYou cannot afford [%s].%s" %
+          (ANSI.TEXT_BOLD, items[item_id].ItemName, ANSI.TEXT_NORMAL))
+    return
+  # TODO possible factors to raise price?
+  price = items[item_id].Value
+  x = input("\nConfirm purchase of [%s] for %d SP [y/N]: " %
+            (items[item_id].ItemName, price)).lower()
+  if x == "y" or x == "yes":
+    player.Currency -= price
+    player.AddItem(item_id, ItemLink(1))
+    print("\n%s%s hands you [%s].%s" %
+          (ANSI.TEXT_BOLD, shopkeep.Name.capitalize(),
+           items[item_id].ItemName, ANSI.TEXT_NORMAL))
+  else:
+    print("\n%sPurchase aborted.%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+
+
+def actionShopSell(shopkeep):
+  player = GameData.GetPlayer()
+  items = GameData.GetItems()
+  if player.CombatState != PlayerCombatState.NONE:
+    print("\n%sYou can't SELL during combat!%s" %
+          (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    return
+  links = {}
+  if shopkeep.BuyItemLinks is None:
+    print("\n%s doesn't want to buy anything." %
+          shopkeep.Name.capitalize())
+    return
+  for item_id, il in player.ItemLinks.items():
+    if not il.Equipped or il.Quantity > 1:
+      if item_id in shopkeep.BuyItemLinks.keys():
+        links.update({item_id: il})
+  if len(links) < 1:
+    print("\n%s doesn't want to buy anything you have." %
+          shopkeep.Name.capitalize())
+    return
+  # sell items for 1/2 value
+  priceAdj = .5
+  item_id = chooseItem(links, "sell", stats=True, shop=True,
+                       valueAdj=priceAdj)
+  if item_id == ItemEnum.NONE:
+    return
+  price = items[item_id].Value * priceAdj
+  x = input("\nConfirm sale of [%s] for %d SP [y/N]: " %
+            (items[item_id].ItemName, price)).lower()
+  if x == "y" or x == "yes":
+    player.Currency += price
+    player.RemoveItem(item_id, ItemLink())
+    print("\n%sYou hand [%s] to %s.%s" %
+          (ANSI.TEXT_BOLD, items[item_id].ItemName,
+           shopkeep.Name.capitalize(), ANSI.TEXT_NORMAL))
+  else:
+    print("\n%sSale aborted.%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+
+
+def playerTalk(p, keyword=""):
+  player = GameData.GetPlayer()
+  player.SetTalking(True)
+  printNPCTalk(p, keyword)
+  while player.IsTalking():
+    # Check for room events
+    GameData.ProcessRoomEvents()
+    prompt(func_break=True)
+    if player.Command == "done":
+      player.SetTalking(False)
+      printNPCTalk(p, "~")
+      player.Command = ""
+      break
+    elif player.Command != "":
+      if not printNPCTalk(p, player.Command):
+        print("\n%s doesn't know anything about that." %
+              p.Name.capitalize())
+  if player.CombatTarget is not None:
+    return True
+
+
+def actionTalk(keyword=""):
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
   if player.CombatState != PlayerCombatState.NONE:
@@ -622,7 +741,7 @@ def actionTalk():
   for npc in rooms[player.Room].Persons:
     npcs.append(npc)
   if len(npcs) < 1:
-    print("\nThere is no one to inspect nearby!")
+    print("\nThere is no one to talk to nearby!")
     return
   p = chooseNPC(npcs, "talk to")
   if p is None:
@@ -630,23 +749,43 @@ def actionTalk():
   if p.Talks is None:
     print("\n%s ignores your attempts to talk." % p.Name.capitalize())
     return
-  player.SetTalking(True)
-  printNPCTalk(p, "")
-  while player.IsTalking():
-    # Check for room events
-    GameData.ProcessRoomEvents()
-    prompt()
-    if player.Command == "done":
-      player.SetTalking(False)
-      printNPCTalk(p, "~")
-      player.Command = ""
-      break
-    elif player.Command != "":
-      if not printNPCTalk(p, player.Command):
-        print("\n%s doesn't know anything about that." %
-              p.Name.capitalize())
-  if player.CombatTarget is not None:
-    return True
+  playerTalk(p, keyword)
+
+
+def actionTalkBuy():
+  player = GameData.GetPlayer()
+  rooms = GameData.GetRooms()
+  if player.IsTalking():
+    # let triggers handle
+    return False
+  else:
+    shopkeep = None
+    for npc in rooms[player.Room].Persons:
+      if npc.SellItemLinks is not None:
+        shopkeep = npc
+        break
+    if shopkeep is None:
+      print("\nNo one nearby wants to buy anything.")
+      return
+    playerTalk(shopkeep, "buy")
+
+
+def actionTalkSell():
+  player = GameData.GetPlayer()
+  rooms = GameData.GetRooms()
+  if player.IsTalking():
+    # let triggers handle
+    return False
+  else:
+    shopkeep = None
+    for npc in rooms[player.Room].Persons:
+      if npc.BuyItemLinks is not None:
+        shopkeep = npc
+        break
+    if shopkeep is None:
+      print("\nNo one nearby wants to sell anything.")
+      return
+    playerTalk(shopkeep, "sell")
 
 
 def chooseDoor(room_id, action, door_closed=None, door_locked=None):
@@ -960,6 +1099,7 @@ def actionPrintHelp():
 
 commands.append(GenericCommand(["armor", "ac"], actionArmor))
 commands.append(GenericCommand(["attack", "a"], actionAttack))
+commands.append(GenericCommand(["buy"], actionTalkBuy))
 commands.append(GenericCommand(["close"], actionClose))
 commands.append(GenericCommand(["drop"], actionDropItem))
 commands.append(GenericCommand(["equip", "eq"], actionEquipItem))
@@ -976,6 +1116,7 @@ commands.append(GenericCommand(["quit", "q"], actionQuit))
 commands.append(GenericCommand(["remove", "rm"], actionRemoveItem))
 commands.append(GenericCommand(["rest"], actionRest))
 commands.append(GenericCommand(["save"], actionSaveGeneric))
+commands.append(GenericCommand(["sell"], actionTalkSell))
 commands.append(GenericCommand(["skills", "sk"], actionSkills))
 commands.append(GenericCommand(["stats", "st"], actionStatsGeneric))
 commands.append(GenericCommand(["talk"], actionTalk))
