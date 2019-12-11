@@ -2035,6 +2035,7 @@ class Mob(Person):
 class QuestEnum(IntEnum):
   NONE = 0
   GUARD_DELIVERY = 1
+  GUARD_INTRO = 2
 
 
 class Quest:
@@ -2045,6 +2046,8 @@ class Quest:
 
 
 quests = {
+    QuestEnum.GUARD_INTRO:
+        Quest("Talk to the guard.", hidden=True),
     QuestEnum.GUARD_DELIVERY:
         Quest("Deliver a weathered package to the provisioner."),
 }

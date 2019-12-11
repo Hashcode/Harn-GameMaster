@@ -461,6 +461,8 @@ def actionQuest():
   count = 0
   print("\n%sCOMPLETED QUESTS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   for quest_id, completed in player.Quests.items():
+    if quests[quest_id].Hidden:
+      continue
     if completed:
       count += 1
       print("%s" % quests[quest_id].Name)
@@ -469,6 +471,8 @@ def actionQuest():
   count = 0
   print("\n%sCURRENT QUESTS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   for quest_id, completed in player.Quests.items():
+    if quests[quest_id].Hidden:
+      continue
     if not completed:
       count += 1
       print("%s" % quests[quest_id].Name)
@@ -632,6 +636,22 @@ def printNPCTalk(p, keyword):
         if tk.Triggers is not None:
           processTriggers(p, tk.Triggers)
   return ret
+
+
+def roomTalkTrigger(keyword):
+  keyword = "~%s~" % keyword
+  player = GameData.GetPlayer()
+  rooms = GameData.GetRooms()
+  for npc in rooms[player.Room].Persons:
+    for tk in npc.Talks:
+      if tk.Keyword.lower() == keyword:
+        if processConditions(tk.Conditions):
+          for t in tk.Texts:
+            print("\n" + wrapper.fill(t))
+          if tk.Triggers is not None:
+            if not processTriggers(npc, tk.Triggers):
+              return False
+  return True
 
 
 def actionShopBuy(shopkeep):
@@ -1172,6 +1192,7 @@ def prompt(func_break=False):
                 "to end conversation.%s" %
                 (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
         else:
+          trigger_deny = False
           for exit_dir, ex in rooms[player.Room].Exits.items():
             if match_dir == exit_dir:
               if ex.Door != DoorEnum.NONE:
@@ -1179,13 +1200,21 @@ def prompt(func_break=False):
                   print("\n%sThe %s %s closed.%s" %
                         (ANSI.TEXT_BOLD, doors[ex.Door].Name,
                          doors[ex.Door].Verb(), ANSI.TEXT_NORMAL))
+                  break
                 else:
+                  if not roomTalkTrigger("on_exit"):
+                    trigger_deny = True
+                    break
                   player.SetRoom(ex.Room)
               else:
+                if not roomTalkTrigger("on_exit"):
+                  trigger_deny = True
+                  break
                 player.SetRoom(ex.Room)
               return
-          print("\n%sYou can't go in that direction.%s" %
-                (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+          if not trigger_deny:
+            print("\n%sYou can't go in that direction.%s" %
+                  (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
         continue
 
       player.Command = x

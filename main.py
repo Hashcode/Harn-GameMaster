@@ -42,7 +42,8 @@ GameData.SetRooms(rooms)
 GameData.ROOM_START = ROOM_START
 GameData.ROOM_RESPAWN = ROOM_RESPAWN
 
-from utils import (printRoomDescription, printRoomObjects, prompt)
+from utils import (printRoomDescription, printRoomObjects, roomTalkTrigger,
+                   prompt)
 from combat import combat
 
 
@@ -68,6 +69,7 @@ while True:
   GameData.ProcessRoomEvents()
 
   printRoomObjects(player.Room)
+  roomTalkTrigger("on_enter")
 
   # Check if the room persons need to attack
   enemies = GameData.ProcessRoomCombat()

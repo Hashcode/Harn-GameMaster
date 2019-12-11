@@ -75,12 +75,41 @@ persons = {
                 ItemEnum.ARMOR_GAUNTLETS_LEATHER_RING: ItemLink(1, True),
             },
             talk=[
+                MobTalk("~on_enter~",
+                        condition=[
+                            Condition(ConditionCheckEnum.HAS_NOT,
+                                      TargetTypeEnum.PLAYER_QUEST,
+                                      QuestEnum.GUARD_INTRO),
+                        ],
+                        text=[
+                            "The guard glances in your direction. "
+                            "\"Come TALK to me Traveller, when you get "
+                            "a moment.\""
+                        ]),
+                MobTalk("~on_exit~",
+                        condition=[
+                            Condition(ConditionCheckEnum.HAS_NOT,
+                                      TargetTypeEnum.PLAYER_QUEST_COMPLETE,
+                                      QuestEnum.GUARD_INTRO),
+                        ],
+                        text=[
+                            "The guard moves to block your way. "
+                            "\"I meant you need to TALK to me, when you get "
+                            "a chance.\"  He taps his foot impatiently,"
+                        ],
+                        triggers=[
+                            Trigger(TriggerTypeEnum.DENY),
+                        ]),
                 MobTalk("",
                         text=[
                             "The guard turns to look at you. "
-                            "\"Oh ... Hello Traveller. I didn't notice you "
-                            "there. Welcome to Stonehaven KEEP. If you need "
-                            "to know where to STAY or EAT, let me know.\""
+                            "\"Hello Traveller. Welcome to Stonehaven KEEP. "
+                            "If you need to know where to STAY or EAT, let "
+                            "me know.\""
+                        ],
+                        triggers=[
+                            Trigger(TriggerTypeEnum.QUEST_COMPLETE,
+                                    QuestEnum.GUARD_INTRO),
                         ]),
                 MobTalk("",
                         condition=[
