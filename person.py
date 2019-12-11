@@ -89,7 +89,7 @@ persons = {
                 MobTalk("~on_exit~",
                         condition=[
                             Condition(ConditionCheckEnum.HAS_NOT,
-                                      TargetTypeEnum.PLAYER_QUEST_COMPLETE,
+                                      TargetTypeEnum.PLAYER_QUEST,
                                       QuestEnum.GUARD_INTRO),
                         ],
                         text=[
@@ -106,10 +106,6 @@ persons = {
                             "\"Hello Traveller. Welcome to Stonehaven KEEP. "
                             "If you need to know where to STAY or EAT, let "
                             "me know.\""
-                        ],
-                        triggers=[
-                            Trigger(TriggerTypeEnum.QUEST_COMPLETE,
-                                    QuestEnum.GUARD_INTRO),
                         ]),
                 MobTalk("",
                         condition=[
@@ -126,6 +122,10 @@ persons = {
                             "gone.\"",
                             "\"Would you be interested in performing a "
                             "DELIVERY for me?\""
+                        ],
+                        triggers=[
+                            Trigger(TriggerTypeEnum.QUEST_COMPLETE,
+                                    QuestEnum.GUARD_INTRO),
                         ]),
                 MobTalk("keep",
                         text=[

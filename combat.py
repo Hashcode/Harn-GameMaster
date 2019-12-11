@@ -720,6 +720,8 @@ def combat(player, enemies):
     if player_combatant.Flags & FLAG_DEAD > 0:
       return
 
+    # 10 second rounds
+    player.GameTime += 10
     player.CombatState = PlayerCombatState.WAIT
     for x in order:
         x.Refresh()

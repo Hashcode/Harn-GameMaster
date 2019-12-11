@@ -46,7 +46,7 @@ def ExistsDB(name, password):
   return False
 
 
-def SaveDB(name, password, info, state):
+def SaveDB(name, password, state):
   payload = {'state': state}
   try:
     r = requests.put(get_char_url(name, password), json=payload)
@@ -87,11 +87,11 @@ def LoadStatsDB():
     return players
 
 
-def SaveStatsDB(name, info, score):
+def SaveStatsDB(name, played, info, score):
   url = "%s/%s/%s" % (URL_BASE, DB_UUID, STATS_FILE)
   name = name.upper()
   players = LoadStatsDB()
-  players.update({name: {"info": info, "score": score}})
+  players.update({name: {"played": played, "info": info, "score": score}})
   try:
     r = requests.put(url, json=json.dumps(players, indent=4))
     if r.status_code in [200, 201]:
@@ -108,8 +108,8 @@ def SavePlayer(save_obj, info, password):
     state_str = codecs.encode(enc_state_bytes, "base64").decode("utf-8")
   else:
     state_str = codecs.encode(state_bytes, "base64").decode("utf-8")
-  if SaveDB(save_obj.Name, password, info, state_str):
-    SaveStatsDB(save_obj.Name, info, 0)
+  if SaveDB(save_obj.Name, password, state_str):
+    SaveStatsDB(save_obj.Name, int(save_obj.SecondsPlayed / 86400), info, 0)
   return True
 
 

@@ -9,8 +9,7 @@ import random
 from enum import IntEnum
 from uuid import uuid4
 from copy import deepcopy
-from time import gmtime
-from calendar import timegm
+from time import time
 
 from logger import logd
 
@@ -2069,6 +2068,9 @@ class PlayerCombatState(IntEnum):
 class Player(Person):
   def __init__(self, name=""):
     super().__init__(PersonTypeEnum.PLAYER, name, "player")
+    self.Time = int(time())  # epoch at login
+    self.SecondsPlayed = 0
+    self.GameTime = 0
     self.Password = ""
     self.Sunsign = SunsignEnum.NONE
     self.Command = ""
@@ -2082,6 +2084,14 @@ class Player(Person):
 
   def Copy(self, p):
     super().Copy(p)
+    self.Time = int(time())  # epoch at login
+    try:
+      self.SecondsPlayed = p.SecondsPlayed
+      self.GameTime = p.GameTime
+    except AttributeError:
+      self.SecondsPlayed = 0
+      self.GameTime = 0
+      logd("player missing doors")
     self.Room = p.Room
     self.LastRoom = p.LastRoom
     self.Currency = p.Currency
@@ -2099,6 +2109,13 @@ class Player(Person):
     except AttributeError:
       logd("player missing quests")
     super().ResetStats()
+
+  def UpdatePlayerTime(self):
+    self.SecondsPlayed += (int(time()) - self.Time)
+    self.Time = int(time())
+
+  def PlayerTime(self):
+    return self.SecondsPlayed + (int(time()) - self.Time)
 
   def SetRoom(self, room_id):
     self.LastRoom = self.Room
@@ -2267,6 +2284,8 @@ class Player(Person):
   def CompleteQuest(self, quest_id):
     if quest_id in self.Quests.keys():
       self.Quests[quest_id] = True
+    else:
+      self.Quests.update({quest_id: True})
 
   def HasQuest(self, quest_id, completed=None):
     for q_id, q_completed in self.Quests.items():
@@ -2429,12 +2448,13 @@ class RoomSpawn:
 
 
 class Room:
-  def __init__(self, title, short_desc="", long_desc=None, func=None,
-               room_pers=None, exits=None, room_items=None,
+  def __init__(self, title, short_desc="", long_desc=None, travel_time=60,
+               func=None, room_pers=None, exits=None, room_items=None,
                spawns=None):
     self.Title = title
     self.ShortDescription = short_desc
     self.LongDescription = []
+    self.TravelTime = travel_time
     self.Function = func
     self.Persons = []
     self.Spawns = []
@@ -2574,7 +2594,7 @@ class GameData:
     persons = GameData.GetPersons()
 
     # Check for room spawns
-    seconds = timegm(gmtime())
+    seconds = int(time())
     if GameData._NextRoomEvent < seconds:
       logd("RoomEvents check")
       # Set NextRoomEvent max 10mins

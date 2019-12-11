@@ -311,6 +311,8 @@ def actionEquipItem():
     print("\nYou take a moment to equip %s." % items[equip_id].ItemName)
     return False
   else:
+    # 1 minute to equip
+    player.GameTime += 60
     print("\n%s equipped." % items[equip_id].ItemName.capitalize())
 
 
@@ -329,6 +331,8 @@ def actionRemoveItem():
           items[item_id].ItemName)
     return
   player.ItemLinks[item_id].Equipped = False
+  # 1 minute to equip
+  player.GameTime += 60
   print("\n%s removed." % items[item_id].ItemName.capitalize())
 
 
@@ -362,6 +366,7 @@ def actionInventory():
 def actionSave():
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
+  player.UpdatePlayerTime()
   if SavePlayer(player, rooms[player.Room].Title, player.Password):
     return True
   else:
@@ -742,6 +747,9 @@ def playerTalk(p, keyword=""):
       if not printNPCTalk(p, player.Command):
         print("\n%s doesn't know anything about that." %
               p.Name.capitalize())
+      else:
+        # 30 second talk turn
+        player.GameTime += 30
   if player.CombatTarget is not None:
     return True
 
@@ -865,6 +873,8 @@ def actionUnlock():
       player.SetDoorState(door_id).Locked = False
       print("\nYou unlock the %s with %s." %
             (doors[door_id].Name, items[key].ItemName))
+      # 30 seconds door action
+      player.GameTime += 30
     else:
       print("\n%sYou don't have the key for that!%s" %
             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
@@ -877,6 +887,8 @@ def actionClose():
   if door_id != DoorEnum.NONE:
     player.SetDoorState(door_id).Closed = True
     print("\nYou close the %s." % doors[door_id].Name)
+    # 30 seconds door action
+    player.GameTime += 30
 
 
 def actionOpen():
@@ -891,6 +903,8 @@ def actionOpen():
     else:
       player.SetDoorState(door_id).Closed = False
       print("\nYou open the %s." % doors[door_id].Name)
+      # 30 seconds door action
+      player.GameTime += 30
 
 
 def actionListPlayers():
@@ -898,12 +912,20 @@ def actionListPlayers():
   if len(pinfo) == 0:
     print("\nThere are no saved characters!")
   else:
-    print("\n%s%-20s %s %s%s" % (ANSI.TEXT_BOLD, "CHARACTER NAME",
-                                 "SCORE", "SAVED IN ROOM", ANSI.TEXT_NORMAL))
-    print("%s%-20s %s %s%s" % (ANSI.TEXT_BOLD, "--------------", "-----",
-                               "-------------", ANSI.TEXT_NORMAL))
+    print("\n%s%-20s %-5s %-11s %s%s" %
+          (ANSI.TEXT_BOLD, "CHARACTER NAME", "SCORE", "TIME PLAYED",
+           "SAVED IN ROOM", ANSI.TEXT_NORMAL))
+    print("%s%-20s %-5s %-11s %s%s" %
+          (ANSI.TEXT_BOLD, "--------------", "-----", "-----------",
+           "-------------", ANSI.TEXT_NORMAL))
     for x in sorted(pinfo):
-      print("%-20s %-5s %s" % (x, str(pinfo[x]["score"]), pinfo[x]["info"]))
+      day_plural = "s"
+      if pinfo[x]["played"] == 1:
+        day_plural = ""
+      print("%-20s %-5s %-11s %s" %
+            (x, str(pinfo[x]["score"]),
+             "%d day%s" % (pinfo[x]["played"], day_plural),
+             pinfo[x]["info"]))
 
 
 def actionLook():
@@ -973,6 +995,8 @@ def actionRest():
   combat = False
   for i in range(2):
     sleep(5)
+    # 15 minute rest time each
+    player.GameTime += 900
     GameData.ProcessRoomEvents()
     # Check if the room persons need to attack
     enemies = GameData.ProcessRoomCombat()
@@ -1039,6 +1063,8 @@ def actionTrain():
     if sl.Attempts > ATT_PER_TRAIN:
       count += 1
       if count == skillNum:
+        # 30 minute train time
+        player.GameTime += 1800
         # attempt to raise skill
         r = DiceRoll(1, 100).Result() + player.SkillBase(skill_id)
         if r > player.SkillML(skill_id, skipPenalty=True):
@@ -1069,6 +1095,12 @@ def actionSaveGeneric():
     return
   if actionSave():
     print("\nCharacter saved.")
+
+
+def actionTime():
+  player = GameData.GetPlayer()
+  print("\nTime Played: %s minutes" % int(player.PlayerTime() / 60))
+  print("Game Time: %s minutes" % int(player.GameTime / 60))
 
 
 class GenericCommand:
@@ -1140,6 +1172,7 @@ commands.append(GenericCommand(["sell"], actionTalkSell))
 commands.append(GenericCommand(["skills", "sk"], actionSkills))
 commands.append(GenericCommand(["stats", "st"], actionStatsGeneric))
 commands.append(GenericCommand(["talk"], actionTalk))
+commands.append(GenericCommand(["time"], actionTime))
 commands.append(GenericCommand(["train"], actionTrain))
 commands.append(GenericCommand(["unlock"], actionUnlock))
 commands.append(GenericCommand(["who"], actionListPlayers))
@@ -1205,11 +1238,15 @@ def prompt(func_break=False):
                   if not roomTalkTrigger("on_exit"):
                     trigger_deny = True
                     break
+                  # time to cross room
+                  player.GameTime += rooms[player.Room].TravelTime
                   player.SetRoom(ex.Room)
               else:
                 if not roomTalkTrigger("on_exit"):
                   trigger_deny = True
                   break
+                # time to cross room
+                player.GameTime += rooms[player.Room].TravelTime
                 player.SetRoom(ex.Room)
               return
           if not trigger_deny:

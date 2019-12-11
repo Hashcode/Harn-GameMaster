@@ -100,7 +100,7 @@ rooms = {
                  "and wealth. Make sure to SAVE along the way to ensure "
                  "your progress won't be lost."
              ],
-             room_StartGame),
+             func=room_StartGame),
     RoomEnum.GAME_RESTORE_SAVE:
         Room("Restore Saved Progress", func=room_RestoreSave),
     RoomEnum.GAME_CREATE_CHARACTER:
