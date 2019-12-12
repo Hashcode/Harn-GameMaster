@@ -648,6 +648,8 @@ def roomTalkTrigger(keyword):
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
   for npc in rooms[player.Room].Persons:
+    if npc.Talks is None:
+      continue
     for tk in npc.Talks:
       if tk.Keyword.lower() == keyword:
         if processConditions(tk.Conditions):
