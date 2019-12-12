@@ -128,6 +128,7 @@ rooms = {
              },
              room_pers=[
                  PersonEnum.BL_KEEP_GUARD,
+                 PersonEnum.BL_KEEP_SENTRY,
              ]),
     RoomEnum.BL_PRIEST_CHAMBER:
         Room("The Priest's Chamber", "the priest's chamber",
@@ -163,7 +164,12 @@ rooms = {
                  DirectionEnum.EAST: Exit(RoomEnum.BL_GATEHOUSE_PASSAGE),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_EASTERN_WALK),
                  DirectionEnum.WEST: Exit(RoomEnum.BL_STABLE),
-             }),
+             },
+             room_pers=[
+                 PersonEnum.BL_KEEP_CORPORAL_WATCH,
+                 PersonEnum.BL_KEEP_YARD_SCRIBE,
+                 PersonEnum.BL_KEEP_SENTRY,
+             ]),
     RoomEnum.BL_N_GATEHOUSE_TOWER:
         Room("North Gatehouse Tower", "the north gatehouse tower",
              ["** TODO **"],

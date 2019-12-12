@@ -46,7 +46,8 @@ persons = {
             }),
     PersonEnum.BL_KEEP_GUARD:
         Mob(PersonEnum.BL_KEEP_GUARD, "a gatehouse guard",
-            "An impassive guard stares ahead.", 60, 17, 50,
+            "A mild-mannered guard keeps watch over the gatehouse.",
+            60, 17, 50,
             cur=DiceRoll(1, 6, 40),
             attrs={
                 AttrEnum.SEX: 1,
@@ -167,6 +168,168 @@ persons = {
                         text=[
                             "\"Stay safe while in the Keep.\" The guard "
                             "resumes his post."
+                        ]),
+            ]),
+    PersonEnum.BL_KEEP_SENTRY:
+        Mob(PersonEnum.BL_KEEP_SENTRY, "a common sentry",
+            "A common sentry stands watch.",
+            50, 14, 40,
+            cur=DiceRoll(1, 6, 10),
+            attrs={
+                AttrEnum.SEX: 1,
+                AttrEnum.STRENGTH: 12,
+                AttrEnum.STAMINA: 12,
+                AttrEnum.DEXTERITY: 12,
+                AttrEnum.AGILITY: 10,
+                AttrEnum.EYESIGHT: 12,
+                AttrEnum.HEARING: 11,
+                AttrEnum.SMELL: 9,
+                AttrEnum.INTELLIGENCE: 10,
+                AttrEnum.AURA: 10,
+                AttrEnum.WILL: 11,
+            },
+            mob_skills={
+                SkillEnum.POLEARM: 40,
+            },
+            eq={
+                ItemEnum.WEAPON_POLEAXE: ItemLink(1, True),
+                ItemEnum.ARMOR_COWL_QUILT: ItemLink(1, True),
+                ItemEnum.ARMOR_TUNIC_QUILT: ItemLink(1, True),
+                ItemEnum.ARMOR_LEGGINGS_QUILT: ItemLink(1, True),
+                ItemEnum.ARMOR_HALFHELM_KURBUL: ItemLink(1, True),
+                ItemEnum.ARMOR_BYRNIE_LEATHER_RING: ItemLink(1, True),
+                ItemEnum.ARMOR_LEGGINGS_LEATHER: ItemLink(1, True),
+                ItemEnum.ARMOR_GAUNTLETS_LEATHER_RING: ItemLink(1, True),
+            },
+            talk=[
+                MobTalk("~on_enter~",
+                        condition=[
+                            Condition(ConditionCheckEnum.LESS_THAN,
+                                      TargetTypeEnum.PERCENT_CHANCE,
+                                      value=5),
+                        ],
+                        text=[
+                            "The sentry shuffles his feet looking bored."
+                        ],
+                        triggers=[
+                            Trigger(TriggerTypeEnum.DELAY, 30),
+                        ]),
+            ]),
+    PersonEnum.BL_KEEP_CORPORAL_WATCH:
+        Mob(PersonEnum.BL_KEEP_CORPORAL_WATCH, "the corporal of the watch",
+            "The corporal of the watch stands here grumbling to his scribe.",
+            65, 18, 50,
+            cur=DiceRoll(1, 6, 60),
+            attrs={
+                AttrEnum.SEX: 1,
+                AttrEnum.STRENGTH: 15,
+                AttrEnum.STAMINA: 15,
+                AttrEnum.DEXTERITY: 13,
+                AttrEnum.AGILITY: 12,
+                AttrEnum.EYESIGHT: 12,
+                AttrEnum.HEARING: 13,
+                AttrEnum.SMELL: 10,
+                AttrEnum.INTELLIGENCE: 13,
+                AttrEnum.AURA: 11,
+                AttrEnum.WILL: 12,
+            },
+            mob_skills={
+                SkillEnum.POLEARM: 50,
+            },
+            eq={
+                ItemEnum.WEAPON_BASTARD_SWORD: ItemLink(1, True),
+                ItemEnum.SHIELD_ROUND_BANDED: ItemLink(1, True),
+                ItemEnum.ARMOR_COWL_QUILT: ItemLink(1, True),
+                ItemEnum.ARMOR_TUNIC_QUILT: ItemLink(1, True),
+                ItemEnum.ARMOR_LEGGINGS_QUILT: ItemLink(1, True),
+                ItemEnum.ARMOR_COWL_MAIL: ItemLink(1, True),
+                ItemEnum.ARMOR_BYRNIE_MAIL: ItemLink(1, True),
+                ItemEnum.ARMOR_LEGGINGS_MAIL: ItemLink(1, True),
+                ItemEnum.ARMOR_MITTENS_MAIL: ItemLink(1, True),
+            },
+            talk=[
+                MobTalk("~on_enter~",
+                        condition=[
+                            Condition(ConditionCheckEnum.LESS_THAN,
+                                      TargetTypeEnum.PERCENT_CHANCE,
+                                      value=5),
+                            Condition(ConditionCheckEnum.HAS,
+                                      TargetTypeEnum.MOB_IN_ROOM,
+                                      PersonEnum.BL_KEEP_YARD_SCRIBE),
+                        ],
+                        text=[
+                            "The corporal of the watch glances at the "
+                            "scribe and grumbles under his breath."
+                        ],
+                        triggers=[
+                            Trigger(TriggerTypeEnum.DELAY, 30),
+                        ]),
+                MobTalk("~on_enter~",
+                        condition=[
+                            Condition(ConditionCheckEnum.LESS_THAN,
+                                      TargetTypeEnum.PERCENT_CHANCE,
+                                      value=5),
+                        ],
+                        text=[
+                            "A young lackey runs up to the corporal and "
+                            "hands him a note before scrambling away."
+                        ],
+                        triggers=[
+                            Trigger(TriggerTypeEnum.DELAY, 30),
+                        ]),
+            ],
+            periodics=[
+            ]),
+    PersonEnum.BL_KEEP_YARD_SCRIBE:
+        Mob(PersonEnum.BL_KEEP_YARD_SCRIBE, "a young scribe",
+            "A young scribe is taking notes as traffic moves in and out of "
+            "the keep.",
+            40, 12, 35,
+            cur=DiceRoll(1, 6, 60),
+            attrs={
+                AttrEnum.SEX: 1,
+                AttrEnum.STRENGTH: 10,
+                AttrEnum.STAMINA: 11,
+                AttrEnum.DEXTERITY: 14,
+                AttrEnum.AGILITY: 11,
+                AttrEnum.EYESIGHT: 15,
+                AttrEnum.HEARING: 14,
+                AttrEnum.SMELL: 10,
+                AttrEnum.INTELLIGENCE: 13,
+                AttrEnum.AURA: 10,
+                AttrEnum.WILL: 11,
+            },
+            mob_skills={
+                SkillEnum.UNARMED: 20,
+            },
+            eq={
+                ItemEnum.ARMOR_ROBE_CLOTH: ItemLink(1, True),
+            },
+            talk=[
+                MobTalk("~on_enter~",
+                        condition=[
+                            Condition(ConditionCheckEnum.LESS_THAN,
+                                      TargetTypeEnum.PERCENT_CHANCE,
+                                      value=5),
+                        ],
+                        text=[
+                            "The scribe scribbles something in his notes."
+                        ],
+                        triggers=[
+                            Trigger(TriggerTypeEnum.DELAY, 30),
+                        ]),
+                MobTalk("~on_exit~",
+                        condition=[
+                            Condition(ConditionCheckEnum.LESS_THAN,
+                                      TargetTypeEnum.PERCENT_CHANCE,
+                                      value=5),
+                        ],
+                        text=[
+                            "As you leave, the scribe watches you go and "
+                            "makes an entry in his notes."
+                        ],
+                        triggers=[
+                            Trigger(TriggerTypeEnum.DELAY, 30),
                         ]),
             ]),
     PersonEnum.BL_PROVISIONER:

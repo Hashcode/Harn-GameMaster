@@ -1511,6 +1511,9 @@ class PersonEnum(IntEnum):
   NONE = 0
   MON_RAT = 100
   BL_KEEP_GUARD = 10000
+  BL_KEEP_SENTRY = 10001
+  BL_KEEP_CORPORAL_WATCH = 10010
+  BL_KEEP_YARD_SCRIBE = 10011
   BL_PROVISIONER = 10020
 
 
@@ -1909,12 +1912,20 @@ class TargetTypeEnum(IntEnum):
   PLAYER_QUEST_COMPLETE = 3
   ITEM_IN_ROOM = 4
   MOB_IN_ROOM = 5
+  LOCATED_IN_ROOM = 6
+  PERCENT_CHANCE = 7
+  ATTR_CHECK = 8
+  SKILL_CHECK = 9
+  TIME_CHECK = 10
 
 
 class ConditionCheckEnum(IntEnum):
   NONE = 0
   HAS = 1
   HAS_NOT = 2
+  GREATER_THAN = 3
+  EQUAL_TO = 4
+  LESS_THAN = 5
 
 
 class TriggerTypeEnum(IntEnum):
@@ -1923,20 +1934,27 @@ class TriggerTypeEnum(IntEnum):
   ITEM_TAKE = 2
   ITEM_BUY = 3
   ITEM_SELL = 4
-  CURRENCY_GIVE = 5
-  CURRENCY_TAKE = 6
-  QUEST_GIVE = 7
-  QUEST_COMPLETE = 8
-  PERSON_ATTACK = 9
-  MESSAGE = 10
-  DENY = 11
+  ROOM_SPAWN = 5
+  ROOM_DESPAWN = 6
+  CURRENCY_GIVE = 7
+  CURRENCY_TAKE = 8
+  QUEST_GIVE = 9
+  QUEST_COMPLETE = 10
+  PERSON_ATTACK = 11
+  PERSON_DESC = 12
+  MESSAGE = 13
+  MOVE = 14
+  DELAY = 15
+  DENY = 16
 
 
 class Condition:
-  def __init__(self, cond, target_type, data):
+  def __init__(self, cond, target_type=TargetTypeEnum.NONE, data=None,
+               value=0):
     self.ConditionCheck = cond
     self.TargetType = target_type
     self.Data = data
+    self.Value = value
 
 
 class Trigger:
@@ -1975,7 +1993,8 @@ class Mob(Person):
                aim=AimEnum.MID, flags=0,
                skin=MaterialEnum.NONE, cur=None, attrs=None,
                num_attacks=1, mob_attacks=None, mob_skills=None, eq=None,
-               loot=None, sell_items=None, buy_items=None, talk=None):
+               loot=None, sell_items=None, buy_items=None, talk=None,
+               periodics=None):
     super().__init__(PersonTypeEnum.NPC, name, long_desc, flags, skin,
                      it=eq)
     # None == Template / Char
@@ -1997,7 +2016,10 @@ class Mob(Person):
     self.Loot = loot
     self.SellItemLinks = sell_items
     self.BuyItemLinks = buy_items
+    self.DelayTimestamp = 0
+    self.DelaySeconds = 0
     self.Talks = talk
+    self.Periodics = periodics
     super().ResetStats()
 
   def AttrInitiative(self):

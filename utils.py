@@ -591,6 +591,28 @@ def processConditions(conditions):
             return False
         if c.ConditionCheck == ConditionCheckEnum.HAS_NOT and match:
             return False
+      elif c.TargetType == TargetTypeEnum.LOCATED_IN_ROOM:
+        # TODO:
+        return False
+      elif c.TargetType == TargetTypeEnum.PERCENT_CHANCE:
+        r = DiceRoll(1, 100).Result()
+        if c.ConditionCheck == ConditionCheckEnum.GREATER_THAN and \
+           r <= c.Value:
+          return False
+        if c.ConditionCheck == ConditionCheckEnum.EQUAL_TO and \
+           r != c.Value:
+          return False
+        if c.ConditionCheck == ConditionCheckEnum.LESS_THAN and \
+           r >= c.Value:
+          return False
+      elif c.TargetType == TargetTypeEnum.ATTR_CHECK:
+        # TODO:
+        return False
+      elif c.TargetType == TargetTypeEnum.SKILL_CHECK:
+        # TODO:
+        return False
+      else:
+        return False
   return True
 
 
@@ -624,14 +646,23 @@ def processTriggers(obj, triggers):
                 (ANSI.TEXT_BOLD, obj.Name.capitalize(),
                  ANSI.TEXT_NORMAL))
           player.CombatTarget = obj.UUID
+      elif tr.TriggerType == TriggerTypeEnum.PERSON_DESC:
+        obj.LongDescription = tr.Data
       elif tr.TriggerType == TriggerTypeEnum.MESSAGE:
         print("\n" + wrapper.fill(tr.Data))
+      elif tr.TriggerType == TriggerTypeEnum.MOVE:
+        # TODO:
+        print("* Coming Soon *")
+      elif tr.TriggerType == TriggerTypeEnum.DELAY:
+        obj.DelayTimestamp = player.PlayerTime()
+        obj.DelaySeconds = int(tr.Data)
       elif tr.TriggerType == TriggerTypeEnum.DENY:
         return False
 
 
 def printNPCTalk(p, keyword):
   ret = False
+  player = GameData.GetPlayer()
   for tk in p.Talks:
     if tk.Keyword.lower() == keyword:
       if processConditions(tk.Conditions):
@@ -649,6 +680,8 @@ def roomTalkTrigger(keyword):
   rooms = GameData.GetRooms()
   for npc in rooms[player.Room].Persons:
     if npc.Talks is None:
+      continue
+    if player.PlayerTime() - npc.DelayTimestamp <= npc.DelaySeconds:
       continue
     for tk in npc.Talks:
       if tk.Keyword.lower() == keyword:
@@ -776,7 +809,12 @@ def actionTalk(keyword=""):
   p = chooseNPC(npcs, "talk to")
   if p is None:
     return
-  if p.Talks is None:
+  count = 0
+  if p.Talks is not None:
+    for t in p.Talks:
+      if not t.Keyword.startswith("~"):
+        count += 1
+  if count == 0:
     print("\n%s ignores your attempts to talk." % p.Name.capitalize())
     return
   playerTalk(p, keyword)
