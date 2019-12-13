@@ -6,7 +6,9 @@
 
 from global_defines import (PersonEnum, Player, ItemEnum, DoorEnum, Door,
                             DoorState, DirectionEnum,
-                            RoomFuncResponse, RoomEnum, Exit, Room, RoomSpawn,
+                            ConditionCheckEnum, TargetTypeEnum, Condition,
+                            TriggerTypeEnum, Trigger, Periodic,
+                            RoomFuncResponse, RoomEnum, Exit, Room,
                             ANSI, GameData)
 from utils import (actionSave)
 from db import (ExistsDB, LoadPlayer)
@@ -215,8 +217,20 @@ rooms = {
                  DirectionEnum.EAST: Exit(RoomEnum.BL_EASTERN_WALK,
                                           DoorEnum.WAREHOUSE_DBL_DOOR),
              },
-             spawns=[
-                 RoomSpawn(PersonEnum.MON_RAT, 100, 1, 360),
+             periodics=[
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN,
+                                   TargetTypeEnum.MOB_IN_ROOM,
+                                   PersonEnum.MON_RAT, 1),
+                         Condition(ConditionCheckEnum.LESS_THAN,
+                                   TargetTypeEnum.PERCENT_CHANCE,
+                                   value=100),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN,
+                                 PersonEnum.MON_RAT),
+                     ], 360),
              ]),
     RoomEnum.BL_SOUTHEASTERN_WALK:
         Room("South-Eastern Walk", "the south-eastern walk",

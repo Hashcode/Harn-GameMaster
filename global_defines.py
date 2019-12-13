@@ -1964,6 +1964,16 @@ class Trigger:
     self.Chance = chance
 
 
+# PERIODIC
+
+class Periodic:
+  def __init__(self, conditions, triggers, delay=60):
+    self.Conditions = conditions
+    self.Triggers = triggers
+    self.DelaySeconds = delay
+    self.LastCheck = 0
+
+
 # TALK
 
 class MobTalk:
@@ -2460,26 +2470,17 @@ class Exit:
     self.Door = door_id
 
 
-class RoomSpawn:
-  def __init__(self, person_id, chance, max_qty=1, delay=60):
-    self.Person = person_id
-    self.Chance = chance
-    self.MaxQuantity = max_qty
-    self.SpawnDelaySeconds = delay
-    self.LastSpawnCheck = 0
-
-
 class Room:
   def __init__(self, title, short_desc="", long_desc=None, travel_time=60,
                func=None, room_pers=None, exits=None, room_items=None,
-               spawns=None):
+               periodics=None):
     self.Title = title
     self.ShortDescription = short_desc
     self.LongDescription = []
     self.TravelTime = travel_time
     self.Function = func
     self.Persons = []
-    self.Spawns = []
+    self.Periodics = []
     self.Exits = dict()
     self.RoomItems = dict()
     if long_desc is not None:
@@ -2495,9 +2496,9 @@ class Room:
     if room_pers is not None:
       for person_id in room_pers:
         self.AddPerson(person_id)
-    if spawns is not None:
-      for s in spawns:
-        self.Spawns.append(s)
+    if periodics is not None:
+      for per in periodics:
+        self.Periodics.append(per)
 
   def AddExit(self, exit_dir, exit):
     if exit_dir in self.Exits:
@@ -2611,41 +2612,34 @@ class GameData:
     return GameData._quests
 
   @staticmethod
-  def ProcessRoomEvents():
+  def ProcessEvents(processConditions, processTriggers):
     rooms = GameData.GetRooms()
-    persons = GameData.GetPersons()
-
-    # Check for room spawns
-    seconds = int(time())
+    player = GameData.GetPlayer()
+    # Check for room events
+    seconds = player.PlayerTime()
     if GameData._NextRoomEvent < seconds:
-      logd("RoomEvents check")
+      logd("Periodics check")
       # Set NextRoomEvent max 10mins
       GameData._NextRoomEvent = seconds + (10 * 60)
-      for r in rooms:
-        if rooms[r].Spawns is None:
+      for room_id in rooms.keys():
+        if rooms[room_id].Periodics is None:
           continue
-        for s in rooms[r].Spawns:
-          next = s.LastSpawnCheck + s.SpawnDelaySeconds
+        for per in rooms[room_id].Periodics:
+          next = per.LastCheck + per.DelaySeconds
           if next >= seconds:
             if GameData._NextRoomEvent > next:
               GameData._NextRoomEvent = next
               logd("Next RoomEvents check in %d seconds" %
                    (GameData._NextRoomEvent - seconds))
             continue
-          s.LastSpawnCheck = seconds
-          if GameData._NextRoomEvent > seconds + s.SpawnDelaySeconds:
-            GameData._NextRoomEvent = seconds + s.SpawnDelaySeconds
+          per.LastCheck = seconds
+          if GameData._NextRoomEvent > seconds + per.DelaySeconds:
+            GameData._NextRoomEvent = seconds + per.DelaySeconds
             logd("Next RoomEvents check in %d seconds" %
                  (GameData._NextRoomEvent - seconds))
-          count = 0
-          for p in rooms[r].Persons:
-            if p.PersonID == s.Person:
-              count += 1
-          if count < s.MaxQuantity:
-            logd("SpawnCheck [%s] in %s [<=%d]" % (persons[s.Person].Name,
-                                                   rooms[r].Title, s.Chance))
-            if DiceRoll(1, 100).Result() <= s.Chance:
-              rooms[r].AddPerson(s.Person)
+          if processConditions(room_id, per.Conditions):
+            if per.Triggers is not None:
+              processTriggers(room_id, per.Triggers)
 
   @staticmethod
   def ProcessRoomCombat():

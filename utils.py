@@ -20,6 +20,7 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             TargetTypeEnum, ConditionCheckEnum,
                             TriggerTypeEnum,
                             ItemLink, DirectionEnum, ANSI, GameData)
+from logger import (logd)
 from db import (LoadStatsDB, SavePlayer)
 
 
@@ -544,7 +545,7 @@ def actionInspect():
     printStats(p)
 
 
-def processConditions(conditions):
+def processConditions(room_id, conditions):
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
   if conditions is not None:
@@ -575,21 +576,43 @@ def processConditions(conditions):
           if player.HasQuest(c.Data, completed=True):
             return False
       elif c.TargetType == TargetTypeEnum.ITEM_IN_ROOM:
-        if c.ConditionCheck == ConditionCheckEnum.HAS:
-          if c.Data not in rooms[player.Room].RoomItems.keys():
+        count = 0
+        for item_id, ri in rooms[room_id].RoomItems.items():
+          if item_id == c.Data:
+            count += 1
+        if c.ConditionCheck == ConditionCheckEnum.HAS and count < 1:
+          return False
+        if c.ConditionCheck == ConditionCheckEnum.HAS_NOT and count > 0:
+          return False
+        if c.ConditionCheck == ConditionCheckEnum.GREATER_THAN:
+          if count <= c.Value:
             return False
-        if c.ConditionCheck == ConditionCheckEnum.HAS_NOT:
-          if c.Data in rooms[player.Room].RoomItems.keys():
+        if c.ConditionCheck == ConditionCheckEnum.EQUAL_TO:
+          if count == c.Value:
+            return False
+        if c.ConditionCheck == ConditionCheckEnum.LESS_THAN:
+          if count >= c.Value:
             return False
       elif c.TargetType == TargetTypeEnum.MOB_IN_ROOM:
         match = False
-        for p in rooms[player.Room].Persons:
+        count = 0
+        for p in rooms[room_id].Persons:
           if p.PersonID == c.Data:
+            count += 1
             match = True
-            break
+        logd("[cond] MOB_IN_ROOM: %d == %d" % (c.Data, count))
         if c.ConditionCheck == ConditionCheckEnum.HAS and not match:
             return False
         if c.ConditionCheck == ConditionCheckEnum.HAS_NOT and match:
+            return False
+        if c.ConditionCheck == ConditionCheckEnum.GREATER_THAN:
+          if count <= c.Value:
+            return False
+        if c.ConditionCheck == ConditionCheckEnum.EQUAL_TO:
+          if count != c.Value:
+            return False
+        if c.ConditionCheck == ConditionCheckEnum.LESS_THAN:
+          if count >= c.Value:
             return False
       elif c.TargetType == TargetTypeEnum.LOCATED_IN_ROOM:
         # TODO:
@@ -618,6 +641,7 @@ def processConditions(conditions):
 
 def processTriggers(obj, triggers):
   player = GameData.GetPlayer()
+  rooms = GameData.GetRooms()
   if triggers is None:
     return
   for tr in triggers:
@@ -631,6 +655,12 @@ def processTriggers(obj, triggers):
         actionShopSell(obj)
       elif tr.TriggerType == TriggerTypeEnum.ITEM_BUY:
         actionShopBuy(obj)
+      elif tr.TriggerType == TriggerTypeEnum.ROOM_SPAWN:
+        logd("[trigger] Room Spawn [%s]: %d" % (rooms[obj].Title, tr.Data))
+        rooms[obj].AddPerson(tr.Data)
+      elif tr.TriggerType == TriggerTypeEnum.ROOM_DESPAWN:
+        # TODO:
+        print("* Coming Soon *")
       elif tr.TriggerType == TriggerTypeEnum.CURRENCY_GIVE:
         player.Currency += int(tr.Data)
       elif tr.TriggerType == TriggerTypeEnum.CURRENCY_TAKE:
@@ -661,11 +691,11 @@ def processTriggers(obj, triggers):
 
 
 def printNPCTalk(p, keyword):
-  ret = False
   player = GameData.GetPlayer()
+  ret = False
   for tk in p.Talks:
     if tk.Keyword.lower() == keyword:
-      if processConditions(tk.Conditions):
+      if processConditions(player.Room, tk.Conditions):
         ret = True
         for t in tk.Texts:
           print("\n" + wrapper.fill(t))
@@ -685,7 +715,7 @@ def roomTalkTrigger(keyword):
       continue
     for tk in npc.Talks:
       if tk.Keyword.lower() == keyword:
-        if processConditions(tk.Conditions):
+        if processConditions(player.Room, tk.Conditions):
           for t in tk.Texts:
             print("\n" + wrapper.fill(t))
           if tk.Triggers is not None:
@@ -771,7 +801,7 @@ def playerTalk(p, keyword=""):
   printNPCTalk(p, keyword)
   while player.IsTalking():
     # Check for room events
-    GameData.ProcessRoomEvents()
+    GameData.ProcessEvents(processConditions, processTriggers)
     prompt(func_break=True)
     if player.Command == "done":
       player.SetTalking(False)
@@ -1037,7 +1067,7 @@ def actionRest():
     sleep(5)
     # 15 minute rest time each
     player.GameTime += 900
-    GameData.ProcessRoomEvents()
+    GameData.ProcessEvents(processConditions, processTriggers)
     # Check if the room persons need to attack
     enemies = GameData.ProcessRoomCombat()
     if len(enemies) > 0:
