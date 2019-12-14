@@ -2471,9 +2471,10 @@ class Exit:
 
 
 class Room:
-  def __init__(self, title, short_desc="", long_desc=None, travel_time=60,
-               func=None, room_pers=None, exits=None, room_items=None,
-               periodics=None):
+  def __init__(self, zone, title, short_desc="", long_desc=None,
+               travel_time=60, func=None, room_pers=None, exits=None,
+               room_items=None, periodics=None):
+    self.Zone = zone
     self.Title = title
     self.ShortDescription = short_desc
     self.LongDescription = []
@@ -2621,7 +2622,9 @@ class GameData:
       logd("Periodics check")
       # Set NextRoomEvent max 10mins
       GameData._NextRoomEvent = seconds + (10 * 60)
-      for room_id in rooms.keys():
+      for room_id, r in rooms.keys():
+        if rooms[player.Room].Zone != r.Zone:
+          continue
         if rooms[room_id].Periodics is None:
           continue
         for per in rooms[room_id].Periodics:
