@@ -4,6 +4,9 @@
 
 # Logging
 
+from gamedata import (GameData)
+
+
 LOG_OFF = 0
 LOG_ERR = 1
 LOG_WRN = 2
@@ -15,7 +18,7 @@ LogLevel = LOG_INF
 
 def log(ll, line):
   if LogLevel >= ll:
-    print(line)
+    GameData.GetConsole().Print(line)
 
 
 def loge(line):
@@ -32,3 +35,5 @@ def logi(line):
 
 def logd(line):
   log(LOG_DBG, "> [debug] %s" % line)
+
+# vim: tabstop=2 shiftwidth=2 expandtab:

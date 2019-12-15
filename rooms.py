@@ -10,7 +10,8 @@ from global_defines import (PersonEnum, Player, ItemEnum, DoorEnum, Door,
                             ConditionCheckEnum, TargetTypeEnum, Condition,
                             TriggerTypeEnum, Trigger, Periodic,
                             RoomFuncResponse, RoomEnum, Exit, Room,
-                            ANSI, GameData)
+                            ANSI)
+from gamedata import (GameData)
 from utils import (actionSave)
 from db import (ExistsDB, LoadPlayer)
 
@@ -32,19 +33,20 @@ def room_StartGame():
 
 
 def room_RestoreSave():
+  cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   name = input("\nCharacter name: ")
   pwd = input("Password: ")
 
-  print("\nPlease wait while saved data is loaded ...")
+  cm.Print("\nPlease wait while saved data is loaded ...")
   ret = LoadPlayer(player, name, pwd)
   if not ret:
-    print("%sUnable to find save data for %s!%s" %
-          (ANSI.TEXT_BOLD, name, ANSI.TEXT_NORMAL))
+    cm.Print("%sUnable to find save data for %s!%s" %
+             (ANSI.TEXT_BOLD, name, ANSI.TEXT_NORMAL))
     player.SetRoom(RoomEnum.GAME_START)
     return RoomFuncResponse.SKIP
 
-  print("Loaded.")
+  cm.Print("Loaded.")
   player.ResetStats()
   player.SetRoom(player.Room)
   return RoomFuncResponse.SKIP
@@ -54,18 +56,18 @@ def room_CreateCharacter():
   player = GameData.GetPlayer()
   player.Name = input("\nChoose a character name: ")
   if len(player.Name) < 3 or len(player.Name) > 20:
-    print("\nCharacter name needs between 3 and 20 characters long.")
+    cm.Print("\nCharacter name needs between 3 and 20 characters long.")
     return RoomFuncResponse.SKIP
 
-  print("\nA password is used to encrypt your SAVE data.")
-  print("It should NOT be a password used for anything important.")
+  cm.Print("\nA password is used to encrypt your SAVE data.")
+  cm.Print("It should NOT be a password used for anything important.")
   player.Password = input("\nEnter a password: ").upper()
   if len(player.Password) < 3 or len(player.Password) > 10:
-    print("\nPassword needs to be between 3 and 10 characters long.")
+    cm.Print("\nPassword needs to be between 3 and 10 characters long.")
     return RoomFuncResponse.SKIP
 
   if ExistsDB(player.Name, player.Password):
-    print("\nCharacter aready exists.")
+    cm.Print("\nCharacter aready exists.")
     player.SetRoom(RoomEnum.GAME_START)
     return RoomFuncResponse.SKIP
 
@@ -74,12 +76,12 @@ def room_CreateCharacter():
   player.ResetStats()
   player.SetRoom(GameData.ROOM_START)
 
-  print("\nSaving character ...")
+  cm.Print("\nSaving character ...")
   if not actionSave():
     return RoomFuncResponse.SKIP
-  print("Done.")
+  cm.Print("Done.")
 
-  print("\nGood luck, %s!" % (player.Name))
+  cm.Print("\nGood luck, %s!" % (player.Name))
   return RoomFuncResponse.SKIP
 
 
@@ -186,7 +188,31 @@ rooms = {
                  PersonEnum.BL_KEEP_CORPORAL_WATCH,
                  PersonEnum.BL_KEEP_YARD_SCRIBE,
                  PersonEnum.BL_KEEP_SENTRY,
-             ]),
+             ],
+             periodics=[
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN,
+                                   TargetTypeEnum.PERCENT_CHANCE,
+                                   value=10),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.MESSAGE,
+                                 "A woman bumps into you as she crosses "
+                                 "the yard."),
+                     ], 300),
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN,
+                                   TargetTypeEnum.PERCENT_CHANCE,
+                                   value=10),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.MESSAGE,
+                                 "A lackey runs up and delivers a message "
+                                 "to the corporal of the watch."),
+                     ], 450),
+            ]),
     RoomEnum.BL_N_GATEHOUSE_TOWER:
         Room(ZoneEnum.KEEP,
              "North Gatehouse Tower", "the north gatehouse tower",

@@ -17,7 +17,9 @@
 from random import seed
 
 from global_defines import (quests, ItemEnum, ItemLink, Player,
-                            RoomEnum, RoomFuncResponse, ANSI, GameData)
+                            RoomEnum, RoomFuncResponse, ANSI)
+from gamedata import (GameData)
+from console import (ConsoleManager)
 
 TestMode = True
 
@@ -26,6 +28,10 @@ ROOM_RESPAWN = RoomEnum.BL_PRIEST_CHAMBER
 
 seed()
 print(ANSI.CLEAR + ANSI.RESET_CURSOR, end='')
+
+cm = ConsoleManager()
+cm.start()
+GameData.SetConsole(cm)
 
 player = Player("Unknown")
 player.SetRoom(RoomEnum.GAME_START)
@@ -82,7 +88,10 @@ while True:
   if res != RoomFuncResponse.NO_PROMPT:
     prompt()
     if player.Command != "":
-      print("\n%sYou cannot do that here.%s" %
-            (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+      cm.Print("\n%sYou cannot do that here.%s" %
+               (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+
+cm.SetNormalTerm()
+
 
 # vim: set tabstop=2 shiftwidth=2 expandtab:

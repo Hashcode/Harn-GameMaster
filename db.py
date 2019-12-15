@@ -10,6 +10,8 @@ import json
 
 from hashlib import sha256
 
+from gamedata import GameData
+
 # from simplecrypt import encrypt, decrypt
 
 URL_BASE = "https://www.jsonstore.io"
@@ -69,7 +71,7 @@ def LoadDB(name, password, legacy=False):
       payload = record["result"]
       ret = payload["state"]
   except:
-    print("An error occurred during character load")
+    GameData.GetConsole().Print("An error occurred during character load")
   return ret
 
 

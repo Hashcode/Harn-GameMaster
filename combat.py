@@ -10,7 +10,8 @@ from global_defines import (DiceRoll, Roll, CoverageEnum, body_parts, aims,
                             AimEnum, SkillEnum, ItemEnum, ItemTypeEnum,
                             PlayerCombatState, wounds, PersonWound,
                             AttrEnum, PersonTypeEnum, ItemLink,
-                            ImpactActionEnum, ANSI, GameData)
+                            ImpactActionEnum, ANSI)
+from gamedata import (GameData)
 from logger import (logd)
 from table_melee_attack import (Action, ResultEnum, T_ATK, T_DEF,
                                 resolve_melee)
@@ -94,6 +95,7 @@ hit_table_melee_default = {
 # COMBAT COMMANDS
 
 def printCombatAttackActions(combatant, target):
+  cm = GameData.GetConsole()
   att = combatant.Person.GenerateCombatAttacks()
   if len(att) > 0:
     att_name = "%d ML [%s]" % (att[0].SkillML, att[0].Name)
@@ -105,47 +107,48 @@ def printCombatAttackActions(combatant, target):
   else:
     target_name = "[NO TARGET]"
   if combatant.Bloodloss > 0:
-    print("\nBLOODLOSS POINTS: %d of %d" %
-          (combatant.Bloodloss, combatant.Person.AttrEndurance()))
-  print("\nOFFENSE COMMANDS:\n")
-  print("%-8s %-5s : %s" % ("AIM", "", aims[combatant.Aim].Name))
+    cm.Print("\nBLOODLOSS POINTS: %d of %d" %
+             (combatant.Bloodloss, combatant.Person.AttrEndurance()))
+  cm.Print("\nOFFENSE COMMANDS:\n")
+  cm.Print("%-8s %-5s : %s" % ("AIM", "", aims[combatant.Aim].Name))
   if not combatant.Prone:
-    print("%-8s %-5s : %s" % ("ATTACK", "[A]", att_name))
-  print("%-8s %-5s :" % ("CAST", "[C]"))
+    cm.Print("%-8s %-5s : %s" % ("ATTACK", "[A]", att_name))
+  cm.Print("%-8s %-5s :" % ("CAST", "[C]"))
   defe_att = combatant.Person.GenerateCombatAttacks(block=True)
   if combatant.DefAction == Action.DODGE or len(defe_att) < 1:
     defe_name = "%d ML [%s]" % (combatant.Person.AttrDodge(), "DODGE")
   else:
     defe_name = "%s ML [BLOCK with %s" % (defe_att[0].SkillML,
                                           defe_att[0].Name)
-  print("%-8s %-5s : %s" % ("DEFENSE", "[DEF]", defe_name))
-  print("%-8s %-5s : %d ML" % ("FLEE", "[F]",
-                               combatant.Person.AttrDodge()))
-  # print("  GRAPPLE")
-  # print("  MISSILE")
-  print("%-8s %-5s :" % ("PASS", "[P]"))
+  cm.Print("%-8s %-5s : %s" % ("DEFENSE", "[DEF]", defe_name))
+  cm.Print("%-8s %-5s : %d ML" % ("FLEE", "[F]",
+                                  combatant.Person.AttrDodge()))
+  # cm.Print("  GRAPPLE")
+  # cm.Print("  MISSILE")
+  cm.Print("%-8s %-5s :" % ("PASS", "[P]"))
   if combatant.Prone:
-    print("%-8s %-5s :" % ("STAND", ""))
-  print("%-8s %-5s : %s" %
-        ("TARGET", "[T]", target_name))
+    cm.Print("%-8s %-5s :" % ("STAND", ""))
+  cm.Print("%-8s %-5s : %s" %
+           ("TARGET", "[T]", target_name))
 
 
 def chooseDefense(combatant):
+  cm = GameData.GetConsole()
   count = 1
-  print("\nChoose a defense:\n")
-  print("1. DODGE [%d ML]" % combatant.Person.AttrDodge())
+  cm.Print("\nChoose a defense:\n")
+  cm.Print("1. DODGE [%d ML]" % combatant.Person.AttrDodge())
   defe_att = combatant.Person.GenerateCombatAttacks(block=True)
   if len(defe_att) > 0:
     count = 2
-    print("2. BLOCK with %s [%d ML]" %
-          (defe_att[0].Name.lower(), defe_att[0].SkillML))
+    cm.Print("2. BLOCK with %s [%d ML]" %
+             (defe_att[0].Name.lower(), defe_att[0].SkillML))
   x = input("\nWhich defense #: ").lower()
   if not x.isnumeric():
-    print("\nInvalid defense.")
+    cm.Print("\nInvalid defense.")
     return
   defeNum = int(x)
   if defeNum < 1 or defeNum > count:
-    print("\nInvalid defense.")
+    cm.Print("\nInvalid defense.")
     return
   if defeNum == 1:
     combatant.DefAction = Action.DODGE
@@ -154,13 +157,14 @@ def chooseDefense(combatant):
 
 
 def chooseTarget(att, combatants):
+  cm = GameData.GetConsole()
   npcs = []
   for c in combatants:
     if c.Person.PersonType == PersonTypeEnum.NPC:
       if c.Flags & FLAG_DEAD == 0:
         npcs.append(c.Person)
   if len(npcs) < 1:
-    print("\nThere is nothing to attack nearby!")
+    cm.Print("\nThere is nothing to attack nearby!")
     return
   p = chooseNPC(npcs, "attack", stats=True)
   if p is not None:
@@ -173,21 +177,23 @@ def chooseTarget(att, combatants):
 
 
 def HandlePlayerDeath(player):
+  cm = GameData.GetConsole()
   # penalties?
   sleep(2)
-  print("\nYou slowly come back to your senses ...")
+  cm.Print("\nYou slowly come back to your senses ...")
   sleep(2)
   player.CombatState = PlayerCombatState.NONE
   player.SetRoom(GameData.ROOM_RESPAWN)
 
 
 def HandleMobDeath(att, defe):
+  cm = GameData.GetConsole()
   rooms = GameData.GetRooms()
   items = GameData.GetItems()
   if defe.Person.CurrencyGen is not None:
     # currency
     r = defe.Person.CurrencyGen.Result()
-    print("\nYou collect %d SP!" % (r))
+    cm.Print("\nYou collect %d SP!" % (r))
     att.Person.Currency += r
   # handle loot
   if defe.Person.Loot is not None:
@@ -205,15 +211,16 @@ def HandleMobDeath(att, defe):
 
 
 def CombatantFumble(combatant, item_id):
+  cm = GameData.GetConsole()
   if combatant.Person is GameData.GetPlayer():
-    print("\n%sYou FUMBLE your %s!%s" %
-          (ANSI.TEXT_BOLD, combatant.Attacks[0].Name.lower(),
-           ANSI.TEXT_NORMAL))
+    cm.Print("\n%sYou FUMBLE your %s!%s" %
+             (ANSI.TEXT_BOLD, combatant.Attacks[0].Name.lower(),
+              ANSI.TEXT_NORMAL))
   else:
-    print("\n%s%s FUMBLES %s %s!%s" %
-          (ANSI.TEXT_BOLD, combatant.Person.Name.capitalize(),
-           combatant.Person.AttrSexPossessivePronounStr().lower(),
-           combatant.Attacks[0].Name.lower(), ANSI.TEXT_NORMAL))
+    cm.Print("\n%s%s FUMBLES %s %s!%s" %
+             (ANSI.TEXT_BOLD, combatant.Person.Name.capitalize(),
+              combatant.Person.AttrSexPossessivePronounStr().lower(),
+              combatant.Attacks[0].Name.lower(), ANSI.TEXT_NORMAL))
   # unequip weapon
   for it_id, il in combatant.Person.ItemLinks.items():
     if it_id == item_id and il.Equipped:
@@ -223,17 +230,19 @@ def CombatantFumble(combatant, item_id):
 
 
 def CombatantStumble(combatant):
+  cm = GameData.GetConsole()
   if combatant.Person is GameData.GetPlayer():
-    print("%sYou STUMBLE to the ground!%s" %
-          (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("%sYou STUMBLE to the ground!%s" %
+             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   else:
-    print("%s%s STUMBLES to the ground!%s" %
-          (ANSI.TEXT_BOLD, combatant.Person.Name.capitalize(),
-           ANSI.TEXT_NORMAL))
+    cm.Print("%s%s STUMBLES to the ground!%s" %
+             (ANSI.TEXT_BOLD, combatant.Person.Name.capitalize(),
+              ANSI.TEXT_NORMAL))
   combatant.Prone = True
 
 
 def HandleImpactDMG(player, att, defe, at, res_level):
+  cm = GameData.GetConsole()
   break_loop = False
 
   # attacker lands impact
@@ -260,26 +269,26 @@ def HandleImpactDMG(player, att, defe, at, res_level):
     else:
       leftright = "right "
   if att.Person == player:
-    print("\nYou HIT %s's %s%s with your %s!" %
-          (defe.Person.Name, leftright,
-           body_parts[loc].PartName.lower(), at.Name.lower()))
+    cm.Print("\nYou HIT %s's %s%s with your %s!" %
+             (defe.Person.Name, leftright,
+              body_parts[loc].PartName.lower(), at.Name.lower()))
   else:
-    print("\n%s HITS your %s%s with %s %s!" %
-          (att.Person.Name.capitalize(), leftright,
-           body_parts[loc].PartName.lower(),
-           att.Person.AttrSexPossessivePronounStr().lower(),
-           at.Name.lower()))
+    cm.Print("\n%s HITS your %s%s with %s %s!" %
+             (att.Person.Name.capitalize(), leftright,
+              body_parts[loc].PartName.lower(),
+              att.Person.AttrSexPossessivePronounStr().lower(),
+              at.Name.lower()))
 
   if (impact <= 0):
     s = "S"
     if at.Name.lower().endswith("s"):
       s = ""
     if att.Person == player:
-      print("Your %s GLANCE%s off %s with no effect!" %
-            (at.Name.lower(), s, defe.Person.Name))
+      cm.Print("Your %s GLANCE%s off %s with no effect!" %
+               (at.Name.lower(), s, defe.Person.Name))
     else:
-      print("%s's %s GLANCE%s off you with no effect!" %
-            (att.Person.Name.capitalize(), at.Name.lower(), s))
+      cm.Print("%s's %s GLANCE%s off you with no effect!" %
+               (att.Person.Name.capitalize(), at.Name.lower(), s))
   else:
     # check impact effect
     ia_list = None
@@ -293,14 +302,14 @@ def HandleImpactDMG(player, att, defe, at, res_level):
                        ImpactActionEnum.WOUND_SRS,
                        ImpactActionEnum.WOUND_GRV]:
         if att.Person == player:
-          print("%s%s suffers a %s wound!%s" %
-                (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
-                 wounds[ia.Action].Name.lower(),
-                 ANSI.TEXT_NORMAL))
+          cm.Print("%s%s suffers a %s wound!%s" %
+                   (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
+                    wounds[ia.Action].Name.lower(),
+                    ANSI.TEXT_NORMAL))
         else:
-          print("%sYou suffer a %s wound!%s" %
-                (ANSI.TEXT_BOLD, wounds[ia.Action].Name.lower(),
-                 ANSI.TEXT_NORMAL))
+          cm.Print("%sYou suffer a %s wound!%s" %
+                   (ANSI.TEXT_BOLD, wounds[ia.Action].Name.lower(),
+                    ANSI.TEXT_NORMAL))
         w = PersonWound(ia.Action, at.DamageType, loc,
                         impact + wounds[ia.Action].IPBonus)
         defe.Person.Wounds.append(w)
@@ -312,13 +321,13 @@ def HandleImpactDMG(player, att, defe, at, res_level):
         if defe.Person.IPIndex() > \
            defe.Person.Attr[AttrEnum.STAMINA]:
           if att.Person == player:
-            print("%s%s DIES from %s wounds!%s" %
-                  (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
-                   defe.Person.AttrSexPossessivePronounStr(),
-                   ANSI.TEXT_NORMAL))
+            cm.Print("%s%s DIES from %s wounds!%s" %
+                     (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
+                      defe.Person.AttrSexPossessivePronounStr(),
+                      ANSI.TEXT_NORMAL))
           else:
-            print("%sYou DIE from your wounds!%s" %
-                  (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+            cm.Print("%sYou DIE from your wounds!%s" %
+                     (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
           defe.Flags |= FLAG_DEAD
           return True
 
@@ -330,12 +339,12 @@ def HandleImpactDMG(player, att, defe, at, res_level):
         if r > defe.Person.Attr[AttrEnum.STAMINA]:
           # DEATH!
           if att.Person == player:
-            print("%s%s DIES instantly!%s" %
-                  (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
-                   ANSI.TEXT_NORMAL))
+            cm.Print("%s%s DIES instantly!%s" %
+                     (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
+                      ANSI.TEXT_NORMAL))
           else:
-            print("%sYou DIE instantly!%s" %
-                  (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+            cm.Print("%sYou DIE instantly!%s" %
+                     (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
           defe.Flags |= FLAG_DEAD
           return True
 
@@ -349,12 +358,12 @@ def HandleImpactDMG(player, att, defe, at, res_level):
               defe.Person.AttrEndurance()))
         if r > defe.Person.AttrEndurance():
           if att.Person == player:
-            print("%s%s is STUNNED!%s" %
-                  (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
-                   ANSI.TEXT_NORMAL))
+            cm.Print("%s%s is STUNNED!%s" %
+                     (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
+                      ANSI.TEXT_NORMAL))
           else:
-            print("%sYou are STUNNED!%s" %
-                  (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+            cm.Print("%sYou are STUNNED!%s" %
+                     (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
           defe.StunLevel += 2
           logd("%s STUN_LEVEL %d" % (defe.Person.Name, defe.StunLevel))
 
@@ -374,12 +383,12 @@ def HandleImpactDMG(player, att, defe, at, res_level):
           CombatantStumble(defe)
       if ia.Action == ImpactActionEnum.BLEED:
         if att.Person == player:
-          print("%s%s's wound is BLEEDING!%s" %
-                (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
-                 ANSI.TEXT_NORMAL))
+          cm.Print("%s%s's wound is BLEEDING!%s" %
+                   (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
+                    ANSI.TEXT_NORMAL))
         else:
-          print("%sYour wound is BLEEDING!%s" %
-                (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+          cm.Print("%sYour wound is BLEEDING!%s" %
+                   (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
         defe.Bleed += ia.Level
         logd("%s BLEED %d" % (defe.Person.Name, defe.Bleed))
 
@@ -406,6 +415,8 @@ def DetermineDefense(combatant):
 
 
 def HandleAttack(att, order, player_combatant, TAdv=False):
+  cm = GameData.GetConsole()
+
   # will return a combatant who gets Tactical Advantage if needed
   ret = None
 
@@ -451,20 +462,20 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
 
     while True:
       if TAdv:
-        print("\n%sTACTICAL ADVANTAGE!%s" %
-              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+        cm.Print("\n%sTACTICAL ADVANTAGE!%s" %
+                 (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
       printCombatAttackActions(att, defe)
       prompt(func_break=True)
       if att.Prone:
         if player.Command == "stand":
-          print("\nYou stand up.")
+          cm.Print("\nYou stand up.")
           att.Prone = False
           att.Action = Action.IGNORE
           break
       else:
         if player.Command == "attack" or player.Command == "a":
           if att.Target is None:
-            print("\nYou have no target!")
+            cm.Print("\nYou have no target!")
           else:
             att.Action = Action.MELEE
             att.Attacks = att.Person.GenerateCombatAttacks()
@@ -476,22 +487,22 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
         att.Action = Action.IGNORE
         break
       elif player.Command == "aim":
-        print("\nComing soon!")
+        cm.Print("\nComing soon!")
       elif player.Command == "cast" or player.Command == "c":
-        print("\nComing soon!")
+        cm.Print("\nComing soon!")
       elif player.Command == "flee" or player.Command == "f":
         # TODO: implement skill check
         att.Action = Action.FLEE
         break
       elif player.Command == "pass" or player.Command == "p":
-        print("\nYou choose to skip your action.")
+        cm.Print("\nYou choose to skip your action.")
         att.Action = Action.IGNORE
         break
       elif player.Command == "target" or player.Command == "t":
         chooseTarget(att, order)
       elif player.Command != "help" and player.Command != "?":
-        print("\n%sYou cannot do that here.%s" %
-              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+        cm.Print("\n%sYou cannot do that here.%s" %
+                 (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
       # if player == FLEE, choose dodge automatically
   else:
     player.CombatState = PlayerCombatState.DEFEND
@@ -502,11 +513,12 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
     if att.Prone:
       att.Prone = False
       att.Action = Action.IGNORE
-      print("\n%s gets up." % (att.Person.Name.capitalize()))
+      cm.Print("\n%s gets up." % (att.Person.Name.capitalize()))
     # check for weapon to equip (FUMBLE)
     elif att.FumbleItemID != ItemEnum.NONE:
-      print("\n%s takes a moment to equip %s." %
-            (att.Person.Name.capitalize(), items[att.FumbleItemID].ItemName))
+      cm.Print("\n%s takes a moment to equip %s." %
+               (att.Person.Name.capitalize(),
+                items[att.FumbleItemID].ItemName))
       for item_id, il in att.Person.ItemLinks.items():
         if item_id == att.FumbleItemID and il.Equipped:
           il.Equipped = True
@@ -554,19 +566,19 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
 
       if res.Result == ResultEnum.DODGE:
         if att.Person == player:
-          print("\n%s DODGES you." % defe.Person.Name.capitalize())
+          cm.Print("\n%s DODGES you." % defe.Person.Name.capitalize())
         else:
-          print("\nYou DODGE %s." % att.Person.Name)
+          cm.Print("\nYou DODGE %s." % att.Person.Name)
 
       if res.Result == ResultEnum.BLOCK:
         if att.Person == player:
-          print("\n%s BLOCKS your attack with %s %s." %
-                (defe.Person.Name.capitalize(),
-                 defe.Person.AttrSexPossessivePronounStr().lower(),
-                 defe.Attacks[0].Name.lower()))
+          cm.Print("\n%s BLOCKS your attack with %s %s." %
+                   (defe.Person.Name.capitalize(),
+                    defe.Person.AttrSexPossessivePronounStr().lower(),
+                    defe.Attacks[0].Name.lower()))
         else:
-          print("\nYou BLOCK %s with your %s." %
-                (att.Person.Name, defe.Attacks[0].Name.lower()))
+          cm.Print("\nYou BLOCK %s with your %s." %
+                   (att.Person.Name, defe.Attacks[0].Name.lower()))
 
       if res.Result == ResultEnum.FUMBLE:
         if T_ATK & res.TargetFlag > 0:
@@ -617,10 +629,10 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
         if res.TargetFlag & T_DEF > 0 and defe.TAdvCount < 1:
           defe.TAdvCount += 1
           if defe.Person == player:
-            print("\nAttacker FAILURE! You get a free action!")
+            cm.Print("\nAttacker FAILURE! You get a free action!")
           else:
-            print("\nAttacker FAILURE! %s gets a free action!" %
-                  defe.Person.Name.capitalize())
+            cm.Print("\nAttacker FAILURE! %s gets a free action!" %
+                     defe.Person.Name.capitalize())
           ret = defe
         # more than 1 TAdv in a turn == MISS text
         else:
@@ -628,13 +640,13 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
 
       if res.Result == ResultEnum.MISS:
         if att.Person == player:
-          print("\nYou MISS %s with your %s." %
-                (defe.Person.Name, at.Name.lower()))
+          cm.Print("\nYou MISS %s with your %s." %
+                   (defe.Person.Name, at.Name.lower()))
         else:
-          print("\n%s MISSES you with %s %s." %
-                (att.Person.Name.capitalize(),
-                 att.Person.AttrSexPossessivePronounStr().lower(),
-                 at.Name.lower()))
+          cm.Print("\n%s MISSES you with %s %s." %
+                   (att.Person.Name.capitalize(),
+                    att.Person.AttrSexPossessivePronounStr().lower(),
+                    at.Name.lower()))
 
       # Only the current attacker can do damage
       if res.Result == ResultEnum.DMG:
@@ -651,6 +663,7 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
 
 
 def combat(player, enemies):
+  cm = GameData.GetConsole()
   # start of combat checks?
   order = []
   round_count = 0
@@ -677,22 +690,22 @@ def combat(player, enemies):
       if round_count % 6 == 0:
         if x.Bleed > 0:
           if x.Person is player:
-            print("\n%sYou are BLEEDING!%s" %
-                  (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+            cm.Print("\n%sYou are BLEEDING!%s" %
+                     (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
           else:
-            print("\n%s%s is BLEEDING!%s" %
-                  (ANSI.TEXT_BOLD, x.Person.Name.capitalize(),
-                   ANSI.TEXT_NORMAL))
+            cm.Print("\n%s%s is BLEEDING!%s" %
+                     (ANSI.TEXT_BOLD, x.Person.Name.capitalize(),
+                      ANSI.TEXT_NORMAL))
           x.Bloodloss += x.Bleed
           if x.Bloodloss > x.Person.AttrEndurance():
             # death from blood loss
             if x.Person is player:
-              print("%sYou EXPIRE from loss of blood!%s" %
-                    (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+              cm.Print("%sYou EXPIRE from loss of blood!%s" %
+                       (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
             else:
-              print("%s%s EXPIRES from loss of blood!%s" %
-                    (ANSI.TEXT_BOLD, x.Person.Name.capitalize(),
-                     ANSI.TEXT_NORMAL))
+              cm.Print("%s%s EXPIRES from loss of blood!%s" %
+                       (ANSI.TEXT_BOLD, x.Person.Name.capitalize(),
+                        ANSI.TEXT_NORMAL))
             x.Flags |= FLAG_DEAD
             if x.Person is player:
               HandlePlayerDeath(player)
@@ -705,12 +718,12 @@ def combat(player, enemies):
              (x.Person.Name, x.StunLevel))
         if x.StunLevel < 1:
           if x.Person is player:
-            print("\n%sYour stun WEARS OFF!%s" %
-                  (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+            cm.Print("\n%sYour stun WEARS OFF!%s" %
+                     (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
           else:
-            print("\n%s%s's stun WEARS OFF!%s" %
-                  (ANSI.TEXT_BOLD, x.Person.Name.capitalize(),
-                   ANSI.TEXT_NORMAL))
+            cm.Print("\n%s%s's stun WEARS OFF!%s" %
+                     (ANSI.TEXT_BOLD, x.Person.Name.capitalize(),
+                      ANSI.TEXT_NORMAL))
       if x is not player_combatant and x.Flags & FLAG_DEAD == 0:
         all_dead = False
     if all_dead:
@@ -759,7 +772,7 @@ def combat(player, enemies):
     if att.Action == Action.FLEE:
       player.Room = player.LastRoom
       player.CombatState = PlayerCombatState.NONE
-      print("\n%sYou FLEE!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+      cm.Print("\n%sYou FLEE!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
       break
 
 # vim: set tabstop=2 shiftwidth=2 expandtab:
