@@ -2549,15 +2549,4 @@ class Room:
         return True
     return False
 
-
-# FORMATTING
-
-class ANSI:
-  RESET_CURSOR = "\x1B[1;1H"
-  CLEAR = "\x1B[2J"
-  TEXT_NORMAL = "\x1B[0m"
-  TEXT_BOLD = "\x1B[1m"
-  TEXT_UNDERLINE = "\x1B[4m"
-  TEXT_REVERSE = "\x1B[7m"
-
 # vim: tabstop=2 shiftwidth=2 expandtab:

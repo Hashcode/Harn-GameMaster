@@ -6,16 +6,15 @@
 
 from enum import IntEnum
 
-from console import (InputFlag)
+from console import (ANSI, InputFlag)
+from db import (ExistsDB, LoadPlayer)
+from gamedata import (GameData)
 from global_defines import (PersonEnum, Player, ItemEnum, DoorEnum, Door,
                             DoorState, DirectionEnum,
                             ConditionCheckEnum, TargetTypeEnum, Condition,
                             TriggerTypeEnum, Trigger, Periodic,
-                            RoomFuncResponse, RoomEnum, Exit, Room,
-                            ANSI)
-from gamedata import (GameData)
+                            RoomFuncResponse, RoomEnum, Exit, Room)
 from utils import (actionSave)
-from db import (ExistsDB, LoadPlayer)
 
 
 def room_StartGame():

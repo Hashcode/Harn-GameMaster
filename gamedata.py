@@ -4,6 +4,9 @@
 
 # Global Game Data
 
+from console import ANSI
+
+
 class GameData:
   _console = None
   _doors = None

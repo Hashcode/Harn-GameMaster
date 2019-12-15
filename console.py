@@ -15,6 +15,18 @@ from threading import Thread, Event
 from time import (sleep, time)
 
 
+# FORMATTING
+
+class ANSI:
+  RESET_CURSOR = "\x1B[1;1H"
+  CLEAR = "\x1B[2J"
+  CLEAR_LINE = "\x1B[1K"
+  TEXT_NORMAL = "\x1B[0m"
+  TEXT_BOLD = "\x1B[1m"
+  TEXT_UNDERLINE = "\x1B[4m"
+  TEXT_REVERSE = "\x1B[7m"
+
+
 class InputFlag(IntEnum):
   NUMERIC = 1 << 1
   UPPERCASE = 1 << 2
@@ -22,8 +34,6 @@ class InputFlag(IntEnum):
 
 
 class ConsoleManager(Thread):
-  CLEAR_LINE = "\x1B[1K"
-
   def __init__(self, prompt="[]:", line_length=60, input_flags=0):
     super().__init__()
     self.daemon = True
@@ -63,7 +73,7 @@ class ConsoleManager(Thread):
 
   def Print(self, msg, end="\n"):
     if self._prompted:
-      self.out.write("%s" % (ConsoleManager.CLEAR_LINE))
+      self.out.write("%s" % (ANSI.CLEAR_LINE))
       self.out.write("\x1B[%dD" %
                      (len(self._prompt) + len(self.cur_input) + 1))
       self._prompted = False

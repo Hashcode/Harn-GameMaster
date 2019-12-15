@@ -8,7 +8,9 @@ from sys import exit
 from textwrap import TextWrapper
 from time import sleep
 
-from console import (InputFlag)
+from console import (ANSI, InputFlag)
+from db import (LoadStatsDB, SavePlayer)
+from gamedata import (GameData)
 from global_defines import (attribute_classes, attributes, months, sunsigns,
                             cultures, social_classes, sibling_ranks, wounds,
                             parent_statuses, player_frames, comelinesses,
@@ -20,10 +22,8 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             DiceRoll, DoorEnum, Mob,
                             TargetTypeEnum, ConditionCheckEnum,
                             TriggerTypeEnum, RoomEnum,
-                            ItemLink, DirectionEnum, ANSI)
-from gamedata import (GameData)
+                            ItemLink, DirectionEnum)
 from logger import (logd)
-from db import (LoadStatsDB, SavePlayer)
 
 
 wrapper = TextWrapper(width=70, fix_sentence_endings=True)

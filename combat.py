@@ -6,12 +6,12 @@
 
 from time import sleep
 
-from console import (InputFlag)
+from console import (ANSI, InputFlag)
 from global_defines import (DiceRoll, Roll, CoverageEnum, body_parts, aims,
                             AimEnum, SkillEnum, ItemEnum, ItemTypeEnum,
                             PlayerCombatState, wounds, PersonWound,
                             AttrEnum, PersonTypeEnum, ItemLink,
-                            ImpactActionEnum, ANSI)
+                            ImpactActionEnum)
 from gamedata import (GameData)
 from logger import (logd)
 from table_melee_attack import (Action, ResultEnum, T_ATK, T_DEF,

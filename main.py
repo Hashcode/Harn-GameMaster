@@ -16,10 +16,10 @@
 
 from random import seed
 
-from global_defines import (quests, ItemEnum, ItemLink, Player,
-                            RoomEnum, RoomFuncResponse, ANSI)
+from console import (ANSI, ConsoleManager)
 from gamedata import (GameData)
-from console import (ConsoleManager)
+from global_defines import (quests, ItemEnum, ItemLink, Player,
+                            RoomEnum, RoomFuncResponse)
 
 TestMode = True
 
