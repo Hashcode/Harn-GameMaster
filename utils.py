@@ -1310,10 +1310,10 @@ def prompt(func_break=False):
       x = cm.Poll()
       if x is not None:
         break
-      # handle 10 second idle
-      if time() - t > 10:
-        # 2 minutes for idle
-        player.GameTime += 120
+      # handle 30 second idle
+      if time() - t > 30:
+        # 5 minutes for idle
+        player.GameTime += 300
         GameData.ProcessEvents(processConditions, processTriggers)
         t = time()
 
