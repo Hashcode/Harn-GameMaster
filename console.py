@@ -9,9 +9,8 @@ import atexit
 import termios
 
 from select import select
-from time import sleep
 from threading import Thread, Event
-from queue import Queue, Empty
+from queue import Queue
 
 
 class ConsoleManager(Thread):
@@ -29,7 +28,7 @@ class ConsoleManager(Thread):
     self.cur_input = ""
     self._echoed = Event()
     self._prompt = prompt
-    self._interrupted = False
+    self._interrupted = 0
     self._prompted = False
     self.line_length = line_length
     atexit.register(self.SetNormalTerm)
@@ -51,14 +50,10 @@ class ConsoleManager(Thread):
                      (len(self._prompt) + len(self.cur_input) + 1))
       self._prompted = False
     self.out.write("%s%s" % (msg, end))
-    self._interrupted = True
+    self._interrupted = 1
 
   def Bell(self):
     self.PrintCH("\a")
-
-  def KeyPressed(self):
-    dr, dw, de = select([sys.stdin], [], [], 0)
-    return dr != []
 
   def run(self):
     self._echoed.wait()
@@ -68,16 +63,18 @@ class ConsoleManager(Thread):
       self.out.flush()
       self._prompted = True
       termios.tcsetattr(self.fd, termios.TCSAFLUSH, self.new_term)
-      self._interrupted = False
-      while not self._interrupted:
-        if self.KeyPressed():
+      self._interrupted = 0
+      while self._interrupted == 0:
+        dr, dw, de = select([sys.stdin, self._interrupted], [], [], 1)
+        if sys.stdin in dr:
           c = sys.stdin.read(1)
           if ord(c) in {10, 13}:
             self._in_queue.put(self.cur_input)
             self.cur_input = ""
-            self._interrupted = True
             self._prompted = False
-            self.PrintCH("\n")
+            if self._interrupted == 0:
+              self.PrintCH("\n")
+            self._interrupted = 1
             termios.tcsetattr(self.fd, termios.TCSAFLUSH, self.old_term)
             self._echoed.wait()
             self._echoed.clear()
@@ -94,7 +91,8 @@ class ConsoleManager(Thread):
           elif ord(c) >= 32 and ord(c) <= 126:
             if len(self.cur_input) <= self.line_length:
               self.cur_input += "%c" % c
-              self.PrintCH("%c" % c)
+              if self._interrupted == 0:
+                self.PrintCH("%c" % c)
             else:
               self.Bell()
           else:
