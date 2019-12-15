@@ -5,6 +5,8 @@
 # Room Functions
 
 from enum import IntEnum
+
+from console import (InputFlag)
 from global_defines import (PersonEnum, Player, ItemEnum, DoorEnum, Door,
                             DoorState, DirectionEnum,
                             ConditionCheckEnum, TargetTypeEnum, Condition,
@@ -17,12 +19,13 @@ from db import (ExistsDB, LoadPlayer)
 
 
 def room_StartGame():
+  cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   while True:
     desc = ANSI.TEXT_BOLD + "CREATE" + ANSI.TEXT_NORMAL + \
         " a new character or " + ANSI.TEXT_BOLD + "RESTORE" + \
         ANSI.TEXT_NORMAL + " a saved game"
-    Player.Command = input("\n%s? " % desc).lower()
+    Player.Command = cm.Input("%s?" % desc, line_length=10).lower()
     if Player.Command == "restore":
       player.SetRoom(RoomEnum.GAME_RESTORE_SAVE)
       break
@@ -35,8 +38,8 @@ def room_StartGame():
 def room_RestoreSave():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  name = input("\nCharacter name: ")
-  pwd = input("Password: ")
+  name = cm.Input("Character name:", line_length=20)
+  pwd = cm.Input("Password:", line_length=10, input_flags=InputFlag.PASSWORD)
 
   cm.Print("\nPlease wait while saved data is loaded ...")
   ret = LoadPlayer(player, name, pwd)
@@ -55,14 +58,15 @@ def room_RestoreSave():
 def room_CreateCharacter():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  player.Name = input("\nChoose a character name: ")
+  player.Name = cm.Input("Choose a character name:", line_length=20)
   if len(player.Name) < 3 or len(player.Name) > 20:
     cm.Print("\nCharacter name needs between 3 and 20 characters long.")
     return RoomFuncResponse.SKIP
 
   cm.Print("\nA password is used to encrypt your SAVE data.")
   cm.Print("It should NOT be a password used for anything important.")
-  player.Password = input("\nEnter a password: ").upper()
+  player.Password = cm.Input("Enter a password:", line_length=10,
+                             input_flags=InputFlag.PASSWORD).upper()
   if len(player.Password) < 3 or len(player.Password) > 10:
     cm.Print("\nPassword needs to be between 3 and 10 characters long.")
     return RoomFuncResponse.SKIP

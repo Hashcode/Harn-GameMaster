@@ -6,8 +6,9 @@
 
 from sys import exit
 from textwrap import TextWrapper
-from time import (sleep, time)
+from time import sleep
 
+from console import (InputFlag)
 from global_defines import (attribute_classes, attributes, months, sunsigns,
                             cultures, social_classes, sibling_ranks, wounds,
                             parent_statuses, player_frames, comelinesses,
@@ -209,7 +210,8 @@ def chooseItem(links, verb, stats=False, shop=False, valueAdj=1):
   cm = GameData.GetConsole()
   cm.Print("\nItems:\n")
   printItems(links, number=True, stats=stats, shop=shop, valueAdj=valueAdj)
-  x = input("\nWhich item # to %s: " % verb).lower()
+  x = cm.Input("Which item # to %s:" % verb, line_length=3,
+               input_flags=InputFlag.NUMERIC)
   if not x.isnumeric():
     cm.Print("\nInvalid item.")
     return ItemEnum.NONE
@@ -516,7 +518,8 @@ def chooseNPC(npcs, noun, stats=False):
       cm.Print("%d. %s [%d IP]" % (count, npc.Name, npc.IP()))
     else:
       cm.Print("%d. %s" % (count, npc.Name))
-  x = input("\nWhich # to %s: " % noun).lower()
+  x = cm.Input("Which # to %s:" % noun, line_length=3,
+               input_flags=InputFlag.NUMERIC)
   if not x.isnumeric():
     cm.Print("\nInvalid target.")
     return None
@@ -778,9 +781,9 @@ def actionShopBuy(shopkeep):
     return
   # TODO possible factors to raise price?
   price = items[item_id].Value
-  x = input("\nConfirm purchase of [%s] for %d SP [y/N]: " %
-            (items[item_id].ItemName, price)).lower()
-  if x == "y" or x == "yes":
+  x = cm.Input("Confirm purchase of [%s] for %d SP [y/n]:" %
+               (items[item_id].ItemName, price), line_length=1).lower()
+  if x == "y":
     player.Currency -= price
     player.AddItem(item_id, ItemLink(1))
     cm.Print("\n%s%s hands you [%s].%s" %
@@ -818,9 +821,9 @@ def actionShopSell(shopkeep):
   if item_id == ItemEnum.NONE:
     return
   price = items[item_id].Value * priceAdj
-  x = input("\nConfirm sale of [%s] for %d SP [y/N]: " %
-            (items[item_id].ItemName, price)).lower()
-  if x == "y" or x == "yes":
+  x = cm.Input("Confirm sale of [%s] for %d SP [y/n]:" %
+               (items[item_id].ItemName, price), line_length=1).lower()
+  if x == "y":
     player.Currency += price
     player.RemoveItem(item_id, ItemLink())
     cm.Print("\n%sYou hand [%s] to %s.%s" %
@@ -945,7 +948,8 @@ def chooseDoor(room_id, action, door_closed=None, door_locked=None):
       if match:
           count += 1
           cm.Print("%d. %s" % (count, doors[ex.Door].Name))
-  x = input("\nWhich # to %s: " % action).lower()
+  x = cm.Input("Which # to %s:" % action, line_length=3,
+               input_flags=InputFlag.NUMERIC)
   if not x.isnumeric():
     cm.Print("\nInvalid door.")
     return ret
@@ -1062,7 +1066,8 @@ def actionChangePassword():
     return
   cm.Print("\nYour password is used to encrypt SAVE data.")
   cm.Print("It should NOT be a password used for anything important.")
-  x = input("\nEnter a password: ").upper()
+  x = cm.Input("Enter a password:", line_length=10,
+               input_flags=InputFlag.PASSWORD).upper()
   if len(x) < 3 or len(x) > 10:
     cm.Print("\nPassword needs to be between 3 and 10 characters long.")
     return
@@ -1083,8 +1088,8 @@ def actionQuit():
              "to end conversation.%s" %
              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
     return
-  y = input("\nAre you sure you wish to QUIT? ").lower()
-  if y == "y" or y == "yes":
+  y = cm.Input("Are you sure you wish to QUIT?", line_length=1).lower()
+  if y == "y":
     actionSave()
     cm.Print("\nGoodbye!\n")
     exit()
@@ -1168,7 +1173,8 @@ def actionTrain():
   if count < 1:
     cm.Print("No skills are ready to be trained. Use them more!")
     return
-  x = input("\nWhich skill # to train: ").lower()
+  x = cm.Input("Which skill # to train:", line_length=3,
+               input_flags=InputFlag.NUMERIC)
   if not x.isnumeric():
     cm.Print("\nInvalid skill.")
     return
@@ -1299,6 +1305,13 @@ commands.append(GenericCommand(["unlock"], actionUnlock))
 commands.append(GenericCommand(["who"], actionListPlayers))
 
 
+def promptTimeout():
+  player = GameData.GetPlayer()
+  # 5 minutes for idle
+  player.GameTime += 300
+  GameData.ProcessEvents(processConditions, processTriggers)
+
+
 def prompt(func_break=False):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
@@ -1306,26 +1319,11 @@ def prompt(func_break=False):
   rooms = GameData.GetRooms()
   player.Command = ""
   while True:
+    prompt_text = "[? = HELP] Command:"
     if player.IsTalking():
-      cm.SetPrompt("[? = HELP, \"DONE\" = Exit Talk] Command:")
-    else:
-      cm.SetPrompt("[? = HELP] Command:")
-    cm.Next()
-    t = time()
-    while True:
-      sleep(.1)
-      x = cm.Poll()
-      if x is not None:
-        break
-      # handle 30 second idle
-      if time() - t > 30:
-        # 5 minutes for idle
-        player.GameTime += 300
-        GameData.ProcessEvents(processConditions, processTriggers)
-        t = time()
-
+      prompt_text = "[? = HELP, \"DONE\" = Exit Talk] Command:"
+    x = cm.Input(prompt_text, timeout=30, timeoutFunc=promptTimeout).lower()
     # Handle universal commands
-    x = x.lower()
     cmd_match = None
     for gen_cmd in commands:
       for cmds in gen_cmd.Commands:
