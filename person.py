@@ -5,7 +5,7 @@
 # Person Definitions
 
 from global_defines import (DiceRoll, DamageTypeEnum, ItemEnum, AttrEnum,
-                            SkillEnum, PersonEnum, ItemLink,
+                            SkillEnum, PersonEnum, ItemLink, Periodic,
                             TargetTypeEnum, ConditionCheckEnum, Condition,
                             TriggerTypeEnum, Trigger, QuestEnum,
                             Mob, MobTalk, MobAttack,
@@ -201,19 +201,17 @@ persons = {
                 ItemEnum.ARMOR_LEGGINGS_LEATHER: ItemLink(1, True),
                 ItemEnum.ARMOR_GAUNTLETS_LEATHER_RING: ItemLink(1, True),
             },
-            talk=[
-                MobTalk("~on_enter~",
-                        condition=[
-                            Condition(ConditionCheckEnum.LESS_THAN,
-                                      TargetTypeEnum.PERCENT_CHANCE,
-                                      value=5),
-                        ],
-                        text=[
-                            "The sentry shuffles his feet looking bored."
-                        ],
-                        triggers=[
-                            Trigger(TriggerTypeEnum.DELAY, 30),
-                        ]),
+            periodics=[
+                Periodic(
+                    [
+                        Condition(ConditionCheckEnum.LESS_THAN,
+                                  TargetTypeEnum.PERCENT_CHANCE,
+                                  value=15),
+                    ],
+                    [
+                        Trigger(TriggerTypeEnum.ROOM_MESSAGE,
+                                "A sentry shuffles his feet looking bored."),
+                    ], 300),
             ]),
     PersonEnum.BL_KEEP_CORPORAL_WATCH:
         Mob(PersonEnum.BL_KEEP_CORPORAL_WATCH, "the corporal of the watch",
@@ -247,38 +245,21 @@ persons = {
                 ItemEnum.ARMOR_LEGGINGS_MAIL: ItemLink(1, True),
                 ItemEnum.ARMOR_MITTENS_MAIL: ItemLink(1, True),
             },
-            talk=[
-                MobTalk("~on_enter~",
-                        condition=[
-                            Condition(ConditionCheckEnum.LESS_THAN,
-                                      TargetTypeEnum.PERCENT_CHANCE,
-                                      value=5),
-                            Condition(ConditionCheckEnum.HAS,
-                                      TargetTypeEnum.MOB_IN_ROOM,
-                                      PersonEnum.BL_KEEP_YARD_SCRIBE),
-                        ],
-                        text=[
-                            "The corporal of the watch glances at the "
-                            "scribe and grumbles under his breath."
-                        ],
-                        triggers=[
-                            Trigger(TriggerTypeEnum.DELAY, 30),
-                        ]),
-                MobTalk("~on_enter~",
-                        condition=[
-                            Condition(ConditionCheckEnum.LESS_THAN,
-                                      TargetTypeEnum.PERCENT_CHANCE,
-                                      value=5),
-                        ],
-                        text=[
-                            "A young lackey runs up to the corporal and "
-                            "hands him a note before scrambling away."
-                        ],
-                        triggers=[
-                            Trigger(TriggerTypeEnum.DELAY, 30),
-                        ]),
-            ],
             periodics=[
+                Periodic(
+                    [
+                        Condition(ConditionCheckEnum.HAS,
+                                  TargetTypeEnum.MOB_IN_ROOM,
+                                  PersonEnum.BL_KEEP_YARD_SCRIBE),
+                        Condition(ConditionCheckEnum.LESS_THAN,
+                                  TargetTypeEnum.PERCENT_CHANCE,
+                                  value=15),
+                    ],
+                    [
+                        Trigger(TriggerTypeEnum.ROOM_MESSAGE,
+                                "The corporal of the watch glances at the "
+                                "scribe and grumbles under his breath."),
+                    ], 300),
             ]),
     PersonEnum.BL_KEEP_YARD_SCRIBE:
         Mob(PersonEnum.BL_KEEP_YARD_SCRIBE, "a young scribe",
@@ -305,32 +286,18 @@ persons = {
             eq={
                 ItemEnum.ARMOR_ROBE_CLOTH: ItemLink(1, True),
             },
-            talk=[
-                MobTalk("~on_enter~",
-                        condition=[
-                            Condition(ConditionCheckEnum.LESS_THAN,
-                                      TargetTypeEnum.PERCENT_CHANCE,
-                                      value=5),
-                        ],
-                        text=[
-                            "The scribe scribbles something in his notes."
-                        ],
-                        triggers=[
-                            Trigger(TriggerTypeEnum.DELAY, 30),
-                        ]),
-                MobTalk("~on_exit~",
-                        condition=[
-                            Condition(ConditionCheckEnum.LESS_THAN,
-                                      TargetTypeEnum.PERCENT_CHANCE,
-                                      value=5),
-                        ],
-                        text=[
-                            "As you leave, the scribe watches you go and "
-                            "makes an entry in his notes."
-                        ],
-                        triggers=[
-                            Trigger(TriggerTypeEnum.DELAY, 30),
-                        ]),
+            periodics=[
+                Periodic(
+                    [
+                        Condition(ConditionCheckEnum.LESS_THAN,
+                                  TargetTypeEnum.PERCENT_CHANCE,
+                                  value=15),
+                    ],
+                    [
+                        Trigger(TriggerTypeEnum.ROOM_MESSAGE,
+                                "The scribe scribbles something in his "
+                                "notes."),
+                    ], 300),
             ]),
     PersonEnum.BL_PROVISIONER:
         Mob(PersonEnum.BL_PROVISIONER, "the provisioner",
