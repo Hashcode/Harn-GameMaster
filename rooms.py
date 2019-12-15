@@ -194,7 +194,7 @@ rooms = {
                      [
                          Condition(ConditionCheckEnum.LESS_THAN,
                                    TargetTypeEnum.PERCENT_CHANCE,
-                                   value=10),
+                                   value=15),
                      ],
                      [
                          Trigger(TriggerTypeEnum.MESSAGE,
@@ -203,9 +203,12 @@ rooms = {
                      ], 300),
                  Periodic(
                      [
+                         Condition(ConditionCheckEnum.HAS,
+                                   TargetTypeEnum.MOB_IN_ROOM,
+                                   PersonEnum.BL_KEEP_CORPORAL_WATCH),
                          Condition(ConditionCheckEnum.LESS_THAN,
                                    TargetTypeEnum.PERCENT_CHANCE,
-                                   value=10),
+                                   value=25),
                      ],
                      [
                          Trigger(TriggerTypeEnum.MESSAGE,
