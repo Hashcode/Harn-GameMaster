@@ -53,6 +53,7 @@ def room_RestoreSave():
 
 
 def room_CreateCharacter():
+  cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   player.Name = input("\nChoose a character name: ")
   if len(player.Name) < 3 or len(player.Name) > 20:
@@ -215,7 +216,7 @@ rooms = {
                                  "A lackey runs up and delivers a message "
                                  "to the corporal of the watch."),
                      ], 450),
-            ]),
+             ]),
     RoomEnum.BL_N_GATEHOUSE_TOWER:
         Room(ZoneEnum.KEEP,
              "North Gatehouse Tower", "the north gatehouse tower",
