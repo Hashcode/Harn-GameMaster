@@ -85,20 +85,34 @@ class GameData:
       for room_id, r in rooms.items():
         if rooms[player.Room].Zone != r.Zone:
           continue
-        if rooms[room_id].Periodics is None:
-          continue
-        for per in rooms[room_id].Periodics:
-          next = per.LastCheck + per.DelaySeconds
-          if next >= seconds:
-            if GameData._NextRoomEvent > next:
-              GameData._NextRoomEvent = next
-            continue
-          per.LastCheck = seconds
-          if GameData._NextRoomEvent > seconds + per.DelaySeconds:
-            GameData._NextRoomEvent = seconds + per.DelaySeconds
-          if processConditions(room_id, per.Conditions):
-            if per.Triggers is not None:
-              processTriggers(room_id, per.Triggers)
+        if rooms[room_id].Periodics is not None:
+          for per in rooms[room_id].Periodics:
+            next = per.LastCheck + per.DelaySeconds
+            if next >= seconds:
+              if GameData._NextRoomEvent > next:
+                GameData._NextRoomEvent = next
+              continue
+            per.LastCheck = seconds
+            if GameData._NextRoomEvent > seconds + per.DelaySeconds:
+              GameData._NextRoomEvent = seconds + per.DelaySeconds
+            if processConditions(room_id, per.Conditions):
+              if per.Triggers is not None:
+                processTriggers(room_id, per.Triggers)
+        if rooms[room_id].Persons is not None:
+          for npc in rooms[room_id].Persons:
+            if npc.Periodics is not None:
+              for per in npc.Periodics:
+                next = per.LastCheck + per.DelaySeconds
+                if next >= seconds:
+                  if GameData._NextRoomEvent > next:
+                    GameData._NextRoomEvent = next
+                  continue
+                per.LastCheck = seconds
+                if GameData._NextRoomEvent > seconds + per.DelaySeconds:
+                  GameData._NextRoomEvent = seconds + per.DelaySeconds
+                if processConditions(room_id, per.Conditions):
+                  if per.Triggers is not None:
+                    processTriggers(room_id, per.Triggers)
 
   @staticmethod
   def ProcessRoomCombat():
