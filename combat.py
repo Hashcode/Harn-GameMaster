@@ -6,6 +6,7 @@
 
 from time import sleep
 
+from console import (InputFlag)
 from global_defines import (DiceRoll, Roll, CoverageEnum, body_parts, aims,
                             AimEnum, SkillEnum, ItemEnum, ItemTypeEnum,
                             PlayerCombatState, wounds, PersonWound,
@@ -142,7 +143,8 @@ def chooseDefense(combatant):
     count = 2
     cm.Print("2. BLOCK with %s [%d ML]" %
              (defe_att[0].Name.lower(), defe_att[0].SkillML))
-  x = input("\nWhich defense #: ").lower()
+  x = cm.Input("Which defense #:", line_length=3,
+               input_flags=InputFlag.NUMERIC)
   if not x.isnumeric():
     cm.Print("\nInvalid defense.")
     return
