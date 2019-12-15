@@ -18,7 +18,7 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             ItemTypeEnum, ItemFlagEnum, ItemEnum,
                             DiceRoll, DoorEnum, Mob,
                             TargetTypeEnum, ConditionCheckEnum,
-                            TriggerTypeEnum,
+                            TriggerTypeEnum, RoomEnum,
                             ItemLink, DirectionEnum, ANSI)
 from gamedata import (GameData)
 from logger import (logd)
@@ -704,6 +704,13 @@ def processTriggers(obj, triggers):
         obj.LongDescription = tr.Data
       elif tr.TriggerType == TriggerTypeEnum.MESSAGE:
         cm.Print(wrapper.fill(tr.Data))
+      elif tr.TriggerType == TriggerTypeEnum.ROOM_MESSAGE:
+        if type(obj) == Mob:
+          if rooms[player.Room].PersonInRoom(obj.UUID):
+            cm.Print(wrapper.fill(tr.Data))
+        elif type(obj) == RoomEnum:
+          if player.Room == obj:
+            cm.Print(wrapper.fill(tr.Data))
       elif tr.TriggerType == TriggerTypeEnum.MOVE:
         # TODO:
         cm.Print("* Coming Soon *")

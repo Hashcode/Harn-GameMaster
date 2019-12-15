@@ -1945,9 +1945,10 @@ class TriggerTypeEnum(IntEnum):
   PERSON_ATTACK = 11
   PERSON_DESC = 12
   MESSAGE = 13
-  MOVE = 14
-  DELAY = 15
-  DENY = 16
+  ROOM_MESSAGE = 14
+  MOVE = 15
+  DELAY = 16
+  DENY = 17
 
 
 class Condition:
@@ -2541,6 +2542,12 @@ class Room:
     if rp is not None:
       self.Persons.remove(rp)
       del rp
+
+  def PersonInRoom(self, uid):
+    for x in self.Persons:
+      if x.UUID == uid:
+        return True
+    return False
 
 
 # FORMATTING

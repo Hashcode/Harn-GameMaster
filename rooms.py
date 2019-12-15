@@ -197,7 +197,7 @@ rooms = {
                                    value=15),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.MESSAGE,
+                         Trigger(TriggerTypeEnum.ROOM_MESSAGE,
                                  "A woman bumps into you as she crosses "
                                  "the yard."),
                      ], 300),
@@ -211,7 +211,7 @@ rooms = {
                                    value=25),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.MESSAGE,
+                         Trigger(TriggerTypeEnum.ROOM_MESSAGE,
                                  "A lackey runs up and delivers a message "
                                  "to the corporal of the watch."),
                      ], 450),
