@@ -55,22 +55,6 @@ class Roll(IntEnum):
   CF = 4
 
 
-# NUMBER
-
-def NumAdj(num):
-  ret = "th"
-  digit = num % 10
-  if num == 11 or num == 12 or num == 13:
-    ret = "th"
-  elif digit == 1:
-    ret = "st"
-  elif digit == 2:
-    ret = "nd"
-  elif digit == 3:
-    ret = "rd"
-  return ret
-
-
 # QUALITY
 
 class QualityEnum(IntEnum):
@@ -2390,9 +2374,8 @@ class Player(Person):
 
   def GameTimeDateStr(self):
     day = self.GameTimeDayOfMonth()
-    return "%s %d%s %d TR" % (months[self.GameTimeMonth()].Name,
-                              day, NumAdj(day),
-                              self.GameTimeYear())
+    return "%s %d %d TR" % (months[self.GameTimeMonth()].Name,
+                            day, self.GameTimeYear())
 
   def GameTimeStr(self):
     return "%02d:%02d" % (self.GameTimeHourOfDay(),

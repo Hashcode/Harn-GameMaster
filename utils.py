@@ -16,7 +16,7 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             parent_statuses, player_frames, comelinesses,
                             complexions, color_hairs, color_eyes,
                             skill_classes, skills, body_parts,
-                            materials, NumAdj, DamageTypeEnum, AttrEnum,
+                            materials, DamageTypeEnum, AttrEnum,
                             Material, PlayerCombatState, PersonTypeEnum,
                             ItemTypeEnum, ItemFlagEnum, ItemEnum,
                             DiceRoll, DoorEnum, Mob,
@@ -437,10 +437,9 @@ def actionInfo():
   cm.Print("%-15s: %s" % ("Name", player.Name))
   cm.Print("%-15s: %s" % (attributes[AttrEnum.SPECIES].Name, "Human"))
   cm.Print("%-15s: %s" % (attributes[AttrEnum.SEX].Name, player.AttrSexStr()))
-  cm.Print("%-15s: %s %d%s" % ("Birth Month/Day",
-                               months[player.Attr[AttrEnum.BIRTH_MONTH]].Name,
-                               player.Attr[AttrEnum.BIRTH_DAY],
-                               NumAdj(player.Attr[AttrEnum.BIRTH_DAY])))
+  cm.Print("%-15s: %s %d" % ("Birth Month/Day",
+                             months[player.Attr[AttrEnum.BIRTH_MONTH]].Name,
+                             player.Attr[AttrEnum.BIRTH_DAY]))
   cm.Print("%-15s: %s (%s)" % ("Sunsign", sunsigns[player.Sunsign].Name,
                                sunsigns[player.Sunsign].Symbol))
   cm.Print("%-15s: %s" % (attributes[AttrEnum.CULTURE].Name,
