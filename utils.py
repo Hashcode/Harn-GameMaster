@@ -119,11 +119,10 @@ def printRoomDescription(room_id):
   cm.Print("")
 
   # check for darkness w/o light source
-  if rooms[room_id].Flags & RoomFlag.DARK > 0:
-    if not rooms[room_id].HasLight():
-      cm.Print("%sDarkness%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-      cm.Print("\nIt's completely dark and you can't see.")
-      return
+  if not rooms[room_id].HasLight():
+    cm.Print("%sDarkness%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("\nIt's completely dark and you can't see.")
+    return
 
   # Room Title
   if rooms[room_id].Title != "":
@@ -245,10 +244,9 @@ def actionGetItem():
   if len(links) < 1:
     cm.Print("\nThere are no items in the room.")
     return
-  if rooms[player.Room].Flags & RoomFlag.DARK > 0:
-    if not rooms[player.Room].HasLight():
-      cm.Print("\nYou can't see anything in the dark.")
-      return
+  if not rooms[player.Room].HasLight():
+    cm.Print("\nYou can't see anything in the dark.")
+    return
   item_id = chooseItem(links, "pick up")
   if item_id == ItemEnum.NONE:
     return
@@ -270,10 +268,9 @@ def actionDropItem():
   if len(links) < 1:
     cm.Print("\nNothing is droppable at the moment.")
     return
-  if rooms[player.Room].Flags & RoomFlag.DARK > 0:
-    if not rooms[player.Room].HasLight():
-      cm.Print("\nYou can't see anything in the dark.")
-      return
+  if not rooms[player.Room].HasLight():
+    cm.Print("\nYou can't see anything in the dark.")
+    return
   item_id = chooseItem(links, "drop")
   if item_id == ItemEnum.NONE:
     return

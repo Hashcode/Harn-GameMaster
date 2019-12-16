@@ -2395,6 +2395,12 @@ class Player(Person):
     return "%02d:%02d" % (self.GameTimeHourOfDay(),
                           self.GameTimeMinuteOfHour())
 
+  def GameTimeIsDay(self):
+    hour = self.GameTimeHourOfDay()
+    if hour >= 6 and hour <= 17:
+      return True
+    return False
+
 
 # DOOR
 
@@ -2538,8 +2544,7 @@ class Exit:
 class RoomFlag(IntEnum):
   PEACEFUL = 1 << 0
   OUTSIDE = 1 << 1
-  DARK = 1 << 2
-  LIGHT = 1 << 3
+  LIGHT = 1 << 2
 
 
 class Room:
@@ -2622,6 +2627,8 @@ class Room:
   def HasLight(self):
     player = GameData.GetPlayer()
     items = GameData.GetItems()
+    if player.GameTimeIsDay():
+      return True
     if self.Flags & RoomFlag.LIGHT > 0:
       return True
     if player.HasLight():
