@@ -1925,7 +1925,10 @@ class TargetTypeEnum(IntEnum):
   PERCENT_CHANCE = 7
   ATTR_CHECK = 8
   SKILL_CHECK = 9
-  TIME_CHECK = 10
+  HOUR_OF_DAY_CHECK = 10
+  MONTH_CHECK = 11
+  DAYLIGHT_CHECK = 12
+  MOONPHASE_CHECK = 13
 
 
 class ConditionCheckEnum(IntEnum):

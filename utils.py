@@ -718,6 +718,36 @@ def processConditions(room_id, conditions):
         res = player.ResolveSkill(c.Value, c.Data)
         if res == Roll.MF or res == Roll.CF:
           return False
+      elif c.TargetType == TargetTypeEnum.HOUR_OF_DAY_CHECK:
+        if c.ConditionCheck == ConditionCheckEnum.GREATER_THAN:
+          if player.GameTimeHourOfDay() <= c.Value:
+            return False
+        if c.ConditionCheck == ConditionCheckEnum.EQUAL_TO:
+          if player.GameTimeHourOfDay() == c.Value:
+            return False
+        if c.ConditionCheck == ConditionCheckEnum.LESS_THAN:
+          if player.GameTimeHourOfDay() >= c.Value:
+            return False
+      elif c.TargetType == TargetTypeEnum.MONTH_CHECK:
+        if c.ConditionCheck == ConditionCheckEnum.GREATER_THAN:
+          if player.GameTimeMonth() <= c.Value:
+            return False
+        if c.ConditionCheck == ConditionCheckEnum.EQUAL_TO:
+          if player.GameTimeMonth() == c.Value:
+            return False
+        if c.ConditionCheck == ConditionCheckEnum.LESS_THAN:
+          if player.GameTimeMonth() >= c.Value:
+            return False
+      elif c.TargetType == TargetTypeEnum.DAYLIGHT_CHECK:
+        if c.ConditionCheck == ConditionCheckEnum.HAS:
+          if not player.GameTimeIsDay():
+            return False
+        elif c.ConditionCheck == ConditionCheckEnum.HAS_NOT:
+          if player.GameTimeIsDay():
+            return False
+      elif c.TargetType == TargetTypeEnum.MOONPHASE_CHECK:
+        # TODO
+        pass
       else:
         return False
   return True
