@@ -2112,7 +2112,8 @@ class Player(Person):
     super().__init__(PersonTypeEnum.PLAYER, name, "player")
     self.Time = int(time())  # epoch at login
     self.SecondsPlayed = 0
-    self.GameTime = 0
+    self.GameTime = 43200  # 12 noon
+    self.LastTimeUpdate = 0
     self.Password = ""
     self.Sunsign = SunsignEnum.NONE
     self.Command = ""
@@ -2130,9 +2131,11 @@ class Player(Person):
     try:
       self.SecondsPlayed = p.SecondsPlayed
       self.GameTime = p.GameTime
+      self.LastTimeUpdate = p.LastTimeUpdate
     except AttributeError:
       self.SecondsPlayed = 0
-      self.GameTime = 0
+      self.GameTime = 43200
+      self.LastTimeUpdate = 0
       logd("player missing time data")
     self.Room = p.Room
     self.LastRoom = p.LastRoom
@@ -2339,6 +2342,58 @@ class Player(Person):
             return False
         return True
     return False
+
+  def GameTimeYear(self):
+    return int(self.GameTime / 31104000) + 720
+
+  def GameTimeMonth(self):
+    return int((self.GameTime % 31104000) / 2592000) + 1
+
+  def GameTimeDayOfMonth(self):
+    return int((self.GameTime % 2592000) / 86400) + 1
+
+  def GameTimeMoonPhase(self):
+    day = self.GameTimeDayOfMonth()
+    if day == 30:
+      return "new"
+    elif day >= 27:
+      return "waning crescent"
+    elif day >= 24:
+      return "waning quarter"
+    elif day >= 21:
+      return "waning half"
+    elif day >= 18:
+      return "waning three-quarter"
+    elif day >= 16:
+      return "waning gibbous"
+    elif day == 15:
+      return "full"
+    elif day >= 13:
+      return "waxing gibbous"
+    elif day >= 10:
+      return "waxing three-quarter"
+    elif day >= 7:
+      return "waxing half"
+    elif day >= 4:
+      return "waxing quarter"
+    else:
+      return "waxing crescent"
+
+  def GameTimeHourOfDay(self):
+    return int((self.GameTime % 86400) / 3600)
+
+  def GameTimeMinuteOfHour(self):
+    return int((self.GameTime % 3600) / 60)
+
+  def GameTimeDateStr(self):
+    day = self.GameTimeDayOfMonth()
+    return "%s %d%s %d TR" % (months[self.GameTimeMonth()].Name,
+                              day, NumAdj(day),
+                              self.GameTimeYear())
+
+  def GameTimeStr(self):
+    return "%02d:%02d" % (self.GameTimeHourOfDay(),
+                          self.GameTimeMinuteOfHour())
 
 
 # DOOR

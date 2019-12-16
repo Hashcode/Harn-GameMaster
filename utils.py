@@ -588,6 +588,48 @@ def actionInspect():
     printStats(p)
 
 
+def processWeather():
+  return
+
+
+def processTime():
+  cm = GameData.GetConsole()
+  player = GameData.GetPlayer()
+  rooms = GameData.GetRooms()
+  if rooms[player.Room].Flags & RoomFlag.OUTSIDE == 0:
+    return
+  if player.GameTime > player.LastTimeUpdate + 7200:
+    moon = player.GameTimeMoonPhase()
+    hour = player.GameTimeHourOfDay()
+    if hour >= 22:  # 10 pm
+      cm.Print("\nThe %s moon is nearing it's zenith." % moon)
+    elif hour >= 20:  # 8 pm
+      cm.Print("\nThe %s moon creeps rises higher in the night sky." % moon)
+    elif hour >= 18:  # 6 pm
+      cm.Print("\nThe last of the sun disappears over the horizon.")
+    elif hour >= 16:  # 4 pm
+      cm.Print("\nThe sun sinks ever lower in the afternoon sky.")
+    elif hour >= 14:  # 2 pm
+      cm.Print("\nThe sun slowly makes it's way across the afternoon sky.")
+    elif hour >= 12:  # noon
+      cm.Print("\nThe suns has reached it's zenith in the sky.")
+    elif hour >= 10:  # 10 am
+      cm.Print("\nThe suns is nearly at it's peak in the late morning.")
+    elif hour >= 8:  # 8 am
+      cm.Print("\nThe suns path arcs higher in the mid-morning sky.")
+    elif hour >= 6:  # 6 am
+      cm.Print("\nThe sun peeks over the horizon.")
+    elif hour >= 4:  # 4 am
+      cm.Print("\nThe %s moon slowly drops below the horizon." % moon)
+    elif hour >= 2:  # 2 am
+      cm.Print("\nThe %s moon drifts lower in the night sky." % moon)
+    else:  # midnight
+      cm.Print("\nThe %s moon is now high overhead." % moon)
+    # set update time to last even hour block
+    player.LastTimeUpdate = int(player.GameTime / 7200) * 7200
+  return
+
+
 def processConditions(room_id, conditions):
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
@@ -859,7 +901,8 @@ def playerTalk(p, keyword=""):
   printNPCTalk(p, keyword)
   while player.IsTalking():
     # Check for room events
-    GameData.ProcessEvents(processConditions, processTriggers)
+    GameData.ProcessEvents(processTime, processWeather,
+                           processConditions, processTriggers)
     prompt(func_break=True)
     if player.Command == "done":
       player.SetTalking(False)
@@ -1128,39 +1171,33 @@ def actionRest():
              "to end conversation.%s" %
              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
     return
-  if player.IP() < 1:
-    cm.Print("\nYou are well rested.")
-    return
-  # health restore
   cm.Print("\nYou take a moment to rest ...")
   combat = False
-  for i in range(2):
-    sleep(5)
-    # 15 minute rest time each
-    player.GameTime += 900
-    GameData.ProcessEvents(processConditions, processTriggers)
-    # Check if the room persons need to attack
-    enemies = GameData.ProcessRoomCombat()
-    if len(enemies) > 0:
-      cm.Print("")
-      combat = True
-      combat(player, enemies)
-      break
-    if not combat:
-      for w in sorted(player.Wounds, reverse=True):
-        cm.Print("\nYou clean and dress a %s %s %s wound." %
-                 (wounds[w.WoundType].Name.lower(),
-                  wounds[w.WoundType].Verbs[w.DamageType].lower(),
-                  body_parts[w.Location].PartName.lower()))
-        sleep(5)
-        r = DiceRoll(1, player.Attr[AttrEnum.AURA]).Result()
-        w.Impact -= r
-        if w.Impact <= 0:
-          player.Wounds.remove(w)
-          cm.Print("It's all better!")
-        else:
-          cm.Print("It looks a bit better.")
-        break
+  sleep(5)
+  # 30 minute rest time each
+  player.GameTime += 1800
+  GameData.ProcessEvents(processTime, processWeather,
+                         processConditions, processTriggers)
+  # Check if the room persons need to attack
+  enemies = GameData.ProcessRoomCombat()
+  if len(enemies) > 0:
+    cm.Print("")
+    combat = True
+    combat(player, enemies)
+  if not combat and player.IP() > 0:
+    for w in sorted(player.Wounds, reverse=True):
+      cm.Print("\nYou clean and dress a %s %s %s wound." %
+               (wounds[w.WoundType].Name.lower(),
+                wounds[w.WoundType].Verbs[w.DamageType].lower(),
+                body_parts[w.Location].PartName.lower()))
+      sleep(5)
+      r = DiceRoll(1, player.Attr[AttrEnum.AURA]).Result()
+      w.Impact -= r
+      if w.Impact <= 0:
+        player.Wounds.remove(w)
+        cm.Print("It's all better!")
+      else:
+        cm.Print("It looks a bit better.")
 
 
 ATT_PER_TRAIN = 25
@@ -1241,11 +1278,21 @@ def actionSaveGeneric():
     cm.Print("\nCharacter saved.")
 
 
+def actionDate():
+  cm = GameData.GetConsole()
+  player = GameData.GetPlayer()
+  cm.Print("\n%s on %s" % (player.GameTimeStr(), player.GameTimeDateStr()))
+
+
 def actionTime():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  cm.Print("\nTime Played: %s minutes" % int(player.PlayerTime() / 60))
-  cm.Print("Game Time: %s minutes" % int(player.GameTime / 60))
+  day_plural = "s"
+  if int(player.PlayerTime() / 86400) == 1:
+    day_plural = ""
+  cm.Print("\nTime Played: %d day%s %d minutes" %
+           (int(player.PlayerTime() / 86400), day_plural,
+            int((player.PlayerTime() % 86400) / 60)))
 
 
 class GenericCommand:
@@ -1299,6 +1346,7 @@ commands.append(GenericCommand(["armor", "ac"], actionArmor))
 commands.append(GenericCommand(["attack", "a"], actionAttack))
 commands.append(GenericCommand(["buy"], actionTalkBuy))
 commands.append(GenericCommand(["close"], actionClose))
+commands.append(GenericCommand(["date"], actionDate))
 commands.append(GenericCommand(["drop"], actionDropItem))
 commands.append(GenericCommand(["equip", "eq"], actionEquipItem))
 commands.append(GenericCommand(["inspect"], actionInspect))
@@ -1328,7 +1376,8 @@ def promptTimeout():
   player = GameData.GetPlayer()
   # 5 minutes for idle
   player.GameTime += 300
-  GameData.ProcessEvents(processConditions, processTriggers)
+  GameData.ProcessEvents(processTime, processWeather,
+                         processConditions, processTriggers)
 
 
 def prompt(func_break=False):

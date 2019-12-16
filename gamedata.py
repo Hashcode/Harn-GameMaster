@@ -77,9 +77,13 @@ class GameData:
     return GameData._quests
 
   @staticmethod
-  def ProcessEvents(processConditions, processTriggers):
+  def ProcessEvents(processTime, processWeather,
+                    processConditions, processTriggers):
     rooms = GameData.GetRooms()
     player = GameData.GetPlayer()
+    # Check for time updates
+    processTime()
+    processWeather()
     # Check for room events
     seconds = player.PlayerTime()
     if GameData._NextRoomEvent < seconds:
@@ -119,6 +123,7 @@ class GameData:
 
   @staticmethod
   def ProcessRoomCombat():
+    cm = GameData.GetConsole()
     player = GameData.GetPlayer()
     rooms = GameData.GetRooms()
     enemies = []
@@ -129,11 +134,11 @@ class GameData:
       if x.IsAggressive():
         count += 1
         if count == 1:
-          print("")
+          cm.Print("")
         enemies.append(x)
-        print("%s%s attacks you!%s" %
-              (ANSI.TEXT_BOLD, x.Name.capitalize(),
-               ANSI.TEXT_NORMAL))
+        cm.Print("%s%s attacks you!%s" %
+                 (ANSI.TEXT_BOLD, x.Name.capitalize(),
+                  ANSI.TEXT_NORMAL))
       if player.CombatTarget is not None:
         if player.CombatTarget == x.UUID:
           enemies.append(x)
