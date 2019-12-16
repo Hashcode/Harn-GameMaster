@@ -5,7 +5,7 @@
 from global_defines import (DiceRoll, MaterialEnum, QualityEnum, CoverageEnum,
                             Effect, EffectTypeEnum, ItemFlagEnum, ItemTypeEnum,
                             ItemEnum, Item, Weapon, Shield, Armor, Ring,
-                            DamageTypeEnum, SkillEnum, item_flags,
+                            DamageTypeEnum, SkillEnum,
                             Trigger, TriggerTypeEnum)
 
 
@@ -36,14 +36,14 @@ COV_Bk = COV_Tx_R | COV_Ab_R
 
 # Item Flag Abbreviations
 
-IFLAG_NO_SELL = item_flags[ItemFlagEnum.NO_SELL].Bit
-IFLAG_NO_DROP = item_flags[ItemFlagEnum.NO_DROP].Bit
-IFLAG_NO_GET = item_flags[ItemFlagEnum.NO_GET].Bit
-IFLAG_LIGHT = item_flags[ItemFlagEnum.LIGHT].Bit
-IFLAG_MAGIC = item_flags[ItemFlagEnum.MAGIC].Bit
-IFLAG_HIDDEN = item_flags[ItemFlagEnum.HIDDEN].Bit
-IFLAG_INVIS = item_flags[ItemFlagEnum.INVIS].Bit
-IFLAG_QUEST = item_flags[ItemFlagEnum.QUEST].Bit
+IFLAG_NO_SELL = 1 << ItemFlagEnum.NO_SELL
+IFLAG_NO_DROP = 1 << ItemFlagEnum.NO_DROP
+IFLAG_NO_GET = 1 << ItemFlagEnum.NO_GET
+IFLAG_LIGHT = 1 << ItemFlagEnum.LIGHT
+IFLAG_MAGIC = 1 << ItemFlagEnum.MAGIC
+IFLAG_HIDDEN = 1 << ItemFlagEnum.HIDDEN
+IFLAG_INVIS = 1 << ItemFlagEnum.INVIS
+IFLAG_QUEST = 1 << ItemFlagEnum.QUEST
 
 
 # Armor Layer Abbreviations
@@ -492,6 +492,10 @@ items = {
                  Trigger(TriggerTypeEnum.DENY,
                          chance=50),
              ]),
+    ItemEnum.MISC_TORCH:
+        Item(ItemTypeEnum.MISC, "torch",
+             QualityEnum.AVE, MaterialEnum.WOOD, 0.5,
+             flags=IFLAG_LIGHT),
 
     # QUEST
 

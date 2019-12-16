@@ -332,6 +332,7 @@ persons = {
                 ItemEnum.WEAPON_KNIFE: ItemLink(1),
                 ItemEnum.WEAPON_SICKLE: ItemLink(1),
                 ItemEnum.WEAPON_STAFF: ItemLink(1),
+                ItemEnum.MISC_TORCH: ItemLink(1),
             },
             talk=[
                 MobTalk("",

@@ -439,6 +439,7 @@ class ItemEnum(IntEnum):
   # MISC
   MISC_STONE = 50000
   MISC_RAT_FUR = 50001
+  MISC_TORCH = 50100
   # QUEST
   QUEST_WEATHERED_PACKAGE = 51000
   # KEYS
@@ -469,20 +470,19 @@ class ItemFlagEnum(IntEnum):
 
 
 class ItemFlag:
-  def __init__(self, name, bit):
+  def __init__(self, name):
     self.Name = name
-    self.Bit = bit
 
 
 item_flags = {
-    ItemFlagEnum.NO_SELL: ItemFlag("no sell", 1 << ItemFlagEnum.NO_SELL),
-    ItemFlagEnum.NO_DROP: ItemFlag("no drop", 1 << ItemFlagEnum.NO_DROP),
-    ItemFlagEnum.NO_GET: ItemFlag("no get", 1 << ItemFlagEnum.NO_GET),
-    ItemFlagEnum.LIGHT: ItemFlag("light", 1 << ItemFlagEnum.LIGHT),
-    ItemFlagEnum.MAGIC: ItemFlag("magic", 1 << ItemFlagEnum.MAGIC),
-    ItemFlagEnum.HIDDEN: ItemFlag("hidden", 1 << ItemFlagEnum.HIDDEN),
-    ItemFlagEnum.INVIS: ItemFlag("invisible", 1 << ItemFlagEnum.INVIS),
-    ItemFlagEnum.QUEST: ItemFlag("quest", 1 << ItemFlagEnum.QUEST),
+    ItemFlagEnum.NO_SELL: ItemFlag("no sell"),
+    ItemFlagEnum.NO_DROP: ItemFlag("no drop"),
+    ItemFlagEnum.NO_GET: ItemFlag("no get"),
+    ItemFlagEnum.LIGHT: ItemFlag("light"),
+    ItemFlagEnum.MAGIC: ItemFlag("magic"),
+    ItemFlagEnum.HIDDEN: ItemFlag("hidden"),
+    ItemFlagEnum.INVIS: ItemFlag("invisible"),
+    ItemFlagEnum.QUEST: ItemFlag("quest"),
 }
 
 
@@ -510,12 +510,17 @@ class Item:
   def ItemFlagStr(self, format="%s"):
     flag_list = []
     for x in ItemFlagEnum:
-        if item_flags[x].Bit & self.Flags > 0:
+        if 1 << x & self.Flags > 0:
           flag_list.append(item_flags[x].Name)
     if len(flag_list) == 0:
       return ""
     else:
       return format % ", ".join(flag_list)
+
+  def IsLight(self):
+    if 1 << ItemFlagEnum.LIGHT & self.Flags > 0:
+      return True
+    return False
 
 
 class Shield(Item):
@@ -1904,6 +1909,14 @@ class Person:
                                   items[default].DamageType))
     return attacks
 
+  def HasLight(self):
+    items = GameData.GetItems()
+    if self.ItemLinks is not None:
+      for item_id, il in self.ItemLinks.items():
+        if items[item_id].IsLight():
+          return True
+    return False
+
 
 # CONDITIONALS
 
@@ -2473,15 +2486,23 @@ class Exit:
     self.Door = door_id
 
 
+class RoomFlag(IntEnum):
+  PEACEFUL = 1 << 0
+  OUTSIDE = 1 << 1
+  DARK = 1 << 2
+  LIGHT = 1 << 3
+
+
 class Room:
   def __init__(self, zone, title, short_desc="", long_desc=None,
-               travel_time=60, func=None, room_pers=None, exits=None,
+               travel_time=60, flags=0, func=None, room_pers=None, exits=None,
                room_items=None, periodics=None):
     self.Zone = zone
     self.Title = title
     self.ShortDescription = short_desc
     self.LongDescription = []
     self.TravelTime = travel_time
+    self.Flags = flags
     self.Function = func
     self.Persons = []
     self.Periodics = []
@@ -2547,6 +2568,22 @@ class Room:
     for x in self.Persons:
       if x.UUID == uid:
         return True
+    return False
+
+  def HasLight(self):
+    player = GameData.GetPlayer()
+    items = GameData.GetItems()
+    if self.Flags & RoomFlag.LIGHT > 0:
+      return True
+    if player.HasLight():
+      return True
+    for x in self.Persons:
+      if x.HasLight():
+        return True
+    if self.RoomItems is not None:
+      for item_id in self.RoomItems.keys():
+        if items[item_id].IsLight():
+          return True
     return False
 
 # vim: tabstop=2 shiftwidth=2 expandtab:

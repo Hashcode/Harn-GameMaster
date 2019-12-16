@@ -15,14 +15,14 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             cultures, social_classes, sibling_ranks, wounds,
                             parent_statuses, player_frames, comelinesses,
                             complexions, color_hairs, color_eyes,
-                            skill_classes, skills, item_flags, body_parts,
+                            skill_classes, skills, body_parts,
                             materials, NumAdj, DamageTypeEnum, AttrEnum,
                             Material, PlayerCombatState, PersonTypeEnum,
                             ItemTypeEnum, ItemFlagEnum, ItemEnum,
                             DiceRoll, DoorEnum, Mob,
                             TargetTypeEnum, ConditionCheckEnum,
-                            TriggerTypeEnum, RoomEnum,
-                            ItemLink, DirectionEnum)
+                            TriggerTypeEnum, RoomEnum, RoomFlag,
+                            ItemLink, DirectionEnum, Roll)
 from logger import (logd)
 
 
@@ -115,7 +115,16 @@ def printRoomDescription(room_id):
   player = GameData.GetPlayer()
   doors = GameData.GetDoors()
   rooms = GameData.GetRooms()
+
   cm.Print("")
+
+  # check for darkness w/o light source
+  if rooms[room_id].Flags & RoomFlag.DARK > 0:
+    if not rooms[room_id].HasLight():
+      cm.Print("%sDarkness%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+      cm.Print("\nIt's completely dark and you can't see.")
+      return
+
   # Room Title
   if rooms[room_id].Title != "":
     cm.Print("%s%s%s" % (ANSI.TEXT_BOLD,
@@ -236,6 +245,10 @@ def actionGetItem():
   if len(links) < 1:
     cm.Print("\nThere are no items in the room.")
     return
+  if rooms[player.Room].Flags & RoomFlag.DARK > 0:
+    if not rooms[player.Room].HasLight():
+      cm.Print("\nYou can't see anything in the dark.")
+      return
   item_id = chooseItem(links, "pick up")
   if item_id == ItemEnum.NONE:
     return
@@ -257,14 +270,18 @@ def actionDropItem():
   if len(links) < 1:
     cm.Print("\nNothing is droppable at the moment.")
     return
+  if rooms[player.Room].Flags & RoomFlag.DARK > 0:
+    if not rooms[player.Room].HasLight():
+      cm.Print("\nYou can't see anything in the dark.")
+      return
   item_id = chooseItem(links, "drop")
   if item_id == ItemEnum.NONE:
     return
-  if items[item_id].Flags & item_flags[ItemFlagEnum.NO_DROP].Bit > 0:
+  if items[item_id].Flags & 1 << ItemFlagEnum.NO_DROP > 0:
     cm.Print("\n%s cannot be dropped." %
              items[item_id].ItemName.capitalize())
     return
-  if items[item_id].Flags & item_flags[ItemFlagEnum.QUEST].Bit > 0:
+  if items[item_id].Flags & 1 << ItemFlagEnum.QUEST > 0:
     cm.Print("\n%s cannot be dropped." %
              items[item_id].ItemName.capitalize())
     return
@@ -655,11 +672,13 @@ def processConditions(room_id, conditions):
            r >= c.Value:
           return False
       elif c.TargetType == TargetTypeEnum.ATTR_CHECK:
-        # TODO:
-        return False
+        r = DiceRoll(1, c.Value).Result()
+        if r > player.Attr[c.Data]:
+          return False
       elif c.TargetType == TargetTypeEnum.SKILL_CHECK:
-        # TODO:
-        return False
+        res = player.ResolveSkill(c.Value, c.Data)
+        if res == Roll.MF or res == Roll.CF:
+          return False
       else:
         return False
   return True
