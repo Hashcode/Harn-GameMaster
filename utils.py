@@ -601,7 +601,7 @@ def processTime():
     if hour >= 22:  # 10 pm
       cm.Print("\nThe %s moon is nearing it's zenith." % moon)
     elif hour >= 20:  # 8 pm
-      cm.Print("\nThe %s moon creeps rises higher in the night sky." % moon)
+      cm.Print("\nThe %s moon rises into view in the night sky." % moon)
     elif hour >= 18:  # 6 pm
       cm.Print("\nThe last of the sun disappears over the horizon.")
     elif hour >= 16:  # 4 pm
