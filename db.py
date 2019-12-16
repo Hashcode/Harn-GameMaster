@@ -11,6 +11,7 @@ import json
 from hashlib import sha256
 
 from gamedata import GameData
+from logger import logd
 
 # from simplecrypt import encrypt, decrypt
 
@@ -32,6 +33,7 @@ def get_char_url(name, password):
   m.update(name.upper().encode('utf-8'))
   m.update(password.encode('utf-8'))
   url = "%s/%s/%s" % (URL_BASE, DB_UUID, m.digest().hex())
+  logd("URL=%s" % url)
   return url
 
 
