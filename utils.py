@@ -1171,8 +1171,8 @@ def actionRest():
   cm.Print("\nYou take a moment to rest ...")
   combat = False
   sleep(5)
-  # 30 minute rest time each
-  player.GameTime += 1800
+  # 1 hour rest time
+  player.GameTime += 3600
   GameData.ProcessEvents(processTime, processWeather,
                          processConditions, processTriggers)
   # Check if the room persons need to attack
@@ -1275,19 +1275,14 @@ def actionSaveGeneric():
     cm.Print("\nCharacter saved.")
 
 
-def actionDate():
-  cm = GameData.GetConsole()
-  player = GameData.GetPlayer()
-  cm.Print("\n%s on %s" % (player.GameTimeStr(), player.GameTimeDateStr()))
-
-
 def actionTime():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
+  cm.Print("\n%s on %s" % (player.GameTimeStr(), player.GameTimeDateStr()))
   day_plural = "s"
   if int(player.PlayerTime() / 86400) == 1:
     day_plural = ""
-  cm.Print("\nTime Played: %d day%s %d minutes" %
+  cm.Print("Time Played: %d day%s %d minutes" %
            (int(player.PlayerTime() / 86400), day_plural,
             int((player.PlayerTime() % 86400) / 60)))
 
@@ -1343,7 +1338,6 @@ commands.append(GenericCommand(["armor", "ac"], actionArmor))
 commands.append(GenericCommand(["attack", "a"], actionAttack))
 commands.append(GenericCommand(["buy"], actionTalkBuy))
 commands.append(GenericCommand(["close"], actionClose))
-commands.append(GenericCommand(["date"], actionDate))
 commands.append(GenericCommand(["drop"], actionDropItem))
 commands.append(GenericCommand(["equip", "eq"], actionEquipItem))
 commands.append(GenericCommand(["inspect"], actionInspect))
