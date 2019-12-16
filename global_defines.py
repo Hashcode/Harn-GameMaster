@@ -1529,15 +1529,9 @@ class PersonTypeEnum(IntEnum):
   NPC = 1
 
 
-class PersonFlagEnum(IntEnum):
-  AGGRESSIVE = 0
-  TALKING = 1
-  SHOPKEEP = 2
-
-
-PERS_AGGRESSIVE = 1 << PersonFlagEnum.AGGRESSIVE
-PERS_TALKING = 1 << PersonFlagEnum.TALKING
-PERS_SHOPKEEP = 1 << PersonFlagEnum.SHOPKEEP
+class PersonFlag(IntEnum):
+  AGGRESSIVE = 1 << 0
+  TALKING = 1 << 1
 
 
 class ItemLink:
@@ -1625,7 +1619,7 @@ class Person:
   def Copy(self, p):
     self.PersonType = p.PersonType
     self.Name = p.Name
-    self.Flags = p.Flags & ~PERS_TALKING
+    self.Flags = p.Flags & ~PersonFlag.TALKING
     self.SkinMaterial = p.SkinMaterial
     self.Attr.clear()
     for attr_id, attr in attributes.items():
@@ -1846,16 +1840,16 @@ class Person:
     return self.SkillML(SkillEnum.DODGE)
 
   def IsAggressive(self):
-    return self.Flags & PERS_AGGRESSIVE > 0
+    return self.Flags & PersonFlag.AGGRESSIVE > 0
 
   def IsTalking(self):
-    return self.Flags & PERS_TALKING > 0
+    return self.Flags & PersonFlag.TALKING > 0
 
   def SetTalking(self, talk):
     if talk:
-      self.Flags |= PERS_TALKING
+      self.Flags |= PersonFlag.TALKING
     else:
-      self.Flags &= ~PERS_TALKING
+      self.Flags &= ~PersonFlag.TALKING
 
   def GenerateCombatAttacks(self, block=False, default=ItemEnum.NONE):
     items = GameData.GetItems()

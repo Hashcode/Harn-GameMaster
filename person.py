@@ -8,15 +8,14 @@ from global_defines import (DiceRoll, DamageTypeEnum, ItemEnum, AttrEnum,
                             SkillEnum, PersonEnum, ItemLink, Periodic,
                             TargetTypeEnum, ConditionCheckEnum, Condition,
                             TriggerTypeEnum, Trigger, QuestEnum,
-                            Mob, MobTalk, MobAttack,
-                            MaterialEnum, AimEnum,
-                            PERS_AGGRESSIVE, PERS_SHOPKEEP)
+                            PersonFlag, Mob, MobTalk, MobAttack,
+                            MaterialEnum, AimEnum)
 
 persons = {
     PersonEnum.MON_RAT:
         Mob(PersonEnum.MON_RAT, "an ugly rat",
             "An ugly rat scurries across the ground.", 35, 4, 25, AimEnum.LOW,
-            PERS_AGGRESSIVE,
+            PersonFlag.AGGRESSIVE,
             MaterialEnum.FUR_LT,
             attrs={
                 AttrEnum.SEX: 0,
@@ -303,7 +302,6 @@ persons = {
         Mob(PersonEnum.BL_PROVISIONER, "the provisioner",
             "A sturdy shop keeper wanders around cleaning supplies.",
             60, 17, 50,
-            flags=PERS_SHOPKEEP,
             cur=DiceRoll(1, 6, 20),
             attrs={
                 AttrEnum.SEX: 1,
