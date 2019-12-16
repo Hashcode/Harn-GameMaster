@@ -211,6 +211,33 @@ persons = {
                         Trigger(TriggerTypeEnum.ROOM_MESSAGE,
                                 "A sentry shuffles his feet looking bored."),
                     ], 300),
+                Periodic(
+                    [
+                        Condition(ConditionCheckEnum.GREATER_THAN,
+                                  TargetTypeEnum.HOUR_OF_DAY_CHECK,
+                                  value=21),
+                        Condition(ConditionCheckEnum.LESS_THAN,
+                                  TargetTypeEnum.PERCENT_CHANCE,
+                                  value=15),
+                    ],
+                    [
+                        Trigger(TriggerTypeEnum.ROOM_MESSAGE,
+                                "A sentry yawns."),
+                    ], 300),
+                Periodic(
+                    [
+                        Condition(ConditionCheckEnum.LESS_THAN,
+                                  TargetTypeEnum.HOUR_OF_DAY_CHECK,
+                                  value=4),
+                        Condition(ConditionCheckEnum.LESS_THAN,
+                                  TargetTypeEnum.PERCENT_CHANCE,
+                                  value=15),
+                    ],
+                    [
+                        Trigger(TriggerTypeEnum.ROOM_MESSAGE,
+                                "A sentry nods off for a moment before "
+                                "jerking upright."),
+                    ], 300),
             ]),
     PersonEnum.BL_KEEP_CORPORAL_WATCH:
         Mob(PersonEnum.BL_KEEP_CORPORAL_WATCH, "the corporal of the watch",
