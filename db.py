@@ -46,7 +46,7 @@ def ExistsDB(name, password):
     if dict["result"] is not None:
       return True
   except:
-    return False
+    pass
   return False
 
 
@@ -57,7 +57,8 @@ def SaveDB(name, password, state):
     if r.status_code in [200, 201]:
       return True
   except:
-    return False
+    pass
+  return False
 
 
 def LoadDB(name, password, legacy=False):
@@ -101,7 +102,8 @@ def SaveStatsDB(name, played, info, score):
     if r.status_code in [200, 201]:
       return True
   except:
-    return False
+    pass
+  return False
 
 
 def SavePlayer(save_obj, info, password):
@@ -113,8 +115,9 @@ def SavePlayer(save_obj, info, password):
   else:
     state_str = codecs.encode(state_bytes, "base64").decode("utf-8")
   if SaveDB(save_obj.Name, password, state_str):
-    SaveStatsDB(save_obj.Name, int(save_obj.SecondsPlayed / 86400), info, 0)
-  return True
+    return SaveStatsDB(save_obj.Name, int(save_obj.SecondsPlayed / 86400),
+                       info, 0)
+  return False
 
 
 def LoadPlayer(player, name, password, legacy=False):
