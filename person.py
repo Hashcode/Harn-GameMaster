@@ -4,6 +4,7 @@
 
 # Person Definitions
 
+from console import (ANSI)
 from global_defines import (DiceRoll, DamageTypeEnum, ItemEnum, AttrEnum,
                             SkillEnum, PersonEnum, ItemLink, Periodic,
                             TargetTypeEnum, ConditionCheckEnum, Condition,
@@ -83,8 +84,15 @@ persons = {
                         ],
                         text=[
                             "The guard glances in your direction. "
-                            "\"Come TALK to me Traveller, when you get "
-                            "a moment.\""
+                            "\"Come TALK to me, Traveller, when you get "
+                            "a moment.\"",
+                            "%s[TIP: Sometimes keywords will be presented "
+                            "in all capitals such as 'TALK'.  You can type "
+                            "these keywords to start interactions or talk "
+                            "about different subjects.  As the adventure "
+                            "progresses this will happen "
+                            "less and less.]%s" % (ANSI.TEXT_BOLD,
+                                                   ANSI.TEXT_NORMAL),
                         ]),
                 MobTalk("~on_exit~",
                         condition=[
@@ -94,18 +102,22 @@ persons = {
                         ],
                         text=[
                             "The guard moves to block your way. "
-                            "\"I meant you need to TALK to me, when you get "
-                            "a chance.\"  He taps his foot impatiently,"
+                            "\"I meant you need to TALK to me before "
+                            "entering.\"  He taps his foot impatiently.",
                         ],
                         triggers=[
                             Trigger(TriggerTypeEnum.DENY),
                         ]),
                 MobTalk("",
                         text=[
-                            "The guard turns to look at you. "
+                            "The guard turns to look at you.",
                             "\"Hello Traveller. Welcome to Stonehaven KEEP. "
-                            "If you need to know where to STAY or EAT, let "
-                            "me know.\""
+                            "Times are rough, so you may need to forgive "
+                            "the grim faces of our inhabitants. We've seen "
+                            "a recent surge in attacks from the wild men of "
+                            "the forest.\"",
+                            "\"You look rather new to the area, so if you "
+                            "want more INFORMATION let me know.\"",
                         ]),
                 MobTalk("",
                         condition=[
@@ -121,7 +133,12 @@ persons = {
                             "Alas, I didn't notice until the wagon was "
                             "gone.\"",
                             "\"Would you be interested in performing a "
-                            "DELIVERY for me?\""
+                            "DELIVERY for me?\"",
+                            "%s[TIP: The guard is offering a quest. To "
+                            "accept the quest type 'DELIVERY'. The 'QUESTS' "
+                            "command displays more information about your "
+                            "current and completed "
+                            "quests.]%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL),
                         ],
                         triggers=[
                             Trigger(TriggerTypeEnum.QUEST_COMPLETE,
@@ -132,7 +149,7 @@ persons = {
                             "\"Ah, Stonehaven Keep, the last bastion of "
                             "civilization before the wild forests off to the "
                             "northeast.\"  At this the guard glances out "
-                            "across the great crevice towards the forest in "
+                            "across the moat towards the forest in "
                             "the distance.",
                             "\"Castellan Danly oversees the keep with a firm "
                             "but fair hand.  Mind that you don't go causin' "
@@ -141,7 +158,25 @@ persons = {
                             "He turns and points down the passage leading "
                             "into the keep. \"Inside we have a bevy of "
                             "shops and services to choose from.  Just "
-                            "follow the Southern Walk once you're inside.\""
+                            "follow the Southern Walk once you're inside.\"",
+                        ]),
+                MobTalk("information",
+                        text=[
+                            "\"Ah some helpful information, let's see.\"",
+                            "The guard gives you a discerning look.",
+                            "\"These are rough times. If I were you, I would "
+                            "secure better weapons and ARMOR. Of course, "
+                            "you can't just pick up a bastard sword and "
+                            "charge into battle. This ain't no fairy tale. "
+                            "You'll want to TRAIN your SKILLS up over time "
+                            "with practice.\"",
+                            "\"To use items like weapons, armor and other "
+                            "things, you'll need to GET, DROP, EQUIP and "
+                            "REMOVE them. Mind you, I wouldn't leave "
+                            "anything on the ground for long.\"",
+                            "\"You should take some time and look at the "
+                            "STATS and INFO about yourself.  Best to know "
+                            "what you're good at.\"",
                         ]),
                 MobTalk("delivery",
                         condition=[
@@ -155,7 +190,14 @@ persons = {
                             "\"Glad to here it! Here, take this to the "
                             "provisioner on the Southern Walk.\"",
                             "A gatehouse guard gives you a small "
-                            "weathered package."
+                            "weathered package.",
+                            "%s[TIP: You are still in 'TALK' mode with the "
+                            "guard. To stop talking type 'DONE'. Then you "
+                            "can see what's in your inventory with the "
+                            "'INVENTORY' command (or it's abbreviation 'I'). "
+                            "Also, 'HELP' will display all of the commands "
+                            "for the game.]%s" % (ANSI.TEXT_BOLD,
+                                                  ANSI.TEXT_NORMAL),
                         ],
                         triggers=[
                             Trigger(TriggerTypeEnum.ITEM_GIVE,
@@ -166,7 +208,7 @@ persons = {
                 MobTalk("~",
                         text=[
                             "\"Stay safe while in the Keep.\" The guard "
-                            "resumes his post."
+                            "resumes his post.",
                         ]),
             ]),
     PersonEnum.BL_KEEP_SENTRY:
@@ -364,7 +406,7 @@ persons = {
                         text=[
                             "\"Hello! Welcome to my humble SHOP.  Feel free "
                             "to look around for something to BUY or you can "
-                            "SELL various items to me.\""
+                            "SELL various items to me.\"",
                         ]),
                 MobTalk("",
                         condition=[
@@ -380,7 +422,7 @@ persons = {
                             "He gently places it on a pile of goods and "
                             "takes a moment to rummage around behind the "
                             "counter.  After a moment he steps up to you "
-                            "and presses a few coins into your hand."
+                            "and presses a few coins into your hand.",
                         ],
                         triggers=[
                             Trigger(TriggerTypeEnum.ITEM_TAKE,
