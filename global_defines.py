@@ -428,6 +428,7 @@ class ItemEnum(IntEnum):
   QUEST_WEATHERED_PACKAGE = 51000
   # KEYS
   KEY_WAREHOUSE_DBL_DOOR = 60000
+  KEY_CORPORAL_APPT = 60001
 
 
 class ItemTypeEnum(IntEnum):
@@ -1951,6 +1952,8 @@ class TriggerTypeEnum(IntEnum):
   GIVE_FLAG = 18
   TAKE_FLAG = 19
   PERSON_MOVE = 20
+  DOOR_UNLOCK = 21
+  DOOR_LOCK = 22
   END = 127
 
 
@@ -2391,6 +2394,7 @@ class DoorEnum(IntEnum):
   NONE = 0
   KEEP_DRAWBRIDGE = 1
   WAREHOUSE_DBL_DOOR = 2
+  CORPORAL_APPT_DOOR = 3
 
 
 # ROOM

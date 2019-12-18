@@ -507,7 +507,10 @@ items = {
 
     ItemEnum.KEY_WAREHOUSE_DBL_DOOR:
         Item(ItemTypeEnum.MISC, "a large bronze key", QualityEnum.AVE,
-             MaterialEnum.BRONZE, 1),
+             MaterialEnum.BRONZE, 1, flags=IFLAG_NO_SELL),
+    ItemEnum.KEY_CORPORAL_APPT:
+        Item(ItemTypeEnum.MISC, "an iron key on a chain", QualityEnum.AVE,
+             MaterialEnum.STEEL, 1, flags=IFLAG_NO_SELL),
 }
 
 # vim: tabstop=2 shiftwidth=2 expandtab:

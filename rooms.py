@@ -100,8 +100,11 @@ doors = {
     DoorEnum.KEEP_DRAWBRIDGE:
         Door("drawbridge", DoorState(True, True), ItemEnum.NONE),
     DoorEnum.WAREHOUSE_DBL_DOOR:
-        Door("double doors", DoorState(True, False),
+        Door("double doors to a warehouse", DoorState(True, True),
              ItemEnum.KEY_WAREHOUSE_DBL_DOOR),
+    DoorEnum.CORPORAL_APPT_DOOR:
+        Door("oak door to an apartment", DoorState(True, True),
+             ItemEnum.KEY_CORPORAL_APPT),
 }
 
 rooms = {
@@ -326,7 +329,8 @@ rooms = {
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_SMITHY),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_SOUTHEASTERN_WALK),
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_APARMENT_1),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_APARMENT_1,
+                                           DoorEnum.CORPORAL_APPT_DOOR),
                  DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHERN_WALK_2),
              }),
     RoomEnum.BL_SMITHY:
@@ -343,7 +347,8 @@ rooms = {
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK),
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK,
+                                           DoorEnum.CORPORAL_APPT_DOOR),
              }),
     RoomEnum.BL_SOUTHERN_WALK_2:
         Room(ZoneEnum.KEEP,

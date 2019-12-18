@@ -864,8 +864,16 @@ def processTriggers(obj, triggers):
           if r is not None:
             r.Persons.remove(obj)
           rooms[tr.Data].Persons.append(obj)
-      elif tr.TriggerType == TriggerTypeEnum.DENY:
-        return False
+      elif tr.TriggerType == TriggerTypeEnum.DOOR_UNLOCK:
+        ds = player.DoorState(tr.Data)
+        if ds is not None:
+          ds.Closed = True
+          ds.Locked = False
+      elif tr.TriggerType == TriggerTypeEnum.DOOR_LOCK:
+        ds = player.DoorState(tr.Data)
+        if ds is not None:
+          ds.Closed = True
+          ds.Locked = True
       elif tr.TriggerType == TriggerTypeEnum.END:
         logd("[trigger] END")
         return False
