@@ -8,14 +8,11 @@ import requests
 import re
 import json
 
-from hashlib import sha256
-
 from gamedata import GameData
-from logger import logd
 
 # from simplecrypt import encrypt, decrypt
 
-URL_BASE = "https://www.jsonstore.io"
+URL_BASE = "https://storage.hashcode.repl.co"
 DB_UUID = "e4cf4dfd5c61f35b78a0c07a01a3c1ca00d8cb3b98345829336c40caf4753183"
 STATS_FILE = "stats"
 
@@ -28,17 +25,13 @@ def get_valid_filename(s):
   return re.sub(r'(?u)[^-\w.]', '', s)
 
 
-def get_char_url(name, password):
-  m = sha256()
-  m.update(name.upper().encode('utf-8'))
-  m.update(password.encode('utf-8'))
-  url = "%s/%s/%s" % (URL_BASE, DB_UUID, m.digest().hex())
-  logd("URL=%s" % url)
-  return url
+def get_char_url(name):
+  return "%s/%s/%s" % (URL_BASE, DB_UUID, name.upper())
 
 
 def ExistsDB(name, password):
-  r = requests.get(get_char_url(name, password))
+  data = {'secret': password}
+  r = requests.post(get_char_url(name), json=data)
   if r.status_code != 200:
     return False
   try:
@@ -52,8 +45,9 @@ def ExistsDB(name, password):
 
 def SaveDB(name, password, state):
   payload = {'state': state}
+  data = {'secret': password, 'value': payload}
   try:
-    r = requests.put(get_char_url(name, password), json=payload)
+    r = requests.put(get_char_url(name), json=data)
     if r.status_code in [200, 201]:
       return True
   except:
@@ -63,11 +57,8 @@ def SaveDB(name, password, state):
 
 def LoadDB(name, password, legacy=False):
   ret = ""
-  if legacy:
-    r = requests.get("%s/%s/%s" % (URL_BASE, DB_UUID,
-                                   get_valid_filename(name.upper())))
-  else:
-    r = requests.get(get_char_url(name, password))
+  data = {'secret': password}
+  r = requests.post(get_char_url(name), json=data)
   try:
     record = r.json()
     if record["result"] is not None:
@@ -107,14 +98,17 @@ def SaveStatsDB(name, played, info, score):
 
 
 def SavePlayer(save_obj, info, password):
-  password = password.upper()
+  temp = password.upper()
+  save_obj.Password = ""
   state_bytes = pickle.dumps(save_obj)
   if global_use_encrypt:
     enc_state_bytes = encrypt(password, state_bytes)
     state_str = codecs.encode(enc_state_bytes, "base64").decode("utf-8")
   else:
     state_str = codecs.encode(state_bytes, "base64").decode("utf-8")
-  if SaveDB(save_obj.Name, password, state_str):
+  ret = SaveDB(save_obj.Name, password, state_str)
+  save_obj.Password = temp
+  if ret:
     return SaveStatsDB(save_obj.Name, int(save_obj.SecondsPlayed / 86400),
                        info, 0)
   return False
