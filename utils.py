@@ -165,6 +165,17 @@ def printRoomObjects(room_id):
     printItems(rooms[room_id].RoomItems)
 
 
+def attrColor(attr):
+  if attr <= 5:
+    return ANSI.TEXT_COLOR_RED
+  elif attr <= 8:
+    return ANSI.TEXT_COLOR_YELLOW
+  elif attr <= 13:
+    return ANSI.TEXT_COLOR_WHITE
+  else:
+    return ANSI.TEXT_COLOR_GREEN
+
+
 def printStats(person):
   cm = GameData.GetConsole()
   if person.PersonType == PersonTypeEnum.PLAYER:
@@ -176,7 +187,9 @@ def printStats(person):
       for attr, val in person.Attr.items():
         if not attributes[attr].Hidden:
           if attributes[attr].AttrClass == ac_id:
-            cm.Print("%-15s: %d" % (attributes[attr].Name, val))
+            cm.Print("%-15s: %s%d%s" % (attributes[attr].Name,
+                                        attrColor(val), val,
+                                        ANSI.TEXT_NORMAL))
     cm.Print("\n%sCHARACTER STATS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   else:
     cm.Print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, person.Name.upper(),
@@ -421,11 +434,17 @@ def actionSkills():
         continue
       if sk.Hidden:
         continue
-      cm.Print("%-15s: %s/%s/%s  ML:%-3d" %
+      cm.Print("%-15s: %s%s%s/%s%s%s/%s%s%s  ML:%-3d" %
                (sk.Name,
+                attrColor(player.Attr[skills[sk_id].Attr1]),
                 attributes[skills[sk_id].Attr1].Abbrev,
+                ANSI.TEXT_NORMAL,
+                attrColor(player.Attr[skills[sk_id].Attr2]),
                 attributes[skills[sk_id].Attr2].Abbrev,
+                ANSI.TEXT_NORMAL,
+                attrColor(player.Attr[skills[sk_id].Attr3]),
                 attributes[skills[sk_id].Attr3].Abbrev,
+                ANSI.TEXT_NORMAL,
                 player.SkillML(sk_id)))
 
 
