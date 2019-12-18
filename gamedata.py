@@ -102,7 +102,7 @@ class GameData:
             per.LastCheck = seconds
             if GameData._NextRoomEvent > seconds + per.DelaySeconds:
               GameData._NextRoomEvent = seconds + per.DelaySeconds
-            if processConditions(room_id, per.Conditions):
+            if processConditions(room_id, rooms[room_id], per.Conditions):
               if per.Triggers is not None:
                 processTriggers(room_id, per.Triggers)
         if rooms[room_id].Persons is not None:
@@ -117,9 +117,9 @@ class GameData:
                 per.LastCheck = seconds
                 if GameData._NextRoomEvent > seconds + per.DelaySeconds:
                   GameData._NextRoomEvent = seconds + per.DelaySeconds
-                if processConditions(room_id, per.Conditions):
+                if processConditions(room_id, npc, per.Conditions):
                   if per.Triggers is not None:
-                    processTriggers(room_id, per.Triggers)
+                    processTriggers(npc, per.Triggers)
 
   @staticmethod
   def ProcessRoomCombat():

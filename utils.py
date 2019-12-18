@@ -645,7 +645,7 @@ def processTime():
   return
 
 
-def processConditions(room_id, conditions):
+def processConditions(room_id, obj, conditions):
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
   if conditions is not None:
@@ -766,6 +766,15 @@ def processConditions(room_id, conditions):
       elif c.TargetType == TargetTypeEnum.MOONPHASE_CHECK:
         # TODO
         pass
+      elif c.TargetType == TargetTypeEnum.FLAG_CHECK:
+        if c.ConditionCheck == ConditionCheckEnum.HAS:
+          if type(obj) is Mob:
+            if obj.Flags & c.Data == 0:
+              return False
+        elif c.ConditionCheck == ConditionCheckEnum.HAS_NOT:
+          if type(obj) is Mob:
+            if obj.Flags & c.Data > 0:
+              return False
       else:
         return False
   return True
@@ -810,7 +819,8 @@ def processTriggers(obj, triggers):
                     ANSI.TEXT_NORMAL))
           player.CombatTarget = obj.UUID
       elif tr.TriggerType == TriggerTypeEnum.PERSON_DESC:
-        obj.LongDescription = tr.Data
+        if type(obj) == Mob:
+          obj.LongDescription = tr.Data
       elif tr.TriggerType == TriggerTypeEnum.MESSAGE:
         cm.Print(wrapper.fill(tr.Data))
       elif tr.TriggerType == TriggerTypeEnum.ROOM_MESSAGE:
@@ -826,8 +836,16 @@ def processTriggers(obj, triggers):
       elif tr.TriggerType == TriggerTypeEnum.DELAY:
         obj.DelayTimestamp = player.PlayerTime()
         obj.DelaySeconds = int(tr.Data)
+      elif tr.TriggerType == TriggerTypeEnum.GIVE_FLAG:
+        if type(obj) == Mob or type(obj) == Player:
+          obj.Flags |= tr.Data
+      elif tr.TriggerType == TriggerTypeEnum.TAKE_FLAG:
+        if type(obj) == Mob or type(obj) == Player:
+          obj.Flags &= ~tr.Data
       elif tr.TriggerType == TriggerTypeEnum.DENY:
         return False
+      elif tr.TriggerType == TriggerTypeEnum.END:
+        return
 
 
 def printNPCTalk(p, keyword):
@@ -836,7 +854,7 @@ def printNPCTalk(p, keyword):
   ret = False
   for tk in p.Talks:
     if tk.Keyword.lower() == keyword:
-      if processConditions(player.Room, tk.Conditions):
+      if processConditions(player.Room, p, tk.Conditions):
         ret = True
         for t in tk.Texts:
           cm.Print("\n" + wrapper.fill(t))
@@ -857,7 +875,7 @@ def roomTalkTrigger(keyword):
       continue
     for tk in npc.Talks:
       if tk.Keyword.lower() == keyword:
-        if processConditions(player.Room, tk.Conditions):
+        if processConditions(player.Room, npc, tk.Conditions):
           for t in tk.Texts:
             cm.Print("\n" + wrapper.fill(t))
           if tk.Triggers is not None:

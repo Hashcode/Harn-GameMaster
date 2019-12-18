@@ -281,6 +281,97 @@ persons = {
                                 "jerking upright."),
                     ], 300),
             ]),
+    PersonEnum.BL_KEEP_BEGGAR:
+        Mob(PersonEnum.BL_KEEP_BEGGAR, "an unkempt beggar",
+            "An unkempt man sits near the wall mumbling to himself.",
+            40, 12, 35,
+            cur=DiceRoll(1, 6, 60),
+            attrs={
+                AttrEnum.SEX: 1,
+                AttrEnum.STRENGTH: 10,
+                AttrEnum.STAMINA: 11,
+                AttrEnum.DEXTERITY: 12,
+                AttrEnum.AGILITY: 11,
+                AttrEnum.EYESIGHT: 10,
+                AttrEnum.HEARING: 10,
+                AttrEnum.SMELL: 4,
+                AttrEnum.INTELLIGENCE: 16,
+                AttrEnum.AURA: 10,
+                AttrEnum.WILL: 11,
+            },
+            mob_skills={
+                SkillEnum.UNARMED: 20,
+            },
+            eq={
+                ItemEnum.ARMOR_TUNIC_CLOTH: ItemLink(1, True),
+            },
+            periodics=[
+                Periodic(
+                    [
+                        Condition(ConditionCheckEnum.HAS,
+                                  TargetTypeEnum.FLAG_CHECK,
+                                  PersonFlag.BEHAVIOR_1),
+                    ],
+                    [
+                        Trigger(TriggerTypeEnum.ROOM_MESSAGE,
+                                "An unkempt man sags visibly and sits back "
+                                "down."),
+                        Trigger(TriggerTypeEnum.PERSON_DESC,
+                                "An unkempt man sits near the wall "
+                                "mumbling to himself."),
+                        Trigger(TriggerTypeEnum.TAKE_FLAG,
+                                PersonFlag.BEHAVIOR_1),
+                    ], 300),
+            ],
+            talk=[
+                MobTalk("~on_enter~",
+                        condition=[
+                            Condition(ConditionCheckEnum.LESS_THAN,
+                                      TargetTypeEnum.PERCENT_CHANCE,
+                                      value=15),
+                        ],
+                        text=[
+                            "An unkempt man mumbles, \"He was an unholy "
+                            "abomination ...\"",
+                        ],
+                        triggers=[
+                            Trigger(TriggerTypeEnum.END),
+                        ]),
+                MobTalk("~on_enter~",
+                        condition=[
+                            Condition(ConditionCheckEnum.HAS_NOT,
+                                      TargetTypeEnum.FLAG_CHECK,
+                                      PersonFlag.BEHAVIOR_1),
+                            Condition(ConditionCheckEnum.LESS_THAN,
+                                      TargetTypeEnum.PERCENT_CHANCE,
+                                      value=15),
+                        ],
+                        text=[
+                            "An unkempt man jumps to his feet and stares at "
+                            "you.",
+                        ],
+                        triggers=[
+                            Trigger(TriggerTypeEnum.PERSON_DESC,
+                                    "An unkempt man is standing here "
+                                    "crazily looking in all directions."),
+                            Trigger(TriggerTypeEnum.GIVE_FLAG,
+                                    PersonFlag.BEHAVIOR_1),
+                            Trigger(TriggerTypeEnum.END),
+                        ]),
+                MobTalk("~on_enter~",
+                        condition=[
+                            Condition(ConditionCheckEnum.LESS_THAN,
+                                      TargetTypeEnum.PERCENT_CHANCE,
+                                      value=15),
+                        ],
+                        text=[
+                            "An unkempt man mumbles, \"I told her not to "
+                            "pick it up ...\"",
+                        ],
+                        triggers=[
+                            Trigger(TriggerTypeEnum.END),
+                        ]),
+            ]),
     PersonEnum.BL_KEEP_CORPORAL_WATCH:
         Mob(PersonEnum.BL_KEEP_CORPORAL_WATCH, "the corporal of the watch",
             "The corporal of the watch stands here grumbling to his scribe.",

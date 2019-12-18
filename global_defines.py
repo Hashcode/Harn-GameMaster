@@ -1503,6 +1503,7 @@ class PersonEnum(IntEnum):
   MON_RAT = 100
   BL_KEEP_GUARD = 10000
   BL_KEEP_SENTRY = 10001
+  BL_KEEP_BEGGAR = 10002
   BL_KEEP_CORPORAL_WATCH = 10010
   BL_KEEP_YARD_SCRIBE = 10011
   BL_PROVISIONER = 10020
@@ -1516,6 +1517,8 @@ class PersonTypeEnum(IntEnum):
 class PersonFlag(IntEnum):
   AGGRESSIVE = 1 << 0
   TALKING = 1 << 1
+  BEHAVIOR_1 = 1 << 6
+  BEHAVIOR_2 = 1 << 7
 
 
 class ItemLink:
@@ -1913,6 +1916,7 @@ class TargetTypeEnum(IntEnum):
   MONTH_CHECK = 11
   DAYLIGHT_CHECK = 12
   MOONPHASE_CHECK = 13
+  FLAG_CHECK = 14
 
 
 class ConditionCheckEnum(IntEnum):
@@ -1943,6 +1947,9 @@ class TriggerTypeEnum(IntEnum):
   MOVE = 15
   DELAY = 16
   DENY = 17
+  GIVE_FLAG = 18
+  TAKE_FLAG = 19
+  END = 127
 
 
 class Condition:
@@ -2115,31 +2122,19 @@ class Player(Person):
   def Copy(self, p):
     super().Copy(p)
     self.Time = int(time())  # epoch at login
-    try:
-      self.SecondsPlayed = p.SecondsPlayed
-      self.GameTime = p.GameTime
-      self.LastTimeUpdate = p.LastTimeUpdate
-    except AttributeError:
-      self.SecondsPlayed = 0
-      self.GameTime = 43200
-      self.LastTimeUpdate = 0
-      logd("player missing time data")
+    self.SecondsPlayed = p.SecondsPlayed
+    self.GameTime = p.GameTime
+    self.LastTimeUpdate = p.LastTimeUpdate
     self.Room = p.Room
     self.LastRoom = p.LastRoom
     self.Currency = p.Currency
     self.CalcSunsign()
-    try:
-      if p.Doors is not None:
-        for door_id, state in p.Doors.items():
-          self.Doors.update({door_id: deepcopy(state)})
-    except AttributeError:
-      logd("player missing doors")
-    try:
-      if p.Quests is not None:
-        for quest_id, complete in p.Quests.items():
-          self.Quests.update({quest_id: complete})
-    except AttributeError:
-      logd("player missing quests")
+    if p.Doors is not None:
+      for door_id, state in p.Doors.items():
+        self.Doors.update({door_id: deepcopy(state)})
+    if p.Quests is not None:
+      for quest_id, complete in p.Quests.items():
+        self.Quests.update({quest_id: complete})
     super().ResetStats()
 
   def UpdatePlayerTime(self):

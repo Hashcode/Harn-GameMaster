@@ -173,6 +173,9 @@ rooms = {
                  "to either side contain arrow slits for archery."
              ],
              flags=RoomFlag.LIGHT,
+             room_pers=[
+                 PersonEnum.BL_KEEP_BEGGAR,
+             ],
              exits={
                  DirectionEnum.WEST: Exit(RoomEnum.BL_ENTRY_YARD),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_KEEP_GATEHOUSE),
