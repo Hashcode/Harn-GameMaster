@@ -2,4 +2,5 @@
 ignore =
 	# ignore tab settings
 	E114, E111
-
+	# ignore long lines
+	E501
