@@ -73,8 +73,9 @@ def LoadDB(name, password, legacy=False):
 
 def LoadStatsDB():
   players = {}
+  data = {'dummy': 'value'}
   url = "%s/%s/%s" % (URL_BASE, DB_UUID, STATS_FILE)
-  r = requests.get(url)
+  r = requests.post(url, json=data)
   try:
     record = r.json()
     if record["result"] is not None:
