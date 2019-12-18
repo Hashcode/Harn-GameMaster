@@ -80,10 +80,10 @@ def room_CreateCharacter():
   player.ResetStats()
   player.SetRoom(GameData.ROOM_START)
 
-  cm.Print("\nSaving character ...")
-  if not actionSave():
-    return RoomFuncResponse.SKIP
-  cm.Print("Done.")
+  #  cm.Print("\nSaving character ...")
+  #  if not actionSave():
+  #    return RoomFuncResponse.SKIP
+  #  cm.Print("Done.")
 
   cm.Print("\nGood luck, %s!" % (player.Name))
   return RoomFuncResponse.SKIP
