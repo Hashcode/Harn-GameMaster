@@ -598,29 +598,29 @@ def processTime():
     moon = player.GameTimeMoonPhase()
     hour = player.GameTimeHourOfDay()
     if hour >= 22:  # 10 pm
-      cm.Print("\nThe %s moon is nearing it's zenith." % moon)
+      cm.Print("The %s moon is nearing it's zenith." % moon)
     elif hour >= 20:  # 8 pm
-      cm.Print("\nThe %s moon rises into view in the night sky." % moon)
+      cm.Print("The %s moon rises into view in the night sky." % moon)
     elif hour >= 18:  # 6 pm
-      cm.Print("\nThe last of the sun disappears over the horizon.")
+      cm.Print("The last of the sun disappears over the horizon.")
     elif hour >= 16:  # 4 pm
-      cm.Print("\nThe sun sinks ever lower in the afternoon sky.")
+      cm.Print("The sun sinks ever lower in the afternoon sky.")
     elif hour >= 14:  # 2 pm
-      cm.Print("\nThe sun slowly makes it's way across the afternoon sky.")
+      cm.Print("The sun slowly makes it's way across the afternoon sky.")
     elif hour >= 12:  # noon
-      cm.Print("\nThe suns has reached it's zenith in the sky.")
+      cm.Print("The suns has reached it's zenith in the sky.")
     elif hour >= 10:  # 10 am
-      cm.Print("\nThe suns is nearly at it's peak in the late morning.")
+      cm.Print("The suns is nearly at it's peak in the late morning.")
     elif hour >= 8:  # 8 am
-      cm.Print("\nThe suns path arcs higher in the mid-morning sky.")
+      cm.Print("The suns path arcs higher in the mid-morning sky.")
     elif hour >= 6:  # 6 am
-      cm.Print("\nThe sun peeks over the horizon.")
+      cm.Print("The sun peeks over the horizon.")
     elif hour >= 4:  # 4 am
-      cm.Print("\nThe %s moon slowly drops below the horizon." % moon)
+      cm.Print("The %s moon slowly drops below the horizon." % moon)
     elif hour >= 2:  # 2 am
-      cm.Print("\nThe %s moon drifts lower in the night sky." % moon)
+      cm.Print("The %s moon drifts lower in the night sky." % moon)
     else:  # midnight
-      cm.Print("\nThe %s moon is now high overhead." % moon)
+      cm.Print("The %s moon is now high overhead." % moon)
     # set update time to last even hour block
     player.LastTimeUpdate = int(player.GameTime / 7200) * 7200
   return
@@ -1199,31 +1199,35 @@ def actionRest():
     return
   cm.Print("\nYou take a moment to rest ...")
   combat = False
-  sleep(5)
-  # 1 hour rest time
-  player.GameTime += 3600
-  GameData.ProcessEvents(processTime, processWeather,
-                         processConditions, processTriggers)
-  # Check if the room persons need to attack
-  enemies = GameData.ProcessRoomCombat()
-  if len(enemies) > 0:
-    cm.Print("")
-    combat = True
+  # 1 hour rest time, 10 minutes at a time
+  for i in range(6):
+    sleep(1)
+    player.GameTime += 600
+    GameData.ProcessEvents(processTime, processWeather,
+                           processConditions, processTriggers)
+    # Check if the room persons need to attack
+    enemies = GameData.ProcessRoomCombat()
+    if len(enemies) > 0:
+      cm.Print("")
+      combat = True
+      break
+  if combat:
     combat(player, enemies)
-  if not combat and player.IP() > 0:
-    for w in sorted(player.Wounds, reverse=True):
-      cm.Print("\nYou clean and dress a %s %s %s wound." %
-               (wounds[w.WoundType].Name.lower(),
-                wounds[w.WoundType].Verbs[w.DamageType].lower(),
-                body_parts[w.Location].PartName.lower()))
-      sleep(5)
-      r = DiceRoll(1, player.Attr[AttrEnum.AURA]).Result()
-      w.Impact -= r
-      if w.Impact <= 0:
-        player.Wounds.remove(w)
-        cm.Print("It's all better!")
-      else:
-        cm.Print("It looks a bit better.")
+  else:
+    if player.IP() > 0:
+      for w in sorted(player.Wounds, reverse=True):
+        cm.Print("\nYou clean and dress a %s %s %s wound ..." %
+                 (wounds[w.WoundType].Name.lower(),
+                  wounds[w.WoundType].Verbs[w.DamageType].lower(),
+                  body_parts[w.Location].PartName.lower()))
+        sleep(5)
+        r = DiceRoll(1, player.Attr[AttrEnum.AURA]).Result()
+        w.Impact -= r
+        if w.Impact <= 0:
+          player.Wounds.remove(w)
+          cm.Print("It's all better!")
+        else:
+          cm.Print("It looks a bit better.")
 
 
 ATT_PER_TRAIN = 25
