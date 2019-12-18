@@ -16,7 +16,7 @@ from logger import logd
 # from simplecrypt import encrypt, decrypt
 
 URL_BASE = "https://www.jsonstore.io"
-DB_UUID = "f4dd28e6f701809382924215197653375ae7bfeedadc1485196e72697392bc2c"
+DB_UUID = "e4cf4dfd5c61f35b78a0c07a01a3c1ca00d8cb3b98345829336c40caf4753183"
 STATS_FILE = "stats"
 
 
