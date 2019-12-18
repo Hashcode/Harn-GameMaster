@@ -7,6 +7,9 @@
 from console import ANSI
 
 
+PERIODIC_TRIGGERED = 1 << 15
+
+
 class GameData:
   _console = None
   _doors = None
@@ -77,6 +80,13 @@ class GameData:
     return GameData._quests
 
   @staticmethod
+  def ResetPersonTriggers():
+    rooms = GameData.GetRooms()
+    for room_id, r in rooms.items():
+      for p in r.Persons:
+        p.Flags &= ~PERIODIC_TRIGGERED
+
+  @staticmethod
   def ProcessEvents(processTime, processWeather,
                     processConditions, processTriggers):
     rooms = GameData.GetRooms()
@@ -86,6 +96,7 @@ class GameData:
     processWeather()
     # Check for room events
     seconds = player.PlayerTime()
+    GameData.ResetPersonTriggers()
     if GameData._NextRoomEvent < seconds:
       # Set NextRoomEvent max 10mins
       GameData._NextRoomEvent = seconds + (10 * 60)
@@ -104,10 +115,14 @@ class GameData:
               GameData._NextRoomEvent = seconds + per.DelaySeconds
             if processConditions(room_id, rooms[room_id], per.Conditions):
               if per.Triggers is not None:
-                processTriggers(room_id, per.Triggers)
+                if processTriggers(room_id, per.Triggers) == False:
+                  break
         if rooms[room_id].Persons is not None:
           for npc in rooms[room_id].Persons:
             if npc.Periodics is not None:
+              if npc.Flags & PERIODIC_TRIGGERED > 0:
+                continue
+              npc.Flags |= PERIODIC_TRIGGERED
               for per in npc.Periodics:
                 next = per.LastCheck + per.DelaySeconds
                 if next >= seconds:
@@ -119,7 +134,8 @@ class GameData:
                   GameData._NextRoomEvent = seconds + per.DelaySeconds
                 if processConditions(room_id, npc, per.Conditions):
                   if per.Triggers is not None:
-                    processTriggers(npc, per.Triggers)
+                    if processTriggers(npc, per.Triggers) == False:
+                      break
 
   @staticmethod
   def ProcessRoomCombat():

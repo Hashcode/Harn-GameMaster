@@ -19,7 +19,7 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             materials, DamageTypeEnum, AttrEnum,
                             Material, PlayerCombatState, PersonTypeEnum,
                             ItemTypeEnum, ItemFlagEnum, ItemEnum,
-                            DiceRoll, DoorEnum, Mob,
+                            DiceRoll, DoorEnum, Mob, Player,
                             TargetTypeEnum, ConditionCheckEnum,
                             TriggerTypeEnum, RoomEnum, RoomFlag,
                             ItemLink, DirectionEnum, Roll)
@@ -715,8 +715,16 @@ def processConditions(room_id, obj, conditions):
           if count >= c.Value:
             return False
       elif c.TargetType == TargetTypeEnum.LOCATED_IN_ROOM:
-        # TODO:
-        return False
+        match = False
+        if type(obj) is Mob:
+          for p in rooms[c.Data].Persons:
+            if p.UUID == obj.UUID:
+              match = True
+              break
+        logd("[cond] LOCATED_IN_ROOM: %s[%d] == %d" %
+             (obj.Name, c.Data, match))
+        if not match:
+          return False
       elif c.TargetType == TargetTypeEnum.PERCENT_CHANCE:
         r = DiceRoll(1, 100).Result()
         if c.ConditionCheck == ConditionCheckEnum.GREATER_THAN and \
@@ -730,13 +738,17 @@ def processConditions(room_id, obj, conditions):
           return False
       elif c.TargetType == TargetTypeEnum.ATTR_CHECK:
         r = DiceRoll(1, c.Value).Result()
+        logd("[cond] ATTR_CHECK: %d vs. %d" % (r, player.Attr[c.Data]))
         if r > player.Attr[c.Data]:
           return False
       elif c.TargetType == TargetTypeEnum.SKILL_CHECK:
         res = player.ResolveSkill(c.Value, c.Data)
+        logd("[cond] SKILL_CHECK: %s" % (res))
         if res == Roll.MF or res == Roll.CF:
           return False
       elif c.TargetType == TargetTypeEnum.HOUR_OF_DAY_CHECK:
+        logd("[cond] HOUR_OF_DAY_CHECK: %d vs. %d" %
+             (player.GameTimeHourOfDay(), c.Value))
         if c.ConditionCheck == ConditionCheckEnum.GREATER_THAN:
           if player.GameTimeHourOfDay() <= c.Value:
             return False
@@ -842,10 +854,21 @@ def processTriggers(obj, triggers):
       elif tr.TriggerType == TriggerTypeEnum.TAKE_FLAG:
         if type(obj) == Mob or type(obj) == Player:
           obj.Flags &= ~tr.Data
+      elif tr.TriggerType == TriggerTypeEnum.PERSON_MOVE:
+        if type(obj) == Mob:
+          r = None
+          for room_id in rooms.keys():
+            if rooms[room_id].PersonInRoom(obj.UUID):
+              r = rooms[room_id]
+              break
+          if r is not None:
+            r.Persons.remove(obj)
+          rooms[tr.Data].Persons.append(obj)
       elif tr.TriggerType == TriggerTypeEnum.DENY:
         return False
       elif tr.TriggerType == TriggerTypeEnum.END:
-        return
+        logd("[trigger] END")
+        return False
 
 
 def printNPCTalk(p, keyword):

@@ -1519,6 +1519,7 @@ class PersonFlag(IntEnum):
   TALKING = 1 << 1
   BEHAVIOR_1 = 1 << 6
   BEHAVIOR_2 = 1 << 7
+  PERIODIC_TRIGGERED = 1 << 15  # keep in sync with gamedata
 
 
 class ItemLink:
@@ -1949,6 +1950,7 @@ class TriggerTypeEnum(IntEnum):
   DENY = 17
   GIVE_FLAG = 18
   TAKE_FLAG = 19
+  PERSON_MOVE = 20
   END = 127
 
 
