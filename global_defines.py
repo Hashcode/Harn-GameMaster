@@ -1779,7 +1779,7 @@ class TriggerTypeEnum(IntEnum):
   QUEST_COMPLETE = 10
   PERSON_ATTACK = 11
   PERSON_DESC = 12
-  MESSAGE = 13
+  ZONE_MESSAGE = 13
   ROOM_MESSAGE = 14
   MOVE = 15
   DELAY = 16
@@ -2216,6 +2216,10 @@ class DoorEnum(IntEnum):
   KEEP_DRAWBRIDGE = 1
   WAREHOUSE_DBL_DOOR = 2
   CORPORAL_APPT_DOOR = 3
+  N_TOWER_TRAPDOOR_LEVEL_2 = 4
+  N_TOWER_TRAPDOOR_LEVEL_3 = 5
+  S_TOWER_TRAPDOOR_LEVEL_2 = 6
+  S_TOWER_TRAPDOOR_LEVEL_3 = 7
 
 
 # ROOM
@@ -2231,9 +2235,13 @@ class RoomEnum(IntEnum):
   BL_ENTRY_YARD = 10010
   BL_STABLE = 10011
   BL_N_GATEHOUSE_TOWER = 10012
+  BL_N_GATEHOUSE_TOWER_LEVEL_2 = 10013
+  BL_N_GATEHOUSE_TOWER_LEVEL_3 = 10014
   BL_EASTERN_WALK = 10020
   BL_WAREHOUSE = 10021
   BL_S_GATEHOUSE_TOWER = 10022
+  BL_S_GATEHOUSE_TOWER_LEVEL_2 = 10023
+  BL_S_GATEHOUSE_TOWER_LEVEL_3 = 10024
   BL_SOUTHEASTERN_WALK = 10030
   BL_BAILIFF_TOWER = 10031
   BL_SOUTHERN_WALK = 10040
@@ -2357,7 +2365,7 @@ class RoomFlag(IntEnum):
 
 class Room:
   def __init__(self, zone, title, short_desc="", long_desc=None, travel_time=60, flags=0, func=None,
-               room_pers=None, exits=None, room_items=None, periodics=None):
+               room_pers=None, exits=None, room_items=None, onLook=None, periodics=None):
     self.Zone = zone
     self.Title = title
     self.ShortDescription = short_desc
@@ -2369,6 +2377,7 @@ class Room:
     self.Periodics = []
     self.Exits = dict()
     self.RoomItems = dict()
+    self.OnLook = onLook
     if long_desc is not None:
       for para in long_desc:
         self.LongDescription.append(para)

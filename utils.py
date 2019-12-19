@@ -132,6 +132,12 @@ def printRoomDescription(room_id):
   if len(rooms[room_id].LongDescription) > 0:
     for para in rooms[room_id].LongDescription:
       cm.Print("\n" + wrapper.fill(para))
+    if rooms[room_id].OnLook is not None:
+      for p in rooms[room_id].OnLook:
+        if processConditions(room_id, rooms[room_id], p.Conditions):
+          if p.Triggers is not None:
+            if processTriggers(room_id, p.Triggers) == False:
+              break
     # Exits
     if len(rooms[room_id].Exits) > 0:
       cm.Print("")
@@ -833,15 +839,16 @@ def processTriggers(obj, triggers):
       elif tr.TriggerType == TriggerTypeEnum.PERSON_DESC:
         if type(obj) == Mob:
           obj.LongDescription = tr.Data
-      elif tr.TriggerType == TriggerTypeEnum.MESSAGE:
-        cm.Print(wrapper.fill(tr.Data))
+      elif tr.TriggerType == TriggerTypeEnum.ZONE_MESSAGE:
+        if player.Room != obj and rooms[player.Room].Zone == rooms[obj].Zone:
+          cm.Print("\n" + wrapper.fill(tr.Data))
       elif tr.TriggerType == TriggerTypeEnum.ROOM_MESSAGE:
         if type(obj) == Mob:
           if rooms[player.Room].PersonInRoom(obj.UUID):
             cm.Print(wrapper.fill(tr.Data))
         elif type(obj) == RoomEnum:
           if player.Room == obj:
-            cm.Print(wrapper.fill(tr.Data))
+            cm.Print("\n" + wrapper.fill(tr.Data))
       elif tr.TriggerType == TriggerTypeEnum.MOVE:
         # TODO:
         cm.Print("* Coming Soon *")

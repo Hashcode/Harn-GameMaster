@@ -93,13 +93,18 @@ def room_CreateCharacter():
 class ZoneEnum(IntEnum):
   NONE = 0
   KEEP = 1
-  FOREST = 2
+  INNER_KEEP = 2
+  FOREST = 3
 
 
 doors = {
     DoorEnum.KEEP_DRAWBRIDGE: Door("drawbridge", DoorState(True, True), ItemEnum.NONE),
     DoorEnum.WAREHOUSE_DBL_DOOR: Door("double doors to a warehouse", DoorState(True, True), ItemEnum.KEY_WAREHOUSE_DBL_DOOR),
     DoorEnum.CORPORAL_APPT_DOOR: Door("oak door to an apartment", DoorState(True, True), ItemEnum.KEY_CORPORAL_APPT),
+    DoorEnum.N_TOWER_TRAPDOOR_LEVEL_2: Door("bottom floor trapdoor", DoorState(True, False)),
+    DoorEnum.N_TOWER_TRAPDOOR_LEVEL_3: Door("top floor trapdoor", DoorState(True, False)),
+    DoorEnum.S_TOWER_TRAPDOOR_LEVEL_2: Door("bottom floor trapdoor", DoorState(True, False)),
+    DoorEnum.S_TOWER_TRAPDOOR_LEVEL_3: Door("top floor trapdoor", DoorState(True, False)),
 }
 
 rooms = {
@@ -162,11 +167,11 @@ rooms = {
                  DirectionEnum.EAST: Exit(RoomEnum.BL_KEEP_GATEHOUSE),
              }),
     RoomEnum.BL_ENTRY_YARD:
-        Room(ZoneEnum.KEEP,
-             "Entry Yard", "an entry yard",
+        Room(ZoneEnum.KEEP, "Entry Yard", "an entry yard",
              [
-                 "This is a small area that is paved with cobblestones.  It forms a road of sorts along the southern edge "
-                 "of the keep interior."
+                 "This is a small area that is paved with cobblestones.  It forms a road of sorts along the eastern edge "
+                 "of the keep interior. A long building with a 15' high roof runs the length of the yard. The smell of horses "
+                 "eminates from it's interior."
              ],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
@@ -186,7 +191,7 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=15),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_MESSAGE, "A woman bumps into you as she crosses the yard."),
+                         Trigger(TriggerTypeEnum.ROOM_MESSAGE, "A woman bumps into you as she crosses the yard heading south."),
                      ], 300),
                  Periodic(
                      [
@@ -197,21 +202,96 @@ rooms = {
                          Trigger(TriggerTypeEnum.ROOM_MESSAGE,
                                  "A lackey runs up and delivers a message to the corporal of the watch."),
                      ], 450),
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.HAS, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.BL_KEEP_SENTRY),
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=15),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_MESSAGE,
+                                 "A sentry walks out of the north gatehouse and takes the place of the sentry currently on duty."),
+                     ], 300),
              ]),
     RoomEnum.BL_N_GATEHOUSE_TOWER:
         Room(ZoneEnum.KEEP, "North Gatehouse Tower", "the north gatehouse tower",
-             ["** TODO **"],
+             [
+                 "The bottom floor of the north gatehouse tower is strewn with sleeping pallets and spare clothing. "
+                 "In the corner is a table and chairs used for eating in-between shifts.  A ladder in the northeast corner "
+                 "leads up to a trapdoor in the ceiling."
+             ],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.SOUTHWEST: Exit(RoomEnum.BL_ENTRY_YARD),
+                 DirectionEnum.UP: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_2, DoorEnum.N_TOWER_TRAPDOOR_LEVEL_2),
+             },
+             room_pers=[
+                 PersonEnum.BL_KEEP_SENTRY,
+                 PersonEnum.BL_KEEP_SENTRY,
+             ]),
+    RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_2:
+        Room(ZoneEnum.KEEP, "Second Floor of the North Gatehouse Tower", "the second floor of the north gatehouse tower",
+             [
+                 "The second floor of the North Gatehouse tower contains several barrels of oil and stacks of rocks which "
+                 "could be used as projectiles against attackers. A small trapdoor in the floor of the northeast corner "
+                 "leads down and a ladder leads up to it's twin in the ceiling."
+             ],
+             flags=RoomFlag.LIGHT,
+             exits={
+                 DirectionEnum.DOWN: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER, DoorEnum.N_TOWER_TRAPDOOR_LEVEL_2),
+                 DirectionEnum.UP: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_3, DoorEnum.N_TOWER_TRAPDOOR_LEVEL_3),
+             }),
+    RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_3:
+        Room(ZoneEnum.KEEP, "Top Floor of the North Gatehouse Tower", "the top floor of the north gatehouse tower",
+             [
+                 "The expanse of forest to the east and north dominates the view from the top of the tower. The road "
+                 "leading away from the keep winds between the forest and a river which passes through marshlands. "
+                 "Eventually, the road bends to the north where it disappears into the forest. A low wall runs the "
+                 "length of the outer wall providing cover for launching missile weapons at attackers coming in from "
+                 "the road."
+             ],
+             flags=RoomFlag.LIGHT,
+             exits={
+                 DirectionEnum.DOWN: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_2, DoorEnum.N_TOWER_TRAPDOOR_LEVEL_3),
              }),
     RoomEnum.BL_STABLE:
         Room(ZoneEnum.KEEP, "Common Stable", "a common stable",
-             ["** TODO **"],
+             [
+                 "The smell of horse and feed permeates the air inside the stable. A long row of stalls lines the "
+                 "the back wall."
+             ],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.EAST: Exit(RoomEnum.BL_ENTRY_YARD),
-             }),
+             },
+             onLook=[
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.HOUR_OF_DAY_CHECK, value=6),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_MESSAGE,
+                                 "At this quiet hour, the horses are silent their stalls."),
+                         Trigger(TriggerTypeEnum.END),
+                     ]),
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.HOUR_OF_DAY_CHECK, value=20),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_MESSAGE,
+                                 "The stable is bustling with activity as stable hands move horses and gear."),
+                         Trigger(TriggerTypeEnum.END),
+                     ]),
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.HOUR_OF_DAY_CHECK, value=25),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_MESSAGE,
+                                 "Activity in the stable has slowed. Occassionally, a horse is being readied for travel."),
+                         Trigger(TriggerTypeEnum.END),
+                     ]),
+             ]),
     RoomEnum.BL_EASTERN_WALK:
         Room(ZoneEnum.KEEP, "Eastern Walk", "the eastern walk",
              [
@@ -226,10 +306,44 @@ rooms = {
              }),
     RoomEnum.BL_S_GATEHOUSE_TOWER:
         Room(ZoneEnum.KEEP, "South Gatehouse Tower", "the south gatehouse tower",
-             ["** TODO **"],
+             [
+                 "The bottom floor of the South Gatehouse tower is strewen with sleeping pallets and spare clothing. "
+                 "Several stools are randomly located in clusters. Spare clothing hangs from a row of pegs along the far "
+                 "wall. A ladder in the southeast corner leads up to a trapdoor in the ceiling."
+             ],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.WEST: Exit(RoomEnum.BL_EASTERN_WALK),
+                 DirectionEnum.UP: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_2, DoorEnum.S_TOWER_TRAPDOOR_LEVEL_2),
+             },
+             room_pers=[
+                 PersonEnum.BL_KEEP_SENTRY,
+                 PersonEnum.BL_KEEP_SENTRY,
+             ]),
+    RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_2:
+        Room(ZoneEnum.KEEP, "Second Floor of the North Gatehouse Tower", "the second floor of the north gatehouse tower",
+             [
+                 "The second floor of the North Gatehouse tower contains several barrels of oil and stacks of rocks which "
+                 "could be used as projectiles against attackers. A small trapdoor in the floor of the northeast corner "
+                 "leads down and a ladder leads up to it's twin in the ceiling."
+             ],
+             flags=RoomFlag.LIGHT,
+             exits={
+                 DirectionEnum.DOWN: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER, DoorEnum.S_TOWER_TRAPDOOR_LEVEL_2),
+                 DirectionEnum.UP: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_3, DoorEnum.S_TOWER_TRAPDOOR_LEVEL_3),
+             }),
+    RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_3:
+        Room(ZoneEnum.KEEP, "Top Floor of the South Gatehouse Tower", "the top floor of the south gatehouse tower",
+             [
+                 "The expanse of forest to the east and north dominates the view from the top of the tower. The road "
+                 "leading away from the keep winds between the forest and a river which passes through marshlands. "
+                 "Eventually, the road bends to the north where it disappears into the forest. A low wall runs the "
+                 "length of the outer wall providing cover for launching missile weapons at attackers coming in from "
+                 "the road."
+             ],
+             flags=RoomFlag.LIGHT,
+             exits={
+                 DirectionEnum.DOWN: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_2, DoorEnum.S_TOWER_TRAPDOOR_LEVEL_3),
              }),
     RoomEnum.BL_WAREHOUSE:
         Room(ZoneEnum.KEEP, "Common Warehouse", "a common warehouse",
