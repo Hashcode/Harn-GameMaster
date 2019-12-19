@@ -1,0 +1,66 @@
+HARN-GAMEMASTER
+
+Take your characters on exciting journeys in the gritty world of the
+HârnMaster Game System in classic Dungeon's and Dragons(tm) modules.
+
+During your adventures you will accumulate skills, items and wealth.
+Make sure to SAVE along the way to ensure your progress won't be lost.
+
+
+TODO
+
+IMPLEMENT:
+x Basic Map Movement
+x Doors / Keys
+/ Player:
+  x Save Handling
+  x Materials / Value / Mass
+  x Basic Items / Inventory / Equip
+  x Skills
+  x Armor System
+  x Quests
+  - Faction Tracking
+/ Combat:
+  - Basic Fighting: Rounds and Turns
+  - Mob AGGRESSIVE Behavior
+  - Mob GUARD Behavior
+x Talk System / Enter - Exit Triggers
+x Events / Triggers for Rooms and Mobs
+x Periodic Events / Triggers for Roombs and Mobs
+x Lighting / Darkness
+x Time / Hour of Day
+/ Tutorial
+- Room Objects
+  - Examine Action
+- Turn / Push / Pull Actions
+- Item Use Action
+- Search Action
+- Sneak Action [Stealth]
+- Pick Lock Action [Legerdemain]
+- Shops:
+  - Provisioner
+  - Smithy
+  - Weaponsmith
+- Rooms:
+  x Entry: Descriptions
+  / Entry: Mobs
+  / Entry: Quests
+  - Eastern Walk: Descriptions
+  - Eastern Walk: Mobs / Talk Data
+  - Eastern Walk: Quests
+  - Southern Walk: Descriptions
+  - Southern Walk: Mobs / Talk Data
+  - Southern Walk: Quests
+  - Fountain Sq. / Tavern: Descriptions
+  - Fountain Sq. / Tavern: Mobs / Talk Data
+  - Fountain Sq. / Tavern: Quests
+  - Main Walk: Descriptions
+  - Main Walk: Mobs / Talk Data
+  - Main Walk: Quests
+  - Inn: Descriptions
+  - Inn: Mobs / Talk Data
+  - Inn: Quests
+  - Outside Inner Gatehouse: Descriptions
+  - Outside Inner Gatehouse: Mobs / Talk Data
+  - Outside Inner Gatehouse: Quests
+  - Catacombs Beneath Church (Random Dungeon)
