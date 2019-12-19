@@ -13,7 +13,7 @@ from global_defines import (DiceRoll, Roll, CoverageEnum, body_parts, aims,
                             AttrEnum, PersonTypeEnum, ItemLink,
                             ImpactActionEnum)
 from gamedata import (GameData)
-from logger import (logd)
+from logger import (logd, loge)
 from table_melee_attack import (Action, ResultEnum, T_ATK, T_DEF,
                                 resolve_melee)
 from table_dmg import dmg_table_melee
@@ -50,6 +50,8 @@ class Combatant:
     else:
       self.Init = DiceRoll(1, 100).Result()
       self.Init += self.Person.AttrInitiative()
+      if self.Prone:
+        self.Init -= 50
     self.Action = Action.IGNORE
     self.Aim = AimEnum.MID
     self.TurnTaken = False
@@ -128,7 +130,7 @@ def printCombatAttackActions(combatant, target):
   # cm.Print("  MISSILE")
   cm.Print("%-8s %-5s :" % ("PASS", "[P]"))
   if combatant.Prone:
-    cm.Print("%-8s %-5s :" % ("STAND", ""))
+    cm.Print("%s%-8s %-5s :%s" % (ANSI.TEXT_COLOR_YELLOW, "STAND", "", ANSI.TEXT_NORMAL))
   cm.Print("%-8s %-5s : %s" %
            ("TARGET", "[T]", target_name))
 
@@ -524,7 +526,7 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
                (att.Person.Name.capitalize(),
                 items[att.FumbleItemID].ItemName))
       for item_id, il in att.Person.ItemLinks.items():
-        if item_id == att.FumbleItemID and il.Equipped:
+        if item_id == att.FumbleItemID and not il.Equipped:
           il.Equipped = True
           break
       att.Action = Action.IGNORE
@@ -534,7 +536,7 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
       logd("%s: Generate Attack" % (att.Person.Name))
       att.Attacks = att.Person.GenerateCombatAttacks()
       if len(att.Attacks) == 0:
-        logd("MOB ERROR! %s no attack!" % (att.Person.Name))
+        loge("MOB ERROR! %s no attack!" % (att.Person.Name))
         att.Action = Action.IGNORE
       else:
         logd("%s attack: %s" % (att.Person.Name, att.Attacks[0].Name))
@@ -584,6 +586,7 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
           cm.Print("\nYou BLOCK %s with your %s." %
                    (att.Person.Name, defe.Attacks[0].Name.lower()))
 
+      origTargetFlag = res.TargetFlag
       if res.Result == ResultEnum.FUMBLE:
         if T_ATK & res.TargetFlag > 0:
           if at.SkillID == SkillEnum.UNARMED:
@@ -614,6 +617,9 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
               r -= 5
             if r > defe.Person.Attr[AttrEnum.DEXTERITY]:
               CombatantFumble(defe, defe.Attacks[0].ItemID)
+          # T_ATK is not in targets, reset this to also show attacker missed
+          if T_ATK & origTargetFlag == 0:
+            res.Result = ResultEnum.MISS
 
       # handle outside if/elif blocks in case FUMBLE -> STUMBLE
       if res.Result == ResultEnum.STUMBLE:
@@ -627,6 +633,9 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
           r = DiceRoll(res.Level, 6).Result() + defe.Person.PhysicalPenalty()
           if r > defe.Person.Attr[AttrEnum.AGILITY]:
             CombatantStumble(defe)
+          # T_ATK is not in targets, reset this to also show attacker missed
+          if T_ATK & origTargetFlag == 0:
+            res.Result = ResultEnum.MISS
 
       if res.Result == ResultEnum.TADV:
         # Only the current defender can get a Tactical Advantage
