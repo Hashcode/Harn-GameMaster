@@ -9,10 +9,8 @@ from enum import IntEnum
 from console import (ANSI, InputFlag)
 from db import (ExistsDB, LoadPlayer)
 from gamedata import (GameData)
-from global_defines import (PersonEnum, PersonFlag, Player, ItemEnum, ItemLink, DoorEnum, Door,
-                            DoorState, DirectionEnum, NewPerson,
-                            ConditionCheckEnum, TargetTypeEnum, Condition,
-                            TriggerTypeEnum, Trigger, Periodic,
+from global_defines import (PersonEnum, PersonFlag, ItemEnum, ItemLink, DoorEnum, Door, DoorState, DirectionEnum,
+                            NewPerson, ConditionCheckEnum, TargetTypeEnum, Condition, TriggerTypeEnum, Trigger, Periodic,
                             RoomFuncResponse, RoomEnum, Exit, RoomFlag, Room)
 # from utils import (actionSave)
 
@@ -24,11 +22,11 @@ def room_StartGame():
     desc = ANSI.TEXT_BOLD + "CREATE" + ANSI.TEXT_NORMAL + \
         " a new character or " + ANSI.TEXT_BOLD + "RESTORE" + \
         ANSI.TEXT_NORMAL + " a saved game"
-    Player.Command = cm.Input("%s?" % desc, line_length=10).lower()
-    if Player.Command == "restore":
+    x = cm.Input("%s?" % desc, line_length=10).lower()
+    if x == "restore":
       player.SetRoom(RoomEnum.GAME_RESTORE_SAVE)
       break
-    elif Player.Command == "create":
+    elif x == "create":
       player.SetRoom(RoomEnum.GAME_CREATE_CHARACTER)
       break
   return RoomFuncResponse.SKIP

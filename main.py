@@ -93,9 +93,6 @@ while True:
   # Handle Commands
   if res != RoomFuncResponse.NO_PROMPT:
     prompt()
-    if player.Command != "":
-      cm.Print("\n%sYou cannot do that here.%s" %
-               (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
 
 cm.SetNormalTerm()
 

@@ -420,6 +420,56 @@ def DetermineDefense(combatant):
       combatant.Action = Action.BLOCK
 
 
+def commandHandler(command, data):
+  cm = GameData.GetConsole()
+  order = data[0]
+  att = data[1]
+  defe = data[2]
+  if command == "stand":
+    if att.Prone:
+      cm.Print("\nYou stand up.")
+      att.Prone = False
+      att.Action = Action.IGNORE
+      return True
+    else:
+      cm.Print("\nYou are already standing.")
+  elif command == "attack" or command == "a":
+    if att.Prone:
+      cm.Print("\nYou can't attack while on the ground!")
+    else:
+      if att.Target is None:
+        cm.Print("\nYou have no target!")
+      else:
+        att.Action = Action.MELEE
+        att.Attacks = att.Person.GenerateCombatAttacks()
+        return True
+  elif command == "defense" or command == "def":
+    chooseDefense(att)
+  elif command == "equip" or command == "eq":
+    # equipped an item == lose a turn
+    att.Action = Action.IGNORE
+    return True
+  elif command == "aim":
+    cm.Print("\nComing soon!")
+  elif command == "cast" or command == "c":
+    cm.Print("\nComing soon!")
+  elif command == "flee" or command == "f":
+    # TODO: implement skill check
+    # if player == FLEE, choose dodge automatically
+    att.Action = Action.FLEE
+    return True
+  elif command == "pass" or command == "p":
+    cm.Print("\nYou choose to skip your action.")
+    att.Action = Action.IGNORE
+    return True
+  elif command == "target" or command == "t":
+    chooseTarget(att, order)
+  elif command == "help" or command == "?":
+    printCombatAttackActions(att, defe)
+  else:
+    return False
+
+
 def HandleAttack(att, order, player_combatant, TAdv=False):
   cm = GameData.GetConsole()
 
@@ -466,50 +516,11 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
 
     DetermineDefense(defe)
 
-    while True:
-      if TAdv:
-        cm.Print("\n%sTACTICAL ADVANTAGE!%s" %
-                 (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-      printCombatAttackActions(att, defe)
-      prompt(func_break=True)
-      if att.Prone:
-        if player.Command == "stand":
-          cm.Print("\nYou stand up.")
-          att.Prone = False
-          att.Action = Action.IGNORE
-          break
-      else:
-        if player.Command == "attack" or player.Command == "a":
-          if att.Target is None:
-            cm.Print("\nYou have no target!")
-          else:
-            att.Action = Action.MELEE
-            att.Attacks = att.Person.GenerateCombatAttacks()
-            break
-      if player.Command == "defense" or player.Command == "def":
-        chooseDefense(att)
-      elif player.Command == "equip" or player.Command == "eq":
-        # equipped an item == lose a turn
-        att.Action = Action.IGNORE
-        break
-      elif player.Command == "aim":
-        cm.Print("\nComing soon!")
-      elif player.Command == "cast" or player.Command == "c":
-        cm.Print("\nComing soon!")
-      elif player.Command == "flee" or player.Command == "f":
-        # TODO: implement skill check
-        att.Action = Action.FLEE
-        break
-      elif player.Command == "pass" or player.Command == "p":
-        cm.Print("\nYou choose to skip your action.")
-        att.Action = Action.IGNORE
-        break
-      elif player.Command == "target" or player.Command == "t":
-        chooseTarget(att, order)
-      elif player.Command != "help" and player.Command != "?":
-        cm.Print("\n%sYou cannot do that here.%s" %
-                 (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-      # if player == FLEE, choose dodge automatically
+    if TAdv:
+      cm.Print("\n%sTACTICAL ADVANTAGE!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    printCombatAttackActions(att, defe)
+    prompt(commandHandler, [order, att, defe])
+
   else:
     player.CombatState = PlayerCombatState.DEFEND
     defe = player_combatant

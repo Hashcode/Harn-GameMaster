@@ -1941,7 +1941,6 @@ class Player(Person):
     self.LastTimeUpdate = 0
     self.Password = ""
     self.Sunsign = SunsignEnum.NONE
-    self.Command = ""
     self.Room = None
     self.LastRoom = None
     self.Currency = 0

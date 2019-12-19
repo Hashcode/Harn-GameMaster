@@ -992,27 +992,33 @@ def actionShopSell(shopkeep):
     cm.Print("\n%sSale aborted.%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
 
 
-def playerTalk(p, keyword=""):
+def talkHandler(command, data):
   cm = GameData.GetConsole()
+  player = GameData.GetPlayer()
+  p = data[0]
+  if command == "done":
+    player.SetTalking(False)
+    printNPCTalk(p, "~")
+    command = ""
+    # exit prompt loop
+    return True
+  if command == "help" or command == "?":
+    return
+  if not printNPCTalk(p, command):
+    cm.Print("\n%s doesn't know anything about that." % p.Name.capitalize())
+  else:
+    # 30 second talk turn
+    player.GameTime += 30
+
+
+def playerTalk(p, keyword=""):
   player = GameData.GetPlayer()
   player.SetTalking(True)
   printNPCTalk(p, keyword)
   while player.IsTalking():
     # Check for room events
     GameData.ProcessEvents()
-    prompt(func_break=True)
-    if player.Command == "done":
-      player.SetTalking(False)
-      printNPCTalk(p, "~")
-      player.Command = ""
-      break
-    elif player.Command != "":
-      if not printNPCTalk(p, player.Command):
-        cm.Print("\n%s doesn't know anything about that." %
-                 p.Name.capitalize())
-      else:
-        # 30 second talk turn
-        player.GameTime += 30
+    prompt(talkHandler, [p])
   if player.CombatTarget is not None:
     return True
 
@@ -1247,8 +1253,8 @@ def actionQuit():
              "to end conversation.%s" %
              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
     return
-  y = cm.Input("Are you sure you wish to quit [y/n]:", line_length=1).lower()
-  if y == "y":
+  x = cm.Input("Are you sure you wish to quit [y/n]:", line_length=1).lower()
+  if x == "y":
     actionSave()
     cm.Print("\nGoodbye!\n")
     exit()
@@ -1473,12 +1479,11 @@ def promptTimeout():
   GameData.ProcessEvents()
 
 
-def prompt(func_break=False):
+def prompt(cmdHandler=None, cmdHandlerData=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   doors = GameData.GetDoors()
   rooms = GameData.GetRooms()
-  player.Command = ""
   while True:
     prompt_text = "[? = HELP] Command:"
     if player.IsTalking():
@@ -1493,12 +1498,12 @@ def prompt(func_break=False):
           break
     if cmd_match is not None:
       res = cmd_match.Function()
-      if func_break and res == False:
-        player.Command = x
-        break
+      if res == False:
+        if cmdHandler is not None:
+          if cmdHandler(x, cmdHandlerData):
+            break
       elif res == True:
         # attack and talk cmds can return true to re-enter main for combat
-        player.Command = ""
         break
     else:
       # Handle directions
@@ -1547,7 +1552,12 @@ def prompt(func_break=False):
                      (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
         continue
 
-      player.Command = x
-      break
+      res = False
+      if cmdHandler is not None:
+        res = cmdHandler(x, cmdHandlerData)
+      if res == True:
+        break
+      elif res == False:
+        cm.Print("\n%sYou cannot do that here.%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
 
 # vim: tabstop=2 shiftwidth=2 expandtab:
