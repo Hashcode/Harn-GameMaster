@@ -107,6 +107,12 @@ class GameData:
         p.Flags &= ~PERIODIC_TRIGGERED
 
   @staticmethod
+  def InitializeRooms():
+    rooms = GameData.GetRooms()
+    for r in rooms.values():
+      r.Initialize(GameData._processConditions, GameData._processTriggers)
+
+  @staticmethod
   def ProcessEvents():
     rooms = GameData.GetRooms()
     player = GameData.GetPlayer()

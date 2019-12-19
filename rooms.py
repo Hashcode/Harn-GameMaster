@@ -9,8 +9,8 @@ from enum import IntEnum
 from console import (ANSI, InputFlag)
 from db import (ExistsDB, LoadPlayer)
 from gamedata import (GameData)
-from global_defines import (PersonEnum, Player, ItemEnum, DoorEnum, Door,
-                            DoorState, DirectionEnum,
+from global_defines import (PersonEnum, PersonFlag, Player, ItemEnum, ItemLink, DoorEnum, Door,
+                            DoorState, DirectionEnum, NewPerson,
                             ConditionCheckEnum, TargetTypeEnum, Condition,
                             TriggerTypeEnum, Trigger, Periodic,
                             RoomFuncResponse, RoomEnum, Exit, RoomFlag, Room)
@@ -50,6 +50,8 @@ def room_RestoreSave():
 
   cm.Print("Loaded.")
   player.ResetStats()
+  # Finish Map Setup
+  GameData.InitializeRooms()
   player.SetRoom(player.Room)
   return RoomFuncResponse.SKIP
 
@@ -78,6 +80,8 @@ def room_CreateCharacter():
   player.GenAttr()
   player.GenSkills()
   player.ResetStats()
+  # Finish Map Setup
+  GameData.InitializeRooms()
   player.SetRoom(GameData.ROOM_START)
 
   #  cm.Print("\nSaving character ...")
@@ -110,7 +114,7 @@ doors = {
 rooms = {
     # GAME ROOMS
     RoomEnum.GAME_START:
-        Room(ZoneEnum.NONE, "Welcome to Harn GameMaster!", "",
+        Room(RoomEnum.GAME_START, ZoneEnum.NONE, "Welcome to Harn GameMaster!", "",
              [
                  "Take your characters on exciting journeys in the gritty world of the HârnMaster Game System in classic Dungeon's "
                  "and Dragons(tm) modules.",
@@ -119,13 +123,13 @@ rooms = {
              ],
              func=room_StartGame),
     RoomEnum.GAME_RESTORE_SAVE:
-        Room(ZoneEnum.NONE, "Restore Saved Progress", func=room_RestoreSave),
+        Room(RoomEnum.GAME_RESTORE_SAVE, ZoneEnum.NONE, "Restore Saved Progress", func=room_RestoreSave),
     RoomEnum.GAME_CREATE_CHARACTER:
-        Room(ZoneEnum.NONE, "Create a New Character", func=room_CreateCharacter),
+        Room(RoomEnum.GAME_CREATE_CHARACTER, ZoneEnum.NONE, "Create a New Character", func=room_CreateCharacter),
 
     # KEEP ON THE BORDERLANDS
     RoomEnum.BL_KEEP_GATEHOUSE:
-        Room(ZoneEnum.KEEP, "The Main Gatehouse to Stonehaven Keep", "the main gatehouse",
+        Room(RoomEnum.BL_KEEP_GATEHOUSE, ZoneEnum.KEEP, "The Main Gatehouse to Stonehaven Keep", "the main gatehouse",
              [
                  "Two 30' high towers complete with battlements, flank a 20' high gatehouse. All have holes for bow and "
                  "crossbow fire. A deep crevice in front of the place can be spanned by a drawbridge.",
@@ -140,11 +144,11 @@ rooms = {
                  DirectionEnum.EAST: Exit(RoomEnum.BL_ROAD_TO_KEEP, DoorEnum.KEEP_DRAWBRIDGE),
              },
              room_pers=[
-                 PersonEnum.BL_KEEP_GUARD,
-                 PersonEnum.BL_KEEP_SENTRY,
+                 NewPerson(PersonEnum.BL_KEEP_GUARD),
+                 NewPerson(PersonEnum.BL_KEEP_SENTRY),
              ]),
     RoomEnum.BL_PRIEST_CHAMBER:
-        Room(ZoneEnum.KEEP, "The Priest's Chamber", "the priest's chamber",
+        Room(RoomEnum.BL_PRIEST_CHAMBER, ZoneEnum.KEEP, "The Priest's Chamber", "the priest's chamber",
              [
                  "The well-appointed chamber you are standing in radiates warmth from a cozy fire roaring in a small "
                  "western alcove. While spartan in furnishings, a well-made armoire sits in a corner as well as a tidy "
@@ -153,21 +157,21 @@ rooms = {
              flags=RoomFlag.LIGHT,
              exits=None),
     RoomEnum.BL_GATEHOUSE_PASSAGE:
-        Room(ZoneEnum.KEEP, "Gatehouse Passage", "a gatehouse passage",
+        Room(RoomEnum.BL_GATEHOUSE_PASSAGE, ZoneEnum.KEEP, "Gatehouse Passage", "a gatehouse passage",
              [
                  "This 10' wide and 10' high passage leads from the main gatehouse of Stonehaven Keep to the entry yard. "
                  "The ceiling above is pierced with murder holes, and the walls to either side contain arrow slits for archery."
              ],
              flags=RoomFlag.LIGHT,
              room_pers=[
-                 PersonEnum.BL_KEEP_BEGGAR,
+                 NewPerson(PersonEnum.BL_KEEP_BEGGAR),
              ],
              exits={
                  DirectionEnum.WEST: Exit(RoomEnum.BL_ENTRY_YARD),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_KEEP_GATEHOUSE),
              }),
     RoomEnum.BL_ENTRY_YARD:
-        Room(ZoneEnum.KEEP, "Entry Yard", "an entry yard",
+        Room(RoomEnum.BL_ENTRY_YARD, ZoneEnum.KEEP, "Entry Yard", "an entry yard",
              [
                  "This is a small area that is paved with cobblestones.  It forms a road of sorts along the eastern edge "
                  "of the keep interior. A long building with a 15' high roof runs the length of the yard. The smell of horses "
@@ -181,9 +185,16 @@ rooms = {
                  DirectionEnum.WEST: Exit(RoomEnum.BL_STABLE),
              },
              room_pers=[
-                 PersonEnum.BL_KEEP_CORPORAL_WATCH,
-                 PersonEnum.BL_KEEP_YARD_SCRIBE,
-                 PersonEnum.BL_KEEP_SENTRY,
+                 NewPerson(PersonEnum.BL_KEEP_CORPORAL_WATCH,
+                           [
+                               Condition(ConditionCheckEnum.GREATER_THAN, TargetTypeEnum.HOUR_OF_DAY_CHECK, value=6),
+                               Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.HOUR_OF_DAY_CHECK, value=20),
+                           ],
+                           [
+                               Trigger(TriggerTypeEnum.DOOR_LOCK, DoorEnum.CORPORAL_APPT_DOOR),
+                           ]),
+                 NewPerson(PersonEnum.BL_KEEP_YARD_SCRIBE),
+                 NewPerson(PersonEnum.BL_KEEP_SENTRY),
              ],
              periodics=[
                  Periodic(
@@ -213,7 +224,7 @@ rooms = {
                      ], 300),
              ]),
     RoomEnum.BL_N_GATEHOUSE_TOWER:
-        Room(ZoneEnum.KEEP, "North Gatehouse Tower", "the north gatehouse tower",
+        Room(RoomEnum.BL_N_GATEHOUSE_TOWER, ZoneEnum.KEEP, "North Gatehouse Tower", "the north gatehouse tower",
              [
                  "The bottom floor of the north gatehouse tower is strewn with sleeping pallets and spare clothing. "
                  "In the corner is a table and chairs used for eating in-between shifts.  A ladder in the northeast corner "
@@ -225,11 +236,12 @@ rooms = {
                  DirectionEnum.UP: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_2, DoorEnum.N_TOWER_TRAPDOOR_LEVEL_2),
              },
              room_pers=[
-                 PersonEnum.BL_KEEP_SENTRY,
-                 PersonEnum.BL_KEEP_SENTRY,
+                 NewPerson(PersonEnum.BL_KEEP_SENTRY),
+                 NewPerson(PersonEnum.BL_KEEP_SENTRY),
              ]),
     RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_2:
-        Room(ZoneEnum.KEEP, "Second Floor of the North Gatehouse Tower", "the second floor of the north gatehouse tower",
+        Room(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_2, ZoneEnum.KEEP,
+             "Second Floor of the North Gatehouse Tower", "the second floor of the north gatehouse tower",
              [
                  "The second floor of the North Gatehouse tower contains several barrels of oil and stacks of rocks which "
                  "could be used as projectiles against attackers. A small trapdoor in the floor of the northeast corner "
@@ -241,7 +253,8 @@ rooms = {
                  DirectionEnum.UP: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_3, DoorEnum.N_TOWER_TRAPDOOR_LEVEL_3),
              }),
     RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_3:
-        Room(ZoneEnum.KEEP, "Top Floor of the North Gatehouse Tower", "the top floor of the north gatehouse tower",
+        Room(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_3, ZoneEnum.KEEP,
+             "Top Floor of the North Gatehouse Tower", "the top floor of the north gatehouse tower",
              [
                  "The expanse of forest to the east and north dominates the view from the top of the tower. The road "
                  "leading away from the keep winds between the forest and a river which passes through marshlands. "
@@ -254,7 +267,7 @@ rooms = {
                  DirectionEnum.DOWN: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_2, DoorEnum.N_TOWER_TRAPDOOR_LEVEL_3),
              }),
     RoomEnum.BL_STABLE:
-        Room(ZoneEnum.KEEP, "Common Stable", "a common stable",
+        Room(RoomEnum.BL_STABLE, ZoneEnum.KEEP, "Common Stable", "a common stable",
              [
                  "The smell of horse and feed permeates the air inside the stable. A long row of stalls lines the "
                  "the back wall."
@@ -293,7 +306,7 @@ rooms = {
                      ]),
              ]),
     RoomEnum.BL_EASTERN_WALK:
-        Room(ZoneEnum.KEEP, "Eastern Walk", "the eastern walk",
+        Room(RoomEnum.BL_EASTERN_WALK, ZoneEnum.KEEP, "Eastern Walk", "the eastern walk",
              [
                  "You stand on a cobblestone paved walk which follows the interior wall of the keep."
              ],
@@ -305,7 +318,7 @@ rooms = {
                  DirectionEnum.WEST: Exit(RoomEnum.BL_WAREHOUSE, DoorEnum.WAREHOUSE_DBL_DOOR),
              }),
     RoomEnum.BL_S_GATEHOUSE_TOWER:
-        Room(ZoneEnum.KEEP, "South Gatehouse Tower", "the south gatehouse tower",
+        Room(RoomEnum.BL_S_GATEHOUSE_TOWER, ZoneEnum.KEEP, "South Gatehouse Tower", "the south gatehouse tower",
              [
                  "The bottom floor of the South Gatehouse tower is strewen with sleeping pallets and spare clothing. "
                  "Several stools are randomly located in clusters. Spare clothing hangs from a row of pegs along the far "
@@ -317,11 +330,12 @@ rooms = {
                  DirectionEnum.UP: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_2, DoorEnum.S_TOWER_TRAPDOOR_LEVEL_2),
              },
              room_pers=[
-                 PersonEnum.BL_KEEP_SENTRY,
-                 PersonEnum.BL_KEEP_SENTRY,
+                 NewPerson(PersonEnum.BL_KEEP_SENTRY),
+                 NewPerson(PersonEnum.BL_KEEP_SENTRY),
              ]),
     RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_2:
-        Room(ZoneEnum.KEEP, "Second Floor of the North Gatehouse Tower", "the second floor of the north gatehouse tower",
+        Room(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_2, ZoneEnum.KEEP,
+             "Second Floor of the North Gatehouse Tower", "the second floor of the north gatehouse tower",
              [
                  "The second floor of the North Gatehouse tower contains several barrels of oil and stacks of rocks which "
                  "could be used as projectiles against attackers. A small trapdoor in the floor of the northeast corner "
@@ -333,7 +347,8 @@ rooms = {
                  DirectionEnum.UP: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_3, DoorEnum.S_TOWER_TRAPDOOR_LEVEL_3),
              }),
     RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_3:
-        Room(ZoneEnum.KEEP, "Top Floor of the South Gatehouse Tower", "the top floor of the south gatehouse tower",
+        Room(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_3, ZoneEnum.KEEP,
+             "Top Floor of the South Gatehouse Tower", "the top floor of the south gatehouse tower",
              [
                  "The expanse of forest to the east and north dominates the view from the top of the tower. The road "
                  "leading away from the keep winds between the forest and a river which passes through marshlands. "
@@ -346,7 +361,7 @@ rooms = {
                  DirectionEnum.DOWN: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_2, DoorEnum.S_TOWER_TRAPDOOR_LEVEL_3),
              }),
     RoomEnum.BL_WAREHOUSE:
-        Room(ZoneEnum.KEEP, "Common Warehouse", "a common warehouse",
+        Room(RoomEnum.BL_WAREHOUSE, ZoneEnum.KEEP, "Common Warehouse", "a common warehouse",
              [
                  "Visiting merchants and other travelers who have quantities of goods are required to keep their materials "
                  "here until they are either sold to the persons at the keep or taken elsewhere.  Stored here are several "
@@ -364,11 +379,11 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN, PersonEnum.MON_RAT),
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT)),
                      ], 360),
              ]),
     RoomEnum.BL_SOUTHEASTERN_WALK:
-        Room(ZoneEnum.KEEP, "South-Eastern Walk", "the south-eastern walk",
+        Room(RoomEnum.BL_SOUTHEASTERN_WALK, ZoneEnum.KEEP, "South-Eastern Walk", "the south-eastern walk",
              [
                  "You stand on a cobblestone paved walk which follows the interior wall of the keep."
              ],
@@ -379,14 +394,14 @@ rooms = {
                  DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHERN_WALK),
              }),
     RoomEnum.BL_BAILIFF_TOWER:
-        Room(ZoneEnum.KEEP, "Bailiff's Tower", "the Bailiff's tower",
+        Room(RoomEnum.BL_BAILIFF_TOWER, ZoneEnum.KEEP, "Bailiff's Tower", "the Bailiff's tower",
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.NORTHWEST: Exit(RoomEnum.BL_SOUTHEASTERN_WALK),
              }),
     RoomEnum.BL_SOUTHERN_WALK:
-        Room(ZoneEnum.KEEP, "Southern Walk", "the southern walk",
+        Room(RoomEnum.BL_SOUTHERN_WALK, ZoneEnum.KEEP, "Southern Walk", "the southern walk",
              ["** TODO **"],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
@@ -396,24 +411,46 @@ rooms = {
                  DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHERN_WALK_2),
              }),
     RoomEnum.BL_SMITHY:
-        Room(ZoneEnum.KEEP, "The Smithy", "the smithy",
+        Room(RoomEnum.BL_SMITHY, ZoneEnum.KEEP, "The Smithy", "the smithy",
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHERN_WALK),
              },
              room_pers=[
-                 PersonEnum.BL_SMITHY,
+                 NewPerson(PersonEnum.BL_SMITHY),
              ]),
     RoomEnum.BL_APARMENT_1:
-        Room(ZoneEnum.KEEP, "A Private Apartment", "a private apartment",
+        Room(RoomEnum.BL_APARMENT_1, ZoneEnum.KEEP, "A Private Apartment", "a private apartment",
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK, DoorEnum.CORPORAL_APPT_DOOR),
-             }),
+             },
+             room_items={
+                 ItemEnum.KEY_CORPORAL_APPT: ItemLink(1),
+             },
+             room_pers=[
+                 NewPerson(PersonEnum.BL_KEEP_CORPORAL_WATCH,
+                           conditions=[
+                               Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.HOUR_OF_DAY_CHECK, value=7),
+                           ],
+                           triggers=[
+                               Trigger(TriggerTypeEnum.DOOR_UNLOCK, DoorEnum.CORPORAL_APPT_DOOR),
+                               Trigger(TriggerTypeEnum.PERSON_DESC, "The corporal of the watch is resting here."),
+                           ]),
+                 NewPerson(PersonEnum.BL_KEEP_CORPORAL_WATCH,
+                           [
+                               Condition(ConditionCheckEnum.GREATER_THAN, TargetTypeEnum.HOUR_OF_DAY_CHECK, value=19),
+                           ],
+                           triggers=[
+                               Trigger(TriggerTypeEnum.GIVE_FLAG, PersonFlag.BEHAVIOR_1),
+                               Trigger(TriggerTypeEnum.DOOR_UNLOCK, DoorEnum.CORPORAL_APPT_DOOR),
+                               Trigger(TriggerTypeEnum.PERSON_DESC, "The corporal of the watch is resting here."),
+                           ]),
+             ]),
     RoomEnum.BL_SOUTHERN_WALK_2:
-        Room(ZoneEnum.KEEP, "Southern Walk", "the southern walk",
+        Room(RoomEnum.BL_SOUTHERN_WALK_2, ZoneEnum.KEEP, "Southern Walk", "the southern walk",
              ["** TODO **"],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
@@ -423,14 +460,14 @@ rooms = {
                  DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHERN_WALK_3),
              }),
     RoomEnum.BL_APARMENT_2:
-        Room(ZoneEnum.KEEP, "A Private Apartment", "a private apartment",
+        Room(RoomEnum.BL_APARMENT_2, ZoneEnum.KEEP, "A Private Apartment", "a private apartment",
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK_2),
              }),
     RoomEnum.BL_SOUTHERN_WALK_3:
-        Room(ZoneEnum.KEEP, "Southern Walk", "the southern walk",
+        Room(RoomEnum.BL_SOUTHERN_WALK_3, ZoneEnum.KEEP, "Southern Walk", "the southern walk",
              ["** TODO **"],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
@@ -441,34 +478,34 @@ rooms = {
                  DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
              }),
     RoomEnum.BL_LEATHERWORKS:
-        Room(ZoneEnum.KEEP, "The Tanner", "the tanner",
+        Room(RoomEnum.BL_LEATHERWORKS, ZoneEnum.KEEP, "The Tanner", "the tanner",
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.SOUTHEAST: Exit(RoomEnum.BL_SOUTHERN_WALK_3),
              },
              room_pers=[
-                 PersonEnum.BL_TANNER,
+                 NewPerson(PersonEnum.BL_TANNER),
              ]),
     RoomEnum.BL_PROVISIONS:
-        Room(ZoneEnum.KEEP, "Provisions Shop", "a provisions shop",
+        Room(RoomEnum.BL_PROVISIONS, ZoneEnum.KEEP, "Provisions Shop", "a provisions shop",
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.SOUTHWEST: Exit(RoomEnum.BL_SOUTHERN_WALK_3),
              },
              room_pers=[
-                 PersonEnum.BL_PROVISIONER,
+                 NewPerson(PersonEnum.BL_PROVISIONER),
              ]),
     RoomEnum.BL_APARMENT_3:
-        Room(ZoneEnum.KEEP, "A Private Apartment", "a private apartment",
+        Room(RoomEnum.BL_APARMENT_3, ZoneEnum.KEEP, "A Private Apartment", "a private apartment",
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK_3),
              }),
     RoomEnum.BL_SOUTHWESTERN_WALK:
-        Room(ZoneEnum.KEEP, "South-Western Walk", "the south-western walk",
+        Room(RoomEnum.BL_SOUTHWESTERN_WALK, ZoneEnum.KEEP, "South-Western Walk", "the south-western walk",
              ["** TODO **"],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
@@ -479,31 +516,31 @@ rooms = {
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_WATCH_TOWER),
              }),
     RoomEnum.BL_APARMENT_4:
-        Room(ZoneEnum.KEEP, "A Private Apartment", "a private apartment",
+        Room(RoomEnum.BL_APARMENT_4, ZoneEnum.KEEP, "A Private Apartment", "a private apartment",
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
              }),
     RoomEnum.BL_WEAPONSMITH:
-        Room(ZoneEnum.KEEP, "The Arms Dealer", "the arms dealer",
+        Room(RoomEnum.BL_WEAPONSMITH, ZoneEnum.KEEP, "The Arms Dealer", "the arms dealer",
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.NORTHWEST: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
              },
              room_pers=[
-                 PersonEnum.BL_ARMS_DEALER,
+                 NewPerson(PersonEnum.BL_ARMS_DEALER),
              ]),
     RoomEnum.BL_WATCH_TOWER:
-        Room(ZoneEnum.KEEP, "Southwest Watch Tower", "the southwest watch tower",
+        Room(RoomEnum.BL_WATCH_TOWER, ZoneEnum.KEEP, "Southwest Watch Tower", "the southwest watch tower",
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
              }),
     RoomEnum.BL_FOUNTAIN_SQUARE:
-        Room(ZoneEnum.KEEP, "Fountain Square", "fountain square",
+        Room(RoomEnum.BL_FOUNTAIN_SQUARE, ZoneEnum.KEEP, "Fountain Square", "fountain square",
              ["** TODO **"],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
@@ -511,7 +548,7 @@ rooms = {
                  DirectionEnum.SOUTHEAST: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
              }),
     RoomEnum.BL_TAVERN_MAINROOM:
-        Room(ZoneEnum.KEEP, "The Tavern", "the tavern",
+        Room(RoomEnum.BL_TAVERN_MAINROOM, ZoneEnum.KEEP, "The Tavern", "the tavern",
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
@@ -519,7 +556,7 @@ rooms = {
                  DirectionEnum.EAST: Exit(RoomEnum.BL_TAVERN_KITCHEN),
              }),
     RoomEnum.BL_TAVERN_KITCHEN:
-        Room(ZoneEnum.KEEP, "Tavern Kitchen", "the tavern kitchen",
+        Room(RoomEnum.BL_TAVERN_KITCHEN, ZoneEnum.KEEP, "Tavern Kitchen", "the tavern kitchen",
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
@@ -527,14 +564,14 @@ rooms = {
                  DirectionEnum.UP: Exit(RoomEnum.BL_TAVERN_LOFT),
              }),
     RoomEnum.BL_TAVERN_LOFT:
-        Room(ZoneEnum.KEEP, "Tavern Loft", "a loft above the tavern",
+        Room(RoomEnum.BL_TAVERN_LOFT, ZoneEnum.KEEP, "Tavern Loft", "a loft above the tavern",
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.DOWN: Exit(RoomEnum.BL_TAVERN_KITCHEN),
              }),
     RoomEnum.BL_MAIN_WALK:
-        Room(ZoneEnum.KEEP, "Main Walk", "a main thorough fair",
+        Room(RoomEnum.BL_MAIN_WALK, ZoneEnum.KEEP, "Main Walk", "a main thorough fair",
              ["** TODO **"],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
@@ -544,7 +581,7 @@ rooms = {
 
     # OUTSIDE KEEP
     RoomEnum.BL_ROAD_TO_KEEP:
-        Room(ZoneEnum.FOREST, "Road to the Keep", "on a steep road",
+        Room(RoomEnum.BL_ROAD_TO_KEEP, ZoneEnum.FOREST, "Road to the Keep", "on a steep road",
              ["** TODO **"],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={

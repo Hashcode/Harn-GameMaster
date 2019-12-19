@@ -2379,6 +2379,25 @@ class Exit:
     self.Door = door_id
 
 
+class NewPerson:
+  def __init__(self, person, conditions=None, triggers=None):
+    self.Person = person
+    self.Conditions = conditions
+    self.Triggers = triggers
+
+  def Create(self, room_id, processConditions, processTriggers):
+    rooms = GameData.GetRooms()
+    persons = GameData.GetPersons()
+    p = deepcopy(persons[self.Person])
+    p.UUID = uuid4()
+    if processConditions(room_id, p, self.Conditions):
+      if self.Triggers is not None:
+        processTriggers(p, self.Triggers)
+      rooms[room_id].AddPerson(p)
+    else:
+      del p
+
+
 class RoomFlag(IntEnum):
   PEACEFUL = 1 << 0
   OUTSIDE = 1 << 1
@@ -2386,8 +2405,9 @@ class RoomFlag(IntEnum):
 
 
 class Room:
-  def __init__(self, zone, title, short_desc="", long_desc=None, travel_time=60, flags=0, func=None,
+  def __init__(self, room_id, zone, title, short_desc="", long_desc=None, travel_time=60, flags=0, func=None,
                room_pers=None, exits=None, room_items=None, onLook=None, periodics=None):
+    self.RoomID = room_id
     self.Zone = zone
     self.Title = title
     self.ShortDescription = short_desc
@@ -2395,6 +2415,7 @@ class Room:
     self.TravelTime = travel_time
     self.Flags = flags
     self.Function = func
+    self.NewPersons = room_pers
     self.Persons = []
     self.Periodics = []
     self.Exits = dict()
@@ -2407,15 +2428,18 @@ class Room:
       for exit_dir, exit in exits.items():
         self.AddExit(exit_dir, exit)
     if room_items is not None:
-      for item_id, qty in room_items.items():
-        self.AddItem(item_id)
-      self.RoomItems = room_items
-    if room_pers is not None:
-      for person_id in room_pers:
-        self.AddPerson(person_id)
+      for item_id, il in room_items.items():
+        self.AddItem(item_id, il)
     if periodics is not None:
       for per in periodics:
         self.Periodics.append(per)
+
+  def Initialize(self, processConditions, processTriggers):
+    if self.NewPersons is not None:
+      for np in self.NewPersons:
+        p = np.Create(self.RoomID, processConditions, processTriggers)
+        if p is not None:
+          self.AddPerson(p)
 
   def AddExit(self, exit_dir, exit):
     if exit_dir in self.Exits:
@@ -2427,11 +2451,11 @@ class Room:
     if direction in self.Exits:
         self.Exits.pop(direction)
 
-  def AddItem(self, item_id, room_item):
+  def AddItem(self, item_id, il):
     if item_id in self.RoomItems:
-      self.RoomItems[item_id].Quantity += room_item.Quantity
+      self.RoomItems[item_id].Quantity += il.Quantity
     else:
-      self.RoomItems.update({item_id: room_item})
+      self.RoomItems.update({item_id: il})
 
   def RemoveItem(self, item_id, item):
     if item_id in self.RoomItems:
@@ -2440,11 +2464,8 @@ class Room:
       else:
         self.RoomItems.pop(item_id)
 
-  def AddPerson(self, person_id):
-    persons = GameData.GetPersons()
-    p = deepcopy(persons[person_id])
-    p.UUID = uuid4()
-    self.Persons.append(p)
+  def AddPerson(self, person):
+    self.Persons.append(person)
 
   def RemovePerson(self, uid):
     rp = None
@@ -2454,7 +2475,6 @@ class Room:
         break
     if rp is not None:
       self.Persons.remove(rp)
-      del rp
 
   def PersonInRoom(self, uid):
     for x in self.Persons:

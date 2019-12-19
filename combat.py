@@ -209,6 +209,8 @@ def HandleMobDeath(att, defe):
         rooms[att.Person.Room].AddItem(item_id, ItemLink(1))
   # remove enemy from room
   rooms[att.Person.Room].RemovePerson(defe.UUID)
+  del defe.Person
+  defe.Person = None
   att.Target = None
 
 
@@ -744,6 +746,10 @@ def combat(player, enemies):
 
     # TURN loop
     for att in sorted(order, reverse=True):
+      # enemy may be removed
+      if att.Person is None:
+        continue
+
       logd("** TURN %s **" % att.Person.Name)
       att.TurnTaken = True
 

@@ -705,16 +705,11 @@ def processConditions(room_id, obj, conditions):
           if count >= c.Value:
             return False
       elif c.TargetType == TargetTypeEnum.LOCATED_IN_ROOM:
-        match = False
         if type(obj) is Mob:
-          for p in rooms[c.Data].Persons:
-            if p.UUID == obj.UUID:
-              match = True
-              break
-        logd("[cond] LOCATED_IN_ROOM: %s[%d] == %d" %
-             (obj.Name, c.Data, match))
-        if not match:
-          return False
+          if c.ConditionCheck == ConditionCheckEnum.HAS and not rooms[c.Data].PersonInRoom(obj.UUID):
+            return False
+          if c.ConditionCheck == ConditionCheckEnum.HAS_NOT and rooms[c.Data].PersonInRoom(obj.UUID):
+            return False
       elif c.TargetType == TargetTypeEnum.PERCENT_CHANCE:
         r = DiceRoll(1, 100).Result()
         if c.ConditionCheck == ConditionCheckEnum.GREATER_THAN and \
@@ -800,8 +795,10 @@ def processTriggers(obj, triggers):
       elif tr.TriggerType == TriggerTypeEnum.ITEM_BUY:
         actionShopBuy(obj)
       elif tr.TriggerType == TriggerTypeEnum.ROOM_SPAWN:
-        logd("[trigger] Room Spawn [%s]: %d" % (rooms[obj].Title, tr.Data))
-        rooms[obj].AddPerson(tr.Data)
+        logd("[trigger] Room Spawn [%s]: %d" % (rooms[obj].Title, tr.Data.Person))
+        p = tr.Data.Create(obj, processConditions, processTriggers)
+        if p is not None:
+          rooms[obj].AddPerson(p)
       elif tr.TriggerType == TriggerTypeEnum.ROOM_DESPAWN:
         # TODO:
         cm.Print("* Coming Soon *")
@@ -856,9 +853,9 @@ def processTriggers(obj, triggers):
             if tr.Data in r.Exits.keys():
               if rooms[player.Room].PersonInRoom(obj.UUID):
                 cm.Print(wrapper.fill("%s moves to the %s." % (obj.Name.capitalize(), directions[tr.Data].Names[0])))
-              r.Persons.remove(obj)
+              r.RemovePerson(obj.UUID)
               nroom_id = r.Exits[tr.Data].Room
-              rooms[nroom_id].Persons.append(obj)
+              rooms[nroom_id].AddPerson(obj)
               exit_match = False
               for exit_dir, ex in rooms[nroom_id].Exits.items():
                 if ex.Room == room_id:
