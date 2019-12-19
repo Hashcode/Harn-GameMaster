@@ -4,3 +4,5 @@ ignore =
 	E114, E111
 	# ignore long lines
 	E501
+	# ignore module level import not at top of file
+	E402
