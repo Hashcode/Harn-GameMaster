@@ -21,8 +21,8 @@ x Doors / Keys
   x Quests
   - Faction Tracking
 / Combat:
-  - Basic Fighting: Rounds and Turns
-  - Mob AGGRESSIVE Behavior
+  x Basic Fighting: Rounds and Turns
+  x Mob AGGRESSIVE Behavior
   - Mob GUARD Behavior
 x Talk System / Enter - Exit Triggers
 x Events / Triggers for Rooms and Mobs
@@ -38,9 +38,10 @@ x Time / Hour of Day
 - Sneak Action [Stealth]
 - Pick Lock Action [Legerdemain]
 - Shops:
-  - Provisioner
-  - Smithy
-  - Weaponsmith
+  x Provisioner
+  x Smithy
+  x Tanner
+  x Weaponsmith
 - Rooms:
   x Entry: Descriptions
   / Entry: Mobs
