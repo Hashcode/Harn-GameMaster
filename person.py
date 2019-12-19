@@ -648,12 +648,11 @@ persons = {
             talk=[
                 MobTalk("",
                         text=[
-                            "\"Hello! Welcome to my humble SHOP.  Feel free to look around for something to BUY or you can "
-                            "SELL various items to me.\"",
+                            "The study woman puts down her tools. \"Ah, a customer ... What would you like to BUY?\"",
                         ]),
                 MobTalk("shop",
                         text=[
-                            "\"WHat would you like to BUY?\"",
+                            "\"Have a look around and let me know if you would care to BUY an item?\"",
                         ]),
                 MobTalk("buy",
                         text=[
@@ -664,7 +663,7 @@ persons = {
                         ]),
                 MobTalk("~",
                         text=[
-                            "\"Fare thee well.\""
+                            "\"The pleasure was mine.\""
                         ]),
             ]),
     PersonEnum.BL_ARMS_DEALER:
@@ -690,10 +689,11 @@ persons = {
             },
             eq={
                 ItemEnum.WEAPON_DAGGER: ItemLink(1, True),
-                ItemEnum.ARMOR_GAMBESON_QUILT: ItemLink(1, True),
-                ItemEnum.ARMOR_CAP_LEATHER: ItemLink(1, True),
+                ItemEnum.ARMOR_VEST_CLOTH: ItemLink(1, True),
+                ItemEnum.ARMOR_COWL_LEATHER: ItemLink(1, True),
                 ItemEnum.ARMOR_SURCOAT_LEATHER: ItemLink(1, True),
-                ItemEnum.ARMOR_SHOES_LEATHER: ItemLink(1, True),
+                ItemEnum.ARMOR_LEGGINGS_CLOTH: ItemLink(1, True),
+                ItemEnum.ARMOR_KNEE_BOOTS_LEATHER: ItemLink(1, True),
             },
             sell_items={
                 ItemEnum.WEAPON_HANDAXE: ItemLink(1),
@@ -708,23 +708,23 @@ persons = {
             talk=[
                 MobTalk("",
                         text=[
-                            "\"Hello! Welcome to my humble SHOP.  Feel free to look around for something to BUY or you can "
-                            "SELL various items to me.\"",
+                            "Glancing warily around, the man sits up straighter. \"If you see something you want to BUY, "
+                            "just say the word.\"",
                         ]),
                 MobTalk("shop",
                         text=[
-                            "\"WHat would you like to BUY?\"",
+                            "\"What would you like to BUY?\"",
                         ]),
                 MobTalk("buy",
                         text=[
-                            "\"See anything you like?\"",
+                            "\"All hand made arms of the finest quality:\"",
                         ],
                         triggers=[
                             Trigger(TriggerTypeEnum.ITEM_BUY),
                         ]),
                 MobTalk("~",
                         text=[
-                            "\"Fare thee well.\""
+                            "\"Entertaining ... as always.\""
                         ]),
             ]),
 }

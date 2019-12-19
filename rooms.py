@@ -372,7 +372,7 @@ rooms = {
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
              }),
     RoomEnum.BL_WEAPONSMITH:
-        Room(ZoneEnum.KEEP, "The Arms Dealerh", "the arms dealer",
+        Room(ZoneEnum.KEEP, "The Arms Dealer", "the arms dealer",
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
