@@ -323,6 +323,10 @@ items = {
         Armor("leather gauntlets",
               QualityEnum.AVE, MaterialEnum.LEATHER, AL_3,
               COV_Ha),
+    ItemEnum.ARMOR_APRON_LEATHER:
+        Armor("leather apron",
+              QualityEnum.AVE, MaterialEnum.LEATHER, AL_3,
+              COV_Tx | COV_Ab | COV_Hp | COV_Gr | COV_Th),
     # ARMOR [KURBUL]
     ItemEnum.ARMOR_HALFHELM_KURBUL:
         Armor("hardened leather halfhelm",

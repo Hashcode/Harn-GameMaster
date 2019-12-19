@@ -38,7 +38,7 @@ persons = {
                 SkillEnum.STEALTH: 0,
             },
             loot={
-                ItemEnum.MISC_RAT_FUR: 75,
+                ItemEnum.MISC_RAT_FUR: 20,
             }),
     PersonEnum.BL_KEEP_GUARD:
         Mob(PersonEnum.BL_KEEP_GUARD, "a gatehouse guard",
@@ -469,6 +469,65 @@ persons = {
                         Trigger(TriggerTypeEnum.ROOM_MESSAGE, "The scribe scribbles something in his notes."),
                     ], 300),
             ]),
+    PersonEnum.BL_SMITHY:
+        Mob(PersonEnum.BL_SMITHY, "the smithy",
+            "A large ruddy faced man in a leather apron moves about the room.", 60, 17, 50,
+            cur=DiceRoll(1, 6, 20),
+            attrs={
+                AttrEnum.SEX: 1,
+                AttrEnum.STRENGTH: 18,
+                AttrEnum.STAMINA: 16,
+                AttrEnum.DEXTERITY: 16,
+                AttrEnum.AGILITY: 12,
+                AttrEnum.EYESIGHT: 15,
+                AttrEnum.HEARING: 5,
+                AttrEnum.SMELL: 7,
+                AttrEnum.INTELLIGENCE: 12,
+                AttrEnum.AURA: 12,
+                AttrEnum.WILL: 16,
+            },
+            mob_skills={
+                SkillEnum.CLUB: 45,
+                SkillEnum.METALCRAFT: 50,
+            },
+            eq={
+                ItemEnum.WEAPON_MAUL: ItemLink(1, True),
+                ItemEnum.ARMOR_GAMBESON_QUILT: ItemLink(1, True),
+                ItemEnum.ARMOR_CAP_LEATHER: ItemLink(1, True),
+                ItemEnum.ARMOR_APRON_LEATHER: ItemLink(1, True),
+                ItemEnum.ARMOR_SHOES_LEATHER: ItemLink(1, True),
+            },
+            sell_items={
+                ItemEnum.ARMOR_COWL_MAIL: ItemLink(1),
+                ItemEnum.ARMOR_BYRNIE_MAIL: ItemLink(1),
+                ItemEnum.ARMOR_HAUBERK_MAIL: ItemLink(1),
+                ItemEnum.ARMOR_LEGGINGS_MAIL: ItemLink(1),
+                ItemEnum.ARMOR_MITTENS_MAIL: ItemLink(1),
+                ItemEnum.ARMOR_VEST_SCALE: ItemLink(1),
+                ItemEnum.ARMOR_BYRNIE_SCALE: ItemLink(1),
+                ItemEnum.ARMOR_HAUBERK_SCALE: ItemLink(1),
+            },
+            talk=[
+                MobTalk("",
+                        text=[
+                            "The large man turns away from his work. \"Hello citizen. Care to BUY something?\"",
+                        ]),
+                MobTalk("shop",
+                        text=[
+                            "\"If you seek metal armors, you're in the right place to BUY them.\"",
+                        ]),
+                MobTalk("buy",
+                        text=[
+                            "\"I sell only the finest made goods:\"",
+                        ],
+                        triggers=[
+                            Trigger(TriggerTypeEnum.ITEM_BUY),
+                        ]),
+                MobTalk("~",
+                        text=[
+                            "\"It's been a pleasure.\""
+                        ]),
+            ]),
     PersonEnum.BL_PROVISIONER:
         Mob(PersonEnum.BL_PROVISIONER, "the provisioner",
             "A sturdy shop keeper wanders around cleaning supplies.", 60, 17, 50,
@@ -540,6 +599,128 @@ persons = {
                         ],
                         triggers=[
                             Trigger(TriggerTypeEnum.ITEM_SELL),
+                        ]),
+                MobTalk("~",
+                        text=[
+                            "\"Fare thee well.\""
+                        ]),
+            ]),
+    PersonEnum.BL_TANNER:
+        Mob(PersonEnum.BL_TANNER, "the tanner",
+            "A short muscular woman strides purposefully around the shop.", 60, 17, 50,
+            cur=DiceRoll(1, 6, 20),
+            attrs={
+                AttrEnum.SEX: 2,
+                AttrEnum.STRENGTH: 14,
+                AttrEnum.STAMINA: 14,
+                AttrEnum.DEXTERITY: 16,
+                AttrEnum.AGILITY: 14,
+                AttrEnum.EYESIGHT: 15,
+                AttrEnum.HEARING: 12,
+                AttrEnum.SMELL: 10,
+                AttrEnum.INTELLIGENCE: 12,
+                AttrEnum.AURA: 12,
+                AttrEnum.WILL: 13,
+            },
+            mob_skills={
+                SkillEnum.DAGGER: 45,
+                SkillEnum.HIDEWORK: 50,
+            },
+            eq={
+                ItemEnum.WEAPON_DAGGER: ItemLink(1, True),
+                ItemEnum.ARMOR_GAMBESON_QUILT: ItemLink(1, True),
+                ItemEnum.ARMOR_CAP_LEATHER: ItemLink(1, True),
+                ItemEnum.ARMOR_SURCOAT_LEATHER: ItemLink(1, True),
+                ItemEnum.ARMOR_SHOES_LEATHER: ItemLink(1, True),
+            },
+            sell_items={
+                ItemEnum.ARMOR_CAP_LEATHER: ItemLink(1),
+                ItemEnum.ARMOR_COWL_LEATHER: ItemLink(1),
+                ItemEnum.ARMOR_VEST_LEATHER: ItemLink(1),
+                ItemEnum.ARMOR_TUNIC_LEATHER: ItemLink(1),
+                ItemEnum.ARMOR_SURCOAT_LEATHER: ItemLink(1),
+                ItemEnum.ARMOR_LEGGINGS_LEATHER: ItemLink(1),
+                ItemEnum.ARMOR_SHOES_LEATHER: ItemLink(1),
+                ItemEnum.ARMOR_CALF_BOOTS_LEATHER: ItemLink(1),
+                ItemEnum.ARMOR_KNEE_BOOTS_LEATHER: ItemLink(1),
+                ItemEnum.ARMOR_GAUNTLETS_LEATHER: ItemLink(1),
+            },
+            talk=[
+                MobTalk("",
+                        text=[
+                            "\"Hello! Welcome to my humble SHOP.  Feel free to look around for something to BUY or you can "
+                            "SELL various items to me.\"",
+                        ]),
+                MobTalk("shop",
+                        text=[
+                            "\"WHat would you like to BUY?\"",
+                        ]),
+                MobTalk("buy",
+                        text=[
+                            "\"See anything you like?\"",
+                        ],
+                        triggers=[
+                            Trigger(TriggerTypeEnum.ITEM_BUY),
+                        ]),
+                MobTalk("~",
+                        text=[
+                            "\"Fare thee well.\""
+                        ]),
+            ]),
+    PersonEnum.BL_ARMS_DEALER:
+        Mob(PersonEnum.BL_ARMS_DEALER, "the arms dealer",
+            "A thin pale man sits behind a counter.", 60, 17, 50,
+            cur=DiceRoll(1, 6, 20),
+            attrs={
+                AttrEnum.SEX: 1,
+                AttrEnum.STRENGTH: 10,
+                AttrEnum.STAMINA: 12,
+                AttrEnum.DEXTERITY: 13,
+                AttrEnum.AGILITY: 10,
+                AttrEnum.EYESIGHT: 15,
+                AttrEnum.HEARING: 12,
+                AttrEnum.SMELL: 13,
+                AttrEnum.INTELLIGENCE: 15,
+                AttrEnum.AURA: 12,
+                AttrEnum.WILL: 13,
+            },
+            mob_skills={
+                SkillEnum.DAGGER: 45,
+                SkillEnum.SURVIVAL: 50,
+            },
+            eq={
+                ItemEnum.WEAPON_DAGGER: ItemLink(1, True),
+                ItemEnum.ARMOR_GAMBESON_QUILT: ItemLink(1, True),
+                ItemEnum.ARMOR_CAP_LEATHER: ItemLink(1, True),
+                ItemEnum.ARMOR_SURCOAT_LEATHER: ItemLink(1, True),
+                ItemEnum.ARMOR_SHOES_LEATHER: ItemLink(1, True),
+            },
+            sell_items={
+                ItemEnum.WEAPON_HANDAXE: ItemLink(1),
+                ItemEnum.WEAPON_DAGGER: ItemLink(1),
+                ItemEnum.WEAPON_MAIN_GAUCHE: ItemLink(1),
+                ItemEnum.WEAPON_SHORTSWORD: ItemLink(1),
+                ItemEnum.WEAPON_BROADSWORD: ItemLink(1),
+                ItemEnum.WEAPON_BASTARD_SWORD: ItemLink(1),
+                ItemEnum.WEAPON_SPEAR: ItemLink(1),
+                ItemEnum.WEAPON_POLEAXE: ItemLink(1),
+            },
+            talk=[
+                MobTalk("",
+                        text=[
+                            "\"Hello! Welcome to my humble SHOP.  Feel free to look around for something to BUY or you can "
+                            "SELL various items to me.\"",
+                        ]),
+                MobTalk("shop",
+                        text=[
+                            "\"WHat would you like to BUY?\"",
+                        ]),
+                MobTalk("buy",
+                        text=[
+                            "\"See anything you like?\"",
+                        ],
+                        triggers=[
+                            Trigger(TriggerTypeEnum.ITEM_BUY),
                         ]),
                 MobTalk("~",
                         text=[

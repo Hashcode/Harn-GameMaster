@@ -287,7 +287,10 @@ rooms = {
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHERN_WALK),
-             }),
+             },
+             room_pers=[
+                 PersonEnum.BL_SMITHY,
+             ]),
     RoomEnum.BL_APARMENT_1:
         Room(ZoneEnum.KEEP, "A Private Apartment", "a private apartment",
              ["** TODO **"],
@@ -317,19 +320,22 @@ rooms = {
              ["** TODO **"],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
-                 DirectionEnum.NORTHWEST: Exit(RoomEnum.BL_WEAPONSMITH),
+                 DirectionEnum.NORTHWEST: Exit(RoomEnum.BL_LEATHERWORKS),
                  DirectionEnum.NORTHEAST: Exit(RoomEnum.BL_PROVISIONS),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_SOUTHERN_WALK_2),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_APARMENT_3),
                  DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
              }),
-    RoomEnum.BL_WEAPONSMITH:
-        Room(ZoneEnum.KEEP, "The Weaponsmith", "the weaponsmith",
+    RoomEnum.BL_LEATHERWORKS:
+        Room(ZoneEnum.KEEP, "The Tanner", "the tanner",
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.SOUTHEAST: Exit(RoomEnum.BL_SOUTHERN_WALK_3),
-             }),
+             },
+             room_pers=[
+                 PersonEnum.BL_TANNER,
+             ]),
     RoomEnum.BL_PROVISIONS:
         Room(ZoneEnum.KEEP, "Provisions Shop", "a provisions shop",
              ["** TODO **"],
@@ -355,7 +361,7 @@ rooms = {
                  DirectionEnum.NORTHWEST: Exit(RoomEnum.BL_FOUNTAIN_SQUARE),
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_APARMENT_4),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_SOUTHERN_WALK_3),
-                 DirectionEnum.SOUTHEAST: Exit(RoomEnum.BL_BANK),
+                 DirectionEnum.SOUTHEAST: Exit(RoomEnum.BL_WEAPONSMITH),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_WATCH_TOWER),
              }),
     RoomEnum.BL_APARMENT_4:
@@ -365,13 +371,16 @@ rooms = {
              exits={
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
              }),
-    RoomEnum.BL_BANK:
-        Room(ZoneEnum.KEEP, "The Bank & Loan", "the bank & loan",
+    RoomEnum.BL_WEAPONSMITH:
+        Room(ZoneEnum.KEEP, "The Arms Dealerh", "the arms dealer",
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.NORTHWEST: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
-             }),
+             },
+             room_pers=[
+                 PersonEnum.BL_ARMS_DEALER,
+             ]),
     RoomEnum.BL_WATCH_TOWER:
         Room(ZoneEnum.KEEP, "Southwest Watch Tower", "the southwest watch tower",
              ["** TODO **"],
