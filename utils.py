@@ -1002,8 +1002,7 @@ def playerTalk(p, keyword=""):
   printNPCTalk(p, keyword)
   while player.IsTalking():
     # Check for room events
-    GameData.ProcessEvents(processTime, processWeather,
-                           processConditions, processTriggers)
+    GameData.ProcessEvents()
     prompt(func_break=True)
     if player.Command == "done":
       player.SetTalking(False)
@@ -1278,8 +1277,7 @@ def actionRest():
   for i in range(6):
     sleep(1)
     player.GameTime += 600
-    GameData.ProcessEvents(processTime, processWeather,
-                           processConditions, processTriggers)
+    GameData.ProcessEvents()
     # Check if the room persons need to attack
     enemies = GameData.ProcessRoomCombat()
     if len(enemies) > 0:
@@ -1475,8 +1473,7 @@ def promptTimeout():
   player = GameData.GetPlayer()
   # 5 minutes for idle
   player.GameTime += 300
-  GameData.ProcessEvents(processTime, processWeather,
-                         processConditions, processTriggers)
+  GameData.ProcessEvents()
 
 
 def prompt(func_break=False):

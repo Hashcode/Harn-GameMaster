@@ -48,10 +48,15 @@ GameData.SetRooms(rooms)
 GameData.ROOM_START = ROOM_START
 GameData.ROOM_RESPAWN = ROOM_RESPAWN
 
-from utils import (processWeather, processTime,
-                   processConditions, processTriggers,
+from utils import (processWeather, processTime, processConditions, processTriggers,
                    printRoomDescription, printRoomObjects, roomTalkTrigger,
                    prompt)
+
+GameData.SetProcessConditions(processConditions)
+GameData.SetProcessTriggers(processTriggers)
+GameData.SetProcessTime(processTime)
+GameData.SetProcessWeather(processWeather)
+
 from combat import combat
 
 
@@ -73,9 +78,8 @@ while True:
   if res == RoomFuncResponse.SKIP:
     continue
 
-  # Check for room events
-  GameData.ProcessEvents(processTime, processWeather,
-                         processConditions, processTriggers)
+  # Check for events
+  GameData.ProcessEvents()
 
   printRoomObjects(player.Room)
   roomTalkTrigger("on_enter")

@@ -19,6 +19,10 @@ class GameData:
   _persons = None
   _player = None
   _NextRoomEvent = 0
+  _processConditions = None
+  _processTriggers = None
+  _processTime = None
+  _processWeather = None
 
   ROOM_START = 0
   ROOM_RESPAWN = 0
@@ -80,6 +84,22 @@ class GameData:
     return GameData._quests
 
   @staticmethod
+  def SetProcessConditions(processConditions):
+    GameData._processConditions = processConditions
+
+  @staticmethod
+  def SetProcessTriggers(processTriggers):
+    GameData._processTriggers = processTriggers
+
+  @staticmethod
+  def SetProcessTime(processTime):
+    GameData._processTime = processTime
+
+  @staticmethod
+  def SetProcessWeather(processWeather):
+    GameData._processWeather = processWeather
+
+  @staticmethod
   def ResetPersonTriggers():
     rooms = GameData.GetRooms()
     for room_id, r in rooms.items():
@@ -87,13 +107,12 @@ class GameData:
         p.Flags &= ~PERIODIC_TRIGGERED
 
   @staticmethod
-  def ProcessEvents(processTime, processWeather,
-                    processConditions, processTriggers):
+  def ProcessEvents():
     rooms = GameData.GetRooms()
     player = GameData.GetPlayer()
     # Check for time updates
-    processTime()
-    processWeather()
+    GameData._processTime()
+    GameData._processWeather()
     # Check for room events
     seconds = player.PlayerTime()
     GameData.ResetPersonTriggers()
@@ -113,9 +132,9 @@ class GameData:
             per.LastCheck = seconds
             if GameData._NextRoomEvent > seconds + per.DelaySeconds:
               GameData._NextRoomEvent = seconds + per.DelaySeconds
-            if processConditions(room_id, rooms[room_id], per.Conditions):
+            if GameData._processConditions(room_id, rooms[room_id], per.Conditions):
               if per.Triggers is not None:
-                if processTriggers(room_id, per.Triggers) == False:
+                if GameData._processTriggers(room_id, per.Triggers) == False:
                   break
         if rooms[room_id].Persons is not None:
           for npc in rooms[room_id].Persons:
@@ -132,9 +151,9 @@ class GameData:
                 per.LastCheck = seconds
                 if GameData._NextRoomEvent > seconds + per.DelaySeconds:
                   GameData._NextRoomEvent = seconds + per.DelaySeconds
-                if processConditions(room_id, npc, per.Conditions):
+                if GameData._processConditions(room_id, npc, per.Conditions):
                   if per.Triggers is not None:
-                    if processTriggers(npc, per.Triggers) == False:
+                    if GameData._processTriggers(npc, per.Triggers) == False:
                       break
 
   @staticmethod
