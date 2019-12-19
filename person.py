@@ -520,7 +520,7 @@ persons = {
                         ],
                         triggers=[
                             Trigger(TriggerTypeEnum.ITEM_TAKE, ItemEnum.QUEST_WEATHERED_PACKAGE),
-                            Trigger(TriggerTypeEnum.CURRENCY_GIVE, 5),
+                            Trigger(TriggerTypeEnum.CURRENCY_GIVE, 1),
                             Trigger(TriggerTypeEnum.QUEST_COMPLETE, QuestEnum.GUARD_DELIVERY),
                         ]),
                 MobTalk("shop",
