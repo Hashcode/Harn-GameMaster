@@ -1244,7 +1244,7 @@ def actionQuit():
              "to end conversation.%s" %
              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
     return
-  y = cm.Input("Are you sure you wish to QUIT?", line_length=1).lower()
+  y = cm.Input("Are you sure you wish to quit [y/n]:", line_length=1).lower()
   if y == "y":
     actionSave()
     cm.Print("\nGoodbye!\n")
