@@ -1880,7 +1880,7 @@ class Mob(Person):
   def AttrDodge(self):
     return self.Dodge - (self.PhysicalPenalty() * 5)
 
-  def GenerateCombatAttacks(self, block=False, default=ItemEnum.NONE):
+  def GenerateCombatAttacks(self, block=False, default=ItemEnum.WEAPON_HAND):
     attacks = []
     # Look for a "natural" attack
     if not block and self.MobAttacks is not None:
