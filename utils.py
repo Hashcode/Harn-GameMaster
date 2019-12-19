@@ -22,8 +22,8 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             DiceRoll, DoorEnum, Mob, Player,
                             TargetTypeEnum, ConditionCheckEnum,
                             TriggerTypeEnum, RoomEnum, RoomFlag,
-                            ItemLink, DirectionEnum, Roll)
-from logger import (logd)
+                            ItemLink, DirectionEnum, directions, Roll)
+from logger import (logd, loge)
 
 
 wrapper = TextWrapper(width=70, fix_sentence_endings=True)
@@ -94,22 +94,6 @@ def printItems(item_links, number=False, stats=False, shop=False,
         cm.Print("%-30s%s%s" % (item_name, item_info, item_value))
 
 
-# Directions
-
-directions = {
-    DirectionEnum.NORTH: ["north", "n"],
-    DirectionEnum.SOUTH: ["south", "s"],
-    DirectionEnum.WEST: ["west", "w"],
-    DirectionEnum.EAST: ["east", "e"],
-    DirectionEnum.NORTHWEST: ["northwest", "nw"],
-    DirectionEnum.NORTHEAST: ["northeast", "ne"],
-    DirectionEnum.SOUTHWEST: ["southwest", "sw"],
-    DirectionEnum.SOUTHEAST: ["southeast", "se"],
-    DirectionEnum.UP: ["up", "u"],
-    DirectionEnum.DOWN: ["down", "d"],
-}
-
-
 def printRoomDescription(room_id):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
@@ -143,7 +127,7 @@ def printRoomDescription(room_id):
       cm.Print("")
       for exit_dir, ex in rooms[room_id].Exits.items():
         exit_str = "To the %s%s%s" % (ANSI.TEXT_BOLD,
-                                      directions[exit_dir][0].upper(),
+                                      directions[exit_dir].Names[0].upper(),
                                       ANSI.TEXT_NORMAL)
         if ex.Door == DoorEnum.NONE:
           cm.Print("%s is %s" % (exit_str, rooms[ex.Room].ShortDescription))
@@ -869,8 +853,24 @@ def processTriggers(obj, triggers):
               r = rooms[room_id]
               break
           if r is not None:
-            r.Persons.remove(obj)
-          rooms[tr.Data].Persons.append(obj)
+            if tr.Data in r.Exits.keys():
+              if rooms[player.Room].PersonInRoom(obj.UUID):
+                cm.Print(wrapper.fill("%s moves to the %s." % (obj.Name.capitalize(), directions[tr.Data].Names[0])))
+              r.Persons.remove(obj)
+              nroom_id = r.Exits[tr.Data].Room
+              rooms[nroom_id].Persons.append(obj)
+              exit_match = False
+              for exit_dir, ex in rooms[nroom_id].Exits.items():
+                if ex.Room == room_id:
+                  exit_match = True
+                  if rooms[player.Room].PersonInRoom(obj.UUID):
+                    cm.Print(wrapper.fill("%s enters from the %s." % (obj.Name.capitalize(), directions[exit_dir].Names[0])))
+                  break
+              if exit_match == False:
+                if rooms[player.Room].PersonInRoom(obj.UUID):
+                  cm.Print(wrapper.fill("%s enters." % (obj.Name.capitalize())))
+            else:
+              loge("%s cannot move %s from %s" % (obj.Name.capitalize(), directions[tr.Data].Names[0], r.Title))
       elif tr.TriggerType == TriggerTypeEnum.DOOR_UNLOCK:
         ds = player.DoorState(tr.Data)
         if ds is not None:
@@ -1099,7 +1099,7 @@ def chooseDoor(room_id, action, door_closed=None, door_locked=None):
   ret = DoorEnum.NONE
   count = 0
   cm.Print("\nChoose a door:\n")
-  for exit_id, ex in rooms[player.Room].Exits.items():
+  for ex in rooms[player.Room].Exits.values():
     if ex.Door != DoorEnum.NONE:
       match = True
       if door_closed is not None:
@@ -1121,7 +1121,7 @@ def chooseDoor(room_id, action, door_closed=None, door_locked=None):
     cm.Print("\nInvalid door.")
     return ret
   count = 0
-  for exit_id, ex in rooms[player.Room].Exits.items():
+  for ex in rooms[player.Room].Exits.values():
     if ex.Door != DoorEnum.NONE:
       match = True
       if door_closed is not None:
@@ -1426,18 +1426,18 @@ def actionPrintHelp():
     cm.Print("%-10s%s" % (cmd.Commands[0].upper(), abbrevs))
   # exits
   cm.Print("\nMOVE DIRECTION:\n")
-  for exit_dir, exit_names in directions.items():
-    dir_len = len(exit_names)
+  for dir_id, dir_info in directions.items():
+    dir_len = len(dir_info.Names)
     if dir_len > 1:
       abbrevs = " ["
       for x in range(1, dir_len):
         if x > 1:
           abbrevs += ", "
-        abbrevs += exit_names[x].upper()
+        abbrevs += dir_info.Names[x].upper()
       abbrevs += "]"
     else:
       abbrevs = ""
-    cm.Print("%-10s%s" % (exit_names[0].upper(), abbrevs))
+    cm.Print("%-10s%s" % (dir_info.Names[0].upper(), abbrevs))
   # break prompt loop to let other sections add commands
   return False
 
@@ -1509,8 +1509,8 @@ def prompt(func_break=False):
     else:
       # Handle directions
       match_dir = DirectionEnum.NONE
-      for d, d_cmds in directions.items():
-        for d_cmd in d_cmds:
+      for d, d_info in directions.items():
+        for d_cmd in d_info.Names:
           if x == d_cmd.lower():
             match_dir = d
             break

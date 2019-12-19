@@ -10,7 +10,8 @@ from global_defines import (DiceRoll, DamageTypeEnum, ItemEnum, AttrEnum,
                             TargetTypeEnum, ConditionCheckEnum, Condition,
                             TriggerTypeEnum, Trigger, QuestEnum,
                             PersonFlag, Mob, MobTalk, MobAttack,
-                            MaterialEnum, AimEnum, DoorEnum, RoomEnum)
+                            MaterialEnum, AimEnum, DoorEnum, RoomEnum,
+                            DirectionEnum)
 
 persons = {
     PersonEnum.MON_RAT:
@@ -336,10 +337,8 @@ persons = {
                         Trigger(TriggerTypeEnum.ROOM_MESSAGE,
                                 "The corporal of the watch turns to the scribe. \"The hour grows late and I am "
                                 "in need of a good meal. I shall see you in the morn.\""),
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE, "The corporal of the watch moves to the south."),
+                        Trigger(TriggerTypeEnum.PERSON_MOVE, DirectionEnum.SOUTH),
                         Trigger(TriggerTypeEnum.GIVE_FLAG, PersonFlag.BEHAVIOR_1),
-                        Trigger(TriggerTypeEnum.PERSON_MOVE, RoomEnum.BL_EASTERN_WALK),
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE, "The corporal of the watch enters from the north."),
                         Trigger(TriggerTypeEnum.END),
                     ], 30),
                 Periodic(
@@ -348,9 +347,7 @@ persons = {
                         Condition(ConditionCheckEnum.HAS, TargetTypeEnum.LOCATED_IN_ROOM, RoomEnum.BL_EASTERN_WALK),
                     ],
                     [
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE, "The corporal of the watch moves to the south."),
-                        Trigger(TriggerTypeEnum.PERSON_MOVE, RoomEnum.BL_SOUTHEASTERN_WALK),
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE, "The corporal of the watch enters from the north."),
+                        Trigger(TriggerTypeEnum.PERSON_MOVE, DirectionEnum.SOUTH),
                         Trigger(TriggerTypeEnum.END),
                     ], 30),
                 Periodic(
@@ -359,9 +356,7 @@ persons = {
                         Condition(ConditionCheckEnum.HAS, TargetTypeEnum.LOCATED_IN_ROOM, RoomEnum.BL_SOUTHEASTERN_WALK),
                     ],
                     [
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE, "The corporal of the watch moves to the west."),
-                        Trigger(TriggerTypeEnum.PERSON_MOVE, RoomEnum.BL_SOUTHERN_WALK),
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE, "The corporal of the watch enters from the east."),
+                        Trigger(TriggerTypeEnum.PERSON_MOVE, DirectionEnum.WEST),
                         Trigger(TriggerTypeEnum.END),
                     ], 30),
                 Periodic(
@@ -374,16 +369,22 @@ persons = {
                         Trigger(TriggerTypeEnum.ROOM_MESSAGE,
                                 "The corporal of the watch unlocks the door to a private apartment with an iron key."),
                         Trigger(TriggerTypeEnum.DOOR_UNLOCK, DoorEnum.CORPORAL_APPT_DOOR),
-                        Trigger(TriggerTypeEnum.PERSON_MOVE, RoomEnum.BL_APARMENT_1),
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE,
-                                "The corporal of the watch enters the private apartment from the north."),
+                        Trigger(TriggerTypeEnum.PERSON_MOVE, DirectionEnum.SOUTH),
                         Trigger(TriggerTypeEnum.ROOM_MESSAGE,
                                 "The corporal of the watch lays down on the bed."),
-                        Trigger(TriggerTypeEnum.TAKE_FLAG, PersonFlag.BEHAVIOR_1),
                         Trigger(TriggerTypeEnum.END),
                     ], 30),
                 Periodic(
                     [
+                        Condition(ConditionCheckEnum.HAS, TargetTypeEnum.FLAG_CHECK, PersonFlag.BEHAVIOR_1),
+                        Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.HOUR_OF_DAY_CHECK, value=2),
+                    ],
+                    [
+                        Trigger(TriggerTypeEnum.TAKE_FLAG, PersonFlag.BEHAVIOR_1),
+                    ], 30),
+                Periodic(
+                    [
+                        Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.FLAG_CHECK, PersonFlag.BEHAVIOR_1),
                         Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.FLAG_CHECK, PersonFlag.BEHAVIOR_2),
                         Condition(ConditionCheckEnum.HAS, TargetTypeEnum.LOCATED_IN_ROOM, RoomEnum.BL_APARMENT_1),
                         Condition(ConditionCheckEnum.GREATER_THAN, TargetTypeEnum.HOUR_OF_DAY_CHECK, value=6),
@@ -392,13 +393,11 @@ persons = {
                         Trigger(TriggerTypeEnum.PERSON_DESC,
                                 "The corporal of the watch seems to be on his way somewhere."),
                         Trigger(TriggerTypeEnum.ROOM_MESSAGE, "The corporal of the watch stands up."),
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE,
-                                "The corporal of the watch leaves the private apartment to the north."),
+                        Trigger(TriggerTypeEnum.PERSON_MOVE, DirectionEnum.NORTH),
                         Trigger(TriggerTypeEnum.ROOM_MESSAGE,
                                 "The corporal of the watch locks the door to a private apartment with an iron key."),
                         Trigger(TriggerTypeEnum.DOOR_LOCK, DoorEnum.CORPORAL_APPT_DOOR),
                         Trigger(TriggerTypeEnum.GIVE_FLAG, PersonFlag.BEHAVIOR_2),
-                        Trigger(TriggerTypeEnum.PERSON_MOVE, RoomEnum.BL_SOUTHERN_WALK),
                         Trigger(TriggerTypeEnum.END),
                     ], 30),
                 Periodic(
@@ -407,9 +406,7 @@ persons = {
                         Condition(ConditionCheckEnum.HAS, TargetTypeEnum.LOCATED_IN_ROOM, RoomEnum.BL_SOUTHERN_WALK),
                     ],
                     [
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE, "The corporal of the watch moves to the east."),
-                        Trigger(TriggerTypeEnum.PERSON_MOVE, RoomEnum.BL_SOUTHEASTERN_WALK),
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE, "The corporal of the watch enters from the west."),
+                        Trigger(TriggerTypeEnum.PERSON_MOVE, DirectionEnum.EAST),
                         Trigger(TriggerTypeEnum.END),
                     ], 30),
                 Periodic(
@@ -418,9 +415,7 @@ persons = {
                         Condition(ConditionCheckEnum.HAS, TargetTypeEnum.LOCATED_IN_ROOM, RoomEnum.BL_SOUTHEASTERN_WALK),
                     ],
                     [
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE, "The corporal of the watch moves to the north."),
-                        Trigger(TriggerTypeEnum.PERSON_MOVE, RoomEnum.BL_EASTERN_WALK),
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE, "The corporal of the watch enters from the south."),
+                        Trigger(TriggerTypeEnum.PERSON_MOVE, DirectionEnum.NORTH),
                         Trigger(TriggerTypeEnum.END),
                     ], 30),
                 Periodic(
@@ -430,9 +425,7 @@ persons = {
                     ],
                     [
                         Trigger(TriggerTypeEnum.PERSON_DESC, "The corporal of the watch stands here grumbling to his scribe."),
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE, "The corporal of the watch moves to the north."),
-                        Trigger(TriggerTypeEnum.PERSON_MOVE, RoomEnum.BL_ENTRY_YARD),
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE, "The corporal of the watch enters from the south."),
+                        Trigger(TriggerTypeEnum.PERSON_MOVE, DirectionEnum.NORTH),
                         Trigger(TriggerTypeEnum.TAKE_FLAG, PersonFlag.BEHAVIOR_2),
                         Trigger(TriggerTypeEnum.END),
                     ], 30),

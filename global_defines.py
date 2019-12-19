@@ -2318,6 +2318,8 @@ class RoomFuncResponse(IntEnum):
   SKIP = 2
 
 
+# DIRECTIONS
+
 class DirectionEnum(IntEnum):
   NONE = 0
   NORTH = 1
@@ -2330,6 +2332,26 @@ class DirectionEnum(IntEnum):
   SOUTHEAST = 8
   UP = 9
   DOWN = 10
+
+
+class Direction:
+  def __init__(self, names, reverse):
+    self.Names = names
+    self.Reverse = reverse
+
+
+directions = {
+    DirectionEnum.NORTH: Direction(["north", "n"], DirectionEnum.SOUTH),
+    DirectionEnum.SOUTH: Direction(["south", "s"], DirectionEnum.NORTH),
+    DirectionEnum.WEST: Direction(["west", "w"], DirectionEnum.EAST),
+    DirectionEnum.EAST: Direction(["east", "e"], DirectionEnum.WEST),
+    DirectionEnum.NORTHWEST: Direction(["northwest", "nw"], DirectionEnum.SOUTHEAST),
+    DirectionEnum.NORTHEAST: Direction(["northeast", "ne"], DirectionEnum.SOUTHWEST),
+    DirectionEnum.SOUTHWEST: Direction(["southwest", "sw"], DirectionEnum.NORTHEAST),
+    DirectionEnum.SOUTHEAST: Direction(["southeast", "se"], DirectionEnum.NORTHWEST),
+    DirectionEnum.UP: Direction(["up", "u"], DirectionEnum.DOWN),
+    DirectionEnum.DOWN: Direction(["down", "d"], DirectionEnum.UP),
+}
 
 
 class DoorState:
