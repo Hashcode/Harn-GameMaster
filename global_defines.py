@@ -42,8 +42,7 @@ class DiceRoll:
       rollList.remove(low)
     for r in rollList:
       value += r
-    logd("DICE RESULT %dD%d+%d (flags:%x): %d" %
-         (self.Num, self.Max, self.Mod, self.Flags, value))
+    logd("DICE RESULT %dD%d+%d (flags:%x): %d" % (self.Num, self.Max, self.Mod, self.Flags, value))
     return value
 
 
@@ -181,22 +180,15 @@ materials = {
     MaterialEnum.HIDE_BEAR_LT: Material("Bear Hide", 0, 0, [5, 3, 2, 4]),
     MaterialEnum.HIDE_BEAR_MD: Material("Bear Hide", 0, 0, [6, 4, 3, 5]),
     MaterialEnum.HIDE_BEAR_HV: Material("Bear Hide", 0, 0, [7, 5, 3, 6]),
-    MaterialEnum.HIDE_DRAGON_LT: Material("Dragon Hide", 0.2, 4800,
-                                          [8, 5, 8, 7],
-                                          flags=1 << MaterialFlagEnum.MAGIC),
-    MaterialEnum.HIDE_DRAGON_MD: Material("Dragon Hide", 0.2, 6400,
-                                          [10, 8, 7, 9],
-                                          flags=1 << MaterialFlagEnum.MAGIC),
-    MaterialEnum.HIDE_DRAGON_HV: Material("Dragon Hide", 0.2, 9600,
-                                          [12, 15, 12, 14],
-                                          flags=1 << MaterialFlagEnum.MAGIC),
+    MaterialEnum.HIDE_DRAGON_LT: Material("Dragon Hide", 0.2, 4800, [8, 5, 8, 7], flags=1 << MaterialFlagEnum.MAGIC),
+    MaterialEnum.HIDE_DRAGON_MD: Material("Dragon Hide", 0.2, 6400, [10, 8, 7, 9], flags=1 << MaterialFlagEnum.MAGIC),
+    MaterialEnum.HIDE_DRAGON_HV: Material("Dragon Hide", 0.2, 9600, [12, 15, 12, 14], flags=1 << MaterialFlagEnum.MAGIC),
     # CRAFTED
     MaterialEnum.CLOTH: Material("Cloth", 0.1, 2, [1, 1, 1, 1]),
     MaterialEnum.QUILT: Material("Quilt", 0.3, 4, [5, 3, 2, 4]),
     MaterialEnum.LEATHER: Material("Leather", 0.2, 4, [2, 4, 3, 3]),
     MaterialEnum.KURBUL: Material("Hardened Leather", 0.25, 5, [4, 5, 4, 3]),
-    MaterialEnum.LEATHER_RING: Material("Studded Leather", 0.4, 7,
-                                        [3, 6, 4, 3]),
+    MaterialEnum.LEATHER_RING: Material("Studded Leather", 0.4, 7, [3, 6, 4, 3]),
     MaterialEnum.MAIL: Material("Chainmail", 0.5, 15, [2, 8, 5, 1]),
     MaterialEnum.SCALE: Material("Scale Mail", 0.7, 10, [5, 9, 4, 5]),
     MaterialEnum.STEEL: Material("Steel", 0.8, 25, [6, 10, 6, 2]),
@@ -205,8 +197,7 @@ materials = {
     MaterialEnum.BRONZE: Material("Bronze", 0.8, 10, [2, 6, 2, 1]),
     MaterialEnum.SILVER: Material("Silver", 1.5, 60, [3, 8, 3, 2]),
     MaterialEnum.GOLD: Material("Gold", 3.0, 120, [4, 9, 4, 3]),
-    MaterialEnum.MITHRIL: Material("Mithril", 0.25, 1200, [4, 10, 7, 8],
-                                   flags=1 << MaterialFlagEnum.MAGIC),
+    MaterialEnum.MITHRIL: Material("Mithril", 0.25, 1200, [4, 10, 7, 8], flags=1 << MaterialFlagEnum.MAGIC),
     # NATURAL
     MaterialEnum.WOOD: Material("Wood", 1.0, 2, [3, 4, 3, 1]),
     MaterialEnum.STONE: Material("Stone", 1.5, 0, [6, 10, 6, 3]),
@@ -238,8 +229,7 @@ class CoverageEnum(IntEnum):
 
 
 class BodyPart:
-  def __init__(self, name, mass, leftright=False, fumble=False,
-               stumble=False):
+  def __init__(self, name, mass, leftright=False, fumble=False, stumble=False):
     self.PartName = name
     self.Mass = mass
     self.LeftRight = leftright
@@ -472,10 +462,8 @@ item_flags = {
 
 
 class Item:
-  def __init__(self, item_type=ItemTypeEnum.NONE, name="",
-               qual=QualityEnum.NONE, material=MaterialEnum.NONE, mass=0,
-               flags=0, eff=None, onGet=None, onDrop=None,
-               onEquip=None, onRemove=None):
+  def __init__(self, item_type=ItemTypeEnum.NONE, name="", qual=QualityEnum.NONE, material=MaterialEnum.NONE,
+               mass=0, flags=0, eff=None, onGet=None, onDrop=None, onEquip=None, onRemove=None):
     self.ItemType = item_type
     self.ItemName = name
     self.Quality = qual
@@ -485,8 +473,7 @@ class Item:
     self.Effects = eff
     # Calculations
     self.Weight = self.Mass * materials[self.Material].WeightBase
-    self.Value = self.Mass * materials[self.Material].CostBase * \
-        qualities[self.Quality].CostModifier
+    self.Value = self.Mass * materials[self.Material].CostBase * qualities[self.Quality].CostModifier
     self.OnGet = onGet
     self.OnDrop = onDrop
     self.OnEquip = onEquip
@@ -509,20 +496,17 @@ class Item:
 
 
 class Shield(Item):
-  def __init__(self, name, qual, material, mass, skill, ar, dr, flags=0,
-               eff=None):
-    super().__init__(ItemTypeEnum.SHIELD, name, qual, material, mass, flags,
-                     eff)
+  def __init__(self, name, qual, material, mass, skill, ar, dr, flags=0, eff=None):
+    super().__init__(ItemTypeEnum.SHIELD, name, qual, material, mass, flags, eff)
     self.Skill = skill
     self.AttackRating = ar
     self.DefenseRating = dr
 
 
 class Weapon(Item):
-  def __init__(self, name, qual, material, mass, skill, ar, dr, sh_penalty,
-               dice_roll, dmg_type=DamageTypeEnum.BLUNT, flags=0, eff=None):
-    super().__init__(ItemTypeEnum.WEAPON, name, qual, material, mass, flags,
-                     eff)
+  def __init__(self, name, qual, material, mass, skill, ar, dr, sh_penalty, dice_roll, dmg_type=DamageTypeEnum.BLUNT,
+               flags=0, eff=None):
+    super().__init__(ItemTypeEnum.WEAPON, name, qual, material, mass, flags, eff)
     self.Skill = skill
     self.AttackRating = ar
     self.DefenseRating = dr
@@ -532,15 +516,13 @@ class Weapon(Item):
 
 
 class Armor(Item):
-  def __init__(self, name, qual, material, layer=0, coverage=0, flags=0,
-               eff=None):
+  def __init__(self, name, qual, material, layer=0, coverage=0, flags=0, eff=None):
     # TODO use coverage / material Type
     mass = 0
     for x in CoverageEnum:
       if coverage & 1 << x > 0:
         mass += body_parts[x].Mass
-    super().__init__(ItemTypeEnum.ARMOR, name, qual, material, mass, flags,
-                     eff)
+    super().__init__(ItemTypeEnum.ARMOR, name, qual, material, mass, flags, eff)
     self.Layer = layer
     self.Coverage = coverage
 
@@ -559,8 +541,7 @@ class Armor(Item):
 
 class Ring(Item):
   def __init__(self, name, qual, material, mass, value=0, flags=0, eff=None):
-    super().__init__(ItemTypeEnum.RING, name, qual, material, mass, flags,
-                     eff)
+    super().__init__(ItemTypeEnum.RING, name, qual, material, mass, flags, eff)
     self.Value = value
 
 
@@ -709,8 +690,7 @@ SS_LAD = SunsignEnum.LAD
 
 
 class Sunsign:
-  def __init__(self, abbrev, name, symbol, start_day, start_month,
-               end_day, end_month):
+  def __init__(self, abbrev, name, symbol, start_day, start_month, end_day, end_month):
     self.Abbrev = abbrev
     self.Name = name
     self.Symbol = symbol
@@ -721,32 +701,19 @@ class Sunsign:
 
 
 sunsigns = {
-    SS_NON: Sunsign("NONE", "[None]", "[None]", 0,
-                    MonthEnum.NONE, 0, MonthEnum.NONE),
-    SS_ULA: Sunsign("ULA", "Ulandus", "Tree", 4,
-                    MonthEnum.NUZYAEL, 3, MonthEnum.PEONU),
-    SS_ARA: Sunsign("ARA", "Aralius", "Wands", 4,
-                    MonthEnum.PEONU, 2, MonthEnum.KELEN),
-    SS_FEN: Sunsign("FEN", "Feniri", "Smith", 3,
-                    MonthEnum.KELEN, 3, MonthEnum.NOLUS),
-    SS_AHN: Sunsign("AHN", "Ahnu", "Fire Dragon", 4,
-                    MonthEnum.NOLUS, 4, MonthEnum.LARANE),
-    SS_ANG: Sunsign("ANG", "Angberelius", "Flaming Swords", 5,
-                    MonthEnum.LARANE, 6, MonthEnum.AGRAZHAR),
-    SS_NAD: Sunsign("NAD", "Nadai", "Salamander", 7,
-                    MonthEnum.AGRAZHAR, 5, MonthEnum.AZURA),
-    SS_HIR: Sunsign("HIR", "Hirin", "Eagle", 6,
-                    MonthEnum.AZURA, 4, MonthEnum.HALANE),
-    SS_TAR: Sunsign("TAR", "Tarael", "Pentacle", 5,
-                    MonthEnum.HALANE, 3, MonthEnum.SAVOR),
-    SS_TAI: Sunsign("TAI", "Tai", "Lantern", 4,
-                    MonthEnum.SAVOR, 2, MonthEnum.ILVIN),
-    SS_SKO: Sunsign("SKO", "Skorus", "Mixer", 3,
-                    MonthEnum.ILVIN, 2, MonthEnum.NAVEK),
-    SS_MAS: Sunsign("MAS", "Masara", "Chalic", 3,
-                    MonthEnum.NAVEK, 1, MonthEnum.MORGAT),
-    SS_LAD: Sunsign("LAD", "Lado", "Galley", 2,
-                    MonthEnum.MORGAT, 3, MonthEnum.NUZYAEL),
+    SS_NON: Sunsign("NONE", "[None]", "[None]", 0, MonthEnum.NONE, 0, MonthEnum.NONE),
+    SS_ULA: Sunsign("ULA", "Ulandus", "Tree", 4, MonthEnum.NUZYAEL, 3, MonthEnum.PEONU),
+    SS_ARA: Sunsign("ARA", "Aralius", "Wands", 4, MonthEnum.PEONU, 2, MonthEnum.KELEN),
+    SS_FEN: Sunsign("FEN", "Feniri", "Smith", 3, MonthEnum.KELEN, 3, MonthEnum.NOLUS),
+    SS_AHN: Sunsign("AHN", "Ahnu", "Fire Dragon", 4, MonthEnum.NOLUS, 4, MonthEnum.LARANE),
+    SS_ANG: Sunsign("ANG", "Angberelius", "Flaming Swords", 5, MonthEnum.LARANE, 6, MonthEnum.AGRAZHAR),
+    SS_NAD: Sunsign("NAD", "Nadai", "Salamander", 7, MonthEnum.AGRAZHAR, 5, MonthEnum.AZURA),
+    SS_HIR: Sunsign("HIR", "Hirin", "Eagle", 6, MonthEnum.AZURA, 4, MonthEnum.HALANE),
+    SS_TAR: Sunsign("TAR", "Tarael", "Pentacle", 5, MonthEnum.HALANE, 3, MonthEnum.SAVOR),
+    SS_TAI: Sunsign("TAI", "Tai", "Lantern", 4, MonthEnum.SAVOR, 2, MonthEnum.ILVIN),
+    SS_SKO: Sunsign("SKO", "Skorus", "Mixer", 3, MonthEnum.ILVIN, 2, MonthEnum.NAVEK),
+    SS_MAS: Sunsign("MAS", "Masara", "Chalic", 3, MonthEnum.NAVEK, 1, MonthEnum.MORGAT),
+    SS_LAD: Sunsign("LAD", "Lado", "Galley", 2, MonthEnum.MORGAT, 3, MonthEnum.NUZYAEL),
 }
 
 
@@ -1151,14 +1118,10 @@ attributes = {
     ATTR_CHR: Attr("CHR", "Hair Color", AttrClassEnum.APPEARANCE, 1, 100, 0),
     ATTR_CEY: Attr("CEY", "Eye Color", AttrClassEnum.APPEARANCE, 1, 100, 0),
     # PHYSICAL
-    ATTR_STR: Attr("STR", "Strength", AttrClassEnum.PHYSICAL, 4, 6, 0,
-                   roll_flags=ROLLF_DROP_LOWEST),
-    ATTR_STA: Attr("STA", "Stamina", AttrClassEnum.PHYSICAL, 4, 6, 0,
-                   roll_flags=ROLLF_DROP_LOWEST),
-    ATTR_DEX: Attr("DEX", "Dexterity", AttrClassEnum.PHYSICAL, 4, 6, 0,
-                   roll_flags=ROLLF_DROP_LOWEST),
-    ATTR_AGL: Attr("AGL", "Agility", AttrClassEnum.PHYSICAL, 4, 6, 0,
-                   roll_flags=ROLLF_DROP_LOWEST),
+    ATTR_STR: Attr("STR", "Strength", AttrClassEnum.PHYSICAL, 4, 6, 0, roll_flags=ROLLF_DROP_LOWEST),
+    ATTR_STA: Attr("STA", "Stamina", AttrClassEnum.PHYSICAL, 4, 6, 0, roll_flags=ROLLF_DROP_LOWEST),
+    ATTR_DEX: Attr("DEX", "Dexterity", AttrClassEnum.PHYSICAL, 4, 6, 0, roll_flags=ROLLF_DROP_LOWEST),
+    ATTR_AGL: Attr("AGL", "Agility", AttrClassEnum.PHYSICAL, 4, 6, 0, roll_flags=ROLLF_DROP_LOWEST),
     ATTR_EYE: Attr("EYE", "Eyesight", AttrClassEnum.PHYSICAL, 3, 6, 0),
     ATTR_HRG: Attr("HRG", "Hearing", AttrClassEnum.PHYSICAL, 3, 6, 0),
     ATTR_SML: Attr("SML", "Smelling", AttrClassEnum.PHYSICAL, 3, 6, 0),
@@ -1166,14 +1129,10 @@ attributes = {
     ATTR_MED: Attr("MED", "Medical", AttrClassEnum.PHYSICAL, 1, 100, 0,
                    hidden=True),
     # PERSONALITY
-    ATTR_INT: Attr("INT", "Intelligence", AttrClassEnum.PERSONALITY, 4, 6, 0,
-                   roll_flags=ROLLF_DROP_LOWEST),
-    ATTR_AUR: Attr("AUR", "Aura", AttrClassEnum.PERSONALITY, 4, 6, 0,
-                   roll_flags=ROLLF_DROP_LOWEST),
-    ATTR_WIL: Attr("WIL", "Will", AttrClassEnum.PERSONALITY, 4, 6, 0,
-                   roll_flags=ROLLF_DROP_LOWEST),
-    ATTR_PSY: Attr("PSY", "Psyche", AttrClassEnum.PERSONALITY, 1, 100, 0,
-                   hidden=True),
+    ATTR_INT: Attr("INT", "Intelligence", AttrClassEnum.PERSONALITY, 4, 6, 0, roll_flags=ROLLF_DROP_LOWEST),
+    ATTR_AUR: Attr("AUR", "Aura", AttrClassEnum.PERSONALITY, 4, 6, 0, roll_flags=ROLLF_DROP_LOWEST),
+    ATTR_WIL: Attr("WIL", "Will", AttrClassEnum.PERSONALITY, 4, 6, 0, roll_flags=ROLLF_DROP_LOWEST),
+    ATTR_PSY: Attr("PSY", "Psyche", AttrClassEnum.PERSONALITY, 1, 100, 0, hidden=True),
     # OCCUPATION
     ATTR_OCC: Attr("OCC", "Occupation", AttrClassEnum.OCCUPATION, 1, 100, 0),
 }
@@ -1260,9 +1219,8 @@ class SkillEnum(IntEnum):
 
 
 class Skill:
-  def __init__(self, name, skill_class, attr1=AttrEnum.NONE,
-               attr2=AttrEnum.NONE, attr3=AttrEnum.NONE, oml_mod=1, apsuc=100,
-               sunsign_mod=None, hidden=False):
+  def __init__(self, name, skill_class, attr1=AttrEnum.NONE, attr2=AttrEnum.NONE, attr3=AttrEnum.NONE,
+               oml_mod=1, apsuc=100, sunsign_mod=None, hidden=False):
     self.Name = name
     self.SkillClass = skill_class
     self.Attr1 = attr1
@@ -1280,214 +1238,112 @@ class Skill:
 skills = {
     # PHYSICAL
     SkillEnum.ACROBATICS:
-        Skill("Acrobatics", SkillClassEnum.PHYSICAL,
-              ATTR_STR, ATTR_AGL, ATTR_AGL, 2,
-              {SS_NAD: 2, SS_HIR: 1}),
+        Skill("Acrobatics", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_AGL, ATTR_AGL, 2, {SS_NAD: 2, SS_HIR: 1}),
     SkillEnum.CLIMBING:
-        Skill("Climbing", SkillClassEnum.PHYSICAL,
-              ATTR_STR, ATTR_DEX, ATTR_AGL, 3,
-              {SS_ULA: 2, SS_ARA: 2}),
+        Skill("Climbing", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_DEX, ATTR_AGL, 3, {SS_ULA: 2, SS_ARA: 2}),
     SkillEnum.CONDITIONING:
-        Skill("Conditioning", SkillClassEnum.PHYSICAL,
-              ATTR_STR, ATTR_STA, ATTR_WIL, 4,
-              {SS_ULA: 1, SS_LAD: 1}),
+        Skill("Conditioning", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_STA, ATTR_WIL, 4, {SS_ULA: 1, SS_LAD: 1}),
     SkillEnum.DANCING:
-        Skill("Dancing", SkillClassEnum.PHYSICAL,
-              ATTR_DEX, ATTR_AGL, ATTR_AGL, 2,
-              {SS_ULA: 1, SS_LAD: 1}, hidden=True),
+        Skill("Dancing", SkillClassEnum.PHYSICAL, ATTR_DEX, ATTR_AGL, ATTR_AGL, 2, {SS_ULA: 1, SS_LAD: 1}, hidden=True),
     SkillEnum.DODGE:
-        Skill("Dodge", SkillClassEnum.PHYSICAL,
-              ATTR_AGL, ATTR_AGL, ATTR_AGL, 3,
-              {SS_HIR: 1, SS_TAR: 1, SS_TAI: 1}),
+        Skill("Dodge", SkillClassEnum.PHYSICAL, ATTR_AGL, ATTR_AGL, ATTR_AGL, 3, {SS_HIR: 1, SS_TAR: 1, SS_TAI: 1}),
     SkillEnum.JUMPING:
-        Skill("Jumping", SkillClassEnum.PHYSICAL,
-              ATTR_STR, ATTR_AGL, ATTR_AGL, 3,
-              {SS_NAD: 2, SS_HIR: 2}),
+        Skill("Jumping", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_AGL, ATTR_AGL, 3, {SS_NAD: 2, SS_HIR: 2}),
     SkillEnum.LEGERDEMAIN:
-        Skill("Legerdemain", SkillClassEnum.PHYSICAL,
-              ATTR_DEX, ATTR_DEX, ATTR_WIL, 1,
-              {SS_SKO: 2, SS_TAI: 2, SS_TAR: 2}),
+        Skill("Legerdemain", SkillClassEnum.PHYSICAL, ATTR_DEX, ATTR_DEX, ATTR_WIL, 1, {SS_SKO: 2, SS_TAI: 2, SS_TAR: 2}),
     SkillEnum.STEALTH:
-        Skill("Stealth", SkillClassEnum.PHYSICAL,
-              ATTR_AGL, ATTR_HRG, ATTR_WIL, 3,
-              {SS_HIR: 2, SS_TAR: 2, SS_TAI: 2}),
+        Skill("Stealth", SkillClassEnum.PHYSICAL, ATTR_AGL, ATTR_HRG, ATTR_WIL, 3, {SS_HIR: 2, SS_TAR: 2, SS_TAI: 2}),
     SkillEnum.SWIMMING:
-        Skill("Swimming", SkillClassEnum.PHYSICAL,
-              ATTR_STA, ATTR_DEX, ATTR_AGL, 1,
-              {SS_SKO: 1, SS_MAS: 3, SS_LAD: 3}),
+        Skill("Swimming", SkillClassEnum.PHYSICAL, ATTR_STA, ATTR_DEX, ATTR_AGL, 1, {SS_SKO: 1, SS_MAS: 3, SS_LAD: 3}),
     SkillEnum.THROWING:
-        Skill("Throwing", SkillClassEnum.PHYSICAL,
-              ATTR_STR, ATTR_DEX, ATTR_EYE, 3,
-              {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Throwing", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_DEX, ATTR_EYE, 3, {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
     # COMMUNICATION
     SkillEnum.AWARENESS:
-        Skill("Awareness", SkillClassEnum.COMMUNICATION,
-              ATTR_EYE, ATTR_HRG, ATTR_SML, 3,
-              {SS_HIR: 2, SS_TAR: 2}),
+        Skill("Awareness", SkillClassEnum.COMMUNICATION, ATTR_EYE, ATTR_HRG, ATTR_SML, 3, {SS_HIR: 2, SS_TAR: 2}),
     SkillEnum.INTRIGUE:
-        Skill("Intrigue", SkillClassEnum.COMMUNICATION,
-              ATTR_INT, ATTR_AUR, ATTR_WIL, 3,
-              {SS_TAI: 1, SS_TAR: 1, SS_SKO: 1}),
+        Skill("Intrigue", SkillClassEnum.COMMUNICATION, ATTR_INT, ATTR_AUR, ATTR_WIL, 3, {SS_TAI: 1, SS_TAR: 1, SS_SKO: 1}),
     SkillEnum.MENTAL_CONFLICT:
-        Skill("Mental Conflict", SkillClassEnum.COMMUNICATION,
-              ATTR_AUR, ATTR_WIL, ATTR_WIL, 3),
+        Skill("Mental Conflict", SkillClassEnum.COMMUNICATION, ATTR_AUR, ATTR_WIL, ATTR_WIL, 3),
     SkillEnum.ORATORY:
-        Skill("Oratory", SkillClassEnum.COMMUNICATION,
-              ATTR_CML, ATTR_VOI, ATTR_INT, 2,
-              {SS_TAR: 1}),
+        Skill("Oratory", SkillClassEnum.COMMUNICATION, ATTR_CML, ATTR_VOI, ATTR_INT, 2, {SS_TAR: 1}),
     SkillEnum.RHETORIC:
-        Skill("Rhetoric", SkillClassEnum.COMMUNICATION,
-              ATTR_VOI, ATTR_INT, ATTR_WIL, 3,
-              {SS_TAI: 1, SS_TAR: 1, SS_SKO: 1}),
+        Skill("Rhetoric", SkillClassEnum.COMMUNICATION, ATTR_VOI, ATTR_INT, ATTR_WIL, 3, {SS_TAI: 1, SS_TAR: 1, SS_SKO: 1}),
     SkillEnum.SINGING:
-        Skill("Singing", SkillClassEnum.COMMUNICATION,
-              ATTR_HRG, ATTR_VOI, ATTR_VOI, 3,
-              {SS_MAS: 1}, hidden=True),
+        Skill("Singing", SkillClassEnum.COMMUNICATION, ATTR_HRG, ATTR_VOI, ATTR_VOI, 3, {SS_MAS: 1}, hidden=True),
     # COMBAT
     SkillEnum.INITIATIVE:
-        Skill("Initiative", SkillClassEnum.COMBAT,
-              ATTR_AGL, ATTR_WIL, ATTR_WIL, 3),
+        Skill("Initiative", SkillClassEnum.COMBAT, ATTR_AGL, ATTR_WIL, ATTR_WIL, 3),
     SkillEnum.UNARMED:
-        Skill("Unarmed Combat", SkillClassEnum.COMBAT,
-              ATTR_STR, ATTR_DEX, ATTR_AGL, 3,
-              {SS_MAS: 2, SS_LAD: 2, SS_ULA: 2}),
+        Skill("Unarmed Combat", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_AGL, 3, {SS_MAS: 2, SS_LAD: 2, SS_ULA: 2}),
     SkillEnum.RIDING:
-        Skill("Riding", SkillClassEnum.COMBAT,
-              ATTR_DEX, ATTR_AGL, ATTR_WIL, 1,
-              {SS_ULA: 1, SS_ARA: 1}),
+        Skill("Riding", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_AGL, ATTR_WIL, 1, {SS_ULA: 1, SS_ARA: 1}),
     SkillEnum.AXE:
-        Skill("Axe", SkillClassEnum.COMBAT,
-              ATTR_STR, ATTR_STR, ATTR_DEX, 2,
-              {SS_AHN: 1, SS_FEN: 1, SS_ANG: 1}),
+        Skill("Axe", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 2, {SS_AHN: 1, SS_FEN: 1, SS_ANG: 1}),
     SkillEnum.BLOWGUN:
-        Skill("Blowgun", SkillClassEnum.COMBAT,
-              ATTR_STA, ATTR_DEX, ATTR_EYE, 2,
-              {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Blowgun", SkillClassEnum.COMBAT, ATTR_STA, ATTR_DEX, ATTR_EYE, 2, {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.BOW:
-        Skill("Bow", SkillClassEnum.COMBAT,
-              ATTR_STR, ATTR_DEX, ATTR_EYE, 2,
-              {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Bow", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_EYE, 2, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.CLUB:
-        Skill("Club", SkillClassEnum.COMBAT,
-              ATTR_STR, ATTR_STR, ATTR_DEX, 3,
-              {SS_ULA: 1, SS_ARA: 1}),
+        Skill("Club", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 3, {SS_ULA: 1, SS_ARA: 1}),
     SkillEnum.DAGGER:
-        Skill("Dagger", SkillClassEnum.COMBAT,
-              ATTR_DEX, ATTR_DEX, ATTR_EYE, 3,
-              {SS_ANG: 2, SS_NAD: 2}),
+        Skill("Dagger", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 3, {SS_ANG: 2, SS_NAD: 2}),
     SkillEnum.FLAIL:
-        Skill("Flail", SkillClassEnum.COMBAT,
-              ATTR_DEX, ATTR_DEX, ATTR_DEX, 1,
-              {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Flail", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_DEX, 1, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.NET:
-        Skill("Net", SkillClassEnum.COMBAT,
-              ATTR_DEX, ATTR_DEX, ATTR_EYE, 1,
-              {SS_MAS: 1, SS_SKO: 1, SS_LAD: 1}),
+        Skill("Net", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, {SS_MAS: 1, SS_SKO: 1, SS_LAD: 1}),
     SkillEnum.POLEARM:
-        Skill("Polearm", SkillClassEnum.COMBAT,
-              ATTR_STR, ATTR_STR, ATTR_DEX, 2,
-              {SS_ANG: 1, SS_ARA: 1}),
+        Skill("Polearm", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 2, {SS_ANG: 1, SS_ARA: 1}),
     SkillEnum.SHIELD:
-        Skill("Shield", SkillClassEnum.COMBAT,
-              ATTR_STR, ATTR_DEX, ATTR_DEX, 3,
-              {SS_ULA: 1, SS_LAD: 1, SS_MAS: 1}),
+        Skill("Shield", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_DEX, 3, {SS_ULA: 1, SS_LAD: 1, SS_MAS: 1}),
     SkillEnum.SLING:
-        Skill("Sling", SkillClassEnum.COMBAT,
-              ATTR_DEX, ATTR_DEX, ATTR_EYE, 1,
-              {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Sling", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.SPEAR:
-        Skill("Spear", SkillClassEnum.COMBAT,
-              ATTR_STR, ATTR_STR, ATTR_DEX, 2,
-              {SS_ARA: 1, SS_FEN: 1, SS_ULA: 1}),
+        Skill("Spear", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 2, {SS_ARA: 1, SS_FEN: 1, SS_ULA: 1}),
     SkillEnum.SWORD:
-        Skill("Sword", SkillClassEnum.COMBAT,
-              ATTR_STR, ATTR_DEX, ATTR_DEX, 2,
-              {SS_ANG: 3, SS_AHN: 1, SS_NAD: 1}),
+        Skill("Sword", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_DEX, 2, {SS_ANG: 3, SS_AHN: 1, SS_NAD: 1}),
     SkillEnum.WHIP:
-        Skill("Whip", SkillClassEnum.COMBAT,
-              ATTR_DEX, ATTR_DEX, ATTR_EYE, 1,
-              {SS_HIR: 1, SS_NAD: 1}),
+        Skill("Whip", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, {SS_HIR: 1, SS_NAD: 1}),
     # LORE / CRAFT
     SkillEnum.AGRICULTURE:
-        Skill("Agriculture", SkillClassEnum.LORE_CRAFTS,
-              ATTR_STR, ATTR_STA, ATTR_WIL, 2,
-              {SS_ULA: 2, SS_ARA: 2}),
+        Skill("Agriculture", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_STA, ATTR_WIL, 2, {SS_ULA: 2, SS_ARA: 2}),
     SkillEnum.ALCHEMY:
-        Skill("Alchemy", SkillClassEnum.LORE_CRAFTS,
-              ATTR_SML, ATTR_INT, ATTR_AUR, 1,
-              {SS_SKO: 3, SS_TAI: 2, SS_MAS: 2}),
+        Skill("Alchemy", SkillClassEnum.LORE_CRAFTS, ATTR_SML, ATTR_INT, ATTR_AUR, 1, {SS_SKO: 3, SS_TAI: 2, SS_MAS: 2}),
     SkillEnum.ANIMALCRAFT:
-        Skill("Animalcraft", SkillClassEnum.LORE_CRAFTS,
-              ATTR_AGL, ATTR_VOI, ATTR_WIL, 1,
-              {SS_ULA: 1, SS_ARA: 1}),
+        Skill("Animalcraft", SkillClassEnum.LORE_CRAFTS, ATTR_AGL, ATTR_VOI, ATTR_WIL, 1, {SS_ULA: 1, SS_ARA: 1}),
     SkillEnum.BREWING:
-        Skill("Brewing", SkillClassEnum.LORE_CRAFTS,
-              ATTR_DEX, ATTR_SML, ATTR_SML, 2,
-              {SS_SKO: 3, SS_TAI: 2, SS_MAS: 2}),
+        Skill("Brewing", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_SML, ATTR_SML, 2, {SS_SKO: 3, SS_TAI: 2, SS_MAS: 2}),
     SkillEnum.COOKERY:
-        Skill("Cookery", SkillClassEnum.LORE_CRAFTS,
-              ATTR_DEX, ATTR_SML, ATTR_SML, 3,
-              {SS_SKO: 1}),
+        Skill("Cookery", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_SML, ATTR_SML, 3, {SS_SKO: 1}),
     SkillEnum.FISHING:
-        Skill("Fishing", SkillClassEnum.LORE_CRAFTS,
-              ATTR_DEX, ATTR_EYE, ATTR_WIL, 3,
-              {SS_MAS: 2, SS_LAD: 2}),
+        Skill("Fishing", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_EYE, ATTR_WIL, 3, {SS_MAS: 2, SS_LAD: 2}),
     SkillEnum.FLETCHING:
-        Skill("Fletching", SkillClassEnum.LORE_CRAFTS,
-              ATTR_DEX, ATTR_DEX, ATTR_EYE, 1,
-              {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Fletching", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.FORAGING:
-        Skill("Foraging", SkillClassEnum.LORE_CRAFTS,
-              ATTR_DEX, ATTR_SML, ATTR_INT, 3,
-              {SS_ULA: 2, SS_ARA: 2}),
+        Skill("Foraging", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_SML, ATTR_INT, 3, {SS_ULA: 2, SS_ARA: 2}),
     SkillEnum.HERBLORE:
-        Skill("Herblore", SkillClassEnum.LORE_CRAFTS,
-              ATTR_EYE, ATTR_SML, ATTR_INT, 1,
-              {SS_ULA: 3, SS_ARA: 2}),
+        Skill("Herblore", SkillClassEnum.LORE_CRAFTS, ATTR_EYE, ATTR_SML, ATTR_INT, 1, {SS_ULA: 3, SS_ARA: 2}),
     SkillEnum.HIDEWORK:
-        Skill("Hidework", SkillClassEnum.LORE_CRAFTS,
-              ATTR_EYE, ATTR_SML, ATTR_WIL, 2,
-              {SS_ULA: 1, SS_ARA: 1}),
+        Skill("Hidework", SkillClassEnum.LORE_CRAFTS, ATTR_EYE, ATTR_SML, ATTR_WIL, 2, {SS_ULA: 1, SS_ARA: 1}),
     SkillEnum.JEWELCRAFT:
-        Skill("Jewelcraft", SkillClassEnum.LORE_CRAFTS,
-              ATTR_DEX, ATTR_EYE, ATTR_WIL, 1,
-              {SS_FEN: 3, SS_TAR: 1, SS_ARA: 1}),
+        Skill("Jewelcraft", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_EYE, ATTR_WIL, 1, {SS_FEN: 3, SS_TAR: 1, SS_ARA: 1}),
     SkillEnum.LOCKCRAFT:
-        Skill("Lockcraft", SkillClassEnum.LORE_CRAFTS,
-              ATTR_DEX, ATTR_EYE, ATTR_WIL, 1,
-              {SS_FEN: 3}),
+        Skill("Lockcraft", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_EYE, ATTR_WIL, 1, {SS_FEN: 3}),
     SkillEnum.METALCRAFT:
-        Skill("Metalcraft", SkillClassEnum.LORE_CRAFTS,
-              ATTR_STR, ATTR_DEX, ATTR_WIL, 1,
-              {SS_FEN: 3, SS_AHN: 1, SS_ANG: 1}),
+        Skill("Metalcraft", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_DEX, ATTR_WIL, 1, {SS_FEN: 3, SS_AHN: 1, SS_ANG: 1}),
     SkillEnum.MINING:
-        Skill("Mining", SkillClassEnum.LORE_CRAFTS,
-              ATTR_STR, ATTR_DEX, ATTR_INT, 1,
-              {SS_ULA: 2, SS_ARA: 2, SS_FEN: 1}),
+        Skill("Mining", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_DEX, ATTR_INT, 1, {SS_ULA: 2, SS_ARA: 2, SS_FEN: 1}),
     SkillEnum.PHYSICIAN:
-        Skill("Physician", SkillClassEnum.LORE_CRAFTS,
-              ATTR_DEX, ATTR_EYE, ATTR_INT, 1,
-              {SS_MAS: 2, SS_SKO: 1, SS_TAI: 1}),
+        Skill("Physician", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_EYE, ATTR_INT, 1, {SS_MAS: 2, SS_SKO: 1, SS_TAI: 1}),
     SkillEnum.SURVIVAL:
-        Skill("Survival", SkillClassEnum.LORE_CRAFTS,
-              ATTR_STR, ATTR_DEX, ATTR_INT, 3,
-              {SS_ULA: 2, SS_ARA: 1}),
+        Skill("Survival", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_DEX, ATTR_INT, 3, {SS_ULA: 2, SS_ARA: 1}),
     SkillEnum.TIMBERCRAFT:
-        Skill("Timbercraft", SkillClassEnum.LORE_CRAFTS,
-              ATTR_STR, ATTR_DEX, ATTR_AGL, 2,
-              {SS_ULA: 3, SS_ARA: 1}),
+        Skill("Timbercraft", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_DEX, ATTR_AGL, 2, {SS_ULA: 3, SS_ARA: 1}),
     SkillEnum.TRACKING:
-        Skill("Tracking", SkillClassEnum.LORE_CRAFTS,
-              ATTR_EYE, ATTR_SML, ATTR_WIL, 2,
-              {SS_ULA: 3, SS_ARA: 3}),
+        Skill("Tracking", SkillClassEnum.LORE_CRAFTS, ATTR_EYE, ATTR_SML, ATTR_WIL, 2, {SS_ULA: 3, SS_ARA: 3}),
     SkillEnum.WEAPONCRAFT:
-        Skill("Weaponcraft", SkillClassEnum.LORE_CRAFTS,
-              ATTR_STR, ATTR_DEX, ATTR_WIL, 1,
-              {SS_FEN: 3, SS_AHN: 1, SS_ANG: 1}),
+        Skill("Weaponcraft", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_DEX, ATTR_WIL, 1, {SS_FEN: 3, SS_AHN: 1, SS_ANG: 1}),
     SkillEnum.WOODCRAFT:
-        Skill("Woodcraft", SkillClassEnum.LORE_CRAFTS,
-              ATTR_DEX, ATTR_DEX, ATTR_WIL, 2,
-              {SS_ULA: 2, SS_ARA: 2, SS_LAD: 1}),
+        Skill("Woodcraft", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_DEX, ATTR_WIL, 2, {SS_ULA: 2, SS_ARA: 2, SS_LAD: 1}),
 }
 
 
@@ -1537,21 +1393,9 @@ class WoundDesc:
 
 
 wounds = {
-    ImpactActionEnum.WOUND_MLD: WoundDesc("Mild",
-                                          ["Bruised",
-                                           "Cut",
-                                           "Poked",
-                                           "Singed"], 0),
-    ImpactActionEnum.WOUND_SRS: WoundDesc("Serious",
-                                          ["Crushed",
-                                           "Slashed",
-                                           "Stabbed",
-                                           "Scorched"], 5),
-    ImpactActionEnum.WOUND_GRV: WoundDesc("Grievous",
-                                          ["Pulverized",
-                                           "Shredded",
-                                           "Skewered",
-                                           "Cremated"], 10),
+    ImpactActionEnum.WOUND_MLD: WoundDesc("Mild", ["Bruised", "Cut", "Poked", "Singed"], 0),
+    ImpactActionEnum.WOUND_SRS: WoundDesc("Serious", ["Crushed", "Slashed", "Stabbed", "Scorched"], 5),
+    ImpactActionEnum.WOUND_GRV: WoundDesc("Grievous", ["Pulverized", "Shredded", "Skewered", "Cremated"], 10),
 }
 
 
@@ -1588,8 +1432,7 @@ class PersonWound:
 
 
 class Person:
-  def __init__(self, person_type, name, long_desc="", flags=0,
-               skin=MaterialEnum.NONE, it=None):
+  def __init__(self, person_type, name, long_desc="", flags=0, skin=MaterialEnum.NONE, it=None):
     self.PersonType = person_type
     self.Name = name
     self.LongDescription = long_desc
@@ -1616,11 +1459,7 @@ class Person:
         self.Attr.update({attr_id: p.Attr[attr_id]})
       else:
         # add new attributes
-        self.Attr.update({attr_id:
-                          DiceRoll(attr.GenRolls,
-                                   attr.GenDice,
-                                   flags=attr.GenFlags).Result() + \
-                          attr.GenMod})
+        self.Attr.update({attr_id: DiceRoll(attr.GenRolls, attr.GenDice, flags=attr.GenFlags).Result() + attr.GenMod})
     self.SkillLinks.clear()
     # copy all skills into skill training
     for skill_id, skill in skills.items():
@@ -1656,8 +1495,7 @@ class Person:
 
   def RemoveItem(self, item_id, item):
     if item_id in self.ItemLinks:
-      if self.ItemLinks[item_id].Equipped and \
-         self.ItemLinks[item_id].Quantity == 1:
+      if self.ItemLinks[item_id].Equipped and self.ItemLinks[item_id].Quantity == 1:
         return False
       if self.ItemLinks[item_id].Quantity > item.Quantity:
         self.ItemLinks[item_id].Quantity -= item.Quantity
@@ -1763,8 +1601,7 @@ class Person:
     if skill_id in self.SkillLinks:
       ml += self.SkillLinks[skill_id].Points
     if not skipPenalty:
-      if skills[skill_id].SkillClass == SkillClassEnum.PHYSICAL or \
-         skills[skill_id].SkillClass == SkillClassEnum.COMBAT:
+      if skills[skill_id].SkillClass == SkillClassEnum.PHYSICAL or skills[skill_id].SkillClass == SkillClassEnum.COMBAT:
         ml -= (self.PhysicalPenalty() * 5)
       else:
         ml -= (self.UniversalPenalty() * 5)
@@ -1850,8 +1687,7 @@ class Person:
     for item_id, il in self.ItemLinks.items():
       if not il.Equipped:
         continue
-      if items[item_id].ItemType == ItemTypeEnum.WEAPON or \
-         items[item_id].ItemType == ItemTypeEnum.SHIELD:
+      if items[item_id].ItemType == ItemTypeEnum.WEAPON or items[item_id].ItemType == ItemTypeEnum.SHIELD:
         if block:
           skill = self.SkillML(items[item_id].Skill)
           skill += items[item_id].DefenseRating
@@ -1867,8 +1703,7 @@ class Person:
       skill_id = items[def_item_id].Skill
       ml = self.SkillML(skill_id)
       ml += items[def_item_id].DefenseRating
-      attacks.append(CombatAttack(items[def_item_id].ItemName, ml, skill_id,
-                                  def_item_id, None, DamageTypeEnum.BLUNT))
+      attacks.append(CombatAttack(items[def_item_id].ItemName, ml, skill_id, def_item_id, None, DamageTypeEnum.BLUNT))
     else:
       for item_id, il in self.ItemLinks.items():
         if not il.Equipped:
@@ -1879,17 +1714,13 @@ class Person:
           ml += items[item_id].AttackRating
           if count > 1:
             ml -= items[item_id].SingleHandPenalty
-          attacks.append(CombatAttack(items[item_id].ItemName, ml, skill_id,
-                                      item_id,
-                                      items[item_id].Roll,
+          attacks.append(CombatAttack(items[item_id].ItemName, ml, skill_id, item_id, items[item_id].Roll,
                                       items[item_id].DamageType))
     if len(attacks) < 1 and default != ItemEnum.NONE:
       skill_id = items[default].Skill
       ml = self.SkillML(skill_id)
       ml += items[default].AttackRating
-      attacks.append(CombatAttack(items[default].ItemName, ml, skill_id,
-                                  default, items[default].Roll,
-                                  items[default].DamageType))
+      attacks.append(CombatAttack(items[default].ItemName, ml, skill_id, default, items[default].Roll, items[default].DamageType))
     return attacks
 
   def HasLight(self):
@@ -1958,8 +1789,7 @@ class TriggerTypeEnum(IntEnum):
 
 
 class Condition:
-  def __init__(self, cond, target_type=TargetTypeEnum.NONE, data=None,
-               value=0):
+  def __init__(self, cond, target_type=TargetTypeEnum.NONE, data=None, value=0):
     self.ConditionCheck = cond
     self.TargetType = target_type
     self.Data = data
@@ -2008,14 +1838,10 @@ class MobAttack:
 
 
 class Mob(Person):
-  def __init__(self, person_id, name, long_desc, ini, end, dodge,
-               aim=AimEnum.MID, flags=0,
-               skin=MaterialEnum.NONE, cur=None, attrs=None,
-               num_attacks=1, mob_attacks=None, mob_skills=None, eq=None,
-               loot=None, sell_items=None, buy_items=None, talk=None,
-               periodics=None):
-    super().__init__(PersonTypeEnum.NPC, name, long_desc, flags, skin,
-                     it=eq)
+  def __init__(self, person_id, name, long_desc, ini, end, dodge, aim=AimEnum.MID, flags=0,
+               skin=MaterialEnum.NONE, cur=None, attrs=None, num_attacks=1, mob_attacks=None, mob_skills=None, eq=None,
+               loot=None, sell_items=None, buy_items=None, talk=None, periodics=None):
+    super().__init__(PersonTypeEnum.NPC, name, long_desc, flags, skin, it=eq)
     # None == Template / Char
     self.UUID = None
     self.PersonID = person_id
@@ -2059,9 +1885,7 @@ class Mob(Person):
           if DiceRoll(1, 100).Result() <= ma.ChanceMax:
             ml = ma.SkillML + ma.AttackRating
             ml -= (self.PhysicalPenalty() * 5)
-            ca = CombatAttack(ma.Name, ml, SkillEnum.UNARMED,
-                              ItemEnum.NONE,
-                              ma.Damage, ma.DamageType)
+            ca = CombatAttack(ma.Name, ml, SkillEnum.UNARMED, ItemEnum.NONE, ma.Damage, ma.DamageType)
             attacks.append(ca)
             break
     # Look for equipped weapons
@@ -2086,10 +1910,8 @@ class Quest:
 
 
 quests = {
-    QuestEnum.GUARD_INTRO:
-        Quest("Talk to the guard.", hidden=True),
-    QuestEnum.GUARD_DELIVERY:
-        Quest("Deliver a weathered package to the provisioner."),
+    QuestEnum.GUARD_INTRO: Quest("Talk to the guard.", hidden=True),
+    QuestEnum.GUARD_DELIVERY: Quest("Deliver a weathered package to the provisioner."),
 }
 
 
@@ -2157,17 +1979,14 @@ class Player(Person):
     for ss_id, ss in sunsigns.items():
       bm = self.Attr[AttrEnum.BIRTH_MONTH]
       bd = self.Attr[AttrEnum.BIRTH_DAY]
-      if (bm == ss.StartMonth and bd >= ss.StartDay) or \
-         (bm == ss.EndMonth and bd <= ss.EndDay):
-          self.Sunsign = ss_id
-          break
+      if (bm == ss.StartMonth and bd >= ss.StartDay) or (bm == ss.EndMonth and bd <= ss.EndDay):
+        self.Sunsign = ss_id
+        break
 
   def GenAttr(self):
     # Generate Attributes
     for attr_id, attr in attributes.items():
-      self.Attr.update({attr_id: DiceRoll(attr.GenRolls, attr.GenDice,
-                                          flags=attr.GenFlags).Result() + \
-                        attr.GenMod})
+      self.Attr.update({attr_id: DiceRoll(attr.GenRolls, attr.GenDice, flags=attr.GenFlags).Result() + attr.GenMod})
     # Adjustments
     # Frame: -3 Human Female
     if self.AttrSex() == SexEnum.FEMALE:
@@ -2374,12 +2193,10 @@ class Player(Person):
 
   def GameTimeDateStr(self):
     day = self.GameTimeDayOfMonth()
-    return "%s %d %d TR" % (months[self.GameTimeMonth()].Name,
-                            day, self.GameTimeYear())
+    return "%s %d %d TR" % (months[self.GameTimeMonth()].Name, day, self.GameTimeYear())
 
   def GameTimeStr(self):
-    return "%02d:%02d" % (self.GameTimeHourOfDay(),
-                          self.GameTimeMinuteOfHour())
+    return "%02d:%02d" % (self.GameTimeHourOfDay(), self.GameTimeMinuteOfHour())
 
   def GameTimeIsDay(self):
     hour = self.GameTimeHourOfDay()
@@ -2535,9 +2352,8 @@ class RoomFlag(IntEnum):
 
 
 class Room:
-  def __init__(self, zone, title, short_desc="", long_desc=None,
-               travel_time=60, flags=0, func=None, room_pers=None, exits=None,
-               room_items=None, periodics=None):
+  def __init__(self, zone, title, short_desc="", long_desc=None, travel_time=60, flags=0, func=None,
+               room_pers=None, exits=None, room_items=None, periodics=None):
     self.Zone = zone
     self.Title = title
     self.ShortDescription = short_desc
