@@ -1285,11 +1285,11 @@ skills = {
               {SS_NAD: 2, SS_HIR: 1}),
     SkillEnum.CLIMBING:
         Skill("Climbing", SkillClassEnum.PHYSICAL,
-              ATTR_STR, ATTR_DEX, ATTR_AGL, 4,
+              ATTR_STR, ATTR_DEX, ATTR_AGL, 3,
               {SS_ULA: 2, SS_ARA: 2}),
     SkillEnum.CONDITIONING:
         Skill("Conditioning", SkillClassEnum.PHYSICAL,
-              ATTR_STR, ATTR_STA, ATTR_WIL, 5,
+              ATTR_STR, ATTR_STA, ATTR_WIL, 4,
               {SS_ULA: 1, SS_LAD: 1}),
     SkillEnum.DANCING:
         Skill("Dancing", SkillClassEnum.PHYSICAL,
@@ -1297,11 +1297,11 @@ skills = {
               {SS_ULA: 1, SS_LAD: 1}, hidden=True),
     SkillEnum.DODGE:
         Skill("Dodge", SkillClassEnum.PHYSICAL,
-              ATTR_AGL, ATTR_AGL, ATTR_AGL, 5,
+              ATTR_AGL, ATTR_AGL, ATTR_AGL, 3,
               {SS_HIR: 1, SS_TAR: 1, SS_TAI: 1}),
     SkillEnum.JUMPING:
         Skill("Jumping", SkillClassEnum.PHYSICAL,
-              ATTR_STR, ATTR_AGL, ATTR_AGL, 4,
+              ATTR_STR, ATTR_AGL, ATTR_AGL, 3,
               {SS_NAD: 2, SS_HIR: 2}),
     SkillEnum.LEGERDEMAIN:
         Skill("Legerdemain", SkillClassEnum.PHYSICAL,
@@ -1317,12 +1317,12 @@ skills = {
               {SS_SKO: 1, SS_MAS: 3, SS_LAD: 3}),
     SkillEnum.THROWING:
         Skill("Throwing", SkillClassEnum.PHYSICAL,
-              ATTR_STR, ATTR_DEX, ATTR_EYE, 4,
+              ATTR_STR, ATTR_DEX, ATTR_EYE, 3,
               {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
     # COMMUNICATION
     SkillEnum.AWARENESS:
         Skill("Awareness", SkillClassEnum.COMMUNICATION,
-              ATTR_EYE, ATTR_HRG, ATTR_SML, 4,
+              ATTR_EYE, ATTR_HRG, ATTR_SML, 3,
               {SS_HIR: 2, SS_TAR: 2}),
     SkillEnum.INTRIGUE:
         Skill("Intrigue", SkillClassEnum.COMMUNICATION,
@@ -1346,10 +1346,10 @@ skills = {
     # COMBAT
     SkillEnum.INITIATIVE:
         Skill("Initiative", SkillClassEnum.COMBAT,
-              ATTR_AGL, ATTR_WIL, ATTR_WIL, 4),
+              ATTR_AGL, ATTR_WIL, ATTR_WIL, 3),
     SkillEnum.UNARMED:
         Skill("Unarmed Combat", SkillClassEnum.COMBAT,
-              ATTR_STR, ATTR_DEX, ATTR_AGL, 4,
+              ATTR_STR, ATTR_DEX, ATTR_AGL, 3,
               {SS_MAS: 2, SS_LAD: 2, SS_ULA: 2}),
     SkillEnum.RIDING:
         Skill("Riding", SkillClassEnum.COMBAT,
@@ -1357,11 +1357,11 @@ skills = {
               {SS_ULA: 1, SS_ARA: 1}),
     SkillEnum.AXE:
         Skill("Axe", SkillClassEnum.COMBAT,
-              ATTR_STR, ATTR_STR, ATTR_DEX, 3,
+              ATTR_STR, ATTR_STR, ATTR_DEX, 2,
               {SS_AHN: 1, SS_FEN: 1, SS_ANG: 1}),
     SkillEnum.BLOWGUN:
         Skill("Blowgun", SkillClassEnum.COMBAT,
-              ATTR_STA, ATTR_DEX, ATTR_EYE, 4,
+              ATTR_STA, ATTR_DEX, ATTR_EYE, 2,
               {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.BOW:
         Skill("Bow", SkillClassEnum.COMBAT,
@@ -1369,7 +1369,7 @@ skills = {
               {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.CLUB:
         Skill("Club", SkillClassEnum.COMBAT,
-              ATTR_STR, ATTR_STR, ATTR_DEX, 4,
+              ATTR_STR, ATTR_STR, ATTR_DEX, 3,
               {SS_ULA: 1, SS_ARA: 1}),
     SkillEnum.DAGGER:
         Skill("Dagger", SkillClassEnum.COMBAT,
@@ -1397,11 +1397,11 @@ skills = {
               {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.SPEAR:
         Skill("Spear", SkillClassEnum.COMBAT,
-              ATTR_STR, ATTR_STR, ATTR_DEX, 3,
+              ATTR_STR, ATTR_STR, ATTR_DEX, 2,
               {SS_ARA: 1, SS_FEN: 1, SS_ULA: 1}),
     SkillEnum.SWORD:
         Skill("Sword", SkillClassEnum.COMBAT,
-              ATTR_STR, ATTR_DEX, ATTR_DEX, 3,
+              ATTR_STR, ATTR_DEX, ATTR_DEX, 2,
               {SS_ANG: 3, SS_AHN: 1, SS_NAD: 1}),
     SkillEnum.WHIP:
         Skill("Whip", SkillClassEnum.COMBAT,
