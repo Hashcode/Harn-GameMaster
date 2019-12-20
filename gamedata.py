@@ -140,7 +140,7 @@ class GameData:
               GameData._NextRoomEvent = seconds + per.DelaySeconds
             if GameData._processConditions(room_id, rooms[room_id], per.Conditions):
               if per.Triggers is not None:
-                if GameData._processTriggers(room_id, per.Triggers) == False:
+                if GameData._processTriggers(room_id, per.Triggers) is False:
                   break
         if rooms[room_id].Persons is not None:
           for npc in rooms[room_id].Persons:
@@ -159,7 +159,7 @@ class GameData:
                   GameData._NextRoomEvent = seconds + per.DelaySeconds
                 if GameData._processConditions(room_id, npc, per.Conditions):
                   if per.Triggers is not None:
-                    if GameData._processTriggers(npc, per.Triggers) == False:
+                    if GameData._processTriggers(npc, per.Triggers) is False:
                       break
 
   @staticmethod

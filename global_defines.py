@@ -2145,9 +2145,9 @@ class Player(Person):
     for q_id, q_completed in self.Quests.items():
       if q_id == quest_id:
         if completed is not None:
-          if completed == True and not q_completed:
+          if completed is True and not q_completed:
             return False
-          if completed == False and q_completed:
+          if completed is False and q_completed:
             return False
         return True
     return False

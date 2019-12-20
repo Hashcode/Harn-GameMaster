@@ -9,9 +9,11 @@ from console import ConsoleManager
 cm = ConsoleManager()
 cm.start()
 
+
 def promptTimeout():
   if random.randint(1, 100) < 50:
     cm.Print("Interrupt!")
+
 
 def Loop():
   while True:

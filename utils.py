@@ -51,8 +51,7 @@ def filterLinks(item_links, equipped=False, equippable=False, flags=0,
   item_dict = {}
   for item_id, il in item_links.items():
     if equippable:
-      if not items[item_id].ItemType in \
-          [ItemTypeEnum.WEAPON, ItemTypeEnum.ARMOR, ItemTypeEnum.RING]:
+      if not items[item_id].ItemType in [ItemTypeEnum.WEAPON, ItemTypeEnum.ARMOR, ItemTypeEnum.RING]:
         continue
     if not equipped and il.Equipped and il.Quantity == 1:
       continue
@@ -120,7 +119,7 @@ def printRoomDescription(room_id):
       for p in rooms[room_id].OnLook:
         if processConditions(room_id, rooms[room_id], p.Conditions):
           if p.Triggers is not None:
-            if processTriggers(room_id, p.Triggers) == False:
+            if processTriggers(room_id, p.Triggers) is False:
               break
     # Exits
     if len(rooms[room_id].Exits) > 0:
@@ -253,7 +252,7 @@ def actionGetItem():
   item_id = chooseItem(links, "pick up")
   if item_id == ItemEnum.NONE:
     return
-  if processTriggers(None, items[item_id].OnGet) == False:
+  if processTriggers(None, items[item_id].OnGet) is False:
     cm.Print("\nYou can't seem to pick up %s." %
              items[item_id].ItemName)
     return
@@ -285,7 +284,7 @@ def actionDropItem():
     cm.Print("\n%s cannot be dropped." %
              items[item_id].ItemName.capitalize())
     return
-  if processTriggers(None, items[item_id].OnDrop) == False:
+  if processTriggers(None, items[item_id].OnDrop) is False:
     cm.Print("\nYou can't seem to drop %s." %
              items[item_id].ItemName)
     return
@@ -334,7 +333,7 @@ def actionEquipItem():
       if count > 1:
           cm.Print("\nAlready wielding 2 rings.")
           return
-  if processTriggers(None, items[item_id].OnEquip) == False:
+  if processTriggers(None, items[item_id].OnEquip) is False:
     cm.Print("\nYou can't seem to eqiup %s." %
              items[item_id].ItemName)
     return
@@ -360,7 +359,7 @@ def actionRemoveItem():
   item_id = chooseItem(links, "remove")
   if item_id == ItemEnum.NONE:
     return
-  if processTriggers(None, items[item_id].OnRemove) == False:
+  if processTriggers(None, items[item_id].OnRemove) is False:
     cm.Print("\nYou can't seem to remove %s." %
              items[item_id].ItemName)
     return
@@ -863,7 +862,7 @@ def processTriggers(obj, triggers):
                   if rooms[player.Room].PersonInRoom(obj.UUID):
                     cm.Print(wrapper.fill("%s enters from the %s." % (obj.Name.capitalize(), directions[exit_dir].Names[0])))
                   break
-              if exit_match == False:
+              if exit_match is False:
                 if rooms[player.Room].PersonInRoom(obj.UUID):
                   cm.Print(wrapper.fill("%s enters." % (obj.Name.capitalize())))
             else:
@@ -1498,11 +1497,11 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
           break
     if cmd_match is not None:
       res = cmd_match.Function()
-      if res == False:
+      if res is False:
         if cmdHandler is not None:
           if cmdHandler(x, cmdHandlerData):
             break
-      elif res == True:
+      elif res is True:
         # attack and talk cmds can return true to re-enter main for combat
         break
     else:
@@ -1555,9 +1554,9 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
       res = False
       if cmdHandler is not None:
         res = cmdHandler(x, cmdHandlerData)
-      if res == True:
+      if res is True:
         break
-      elif res == False:
+      elif res is False:
         cm.Print("\n%sYou cannot do that here.%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
 
 # vim: tabstop=2 shiftwidth=2 expandtab:
