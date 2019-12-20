@@ -1303,6 +1303,7 @@ def actionRest():
           cm.Print("It's all better!")
         else:
           cm.Print("It looks a bit better.")
+        break
 
 
 ATT_PER_TRAIN = 25
