@@ -456,6 +456,7 @@ def commandHandler(command, data):
   elif command == "flee" or command == "f":
     # TODO: implement skill check
     # if player == FLEE, choose dodge automatically
+    # check for a valid exit
     att.Action = Action.FLEE
     return True
   elif command == "pass" or command == "p":
