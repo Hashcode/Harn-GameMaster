@@ -145,15 +145,6 @@ rooms = {
                  NewPerson(PersonEnum.BL_KEEP_GUARD),
                  NewPerson(PersonEnum.BL_KEEP_SENTRY),
              ]),
-    RoomEnum.BL_PRIEST_CHAMBER:
-        Room(RoomEnum.BL_PRIEST_CHAMBER, ZoneEnum.KEEP, "The Priest's Chamber", "the priest's chamber",
-             [
-                 "The well-appointed chamber you are standing in radiates warmth from a cozy fire roaring in a small "
-                 "western alcove. While spartan in furnishings, a well-made armoire sits in a corner as well as a tidy "
-                 "bed along one wall. Several religious paintings are hung on the walls."
-             ],
-             flags=RoomFlag.LIGHT,
-             exits=None),
     RoomEnum.BL_GATEHOUSE_PASSAGE:
         Room(RoomEnum.BL_GATEHOUSE_PASSAGE, ZoneEnum.KEEP, "Gatehouse Passage", "a gatehouse passage",
              [
@@ -573,7 +564,73 @@ rooms = {
              ["** TODO **"],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_INN_ENTRYWAY),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHERN_WALK_2),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_MAIN_WALK_2),
+             }),
+    RoomEnum.BL_INN_ENTRYWAY:
+        Room(RoomEnum.BL_INN_ENTRYWAY, ZoneEnum.KEEP, "Inn Entryway", "the entryway of the inn",
+             ["** TODO **"],
+             flags=RoomFlag.LIGHT,
+             exits={
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_MAIN_WALK),
+             }),
+    RoomEnum.BL_MAIN_WALK_2:
+        Room(RoomEnum.BL_MAIN_WALK_2, ZoneEnum.KEEP, "Main Walk", "a main thorough fair",
+             ["** TODO **"],
+             flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_ENTRY_INNER_GATEHOUSE),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_MAIN_WALK),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_ALLEYWAY),
+             }),
+    RoomEnum.BL_ALLEYWAY:
+        Room(RoomEnum.BL_ALLEYWAY, ZoneEnum.KEEP, "A Dark Narrow Alleyway", "a dark narrow alleyway",
+             ["** TODO **"],
+             flags=RoomFlag.OUTSIDE,
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_APARMENT_5),
+                 DirectionEnum.NORTHEAST: Exit(RoomEnum.BL_APARMENT_6),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_MAIN_WALK_2),
+             }),
+    RoomEnum.BL_APARMENT_5:
+        Room(RoomEnum.BL_APARMENT_5, ZoneEnum.KEEP, "A Shabby Apartment", "a shabby apartment",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_ALLEYWAY),
+             }),
+    RoomEnum.BL_APARMENT_6:
+        Room(RoomEnum.BL_APARMENT_6, ZoneEnum.KEEP, "An Abandoned Apartment", "an abandoned apartment",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.SOUTHWEST: Exit(RoomEnum.BL_ALLEYWAY),
+             }),
+    RoomEnum.BL_ENTRY_INNER_GATEHOUSE:
+        Room(RoomEnum.BL_ENTRY_INNER_GATEHOUSE, ZoneEnum.KEEP, "Outside the Inner Gatehouse", "the outside of the inner gatehouse",
+             ["** TODO **"],
+             flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
+             exits={
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_MAIN_WALK_2),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_CHAPEL_MAINROOM),
+             }),
+    RoomEnum.BL_CHAPEL_MAINROOM:
+        Room(RoomEnum.BL_CHAPEL_MAINROOM, ZoneEnum.KEEP, "Chapel Mainroom", "the chapel mainroom",
+             ["** TODO **"],
+             flags=RoomFlag.LIGHT,
+             exits={
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_ENTRY_INNER_GATEHOUSE),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_PRIEST_CHAMBER),
+             }),
+    RoomEnum.BL_PRIEST_CHAMBER:
+        Room(RoomEnum.BL_PRIEST_CHAMBER, ZoneEnum.KEEP, "The Curates's Chamber", "the curate's chamber",
+             [
+                 "The well-appointed chamber you are standing in radiates warmth from a cozy fire roaring in a small "
+                 "western alcove. While spartan in furnishings, a well-made armoire sits in a corner as well as a tidy "
+                 "bed along one wall. Several religious paintings are hung on the walls."
+             ],
+             flags=RoomFlag.LIGHT,
+             exits={
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_CHAPEL_MAINROOM),
              }),
 
 
