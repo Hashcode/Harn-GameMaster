@@ -1620,18 +1620,19 @@ class Person:
     return 100 + self.SkillBase(skill_id)
 
   def ResolveSkill(self, ml, skill_id):
-    # store attempts
-    if skill_id != SkillEnum.NONE:
-      if skill_id in self.SkillLinks:
-        self.SkillLinks[skill_id].Attempts += 1
-      else:
-        self.SkillLinks.update({skill_id: SkillLink(0, 1)})
+    if type(self) is Player:
+      # store attempts
+      if skill_id != SkillEnum.NONE:
+        if skill_id in self.SkillLinks:
+          self.SkillLinks[skill_id].Attempts += 1
+        else:
+          self.SkillLinks.update({skill_id: SkillLink(0, 1)})
     r = DiceRoll(1, 100).Result()
-    logd("%s RESOLVE SKILL: %d, ROLL: %d" % (self.Name, ml, r))
     if ml < 5:
       ml = 5
     elif ml > 95:
       ml = 95
+    logd("%s RESOLVE SKILL [%s]: %d, ROLL: %d" % (self.Name, skills[skill_id].Name, ml, r))
     # success
     if r <= ml:
       if r % 5 == 0:
