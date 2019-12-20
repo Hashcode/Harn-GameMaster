@@ -1484,9 +1484,10 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
   doors = GameData.GetDoors()
   rooms = GameData.GetRooms()
   while True:
-    prompt_text = "[? = HELP] Command:"
+    prompt_text = "[IP:%-3d PEN:%-3d | ? = HELP" % (player.IP(), player.PhysicalPenalty())
     if player.IsTalking():
-      prompt_text = "[? = HELP, \"DONE\" = Exit Talk] Command:"
+      prompt_text += ", \"DONE\" = Exit Talk"
+    prompt_text += "]:"
     x = cm.Input(prompt_text, timeout=30, timeoutFunc=promptTimeout).lower()
     # Handle universal commands
     cmd_match = None
