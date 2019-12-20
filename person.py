@@ -217,7 +217,7 @@ persons = {
     PersonEnum.BL_KEEP_BEGGAR:
         Mob(PersonEnum.BL_KEEP_BEGGAR, "an unkempt beggar",
             "An unkempt man sits near the wall mumbling to himself.", 40, 12, 35,
-            cur=DiceRoll(1, 6, 60),
+            cur=DiceRoll(1, 2),
             attrs={
                 AttrEnum.SEX: 1,
                 AttrEnum.STRENGTH: 10,
@@ -232,7 +232,7 @@ persons = {
                 AttrEnum.WILL: 11,
             },
             mob_skills={
-                SkillEnum.UNARMED: 20,
+                SkillEnum.UNARMED: 40,
             },
             eq={
                 ItemEnum.ARMOR_TUNIC_CLOTH: ItemLink(1, True),
@@ -302,7 +302,7 @@ persons = {
                 AttrEnum.WILL: 12,
             },
             mob_skills={
-                SkillEnum.POLEARM: 50,
+                SkillEnum.SWORD: 70,
             },
             eq={
                 ItemEnum.WEAPON_BASTARD_SWORD: ItemLink(1, True),
@@ -433,7 +433,7 @@ persons = {
     PersonEnum.BL_KEEP_YARD_SCRIBE:
         Mob(PersonEnum.BL_KEEP_YARD_SCRIBE, "a young scribe",
             "A young scribe is taking notes as traffic moves in and out of the keep.", 40, 12, 35,
-            cur=DiceRoll(1, 6, 60),
+            cur=DiceRoll(1, 6, 3),
             attrs={
                 AttrEnum.SEX: 1,
                 AttrEnum.STRENGTH: 10,
@@ -448,7 +448,7 @@ persons = {
                 AttrEnum.WILL: 11,
             },
             mob_skills={
-                SkillEnum.UNARMED: 20,
+                SkillEnum.UNARMED: 50,
             },
             eq={
                 ItemEnum.ARMOR_ROBE_CLOTH: ItemLink(1, True),
@@ -480,7 +480,7 @@ persons = {
                 AttrEnum.WILL: 16,
             },
             mob_skills={
-                SkillEnum.CLUB: 45,
+                SkillEnum.CLUB: 75,
                 SkillEnum.METALCRAFT: 50,
             },
             eq={
@@ -539,7 +539,7 @@ persons = {
                 AttrEnum.WILL: 13,
             },
             mob_skills={
-                SkillEnum.DAGGER: 45,
+                SkillEnum.DAGGER: 75,
             },
             eq={
                 ItemEnum.WEAPON_DAGGER: ItemLink(1, True),
@@ -616,7 +616,7 @@ persons = {
                 AttrEnum.WILL: 13,
             },
             mob_skills={
-                SkillEnum.DAGGER: 45,
+                SkillEnum.DAGGER: 75,
                 SkillEnum.HIDEWORK: 50,
             },
             eq={
@@ -677,7 +677,7 @@ persons = {
                 AttrEnum.WILL: 13,
             },
             mob_skills={
-                SkillEnum.DAGGER: 45,
+                SkillEnum.DAGGER: 75,
                 SkillEnum.SURVIVAL: 50,
             },
             eq={
