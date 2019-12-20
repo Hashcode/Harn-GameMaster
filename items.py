@@ -484,8 +484,8 @@ items = {
         Item(ItemTypeEnum.MISC, "stone", QualityEnum.TER,
              MaterialEnum.STONE, 1),
     ItemEnum.MISC_RAT_FUR:
-        Item(ItemTypeEnum.MISC, "rat fur", QualityEnum.POR,
-             MaterialEnum.FUR_LT, 1,
+        Item(ItemTypeEnum.MISC, "rat fur", QualityEnum.AVE,
+             MaterialEnum.FUR_LT, 2,
              onDrop=[
                  Trigger(TriggerTypeEnum.ROOM_MESSAGE,
                          "With a sigh of relief you drop a rate fur."),

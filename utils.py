@@ -514,7 +514,10 @@ def actionQuest():
       continue
     if completed:
       count += 1
-      cm.Print("%s" % quests[quest_id].Name)
+      flags = ""
+      if quests[quest_id].Repeatable:
+        flags = " (repeatable)"
+      cm.Print("%s%s" % (quests[quest_id].Name, flags))
   if count < 1:
     cm.Print("[NONE]")
   count = 0
@@ -523,8 +526,11 @@ def actionQuest():
     if quests[quest_id].Hidden:
       continue
     if not completed:
+      flags = ""
+      if quests[quest_id].Repeatable:
+        flags = " (repeatable)"
       count += 1
-      cm.Print("%s" % quests[quest_id].Name)
+      cm.Print("%s%s" % (quests[quest_id].Name, flags))
   if count < 1:
     cm.Print("[NONE]")
 
@@ -820,15 +826,20 @@ def processTriggers(obj, triggers):
         if type(obj) == Mob:
           obj.LongDescription = tr.Data
       elif tr.TriggerType == TriggerTypeEnum.ZONE_MESSAGE:
-        if player.Room != obj and rooms[player.Room].Zone == rooms[obj].Zone:
-          cm.Print("\n" + wrapper.fill(tr.Data))
-      elif tr.TriggerType == TriggerTypeEnum.ROOM_MESSAGE:
-        if type(obj) == Mob:
-          if rooms[player.Room].PersonInRoom(obj.UUID):
-            cm.Print(wrapper.fill(tr.Data))
-        elif type(obj) == RoomEnum:
-          if player.Room == obj:
+        if tr.Data2 is None:
+          if player.Room != obj and rooms[player.Room].Zone == rooms[obj].Zone:
             cm.Print("\n" + wrapper.fill(tr.Data))
+        else:
+          if player.Room != obj and rooms[player.Room].Zone == tr.Data2:
+            cm.Print("\n" + wrapper.fill(tr.Data))
+      elif tr.TriggerType == TriggerTypeEnum.ROOM_MESSAGE:
+        if tr.Data2 is None:
+          if type(obj) == Mob and rooms[player.Room].PersonInRoom(obj.UUID):
+            cm.Print(wrapper.fill(tr.Data))
+          elif type(obj) == RoomEnum and player.Room == obj:
+            cm.Print("\n" + wrapper.fill(tr.Data))
+        elif player.Room == tr.Data2:
+          cm.Print(wrapper.fill(tr.Data))
       elif tr.TriggerType == TriggerTypeEnum.MOVE:
         # TODO:
         cm.Print("* Coming Soon *")
@@ -879,6 +890,8 @@ def processTriggers(obj, triggers):
           ds.Locked = True
       elif tr.TriggerType == TriggerTypeEnum.END:
         logd("[trigger] END")
+        return False
+    else:
         return False
 
 

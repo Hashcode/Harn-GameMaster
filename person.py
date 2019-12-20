@@ -39,7 +39,7 @@ persons = {
                 SkillEnum.STEALTH: 0,
             },
             loot={
-                ItemEnum.MISC_RAT_FUR: 20,
+                ItemEnum.MISC_RAT_FUR: 50,
             }),
     PersonEnum.BL_KEEP_GUARD:
         Mob(PersonEnum.BL_KEEP_GUARD, "a gatehouse guard",
@@ -554,6 +554,9 @@ persons = {
                 ItemEnum.WEAPON_STAFF: ItemLink(1),
                 ItemEnum.MISC_TORCH: ItemLink(1),
             },
+            buy_items={
+                ItemEnum.MISC_RAT_FUR: ItemLink(1),
+            },
             talk=[
                 MobTalk("",
                         text=[
@@ -562,7 +565,8 @@ persons = {
                         ]),
                 MobTalk("",
                         condition=[
-                            Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST_COMPLETE, QuestEnum.GUARD_DELIVERY),
+                            Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST_COMPLETE,
+                                      QuestEnum.GUARD_DELIVERY),
                         ],
                         text=[
                             "\"Ah! I see you have a package for me.  I appreciate your help bringing it to the shop.\"",
@@ -574,6 +578,50 @@ persons = {
                             Trigger(TriggerTypeEnum.ITEM_TAKE, ItemEnum.QUEST_WEATHERED_PACKAGE),
                             Trigger(TriggerTypeEnum.CURRENCY_GIVE, 1),
                             Trigger(TriggerTypeEnum.QUEST_COMPLETE, QuestEnum.GUARD_DELIVERY),
+                        ]),
+                MobTalk("",
+                        condition=[
+                            Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST,
+                                      QuestEnum.WAREHOUSE_RATS),
+                        ],
+                        text=[
+                            "\"If you're interested, I could use some help in my warehouse. Seemingly overnight "
+                            "rats have infested the place. It doesn't look good for me and worse when they get "
+                            "into the wares we store for traveling folks.\"",
+                            "He pauses to shiver slightly.",
+                            "\"Care to clear out a few rats as you have time? You could bring me their fur as "
+                            "PROOF of your efforts?\"",
+                        ]),
+                MobTalk("proof",
+                        condition=[
+                            Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST,
+                                      QuestEnum.WAREHOUSE_RATS),
+                        ],
+                        text=[
+                            "\"Great! The warehouse is back down the Southern Walk and then north on Eastern "
+                            "Walk. It's there on the left.\"",
+                            "The provisioner starts patting his surcoat and checking his pockets.",
+                            "\"Return to me and I'll pay you for each fur you collect. You'll need this key for "
+                            "the double doors.\"",
+                            "The provisioner gives you a large bronze key.",
+                        ],
+                        triggers=[
+                            Trigger(TriggerTypeEnum.QUEST_GIVE, QuestEnum.WAREHOUSE_RATS),
+                            Trigger(TriggerTypeEnum.ITEM_GIVE, ItemEnum.KEY_WAREHOUSE_DBL_DOOR),
+                        ]),
+                MobTalk("~on_enter~",
+                        condition=[
+                            Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST_COMPLETE,
+                                      QuestEnum.WAREHOUSE_RATS),
+                            Condition(ConditionCheckEnum.HAS, TargetTypeEnum.PLAYER_INVEN, ItemEnum.MISC_RAT_FUR),
+                        ],
+                        text=[
+                            "\"Ah, I see you've been clearing out the varmin in the warehouse! I'll pay you "
+                            "1 SP per fur as I agreed.\""
+                        ],
+                        triggers=[
+                            Trigger(TriggerTypeEnum.QUEST_COMPLETE, QuestEnum.WAREHOUSE_RATS),
+                            Trigger(TriggerTypeEnum.ITEM_SELL),
                         ]),
                 MobTalk("shop",
                         text=[

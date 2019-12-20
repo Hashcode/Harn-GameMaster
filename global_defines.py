@@ -173,13 +173,13 @@ materials = {
     # SKIN TYPES
     MaterialEnum.FEATHERS_LT: Material("Feathers", 0, 0, [3, 2, 1, 2]),
     MaterialEnum.FEATHERS_MD: Material("Feathers", 0, 0, [3, 4, 2, 4]),
-    MaterialEnum.FUR_LT: Material("Fur", 0, 0, [2, 1, 1, 2]),
-    MaterialEnum.FUR_MD: Material("Fur", 0, 0, [4, 3, 1, 3]),
-    MaterialEnum.FUR_HV: Material("Fur", 0, 0, [5, 4, 1, 3]),
-    MaterialEnum.HIDE: Material("Hide", 0, 0, [5, 4, 1, 3]),
-    MaterialEnum.HIDE_BEAR_LT: Material("Bear Hide", 0, 0, [5, 3, 2, 4]),
-    MaterialEnum.HIDE_BEAR_MD: Material("Bear Hide", 0, 0, [6, 4, 3, 5]),
-    MaterialEnum.HIDE_BEAR_HV: Material("Bear Hide", 0, 0, [7, 5, 3, 6]),
+    MaterialEnum.FUR_LT: Material("Fur", 0.1, 1, [2, 1, 1, 2]),
+    MaterialEnum.FUR_MD: Material("Fur", 0.2, 2, [4, 3, 1, 3]),
+    MaterialEnum.FUR_HV: Material("Fur", 0.3, 3, [5, 4, 1, 3]),
+    MaterialEnum.HIDE: Material("Hide", 0.2, 4, [5, 4, 1, 3]),
+    MaterialEnum.HIDE_BEAR_LT: Material("Bear Hide", 0.2, 3, [5, 3, 2, 4]),
+    MaterialEnum.HIDE_BEAR_MD: Material("Bear Hide", 0.2, 5, [6, 4, 3, 5]),
+    MaterialEnum.HIDE_BEAR_HV: Material("Bear Hide", 0.2, 7, [7, 5, 3, 6]),
     MaterialEnum.HIDE_DRAGON_LT: Material("Dragon Hide", 0.2, 4800, [8, 5, 8, 7], flags=1 << MaterialFlagEnum.MAGIC),
     MaterialEnum.HIDE_DRAGON_MD: Material("Dragon Hide", 0.2, 6400, [10, 8, 7, 9], flags=1 << MaterialFlagEnum.MAGIC),
     MaterialEnum.HIDE_DRAGON_HV: Material("Dragon Hide", 0.2, 9600, [12, 15, 12, 14], flags=1 << MaterialFlagEnum.MAGIC),
@@ -1802,9 +1802,10 @@ class Condition:
 
 
 class Trigger:
-  def __init__(self, trigger_type, data=None, chance=100):
+  def __init__(self, trigger_type, data=None, data2=None, chance=100):
     self.TriggerType = trigger_type
     self.Data = data
+    self.Data2 = data2
     self.Chance = chance
 
 
@@ -1905,18 +1906,21 @@ class QuestEnum(IntEnum):
   NONE = 0
   GUARD_DELIVERY = 1
   GUARD_INTRO = 2
+  WAREHOUSE_RATS = 3
 
 
 class Quest:
-  def __init__(self, name, hidden=False, triggers=None):
+  def __init__(self, name, hidden=False, triggers=None, repeatable=False):
     self.Name = name
     self.Hidden = hidden
     self.Triggers = triggers
+    self.Repeatable = repeatable
 
 
 quests = {
     QuestEnum.GUARD_INTRO: Quest("Talk to the guard.", hidden=True),
     QuestEnum.GUARD_DELIVERY: Quest("Deliver a weathered package to the provisioner."),
+    QuestEnum.WAREHOUSE_RATS: Quest("Sell rat furs to the provisioner.", repeatable=True),
 }
 
 
