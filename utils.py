@@ -923,7 +923,6 @@ def printNPCTalk(p, keyword):
 
 
 def roomTalkTrigger(keyword):
-  cm = GameData.GetConsole()
   keyword = "~%s~" % keyword
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()

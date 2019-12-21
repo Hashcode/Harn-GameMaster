@@ -18,8 +18,7 @@ from random import seed
 
 from console import (ANSI, ConsoleManager)
 from gamedata import (GameData)
-from global_defines import (quests, ItemEnum, ItemLink, Player,
-                            RoomEnum, RoomFuncResponse)
+from global_defines import (quests, Player, RoomEnum, RoomFuncResponse)
 
 TestMode = True
 
