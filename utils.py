@@ -824,24 +824,24 @@ def processTriggers(obj, triggers):
           player.CombatTarget = obj.UUID
       elif tr.TriggerType == TriggerTypeEnum.PERSON_DESC:
         if type(obj) == Mob:
-          obj.LongDescription = tr.Data
+          obj.LongDescription = obj.TextTranslate(tr.Data)
       elif tr.TriggerType == TriggerTypeEnum.ZONE_MESSAGE:
         if tr.Data2 is None:
           if player.Room != obj and rooms[player.Room].Zone == rooms[obj].Zone:
             for m in tr.Data:
-              cm.Print("\n" + wrapper.fill(m))
+              cm.Print("\n" + wrapper.fill(rooms[obj].TextTranslate(m)))
         else:
           if player.Room != obj and rooms[player.Room].Zone == tr.Data2:
             for m in tr.Data:
-              cm.Print("\n" + wrapper.fill(m))
+              cm.Print("\n" + wrapper.fill(rooms[obj].TextTranslate(m)))
       elif tr.TriggerType == TriggerTypeEnum.MESSAGE:
         if tr.Data2 is None:
           if type(obj) == Mob and rooms[player.Room].PersonInRoom(obj.UUID):
             for m in tr.Data:
-              cm.Print("\n" + wrapper.fill(m))
+              cm.Print("\n" + wrapper.fill(obj.TextTranslate(m)))
           elif type(obj) == RoomEnum and player.Room == obj:
             for m in tr.Data:
-              cm.Print("\n" + wrapper.fill(m))
+              cm.Print(wrapper.fill(rooms[player.Room].TextTranslate(m)))
         elif player.Room == tr.Data2:
           for m in tr.Data:
             cm.Print(wrapper.fill(m))

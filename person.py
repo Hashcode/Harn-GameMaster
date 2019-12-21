@@ -43,7 +43,7 @@ persons = {
             }),
     PersonEnum.BL_KEEP_GUARD:
         Mob(PersonEnum.BL_KEEP_GUARD, "a gatehouse guard",
-            "A mild-mannered guard keeps watch over the gatehouse.", 60, 17, 50,
+            "A gatehouse guard keeps watch over his post.", 60, 17, 50,
             cur=DiceRoll(1, 6, 40),
             attrs={
                 AttrEnum.SEX: 1,
@@ -79,12 +79,12 @@ persons = {
                         [
                             Trigger(TriggerTypeEnum.MESSAGE,
                                     [
-                                        "The guard glances in your direction. \"Come TALK to me, Traveller, when you get "
+                                        "@@NAME_CAP@@ in your direction. \"Come TALK to me, Traveller, when you get "
                                         "a moment.\"",
                                         "%s[TIP: Sometimes keywords will be presented in all capitals such as 'TALK'. "
                                         "You can type these keywords to start interactions or talk about different subjects. "
                                         "As the adventure progresses this will happen less and less.]"
-                                        "%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL)
+                                        "%s" % (ANSI.TEXT_COLOR_CYAN, ANSI.TEXT_NORMAL)
                                     ]),
                         ]),
                 MobTalk("~on_exit~",
@@ -94,7 +94,7 @@ persons = {
                         [
                             Trigger(TriggerTypeEnum.MESSAGE,
                                     [
-                                        "The guard moves to block your way. \"I meant you need to TALK to me before entering.\" "
+                                        "@@NAME_CAP@@ moves to block your way. \"I meant you need to TALK to me before entering.\" "
                                         "He taps his foot impatiently.",
                                     ]),
                             Trigger(TriggerTypeEnum.DENY),
@@ -103,7 +103,7 @@ persons = {
                         triggers=[
                             Trigger(TriggerTypeEnum.MESSAGE,
                                     [
-                                        "The guard turns to look at you.",
+                                        "@@NAME_CAP@@ turns to look at you.",
                                         "\"Hello Traveller. Welcome to Stonehaven KEEP. Times are rough, so you may need to forgive "
                                         "the grim faces of our inhabitants. We've seen a recent surge in attacks from the wild men "
                                         "of the forest.\"",
@@ -116,7 +116,7 @@ persons = {
                         ],
                         [
                             Trigger(TriggerTypeEnum.PAUSE, 1),
-                            Trigger(TriggerTypeEnum.MESSAGE, ["The guard then looks thoughtful for a moment."]),
+                            Trigger(TriggerTypeEnum.MESSAGE, ["@@NAME_CAP@@ then looks thoughtful for a moment."]),
                             Trigger(TriggerTypeEnum.PAUSE, 2),
                             Trigger(TriggerTypeEnum.MESSAGE,
                                     [
@@ -129,7 +129,7 @@ persons = {
                                         "\"Would you be interested in performing a DELIVERY for me?\"",
                                         "%s[TIP: The guard is offering a quest. To accept the quest type 'DELIVERY'. The 'QUESTS' "
                                         "command displays more information about your current and completed quests.]"
-                                        "%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL),
+                                        "%s" % (ANSI.TEXT_COLOR_CYAN, ANSI.TEXT_NORMAL),
                                     ]),
                             Trigger(TriggerTypeEnum.QUEST_COMPLETE, QuestEnum.GUARD_INTRO),
                         ]),
@@ -139,10 +139,10 @@ persons = {
                                     [
                                         "\"Ah, Stonehaven Keep, the last bastion of civilization before the wild forests off to "
                                         "the northeast.\"",
-                                        "At this the guard glances out across the moat towards the forest in the distance.",
+                                        "At this @@NAME@@ glances out across the moat towards the forest in the distance.",
                                         "\"Castellan Danly oversees the keep with a firm but fair hand. Mind that you don't go "
                                         "causin' any trouble or you'll see the keep's prison from the inside.\"",
-                                        "He turns and points down the passage leading into the keep.",
+                                        "@@SEX@@ turns and points down the passage leading into the keep.",
                                         "\"Inside we have a bevy of shops and services to choose from.  Just follow the "
                                         "Southern Walk once you're inside.\"",
                                     ]),
@@ -152,10 +152,10 @@ persons = {
                             Trigger(TriggerTypeEnum.MESSAGE,
                                     [
                                         "\"Ah some helpful information, let's see.\"",
-                                        "The guard gives you a discerning look.",
+                                        "@@NAME_CAP@@ gives you a discerning look.",
                                         "\"These are rough times. If I were you, I would secure better weapons and ARMOR. Of course, "
                                         "you can't just pick up a bastard sword and charge into battle. This ain't no fairy tale. "
-                                        "You'll want to TRAIN your SKILLS up over time with practice.\"",
+                                        "You'll want to train your SKILLS up over time with practice.\"",
                                         "\"To use items like weapons, armor and other things, you'll need to GET, DROP, EQUIP and "
                                         "REMOVE them. Mind you, I wouldn't leave anything on the ground for long.\"",
                                         "\"You should take some time and look at the STATS and INFO about yourself.  Best to know "
@@ -168,18 +168,18 @@ persons = {
                         ],
                         [
                             Trigger(TriggerTypeEnum.MESSAGE,
-                                    ["A gap-toothed smile cracks the face of the stoic guard."]),
+                                    ["A gap-toothed smile cracks the face of @@NAME@@."]),
                             Trigger(TriggerTypeEnum.PAUSE, 2),
                             Trigger(TriggerTypeEnum.MESSAGE,
                                     ["\"Glad to here it! Here, take this to the provisioner on the Southern Walk.\""]),
                             Trigger(TriggerTypeEnum.PAUSE, 1),
                             Trigger(TriggerTypeEnum.MESSAGE,
                                     [
-                                        "A gatehouse guard gives you a small weathered package.",
+                                        "@@NAME_CAP@@ gives you a small weathered package.",
                                         "%s[TIP: You are still in 'TALK' mode with the guard. To stop talking type 'DONE'. Then "
                                         "you can see what's in your inventory with the 'INVENTORY' command (or it's "
                                         "abbreviation 'I'). Also, 'HELP' will display all of the commands for the "
-                                        "game.]%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL),
+                                        "game.]%s" % (ANSI.TEXT_COLOR_CYAN, ANSI.TEXT_NORMAL),
                                     ]),
                             Trigger(TriggerTypeEnum.ITEM_GIVE, ItemEnum.QUEST_WEATHERED_PACKAGE),
                             Trigger(TriggerTypeEnum.QUEST_GIVE, QuestEnum.GUARD_DELIVERY),
@@ -189,12 +189,12 @@ persons = {
                             Trigger(TriggerTypeEnum.MESSAGE,
                                     [
                                         "\"Stay safe while in the Keep.\"",
-                                        "The guard resumes his post.",
+                                        "@@NAME_CAP@@ resumes his post.",
                                     ]),
                         ]),
             ]),
     PersonEnum.BL_KEEP_SENTRY:
-        Mob(PersonEnum.BL_KEEP_SENTRY, "a common sentry",
+        Mob(PersonEnum.BL_KEEP_SENTRY, "a sentry",
             "A common sentry stands watch.", 50, 14, 40,
             cur=DiceRoll(1, 6, 10),
             attrs={
@@ -230,7 +230,7 @@ persons = {
                     ],
                     [
                         Trigger(TriggerTypeEnum.MESSAGE,
-                                ["A sentry shuffles his feet looking bored."]),
+                                ["@@NAME_CAP@@ shuffles his feet looking bored."]),
                     ], 300),
                 Periodic(
                     [
@@ -238,7 +238,7 @@ persons = {
                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=15),
                     ],
                     [
-                        Trigger(TriggerTypeEnum.MESSAGE, ["A sentry yawns."]),
+                        Trigger(TriggerTypeEnum.MESSAGE, ["@@NAME_CAP@@ yawns."]),
                     ], 300),
                 Periodic(
                     [
@@ -246,11 +246,11 @@ persons = {
                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=15),
                     ],
                     [
-                        Trigger(TriggerTypeEnum.MESSAGE, ["A sentry nods off for a moment before jerking upright."]),
+                        Trigger(TriggerTypeEnum.MESSAGE, ["@@NAME_CAP@@ nods off for a moment before jerking upright."]),
                     ], 300),
             ]),
     PersonEnum.BL_KEEP_BEGGAR:
-        Mob(PersonEnum.BL_KEEP_BEGGAR, "an unkempt beggar",
+        Mob(PersonEnum.BL_KEEP_BEGGAR, "an unkempt man",
             "An unkempt man sits near the wall mumbling to himself.", 40, 12, 35,
             cur=DiceRoll(1, 2),
             attrs={
@@ -278,8 +278,8 @@ persons = {
                         Condition(ConditionCheckEnum.HAS, TargetTypeEnum.FLAG_CHECK, PersonFlag.BEHAVIOR_1),
                     ],
                     [
-                        Trigger(TriggerTypeEnum.MESSAGE, ["An unkempt man sags visibly and sits back down."]),
-                        Trigger(TriggerTypeEnum.PERSON_DESC, "An unkempt man sits near the wall mumbling to himself."),
+                        Trigger(TriggerTypeEnum.MESSAGE, ["@@NAME_CAP@@ sags visibly and sits back down."]),
+                        Trigger(TriggerTypeEnum.PERSON_DESC, "@@NAME_CAP@@ sits near the wall mumbling to himself."),
                         Trigger(TriggerTypeEnum.TAKE_FLAG, PersonFlag.BEHAVIOR_1),
                     ], 300),
             ],
@@ -290,7 +290,7 @@ persons = {
                         ],
                         [
                             Trigger(TriggerTypeEnum.MESSAGE,
-                                    ["An unkempt man mumbles, \"He was an unholy abomination ...\""]),
+                                    ["@@NAME_CAP@@ mumbles, \"He was an unholy abomination ...\""]),
                             Trigger(TriggerTypeEnum.END),
                         ]),
                 MobTalk("~on_enter~",
@@ -300,9 +300,9 @@ persons = {
                         ],
                         [
                             Trigger(TriggerTypeEnum.MESSAGE,
-                                    ["An unkempt man jumps to his feet and stares at you."]),
+                                    ["@@NAME_CAP@@ jumps to his feet and stares at you."]),
                             Trigger(TriggerTypeEnum.PERSON_DESC,
-                                    "An unkempt man is standing here crazily looking in all directions."),
+                                    "@@NAME_CAP@@ is standing here crazily looking in all directions."),
                             Trigger(TriggerTypeEnum.GIVE_FLAG, PersonFlag.BEHAVIOR_1),
                             Trigger(TriggerTypeEnum.END),
                         ]),
@@ -312,7 +312,7 @@ persons = {
                         ],
                         [
                             Trigger(TriggerTypeEnum.MESSAGE,
-                                    ["An unkempt man mumbles, \"I told her not to pick it up ...\""]),
+                                    ["@@NAME_CAP@@ mumbles, \"I told her not to pick it up ...\""]),
                             Trigger(TriggerTypeEnum.END),
                         ]),
             ]),
@@ -355,7 +355,7 @@ persons = {
                     ],
                     [
                         Trigger(TriggerTypeEnum.MESSAGE,
-                                "The corporal of the watch glances at the scribe and grumbles under his breath."),
+                                "@@NAME_CAP@@ glances at the scribe and grumbles under his breath."),
                     ], 300),
                 Periodic(
                     [
@@ -365,9 +365,9 @@ persons = {
                     ],
                     [
                         Trigger(TriggerTypeEnum.PERSON_DESC,
-                                "The corporal of the watch seems to be on his way somewhere."),
+                                "@@NAME_CAP@@ seems to be on his way somewhere."),
                         Trigger(TriggerTypeEnum.MESSAGE,
-                                "The corporal of the watch turns to the scribe. \"The hour grows late and I am "
+                                "@@NAME_CAP@@ turns to the scribe. \"The hour grows late and I am "
                                 "in need of a good meal. I shall see you in the morn.\""),
                         Trigger(TriggerTypeEnum.PERSON_MOVE, DirectionEnum.SOUTH),
                         Trigger(TriggerTypeEnum.GIVE_FLAG, PersonFlag.BEHAVIOR_1),
@@ -397,13 +397,13 @@ persons = {
                         Condition(ConditionCheckEnum.HAS, TargetTypeEnum.LOCATED_IN_ROOM, RoomEnum.BL_SOUTHERN_WALK),
                     ],
                     [
-                        Trigger(TriggerTypeEnum.PERSON_DESC, "The corporal of the watch is resting here."),
+                        Trigger(TriggerTypeEnum.PERSON_DESC, "@@NAME_CAP@@ is resting here."),
                         Trigger(TriggerTypeEnum.MESSAGE,
-                                "The corporal of the watch unlocks the door to a private apartment with an iron key."),
+                                "@@NAME_CAP@@ unlocks the door to a private apartment with an iron key."),
                         Trigger(TriggerTypeEnum.DOOR_UNLOCK, DoorEnum.CORPORAL_APPT_DOOR),
                         Trigger(TriggerTypeEnum.PERSON_MOVE, DirectionEnum.SOUTH),
                         Trigger(TriggerTypeEnum.MESSAGE,
-                                "The corporal of the watch lays down on the bed."),
+                                "@@NAME_CAP@@ lays down on the bed."),
                         Trigger(TriggerTypeEnum.END),
                     ], 30),
                 Periodic(
@@ -423,11 +423,11 @@ persons = {
                     ],
                     [
                         Trigger(TriggerTypeEnum.PERSON_DESC,
-                                "The corporal of the watch seems to be on his way somewhere."),
-                        Trigger(TriggerTypeEnum.MESSAGE, "The corporal of the watch stands up."),
+                                "@@NAME_CAP@@ seems to be on his way somewhere."),
+                        Trigger(TriggerTypeEnum.MESSAGE, "@@NAME_CAP@@ stands up."),
                         Trigger(TriggerTypeEnum.PERSON_MOVE, DirectionEnum.NORTH),
                         Trigger(TriggerTypeEnum.MESSAGE,
-                                "The corporal of the watch locks the door to a private apartment with an iron key."),
+                                "@@NAME_CAP@@ locks the door to a private apartment with an iron key."),
                         Trigger(TriggerTypeEnum.DOOR_LOCK, DoorEnum.CORPORAL_APPT_DOOR),
                         Trigger(TriggerTypeEnum.GIVE_FLAG, PersonFlag.BEHAVIOR_2),
                         Trigger(TriggerTypeEnum.END),
@@ -456,7 +456,7 @@ persons = {
                         Condition(ConditionCheckEnum.HAS, TargetTypeEnum.LOCATED_IN_ROOM, RoomEnum.BL_EASTERN_WALK),
                     ],
                     [
-                        Trigger(TriggerTypeEnum.PERSON_DESC, "The corporal of the watch stands here grumbling to his scribe."),
+                        Trigger(TriggerTypeEnum.PERSON_DESC, "@@NAME_CAP@@ stands here grumbling to his scribe."),
                         Trigger(TriggerTypeEnum.PERSON_MOVE, DirectionEnum.NORTH),
                         Trigger(TriggerTypeEnum.TAKE_FLAG, PersonFlag.BEHAVIOR_2),
                         Trigger(TriggerTypeEnum.END),
@@ -491,7 +491,7 @@ persons = {
                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=15),
                     ],
                     [
-                        Trigger(TriggerTypeEnum.MESSAGE, "The scribe scribbles something in his notes."),
+                        Trigger(TriggerTypeEnum.MESSAGE, "@@NAME_CAP@@ scribbles something in his notes."),
                     ], 300),
             ]),
     PersonEnum.BL_SMITHY:
@@ -613,10 +613,10 @@ persons = {
                             Trigger(TriggerTypeEnum.PAUSE, 1),
                             Trigger(TriggerTypeEnum.MESSAGE,
                                     [
-                                        "You give the weathered package to the shop keeper.",
-                                        "He gently places it on a pile of goods and takes a moment to rummage around "
-                                        "behind the counter.  After a moment he steps up to you and presses a few coins "
-                                        "into your hand.",
+                                        "You give the weathered package to @@NAME@@.",
+                                        "@@SEX_PRONOUN_CAP@@ gently places it on a pile of goods and takes a moment to rummage "
+                                        "around behind the counter.  After a moment @@SEX_PRONOUN@@ steps up to you and presses "
+                                        "a few coins into your hand.",
                                     ]),
                             Trigger(TriggerTypeEnum.ITEM_TAKE, ItemEnum.QUEST_WEATHERED_PACKAGE),
                             Trigger(TriggerTypeEnum.CURRENCY_GIVE, 5),
@@ -637,7 +637,7 @@ persons = {
                                     ]),
                             Trigger(TriggerTypeEnum.PAUSE, 2),
                             Trigger(TriggerTypeEnum.MESSAGE,
-                                    ["He pauses to shiver slightly."]),
+                                    ["@@SEX_PRONOUN_CAP@@ pauses to shiver slightly."]),
                             Trigger(TriggerTypeEnum.PAUSE, 2),
                             Trigger(TriggerTypeEnum.MESSAGE,
                                     [
@@ -658,28 +658,29 @@ persons = {
                                     ]),
                             Trigger(TriggerTypeEnum.PAUSE, 1),
                             Trigger(TriggerTypeEnum.MESSAGE,
-                                    ["The provisioner trails off as he takes a closer look at you ..."]),
+                                    ["@@NAME_CAP@@ trails off as @@SEX_PRONOUN@@ takes a closer look at you ..."]),
                             Trigger(TriggerTypeEnum.PAUSE, 1),
                             Trigger(TriggerTypeEnum.MESSAGE,
                                     [
                                         "\"Oh my, you are quite unprepared to go rat hunting. Perhaps I have something to "
                                         "help.\"",
-                                        "The provisioner starts searching around his shop."
+                                        "@@NAME_CAP@@ starts searching around @@SEX_POSSESSIVE_PRONOUN@@ shop."
                                     ]),
                             Trigger(TriggerTypeEnum.PAUSE, 3),
-                            Trigger(TriggerTypeEnum.MESSAGE, ["The provisioner finds a wooden club lying in a corner."]),
+                            Trigger(TriggerTypeEnum.MESSAGE, ["@@NAME_CAP@@ finds a wooden club lying in a corner."]),
                             Trigger(TriggerTypeEnum.PAUSE, 2),
-                            Trigger(TriggerTypeEnum.MESSAGE, ["The provisioner digs a worn leather tunic out of a chest."]),
+                            Trigger(TriggerTypeEnum.MESSAGE, ["@@NAME_CAP@@ digs a worn leather tunic out of a chest."]),
                             Trigger(TriggerTypeEnum.PAUSE, 2),
-                            Trigger(TriggerTypeEnum.MESSAGE, ["The provisioner pulls a key from a pocket in his surcoat."]),
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    ["@@NAME_CAP@@ pulls a key from a pocket in @@SEX_POSSESSIVE_PRONOUN@@ surcoat."]),
                             Trigger(TriggerTypeEnum.PAUSE, 2),
                             Trigger(TriggerTypeEnum.MESSAGE, ["\"Yes yes. This will do. Here take these.\""]),
                             Trigger(TriggerTypeEnum.PAUSE, 1),
                             Trigger(TriggerTypeEnum.MESSAGE,
                                     [
-                                        "The provisioner gives you a worn leather tunic.",
-                                        "The provisioner gives you a wooden club.",
-                                        "The provisioner gives you a large bronze key.",
+                                        "@@NAME_CAP@@ gives you a worn leather tunic.",
+                                        "@@NAME_CAP@@ gives you a wooden club.",
+                                        "@@NAME_CAP@@ gives you a large bronze key.",
                                     ]),
                             Trigger(TriggerTypeEnum.ITEM_GIVE, ItemEnum.WEAPON_CLUB),
                             Trigger(TriggerTypeEnum.ITEM_GIVE, ItemEnum.ARMOR_WORN_LEATHER_TUNIC),
@@ -711,7 +712,7 @@ persons = {
                         ]),
                 MobTalk("buy",
                         triggers=[
-                            Trigger(TriggerTypeEnum.MESSAGE, ["\"Excellent!  Here's what I have:\""]),
+                            Trigger(TriggerTypeEnum.MESSAGE, ["\"Excellent! Here's what I have:\""]),
                             Trigger(TriggerTypeEnum.ITEM_BUY),
                         ]),
                 MobTalk("sell",
@@ -769,7 +770,7 @@ persons = {
                         triggers=[
                             Trigger(TriggerTypeEnum.MESSAGE,
                                     [
-                                        "The study woman puts down her tools.",
+                                        "@@NAME_CAP@@ puts down @@SEX_POSSESSIVE_PRONOUN@@ tools.",
                                         "\"Ah, a customer ... What would you like to BUY?\"",
                                     ]),
                         ]),
