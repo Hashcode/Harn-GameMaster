@@ -371,7 +371,7 @@ rooms = {
                          Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT)),
                          Trigger(TriggerTypeEnum.ROOM_MESSAGE, "The sound of scurring claws comes from the west.",
                                  RoomEnum.BL_EASTERN_WALK),
-                     ], 120),
+                     ], 60),
              ]),
     RoomEnum.BL_SOUTHEASTERN_WALK:
         Room(RoomEnum.BL_SOUTHEASTERN_WALK, ZoneEnum.KEEP, "South-Eastern Walk", "the south-eastern walk",
