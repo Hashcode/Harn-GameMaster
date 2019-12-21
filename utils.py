@@ -444,7 +444,7 @@ def actionInfo():
   # TODO: hardcoded Human for now
   cm.Print("%-15s: %s" % ("Name", player.Name))
   cm.Print("%-15s: %s" % (attributes[AttrEnum.SPECIES].Name, "Human"))
-  cm.Print("%-15s: %s" % (attributes[AttrEnum.SEX].Name, player.AttrSexStr()))
+  cm.Print("%-15s: %s" % (attributes[AttrEnum.SEX].Name, player.AttrSexStr().capitalize()))
   cm.Print("%-15s: %s %d" % ("Birth Month/Day",
                              months[player.Attr[AttrEnum.BIRTH_MONTH]].Name,
                              player.Attr[AttrEnum.BIRTH_DAY]))

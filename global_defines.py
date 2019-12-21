@@ -787,9 +787,9 @@ class SexEnum(IntEnum):
 
 
 sexes = {
-    SexEnum.NONE: AttrSexNameMax("None", "It", "Its", 0),
-    SexEnum.MALE: AttrSexNameMax("Male", "He", "His", 48),
-    SexEnum.FEMALE: AttrSexNameMax("Female", "She", "Her", 100),
+    SexEnum.NONE: AttrSexNameMax("none", "it", "its", 0),
+    SexEnum.MALE: AttrSexNameMax("male", "he", "his", 48),
+    SexEnum.FEMALE: AttrSexNameMax("female", "she", "her", 100),
 }
 
 
@@ -1570,7 +1570,7 @@ class Person:
     ret = ret.replace("@@SEX_CAP@@", self.AttrSexStr().capitalize())
     ret = ret.replace("@@SEX_PRONOUN@@", self.AttrSexPronounStr())
     ret = ret.replace("@@SEX_PRONOUN_CAP@@", self.AttrSexPronounStr().capitalize())
-    ret = ret.replace("@@SEX_POSSESSIVE_PRONOUN@@", self.AttrSexPossessivePronounStr())
+    ret = ret.replace("@@SEX_POSSESSIVE_PRONOUN@@", self.AttrSexPossessivePronounStr().lower())
     ret = ret.replace("@@SEX_POSSESSIVE_PRONOUN_CAP@@", self.AttrSexPossessivePronounStr().capitalize())
     return ret
 
