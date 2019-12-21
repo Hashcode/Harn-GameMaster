@@ -1497,8 +1497,8 @@ commands.append(GenericCommand(["who"], actionListPlayers))
 
 def promptTimeout():
   player = GameData.GetPlayer()
-  # 5 minutes for idle
-  player.GameTime += 300
+  # 3 minutes for idle
+  player.GameTime += 180
   GameData.ProcessEvents()
 
 
@@ -1512,7 +1512,7 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
     if player.IsTalking():
       prompt_text += ", \"DONE\" = Exit Talk"
     prompt_text += "]:"
-    x = cm.Input(prompt_text, timeout=30, timeoutFunc=promptTimeout).lower()
+    x = cm.Input(prompt_text, timeout=10, timeoutFunc=promptTimeout).lower()
     # Handle universal commands
     cmd_match = None
     for gen_cmd in commands:
