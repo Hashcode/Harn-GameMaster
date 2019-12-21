@@ -467,6 +467,11 @@ items = {
         Armor("steel greaves",
               QualityEnum.AVE, MaterialEnum.STEEL, AL_5_5,
               COV_Ca),
+    # MISC ARMOR
+    ItemEnum.ARMOR_WORN_LEATHER_TUNIC:
+        Armor("worn leather tunic",
+              QualityEnum.INF, MaterialEnum.LEATHER, AL_3,
+              COV_Ua | COV_Sh | COV_Tx | COV_Ab | COV_Hp | COV_Gr),
 
     # RING
 
@@ -487,14 +492,11 @@ items = {
         Item(ItemTypeEnum.MISC, "rat fur", QualityEnum.AVE,
              MaterialEnum.FUR_LT, 2,
              onDrop=[
-                 Trigger(TriggerTypeEnum.ROOM_MESSAGE,
-                         "With a sigh of relief you drop a rate fur."),
+                 Trigger(TriggerTypeEnum.MESSAGE, ["With a sigh of relief you drop a rate fur."]),
              ],
              onGet=[
-                 Trigger(TriggerTypeEnum.ROOM_MESSAGE,
-                         "You pinch your nose and attempt to get a rate fur."),
-                 Trigger(TriggerTypeEnum.DENY,
-                         chance=50),
+                 Trigger(TriggerTypeEnum.MESSAGE, ["You pinch your nose and attempt to get a rate fur."]),
+                 Trigger(TriggerTypeEnum.DENY, chance=50),
              ]),
     ItemEnum.MISC_TORCH:
         Item(ItemTypeEnum.MISC, "torch",

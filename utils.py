@@ -828,18 +828,23 @@ def processTriggers(obj, triggers):
       elif tr.TriggerType == TriggerTypeEnum.ZONE_MESSAGE:
         if tr.Data2 is None:
           if player.Room != obj and rooms[player.Room].Zone == rooms[obj].Zone:
-            cm.Print("\n" + wrapper.fill(tr.Data))
+            for m in tr.Data:
+              cm.Print("\n" + wrapper.fill(m))
         else:
           if player.Room != obj and rooms[player.Room].Zone == tr.Data2:
-            cm.Print("\n" + wrapper.fill(tr.Data))
-      elif tr.TriggerType == TriggerTypeEnum.ROOM_MESSAGE:
+            for m in tr.Data:
+              cm.Print("\n" + wrapper.fill(m))
+      elif tr.TriggerType == TriggerTypeEnum.MESSAGE:
         if tr.Data2 is None:
           if type(obj) == Mob and rooms[player.Room].PersonInRoom(obj.UUID):
-            cm.Print(wrapper.fill(tr.Data))
+            for m in tr.Data:
+              cm.Print("\n" + wrapper.fill(m))
           elif type(obj) == RoomEnum and player.Room == obj:
-            cm.Print("\n" + wrapper.fill(tr.Data))
+            for m in tr.Data:
+              cm.Print("\n" + wrapper.fill(m))
         elif player.Room == tr.Data2:
-          cm.Print(wrapper.fill(tr.Data))
+          for m in tr.Data:
+            cm.Print(wrapper.fill(m))
       elif tr.TriggerType == TriggerTypeEnum.MOVE:
         # TODO:
         cm.Print("* Coming Soon *")
@@ -888,6 +893,8 @@ def processTriggers(obj, triggers):
         if ds is not None:
           ds.Closed = True
           ds.Locked = True
+      elif tr.TriggerType == TriggerTypeEnum.PAUSE:
+        sleep(tr.Data)
       elif tr.TriggerType == TriggerTypeEnum.END:
         logd("[trigger] END")
         return False
@@ -903,8 +910,6 @@ def printNPCTalk(p, keyword):
     if tk.Keyword.lower() == keyword:
       if processConditions(player.Room, p, tk.Conditions):
         ret = True
-        for t in tk.Texts:
-          cm.Print("\n" + wrapper.fill(t))
         if tk.Triggers is not None:
           processTriggers(p, tk.Triggers)
   return ret
@@ -923,8 +928,6 @@ def roomTalkTrigger(keyword):
     for tk in npc.Talks:
       if tk.Keyword.lower() == keyword:
         if processConditions(player.Room, npc, tk.Conditions):
-          for t in tk.Texts:
-            cm.Print("\n" + wrapper.fill(t))
           if tk.Triggers is not None:
             if not processTriggers(npc, tk.Triggers):
               return False

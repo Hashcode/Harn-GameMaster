@@ -78,6 +78,8 @@ def room_CreateCharacter():
   player.GenAttr()
   player.GenSkills()
   player.ResetStats()
+  player.AddItem(ItemEnum.ARMOR_TUNIC_CLOTH, ItemLink(1, equip=True))
+  player.AddItem(ItemEnum.ARMOR_LEGGINGS_CLOTH, ItemLink(1, equip=True))
   # Finish Map Setup
   GameData.InitializeRooms()
   player.SetRoom(GameData.ROOM_START)
@@ -191,7 +193,7 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=15),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_MESSAGE, "A woman bumps into you as she crosses the yard heading south."),
+                         Trigger(TriggerTypeEnum.MESSAGE, ["A woman bumps into you as she crosses the yard heading south."]),
                      ], 300),
                  Periodic(
                      [
@@ -199,8 +201,8 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=25),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_MESSAGE,
-                                 "A lackey runs up and delivers a message to the corporal of the watch."),
+                         Trigger(TriggerTypeEnum.MESSAGE,
+                                 ["A lackey runs up and delivers a message to the corporal of the watch."]),
                      ], 450),
                  Periodic(
                      [
@@ -208,8 +210,11 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=15),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_MESSAGE,
-                                 "A sentry walks out of the north gatehouse and takes the place of the sentry currently on duty."),
+                         Trigger(TriggerTypeEnum.MESSAGE,
+                                 [
+                                     "A sentry walks out of the north gatehouse and takes the place of the sentry "
+                                     "currently on duty.",
+                                 ]),
                      ], 300),
              ]),
     RoomEnum.BL_N_GATEHOUSE_TOWER:
@@ -271,8 +276,7 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.HOUR_OF_DAY_CHECK, value=6),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_MESSAGE,
-                                 "At this quiet hour, the horses are silent their stalls."),
+                         Trigger(TriggerTypeEnum.MESSAGE, ["At this quiet hour, the horses are silent their stalls."]),
                          Trigger(TriggerTypeEnum.END),
                      ]),
                  Periodic(
@@ -280,8 +284,8 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.HOUR_OF_DAY_CHECK, value=20),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_MESSAGE,
-                                 "The stable is bustling with activity as stable hands move horses and gear."),
+                         Trigger(TriggerTypeEnum.MESSAGE,
+                                 ["The stable is bustling with activity as stable hands move horses and gear."]),
                          Trigger(TriggerTypeEnum.END),
                      ]),
                  Periodic(
@@ -289,8 +293,8 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.HOUR_OF_DAY_CHECK, value=25),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_MESSAGE,
-                                 "Activity in the stable has slowed. Occassionally, a horse is being readied for travel."),
+                         Trigger(TriggerTypeEnum.MESSAGE,
+                                 ["Activity in the stable has slowed. Occassionally, a horse is being readied for travel."]),
                          Trigger(TriggerTypeEnum.END),
                      ]),
              ]),
@@ -369,7 +373,7 @@ rooms = {
                      ],
                      [
                          Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT)),
-                         Trigger(TriggerTypeEnum.ROOM_MESSAGE, "The sound of scurring claws comes from the west.",
+                         Trigger(TriggerTypeEnum.MESSAGE, ["The sound of scurring claws comes from the west."],
                                  RoomEnum.BL_EASTERN_WALK),
                      ], 60),
              ]),

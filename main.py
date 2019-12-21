@@ -59,13 +59,6 @@ GameData.SetProcessWeather(processWeather)
 
 from combat import combat
 
-
-if TestMode:
-  player.AddItem(ItemEnum.WEAPON_CLUB, ItemLink(1, equip=True))
-
-  player.AddItem(ItemEnum.ARMOR_TUNIC_CLOTH, ItemLink(1, equip=True))
-  player.AddItem(ItemEnum.ARMOR_LEGGINGS_CLOTH, ItemLink(1, equip=True))
-
 while True:
   res = RoomFuncResponse.NONE
   printRoomDescription(player.Room)

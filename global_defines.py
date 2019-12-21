@@ -408,6 +408,8 @@ class ItemEnum(IntEnum):
   ARMOR_VAMBRACES_STEEL = 20707
   ARMOR_KNEECOPS_STEEL = 20708
   ARMOR_GREAVES_STEEL = 20709
+  # ARMOR MISC
+  ARMOR_WORN_LEATHER_TUNIC = 25000
   # RINGS
   RING_ATTACK_SILVER = 30000
   RING_HP_GOLD = 30001
@@ -1781,7 +1783,7 @@ class TriggerTypeEnum(IntEnum):
   PERSON_ATTACK = 11
   PERSON_DESC = 12
   ZONE_MESSAGE = 13
-  ROOM_MESSAGE = 14
+  MESSAGE = 14
   MOVE = 15
   DELAY = 16
   DENY = 17
@@ -1790,6 +1792,7 @@ class TriggerTypeEnum(IntEnum):
   PERSON_MOVE = 20
   DOOR_UNLOCK = 21
   DOOR_LOCK = 22
+  PAUSE = 23
   END = 127
 
 
@@ -1822,10 +1825,9 @@ class Periodic:
 # TALK
 
 class MobTalk:
-  def __init__(self, keyword, condition=None, text="", triggers=None):
+  def __init__(self, keyword, conditions=None, triggers=None):
     self.Keyword = keyword
-    self.Conditions = condition
-    self.Texts = text
+    self.Conditions = conditions
     self.Triggers = triggers
 
 

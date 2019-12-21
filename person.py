@@ -73,90 +73,124 @@ persons = {
             },
             talk=[
                 MobTalk("~on_enter~",
-                        condition=[
+                        [
                             Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST, QuestEnum.GUARD_INTRO),
                         ],
-                        text=[
-                            "The guard glances in your direction. \"Come TALK to me, Traveller, when you get a moment.\"",
-                            "%s[TIP: Sometimes keywords will be presented in all capitals such as 'TALK'.  You can type "
-                            "these keywords to start interactions or talk about different subjects.  As the adventure "
-                            "progresses this will happen less and less.]%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL),
+                        [
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "The guard glances in your direction. \"Come TALK to me, Traveller, when you get "
+                                        "a moment.\"",
+                                        "%s[TIP: Sometimes keywords will be presented in all capitals such as 'TALK'. "
+                                        "You can type these keywords to start interactions or talk about different subjects. "
+                                        "As the adventure progresses this will happen less and less.]"
+                                        "%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL)
+                                    ]),
                         ]),
                 MobTalk("~on_exit~",
-                        condition=[
+                        [
                             Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST, QuestEnum.GUARD_INTRO),
                         ],
-                        text=[
-                            "The guard moves to block your way. \"I meant you need to TALK to me before entering.\" "
-                            "He taps his foot impatiently.",
-                        ],
-                        triggers=[
+                        [
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "The guard moves to block your way. \"I meant you need to TALK to me before entering.\" "
+                                        "He taps his foot impatiently.",
+                                    ]),
                             Trigger(TriggerTypeEnum.DENY),
                         ]),
                 MobTalk("",
-                        text=[
-                            "The guard turns to look at you.",
-                            "\"Hello Traveller. Welcome to Stonehaven KEEP. Times are rough, so you may need to forgive the grim "
-                            "faces of our inhabitants. We've seen a recent surge in attacks from the wild men of the forest.\"",
-                            "\"You look rather new to the area, so if you want more INFORMATION let me know.\"",
+                        triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "The guard turns to look at you.",
+                                        "\"Hello Traveller. Welcome to Stonehaven KEEP. Times are rough, so you may need to forgive "
+                                        "the grim faces of our inhabitants. We've seen a recent surge in attacks from the wild men "
+                                        "of the forest.\"",
+                                        "\"You look rather new to the area, so if you want more INFORMATION let me know.\"",
+                                    ]),
                         ]),
                 MobTalk("",
-                        condition=[
+                        [
                             Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST, QuestEnum.GUARD_DELIVERY),
                         ],
-                        text=[
-                            "The guard then looks thoughtful for a moment.",
-                            "\"About an hour ago, a cart of goods from the east came through here.  A package fell off "
-                            "while I was going through the inventory. Alas, I didn't notice until the wagon was gone.\"",
-                            "\"Would you be interested in performing a DELIVERY for me?\"",
-                            "%s[TIP: The guard is offering a quest. To accept the quest type 'DELIVERY'. The 'QUESTS' command "
-                            "displays more information about your current and completed quests.]%s" % (ANSI.TEXT_BOLD,
-                                                                                                       ANSI.TEXT_NORMAL),
-                        ],
-                        triggers=[
+                        [
+                            Trigger(TriggerTypeEnum.PAUSE, 1),
+                            Trigger(TriggerTypeEnum.MESSAGE, ["The guard then looks thoughtful for a moment."]),
+                            Trigger(TriggerTypeEnum.PAUSE, 2),
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "\"About an hour ago, a cart of goods from the east came through here.  A package fell off "
+                                        "while I was going through the inventory. Alas, I didn't notice until the wagon was gone.\"",
+                                    ]),
+                            Trigger(TriggerTypeEnum.PAUSE, 1),
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "\"Would you be interested in performing a DELIVERY for me?\"",
+                                        "%s[TIP: The guard is offering a quest. To accept the quest type 'DELIVERY'. The 'QUESTS' "
+                                        "command displays more information about your current and completed quests.]"
+                                        "%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL),
+                                    ]),
                             Trigger(TriggerTypeEnum.QUEST_COMPLETE, QuestEnum.GUARD_INTRO),
                         ]),
                 MobTalk("keep",
-                        text=[
-                            "\"Ah, Stonehaven Keep, the last bastion of civilization before the wild forests off to the "
-                            "northeast.\"  At this the guard glances out across the moat towards the forest in the distance.",
-                            "\"Castellan Danly oversees the keep with a firm but fair hand.  Mind that you don't go causin' "
-                            "any trouble or you'll see the keep's prison from the inside.\"",
-                            "He turns and points down the passage leading into the keep. \"Inside we have a bevy of "
-                            "shops and services to choose from.  Just follow the Southern Walk once you're inside.\"",
+                        triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "\"Ah, Stonehaven Keep, the last bastion of civilization before the wild forests off to "
+                                        "the northeast.\"",
+                                        "At this the guard glances out across the moat towards the forest in the distance.",
+                                        "\"Castellan Danly oversees the keep with a firm but fair hand. Mind that you don't go "
+                                        "causin' any trouble or you'll see the keep's prison from the inside.\"",
+                                        "He turns and points down the passage leading into the keep.",
+                                        "\"Inside we have a bevy of shops and services to choose from.  Just follow the "
+                                        "Southern Walk once you're inside.\"",
+                                    ]),
                         ]),
                 MobTalk("information",
-                        text=[
-                            "\"Ah some helpful information, let's see.\"",
-                            "The guard gives you a discerning look.",
-                            "\"These are rough times. If I were you, I would secure better weapons and ARMOR. Of course, "
-                            "you can't just pick up a bastard sword and charge into battle. This ain't no fairy tale. "
-                            "You'll want to TRAIN your SKILLS up over time with practice.\"",
-                            "\"To use items like weapons, armor and other things, you'll need to GET, DROP, EQUIP and "
-                            "REMOVE them. Mind you, I wouldn't leave anything on the ground for long.\"",
-                            "\"You should take some time and look at the STATS and INFO about yourself.  Best to know "
-                            "what you're good at.\"",
+                        triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "\"Ah some helpful information, let's see.\"",
+                                        "The guard gives you a discerning look.",
+                                        "\"These are rough times. If I were you, I would secure better weapons and ARMOR. Of course, "
+                                        "you can't just pick up a bastard sword and charge into battle. This ain't no fairy tale. "
+                                        "You'll want to TRAIN your SKILLS up over time with practice.\"",
+                                        "\"To use items like weapons, armor and other things, you'll need to GET, DROP, EQUIP and "
+                                        "REMOVE them. Mind you, I wouldn't leave anything on the ground for long.\"",
+                                        "\"You should take some time and look at the STATS and INFO about yourself.  Best to know "
+                                        "what you're good at.\"",
+                                    ]),
                         ]),
                 MobTalk("delivery",
-                        condition=[
+                        [
                             Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST, QuestEnum.GUARD_DELIVERY),
                         ],
-                        text=[
-                            "A gap-toothed smile cracks the face of the stoic guard.",
-                            "\"Glad to here it! Here, take this to the provisioner on the Southern Walk.\"",
-                            "A gatehouse guard gives you a small weathered package.",
-                            "%s[TIP: You are still in 'TALK' mode with the guard. To stop talking type 'DONE'. Then you "
-                            "can see what's in your inventory with the 'INVENTORY' command (or it's abbreviation 'I'). "
-                            "Also, 'HELP' will display all of the commands for the game.]%s" % (ANSI.TEXT_BOLD,
-                                                                                                ANSI.TEXT_NORMAL),
-                        ],
-                        triggers=[
+                        [
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    ["A gap-toothed smile cracks the face of the stoic guard."]),
+                            Trigger(TriggerTypeEnum.PAUSE, 2),
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    ["\"Glad to here it! Here, take this to the provisioner on the Southern Walk.\""]),
+                            Trigger(TriggerTypeEnum.PAUSE, 1),
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "A gatehouse guard gives you a small weathered package.",
+                                        "%s[TIP: You are still in 'TALK' mode with the guard. To stop talking type 'DONE'. Then "
+                                        "you can see what's in your inventory with the 'INVENTORY' command (or it's "
+                                        "abbreviation 'I'). Also, 'HELP' will display all of the commands for the "
+                                        "game.]%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL),
+                                    ]),
                             Trigger(TriggerTypeEnum.ITEM_GIVE, ItemEnum.QUEST_WEATHERED_PACKAGE),
                             Trigger(TriggerTypeEnum.QUEST_GIVE, QuestEnum.GUARD_DELIVERY),
                         ]),
                 MobTalk("~",
-                        text=[
-                            "\"Stay safe while in the Keep.\" The guard resumes his post.",
+                        triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "\"Stay safe while in the Keep.\"",
+                                        "The guard resumes his post.",
+                                    ]),
                         ]),
             ]),
     PersonEnum.BL_KEEP_SENTRY:
@@ -195,7 +229,8 @@ persons = {
                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=15),
                     ],
                     [
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE, "A sentry shuffles his feet looking bored."),
+                        Trigger(TriggerTypeEnum.MESSAGE,
+                                ["A sentry shuffles his feet looking bored."]),
                     ], 300),
                 Periodic(
                     [
@@ -203,7 +238,7 @@ persons = {
                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=15),
                     ],
                     [
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE, "A sentry yawns."),
+                        Trigger(TriggerTypeEnum.MESSAGE, ["A sentry yawns."]),
                     ], 300),
                 Periodic(
                     [
@@ -211,7 +246,7 @@ persons = {
                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=15),
                     ],
                     [
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE, "A sentry nods off for a moment before jerking upright."),
+                        Trigger(TriggerTypeEnum.MESSAGE, ["A sentry nods off for a moment before jerking upright."]),
                     ], 300),
             ]),
     PersonEnum.BL_KEEP_BEGGAR:
@@ -243,44 +278,41 @@ persons = {
                         Condition(ConditionCheckEnum.HAS, TargetTypeEnum.FLAG_CHECK, PersonFlag.BEHAVIOR_1),
                     ],
                     [
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE, "An unkempt man sags visibly and sits back down."),
+                        Trigger(TriggerTypeEnum.MESSAGE, ["An unkempt man sags visibly and sits back down."]),
                         Trigger(TriggerTypeEnum.PERSON_DESC, "An unkempt man sits near the wall mumbling to himself."),
                         Trigger(TriggerTypeEnum.TAKE_FLAG, PersonFlag.BEHAVIOR_1),
                     ], 300),
             ],
             talk=[
                 MobTalk("~on_enter~",
-                        condition=[
+                        [
                             Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=15),
                         ],
-                        text=[
-                            "An unkempt man mumbles, \"He was an unholy abomination ...\"",
-                        ],
-                        triggers=[
+                        [
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    ["An unkempt man mumbles, \"He was an unholy abomination ...\""]),
                             Trigger(TriggerTypeEnum.END),
                         ]),
                 MobTalk("~on_enter~",
-                        condition=[
+                        [
                             Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.FLAG_CHECK, PersonFlag.BEHAVIOR_1),
                             Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=15),
                         ],
-                        text=[
-                            "An unkempt man jumps to his feet and stares at you.",
-                        ],
-                        triggers=[
+                        [
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    ["An unkempt man jumps to his feet and stares at you."]),
                             Trigger(TriggerTypeEnum.PERSON_DESC,
                                     "An unkempt man is standing here crazily looking in all directions."),
                             Trigger(TriggerTypeEnum.GIVE_FLAG, PersonFlag.BEHAVIOR_1),
                             Trigger(TriggerTypeEnum.END),
                         ]),
                 MobTalk("~on_enter~",
-                        condition=[
+                        [
                             Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=15),
                         ],
-                        text=[
-                            "An unkempt man mumbles, \"I told her not to pick it up ...\"",
-                        ],
-                        triggers=[
+                        [
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    ["An unkempt man mumbles, \"I told her not to pick it up ...\""]),
                             Trigger(TriggerTypeEnum.END),
                         ]),
             ]),
@@ -322,7 +354,7 @@ persons = {
                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=15),
                     ],
                     [
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE,
+                        Trigger(TriggerTypeEnum.MESSAGE,
                                 "The corporal of the watch glances at the scribe and grumbles under his breath."),
                     ], 300),
                 Periodic(
@@ -334,7 +366,7 @@ persons = {
                     [
                         Trigger(TriggerTypeEnum.PERSON_DESC,
                                 "The corporal of the watch seems to be on his way somewhere."),
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE,
+                        Trigger(TriggerTypeEnum.MESSAGE,
                                 "The corporal of the watch turns to the scribe. \"The hour grows late and I am "
                                 "in need of a good meal. I shall see you in the morn.\""),
                         Trigger(TriggerTypeEnum.PERSON_MOVE, DirectionEnum.SOUTH),
@@ -366,11 +398,11 @@ persons = {
                     ],
                     [
                         Trigger(TriggerTypeEnum.PERSON_DESC, "The corporal of the watch is resting here."),
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE,
+                        Trigger(TriggerTypeEnum.MESSAGE,
                                 "The corporal of the watch unlocks the door to a private apartment with an iron key."),
                         Trigger(TriggerTypeEnum.DOOR_UNLOCK, DoorEnum.CORPORAL_APPT_DOOR),
                         Trigger(TriggerTypeEnum.PERSON_MOVE, DirectionEnum.SOUTH),
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE,
+                        Trigger(TriggerTypeEnum.MESSAGE,
                                 "The corporal of the watch lays down on the bed."),
                         Trigger(TriggerTypeEnum.END),
                     ], 30),
@@ -392,9 +424,9 @@ persons = {
                     [
                         Trigger(TriggerTypeEnum.PERSON_DESC,
                                 "The corporal of the watch seems to be on his way somewhere."),
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE, "The corporal of the watch stands up."),
+                        Trigger(TriggerTypeEnum.MESSAGE, "The corporal of the watch stands up."),
                         Trigger(TriggerTypeEnum.PERSON_MOVE, DirectionEnum.NORTH),
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE,
+                        Trigger(TriggerTypeEnum.MESSAGE,
                                 "The corporal of the watch locks the door to a private apartment with an iron key."),
                         Trigger(TriggerTypeEnum.DOOR_LOCK, DoorEnum.CORPORAL_APPT_DOOR),
                         Trigger(TriggerTypeEnum.GIVE_FLAG, PersonFlag.BEHAVIOR_2),
@@ -459,7 +491,7 @@ persons = {
                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=15),
                     ],
                     [
-                        Trigger(TriggerTypeEnum.ROOM_MESSAGE, "The scribe scribbles something in his notes."),
+                        Trigger(TriggerTypeEnum.MESSAGE, "The scribe scribbles something in his notes."),
                     ], 300),
             ]),
     PersonEnum.BL_SMITHY:
@@ -502,23 +534,23 @@ persons = {
             },
             talk=[
                 MobTalk("",
-                        text=[
-                            "The large man turns away from his work. \"Hello citizen. Care to BUY something?\"",
+                        triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    ["The large man turns away from his work. \"Hello citizen. Care to BUY something?\""]),
                         ]),
                 MobTalk("shop",
-                        text=[
-                            "\"If you seek metal armors, you're in the right place to BUY them.\"",
+                        triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    ["\"If you seek metal armors, you're in the right place to BUY them.\""]),
                         ]),
                 MobTalk("buy",
-                        text=[
-                            "\"I sell only the finest made goods:\"",
-                        ],
                         triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE, ["\"I sell only the finest made goods:\""]),
                             Trigger(TriggerTypeEnum.ITEM_BUY),
                         ]),
                 MobTalk("~",
-                        text=[
-                            "\"It's been a pleasure.\""
+                        triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE, ["\"It's been a pleasure.\""]),
                         ]),
             ]),
     PersonEnum.BL_PROVISIONER:
@@ -559,91 +591,137 @@ persons = {
             },
             talk=[
                 MobTalk("",
-                        text=[
-                            "\"Hello! Welcome to my humble SHOP.  Feel free to look around for something to BUY or you can "
-                            "SELL various items to me.\"",
+                        triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "\"Hello! Welcome to my humble SHOP.  Feel free to look around for something to "
+                                        "BUY or you can SELL various items to me.\"",
+                                    ]),
                         ]),
                 MobTalk("",
-                        condition=[
+                        [
                             Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST_COMPLETE,
                                       QuestEnum.GUARD_DELIVERY),
                         ],
-                        text=[
-                            "\"Ah! I see you have a package for me.  I appreciate your help bringing it to the shop.\"",
-                            "You give the weathered package to the shop keeper.",
-                            "He gently places it on a pile of goods and takes a moment to rummage around behind the "
-                            "counter.  After a moment he steps up to you and presses a few coins into your hand.",
-                        ],
-                        triggers=[
+                        [
+                            Trigger(TriggerTypeEnum.PAUSE, 2),
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "\"Ah! I see you have a package for me.  I appreciate your help bringing it to "
+                                        "the shop.\"",
+                                    ]),
+                            Trigger(TriggerTypeEnum.PAUSE, 1),
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "You give the weathered package to the shop keeper.",
+                                        "He gently places it on a pile of goods and takes a moment to rummage around "
+                                        "behind the counter.  After a moment he steps up to you and presses a few coins "
+                                        "into your hand.",
+                                    ]),
                             Trigger(TriggerTypeEnum.ITEM_TAKE, ItemEnum.QUEST_WEATHERED_PACKAGE),
-                            Trigger(TriggerTypeEnum.CURRENCY_GIVE, 1),
+                            Trigger(TriggerTypeEnum.CURRENCY_GIVE, 5),
                             Trigger(TriggerTypeEnum.QUEST_COMPLETE, QuestEnum.GUARD_DELIVERY),
                         ]),
                 MobTalk("",
-                        condition=[
+                        [
                             Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST,
                                       QuestEnum.WAREHOUSE_RATS),
                         ],
-                        text=[
-                            "\"If you're interested, I could use some help in my warehouse. Seemingly overnight "
-                            "rats have infested the place. It doesn't look good for me and worse when they get "
-                            "into the wares we store for traveling folks.\"",
-                            "He pauses to shiver slightly.",
-                            "\"Care to clear out a few rats as you have time? You could bring me their fur as "
-                            "PROOF of your efforts?\"",
+                        [
+                            Trigger(TriggerTypeEnum.PAUSE, 2),
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "\"If you're interested, I could use some help in my warehouse. Seemingly "
+                                        "overnight rats have infested the place. It doesn't look good for me and worse "
+                                        "when they get into the wares we store for traveling folks.\"",
+                                    ]),
+                            Trigger(TriggerTypeEnum.PAUSE, 2),
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    ["He pauses to shiver slightly."]),
+                            Trigger(TriggerTypeEnum.PAUSE, 2),
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "\"Care to clear out a few rats as you have time? You could bring me their "
+                                        "fur as PROOF of your efforts?\"",
+                                    ]),
                         ]),
                 MobTalk("proof",
-                        condition=[
-                            Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST,
-                                      QuestEnum.WAREHOUSE_RATS),
+                        [
+                            Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST, QuestEnum.WAREHOUSE_RATS),
                         ],
-                        text=[
-                            "\"Great! The warehouse is back down the Southern Walk and then north on Eastern "
-                            "Walk. It's there on the left.\"",
-                            "The provisioner starts patting his surcoat and checking his pockets.",
-                            "\"Return to me and I'll pay you for each fur you collect. You'll need this key for "
-                            "the double doors.\"",
-                            "The provisioner gives you a large bronze key.",
-                        ],
-                        triggers=[
-                            Trigger(TriggerTypeEnum.QUEST_GIVE, QuestEnum.WAREHOUSE_RATS),
+                        [
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "\"Great! The warehouse is back down the Southern Walk and then north on Eastern "
+                                        "Walk. It's there on the left. Return to me and I'll pay you for each fur you "
+                                        "collect.\"",
+                                    ]),
+                            Trigger(TriggerTypeEnum.PAUSE, 1),
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    ["The provisioner trails off as he takes a closer look at you ..."]),
+                            Trigger(TriggerTypeEnum.PAUSE, 1),
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "\"Oh my, you are quite unprepared to go rat hunting. Perhaps I have something to "
+                                        "help.\"",
+                                        "The provisioner starts searching around his shop."
+                                    ]),
+                            Trigger(TriggerTypeEnum.PAUSE, 3),
+                            Trigger(TriggerTypeEnum.MESSAGE, ["The provisioner finds a wooden club lying in a corner."]),
+                            Trigger(TriggerTypeEnum.PAUSE, 2),
+                            Trigger(TriggerTypeEnum.MESSAGE, ["The provisioner digs a worn leather tunic out of a chest."]),
+                            Trigger(TriggerTypeEnum.PAUSE, 2),
+                            Trigger(TriggerTypeEnum.MESSAGE, ["The provisioner pulls a key from a pocket in his surcoat."]),
+                            Trigger(TriggerTypeEnum.PAUSE, 2),
+                            Trigger(TriggerTypeEnum.MESSAGE, ["\"Yes yes. This will do. Here take these.\""]),
+                            Trigger(TriggerTypeEnum.PAUSE, 1),
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "The provisioner gives you a worn leather tunic.",
+                                        "The provisioner gives you a wooden club.",
+                                        "The provisioner gives you a large bronze key.",
+                                    ]),
+                            Trigger(TriggerTypeEnum.ITEM_GIVE, ItemEnum.WEAPON_CLUB),
+                            Trigger(TriggerTypeEnum.ITEM_GIVE, ItemEnum.ARMOR_WORN_LEATHER_TUNIC),
                             Trigger(TriggerTypeEnum.ITEM_GIVE, ItemEnum.KEY_WAREHOUSE_DBL_DOOR),
+                            Trigger(TriggerTypeEnum.QUEST_GIVE, QuestEnum.WAREHOUSE_RATS),
+                            Trigger(TriggerTypeEnum.PAUSE, 1),
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    ["\"Don't forget you'll need to EQUIP the club and tunic. Good luck!"]),
                         ]),
                 MobTalk("~on_enter~",
-                        condition=[
+                        [
                             Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST_COMPLETE,
                                       QuestEnum.WAREHOUSE_RATS),
                             Condition(ConditionCheckEnum.HAS, TargetTypeEnum.PLAYER_INVEN, ItemEnum.MISC_RAT_FUR),
                         ],
-                        text=[
-                            "\"Ah, I see you've been clearing out the varmin in the warehouse! I'll pay you "
-                            "1 SP per fur as I agreed.\""
-                        ],
-                        triggers=[
+                        [
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "\"Ah, I see you've been clearing out the varmin in the warehouse! "
+                                        "I'll pay you 1 SP per fur as I agreed. And in the future you can SELL them "
+                                        "to me.\"",
+                                    ]),
                             Trigger(TriggerTypeEnum.QUEST_COMPLETE, QuestEnum.WAREHOUSE_RATS),
                             Trigger(TriggerTypeEnum.ITEM_SELL),
                         ]),
                 MobTalk("shop",
-                        text=[
-                            "\"Ah a customer! Are you here to BUY or SELL?\"",
+                        triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE, ["\"Ah a customer! Are you here to BUY or SELL?\""]),
                         ]),
                 MobTalk("buy",
-                        text=[
-                            "\"Excellent!  Here's what I have:\"",
-                        ],
                         triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE, ["\"Excellent!  Here's what I have:\""]),
                             Trigger(TriggerTypeEnum.ITEM_BUY),
                         ]),
                 MobTalk("sell",
-                        text=[
-                            "\"Let's see if you have anything I need ...\"",
-                        ],
                         triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE, ["\"Let's see if you have anything I need ...\""]),
                             Trigger(TriggerTypeEnum.ITEM_SELL),
                         ]),
                 MobTalk("~",
-                        text=[
-                            "\"Fare thee well.\""
+                        triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE, ["\"Fare thee well.\""]),
                         ]),
             ]),
     PersonEnum.BL_TANNER:
@@ -688,23 +766,26 @@ persons = {
             },
             talk=[
                 MobTalk("",
-                        text=[
-                            "The study woman puts down her tools. \"Ah, a customer ... What would you like to BUY?\"",
+                        triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "The study woman puts down her tools.",
+                                        "\"Ah, a customer ... What would you like to BUY?\"",
+                                    ]),
                         ]),
                 MobTalk("shop",
-                        text=[
-                            "\"Have a look around and let me know if you would care to BUY an item?\"",
+                        triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    ["\"Have a look around and let me know if you would care to BUY an item?\""]),
                         ]),
                 MobTalk("buy",
-                        text=[
-                            "\"See anything you like?\"",
-                        ],
                         triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE, ["\"See anything you like?\""]),
                             Trigger(TriggerTypeEnum.ITEM_BUY),
                         ]),
                 MobTalk("~",
-                        text=[
-                            "\"The pleasure was mine.\""
+                        triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE, ["\"The pleasure was mine.\""]),
                         ]),
             ]),
     PersonEnum.BL_ARMS_DEALER:
@@ -753,24 +834,25 @@ persons = {
             },
             talk=[
                 MobTalk("",
-                        text=[
-                            "Glancing warily around, the man sits up straighter. \"If you see something you want to BUY, "
-                            "just say the word.\"",
+                        triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE,
+                                    [
+                                        "Glancing warily around, the man sits up straighter.",
+                                        "\"If you see something you want to BUY, just say the word.\"",
+                                    ]),
                         ]),
                 MobTalk("shop",
-                        text=[
-                            "\"What would you like to BUY?\"",
+                        triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE, ["\"What would you like to BUY?\""]),
                         ]),
                 MobTalk("buy",
-                        text=[
-                            "\"All hand made arms of the finest quality:\"",
-                        ],
                         triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE, ["\"All hand made arms of the finest quality:\""]),
                             Trigger(TriggerTypeEnum.ITEM_BUY),
                         ]),
                 MobTalk("~",
-                        text=[
-                            "\"Entertaining ... as always.\""
+                        triggers=[
+                            Trigger(TriggerTypeEnum.MESSAGE, ["\"Entertaining ... as always.\""]),
                         ]),
             ]),
 }
