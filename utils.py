@@ -905,6 +905,7 @@ def processTriggers(obj, triggers):
 def printNPCTalk(p, keyword):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
+  items = GameData.GetItems()
   ret = False
   for tk in p.Talks:
     if tk.Keyword.lower() == keyword:
@@ -912,6 +913,12 @@ def printNPCTalk(p, keyword):
         ret = True
         if tk.Triggers is not None:
           processTriggers(p, tk.Triggers)
+  # handle shopkeep item names
+  if p.SellItemLinks is not None:
+    for item_id in p.SellItemLinks.keys():
+      if items[item_id].ItemName.lower() == keyword:
+        ret = True
+        cm.Print("\n" + wrapper.fill(items[item_id].Description()))
   return ret
 
 
