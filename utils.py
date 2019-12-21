@@ -9,7 +9,7 @@ from textwrap import TextWrapper
 from time import sleep
 
 from console import (ANSI, InputFlag)
-from db import (LoadStatsDB, SavePlayer)
+from db_jsonstore import (LoadStatsDB, SavePlayer)
 from gamedata import (GameData)
 from global_defines import (attribute_classes, attributes, months, sunsigns,
                             cultures, social_classes, sibling_ranks, wounds,
