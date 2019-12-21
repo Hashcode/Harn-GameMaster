@@ -45,6 +45,15 @@ class DiceRoll:
     logd("DICE RESULT %dD%d+%d (flags:%x): %d" % (self.Num, self.Max, self.Mod, self.Flags, value))
     return value
 
+  def __str__(self):
+    ret = "%dD%d" % (self.Num, self.Max)
+    if self.Mod != 0:
+      if self.Mod > 0:
+        ret += "+%d" % self.Mod
+      else:
+        ret += "-%d" % self.Mod
+    return ret
+
 
 class Roll(IntEnum):
   NONE = 0
@@ -92,6 +101,14 @@ class DamageTypeEnum(IntEnum):
   PIERCE = 2
   ELEMENTAL = 3
   MAX = 4
+
+
+damages = {
+    DamageTypeEnum.BLUNT: "crushing",
+    DamageTypeEnum.EDGE: "slashing",
+    DamageTypeEnum.PIERCE: "piercing",
+    DamageTypeEnum.ELEMENTAL: "elemental",
+}
 
 
 # MATERIALS
@@ -497,6 +514,11 @@ class Item:
       return True
     return False
 
+  def Description(self):
+    return "%s : Made of %s%s" % (
+        self.ItemName.capitalize(), materials[self.Material].Name.lower(),
+        self.ItemFlagStr(": (%s)"))
+
 
 class Shield(Item):
   def __init__(self, name, qual, material, mass, skill, ar, dr, flags=0, eff=None):
@@ -504,6 +526,11 @@ class Shield(Item):
     self.Skill = skill
     self.AttackRating = ar
     self.DefenseRating = dr
+
+  def Description(self):
+    return "%s : Made of %s and uses %s skill%s" % (
+        self.ItemName.capitalize(), materials[self.Material].Name.lower(),
+        skills[self.Skill].Name.lower(), self.ItemFlagStr(" (%s)"))
 
 
 class Weapon(Item):
@@ -516,6 +543,11 @@ class Weapon(Item):
     self.SingleHandPenalty = sh_penalty
     self.Roll = dice_roll
     self.DamageType = dmg_type
+
+  def Description(self):
+    return "%s : Made of %s, does %s %s damage and uses %s skill%s" % (
+        self.ItemName.capitalize(), materials[self.Material].Name.lower(), self.Roll,
+        damages[self.DamageType], skills[self.Skill].Name.lower(), self.ItemFlagStr(" (%s)"))
 
 
 class Armor(Item):
@@ -540,6 +572,11 @@ class Armor(Item):
     if self.Coverage & 1 << bp_id > 0:
         return True
     return False
+
+  def Description(self):
+    return "%s : Made of %s and covers %s%s" % (
+        self.ItemName.capitalize(), materials[self.Material].Name.lower(),
+        self.CoverageStr().lower(), self.ItemFlagStr(" (%s)"))
 
 
 class Ring(Item):
@@ -1526,6 +1563,17 @@ class Person:
   def AttrSexPossessivePronounStr(self):
     return sexes[self.AttrSex()].PossessivePronoun
 
+  def TextTranslate(self, text):
+    ret = text.replace("@@NAME@@", self.Name)
+    ret = ret.replace("@@NAME_CAP@@", self.Name.capitalize())
+    ret = ret.replace("@@SEX@@", self.AttrSexStr())
+    ret = ret.replace("@@SEX_CAP@@", self.AttrSexStr().capitalize())
+    ret = ret.replace("@@SEX_PRONOUN@@", self.AttrSexPronounStr())
+    ret = ret.replace("@@SEX_PRONOUN_CAP@@", self.AttrSexPronounStr().capitalize())
+    ret = ret.replace("@@SEX_POSSESSIVE_PRONOUN@@", self.AttrSexPossessivePronounStr())
+    ret = ret.replace("@@SEX_POSSESSIVE_PRONOUN_CAP@@", self.AttrSexPossessivePronounStr().capitalize())
+    return ret
+
   def IP(self):
     ret = 0
     for x in self.Wounds:
@@ -2444,6 +2492,10 @@ class Room:
         p = np.Create(self.RoomID, processConditions, processTriggers)
         if p is not None:
           self.AddPerson(p)
+
+  def TextTranslate(self, text):
+    ret = text.replace("@@TITLE@@", self.Title)
+    return ret
 
   def AddExit(self, exit_dir, exit):
     if exit_dir in self.Exits:
