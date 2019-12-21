@@ -468,9 +468,9 @@ items = {
               QualityEnum.AVE, MaterialEnum.STEEL, AL_5_5,
               COV_Ca),
     # MISC ARMOR
-    ItemEnum.ARMOR_WORN_LEATHER_TUNIC:
-        Armor("worn leather tunic",
-              QualityEnum.INF, MaterialEnum.LEATHER, AL_3,
+    ItemEnum.ARMOR_STAINED_QUILT_TUNIC:
+        Armor("stained quilt tunic",
+              QualityEnum.INF, MaterialEnum.QUILT, AL_3,
               COV_Ua | COV_Sh | COV_Tx | COV_Ab | COV_Hp | COV_Gr),
 
     # RING
