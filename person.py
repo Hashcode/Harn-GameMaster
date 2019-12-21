@@ -39,7 +39,7 @@ persons = {
                 SkillEnum.STEALTH: 0,
             },
             loot={
-                ItemEnum.MISC_RAT_FUR: 50,
+                ItemEnum.MISC_RAT_FUR: 100,
             }),
     PersonEnum.BL_KEEP_GUARD:
         Mob(PersonEnum.BL_KEEP_GUARD, "a gatehouse guard",
