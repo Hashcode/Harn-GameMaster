@@ -895,9 +895,9 @@ class ParentStatusEnum:
 parent_statuses = {
     ParentStatusEnum.OFFSPRING: AttrNameMax("Normal", 50),
     ParentStatusEnum.FOSTERED: AttrNameMax("Fostered", 70),
-    ParentStatusEnum.ADOPTED: AttrNameMax("Adopted", 70),
-    ParentStatusEnum.BASTARD: AttrNameMax("Bastard", 85),
-    ParentStatusEnum.ORPHAN: AttrNameMax("Orphaned", 95),
+    ParentStatusEnum.ADOPTED: AttrNameMax("Adopted", 75),
+    ParentStatusEnum.BASTARD: AttrNameMax("Bastard", 90),
+    ParentStatusEnum.ORPHAN: AttrNameMax("Orphaned", 100),
 }
 
 
