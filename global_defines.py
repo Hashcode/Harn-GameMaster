@@ -1677,6 +1677,14 @@ class Person:
           self.SkillLinks[skill_id].Attempts += 1
         else:
           self.SkillLinks.update({skill_id: SkillLink(0, 1)})
+      # check for skillup
+      if self.SkillLinks[skill_id].Attempts > skills[skill_id].AttemptsPerSkillUpCheck:
+        # attempt to raise skill
+        r = DiceRoll(1, 100).Result() + self.SkillBase(skill_id)
+        if r > self.SkillML(skill_id, skipPenalty=True):
+          GameData.GetConsole().Print("\nYou've become better at the %s skill!" % (skills[skill_id].Name.lower()))
+          self.SkillLinks[skill_id].Points += 1
+        self.SkillLinks[skill_id].Attempts -= skills[skill_id].AttemptsPerSkillUpCheck
     r = DiceRoll(1, 100).Result()
     if ml < 5:
       ml = 5

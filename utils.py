@@ -1328,64 +1328,6 @@ def actionRest():
         break
 
 
-ATT_PER_TRAIN = 25
-
-
-def actionTrain():
-  cm = GameData.GetConsole()
-  player = GameData.GetPlayer()
-  if player.CombatState != PlayerCombatState.NONE:
-    cm.Print("\n%sYou can't TRAIN during combat!%s" %
-             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-    return
-  if player.IsTalking():
-    cm.Print("\n%sYou are talking! Enter \"DONE\" "
-             "to end conversation.%s" %
-             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-    return
-  cm.Print("\nChoose a trainable skill (>%d attempts):\n" % ATT_PER_TRAIN)
-  count = 0
-  for skill_id, sl in player.SkillLinks.items():
-    if sl.Attempts > ATT_PER_TRAIN:
-      count += 1
-      attempts = int(sl.Attempts / ATT_PER_TRAIN)
-      plural = ""
-      if attempts > 1:
-        plural = "s"
-      cm.Print("%-3s %-15s [%d train%s]" %
-               ("%d." % count, skills[skill_id].Name, attempts, plural))
-  if count < 1:
-    cm.Print("No skills are ready to be trained. Use them more!")
-    return
-  x = cm.Input("Which skill # to train:", line_length=3,
-               input_flags=InputFlag.NUMERIC)
-  if not x.isnumeric():
-    cm.Print("\nInvalid skill.")
-    return
-  skillNum = int(x)
-  if skillNum < 1 or skillNum > count:
-    cm.Print("\nInvalid skill.")
-    return
-  count = 0
-  for skill_id, sl in player.SkillLinks.items():
-    if sl.Attempts > ATT_PER_TRAIN:
-      count += 1
-      if count == skillNum:
-        # 30 minute train time
-        player.GameTime += 1800
-        # attempt to raise skill
-        r = DiceRoll(1, 100).Result() + player.SkillBase(skill_id)
-        if r > player.SkillML(skill_id, skipPenalty=True):
-          cm.Print("\nYou GAIN an mastery level in %s!" %
-                   (skills[skill_id].Name.lower()))
-          sl.Points += 1
-        else:
-          cm.Print("\nYour attempt to train %s FAILS!" %
-                   (skills[skill_id].Name.lower()))
-        sl.Attempts -= ATT_PER_TRAIN
-        break
-
-
 def actionStatsGeneric():
   printStats(GameData.GetPlayer())
 
@@ -1489,7 +1431,6 @@ commands.append(GenericCommand(["skills", "sk"], actionSkills))
 commands.append(GenericCommand(["stats", "st"], actionStatsGeneric))
 commands.append(GenericCommand(["talk"], actionTalk))
 commands.append(GenericCommand(["time"], actionTime))
-commands.append(GenericCommand(["train"], actionTrain))
 commands.append(GenericCommand(["unlock"], actionUnlock))
 commands.append(GenericCommand(["who"], actionListPlayers))
 
