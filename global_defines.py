@@ -1278,112 +1278,112 @@ class Skill:
 skills = {
     # PHYSICAL
     SkillEnum.ACROBATICS:
-        Skill("Acrobatics", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_AGL, ATTR_AGL, 2, {SS_NAD: 2, SS_HIR: 1}),
+        Skill("Acrobatics", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_AGL, ATTR_AGL, 2, 100, {SS_NAD: 2, SS_HIR: 1}),
     SkillEnum.CLIMBING:
-        Skill("Climbing", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_DEX, ATTR_AGL, 3, {SS_ULA: 2, SS_ARA: 2}),
+        Skill("Climbing", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_DEX, ATTR_AGL, 3, 50, {SS_ULA: 2, SS_ARA: 2}),
     SkillEnum.CONDITIONING:
-        Skill("Conditioning", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_STA, ATTR_WIL, 4, {SS_ULA: 1, SS_LAD: 1}),
+        Skill("Conditioning", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_STA, ATTR_WIL, 4, 100, {SS_ULA: 1, SS_LAD: 1}),
     SkillEnum.DANCING:
-        Skill("Dancing", SkillClassEnum.PHYSICAL, ATTR_DEX, ATTR_AGL, ATTR_AGL, 2, {SS_ULA: 1, SS_LAD: 1}, hidden=True),
+        Skill("Dancing", SkillClassEnum.PHYSICAL, ATTR_DEX, ATTR_AGL, ATTR_AGL, 2, 50, {SS_ULA: 1, SS_LAD: 1}, hidden=True),
     SkillEnum.DODGE:
-        Skill("Dodge", SkillClassEnum.PHYSICAL, ATTR_AGL, ATTR_AGL, ATTR_AGL, 3, {SS_HIR: 1, SS_TAR: 1, SS_TAI: 1}),
+        Skill("Dodge", SkillClassEnum.PHYSICAL, ATTR_AGL, ATTR_AGL, ATTR_AGL, 3, 100, {SS_HIR: 1, SS_TAR: 1, SS_TAI: 1}),
     SkillEnum.JUMPING:
-        Skill("Jumping", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_AGL, ATTR_AGL, 3, {SS_NAD: 2, SS_HIR: 2}),
+        Skill("Jumping", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_AGL, ATTR_AGL, 3, 50, {SS_NAD: 2, SS_HIR: 2}),
     SkillEnum.LEGERDEMAIN:
-        Skill("Legerdemain", SkillClassEnum.PHYSICAL, ATTR_DEX, ATTR_DEX, ATTR_WIL, 1, {SS_SKO: 2, SS_TAI: 2, SS_TAR: 2}),
+        Skill("Legerdemain", SkillClassEnum.PHYSICAL, ATTR_DEX, ATTR_DEX, ATTR_WIL, 1, 50, {SS_SKO: 2, SS_TAI: 2, SS_TAR: 2}),
     SkillEnum.STEALTH:
-        Skill("Stealth", SkillClassEnum.PHYSICAL, ATTR_AGL, ATTR_HRG, ATTR_WIL, 3, {SS_HIR: 2, SS_TAR: 2, SS_TAI: 2}),
+        Skill("Stealth", SkillClassEnum.PHYSICAL, ATTR_AGL, ATTR_HRG, ATTR_WIL, 3, 100, {SS_HIR: 2, SS_TAR: 2, SS_TAI: 2}),
     SkillEnum.SWIMMING:
-        Skill("Swimming", SkillClassEnum.PHYSICAL, ATTR_STA, ATTR_DEX, ATTR_AGL, 1, {SS_SKO: 1, SS_MAS: 3, SS_LAD: 3}),
+        Skill("Swimming", SkillClassEnum.PHYSICAL, ATTR_STA, ATTR_DEX, ATTR_AGL, 1, 100, {SS_SKO: 1, SS_MAS: 3, SS_LAD: 3}),
     SkillEnum.THROWING:
-        Skill("Throwing", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_DEX, ATTR_EYE, 3, {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Throwing", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_DEX, ATTR_EYE, 3, 100, {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
     # COMMUNICATION
     SkillEnum.AWARENESS:
-        Skill("Awareness", SkillClassEnum.COMMUNICATION, ATTR_EYE, ATTR_HRG, ATTR_SML, 3, {SS_HIR: 2, SS_TAR: 2}),
+        Skill("Awareness", SkillClassEnum.COMMUNICATION, ATTR_EYE, ATTR_HRG, ATTR_SML, 3, 50, {SS_HIR: 2, SS_TAR: 2}),
     SkillEnum.INTRIGUE:
-        Skill("Intrigue", SkillClassEnum.COMMUNICATION, ATTR_INT, ATTR_AUR, ATTR_WIL, 3, {SS_TAI: 1, SS_TAR: 1, SS_SKO: 1}),
+        Skill("Intrigue", SkillClassEnum.COMMUNICATION, ATTR_INT, ATTR_AUR, ATTR_WIL, 3, 50, {SS_TAI: 1, SS_TAR: 1, SS_SKO: 1}),
     SkillEnum.MENTAL_CONFLICT:
-        Skill("Mental Conflict", SkillClassEnum.COMMUNICATION, ATTR_AUR, ATTR_WIL, ATTR_WIL, 3),
+        Skill("Mental Conflict", SkillClassEnum.COMMUNICATION, ATTR_AUR, ATTR_WIL, ATTR_WIL, 3, 50),
     SkillEnum.ORATORY:
-        Skill("Oratory", SkillClassEnum.COMMUNICATION, ATTR_CML, ATTR_VOI, ATTR_INT, 2, {SS_TAR: 1}),
+        Skill("Oratory", SkillClassEnum.COMMUNICATION, ATTR_CML, ATTR_VOI, ATTR_INT, 2, 50, {SS_TAR: 1}),
     SkillEnum.RHETORIC:
-        Skill("Rhetoric", SkillClassEnum.COMMUNICATION, ATTR_VOI, ATTR_INT, ATTR_WIL, 3, {SS_TAI: 1, SS_TAR: 1, SS_SKO: 1}),
+        Skill("Rhetoric", SkillClassEnum.COMMUNICATION, ATTR_VOI, ATTR_INT, ATTR_WIL, 3, 50, {SS_TAI: 1, SS_TAR: 1, SS_SKO: 1}),
     SkillEnum.SINGING:
-        Skill("Singing", SkillClassEnum.COMMUNICATION, ATTR_HRG, ATTR_VOI, ATTR_VOI, 3, {SS_MAS: 1}, hidden=True),
+        Skill("Singing", SkillClassEnum.COMMUNICATION, ATTR_HRG, ATTR_VOI, ATTR_VOI, 3, 50, {SS_MAS: 1}, hidden=True),
     # COMBAT
     SkillEnum.INITIATIVE:
-        Skill("Initiative", SkillClassEnum.COMBAT, ATTR_AGL, ATTR_WIL, ATTR_WIL, 3),
+        Skill("Initiative", SkillClassEnum.COMBAT, ATTR_AGL, ATTR_WIL, ATTR_WIL, 3, 100),
     SkillEnum.UNARMED:
-        Skill("Unarmed Combat", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_AGL, 3, {SS_MAS: 2, SS_LAD: 2, SS_ULA: 2}),
+        Skill("Unarmed Combat", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_AGL, 3, 100, {SS_MAS: 2, SS_LAD: 2, SS_ULA: 2}),
     SkillEnum.RIDING:
-        Skill("Riding", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_AGL, ATTR_WIL, 1, {SS_ULA: 1, SS_ARA: 1}),
+        Skill("Riding", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_AGL, ATTR_WIL, 1, 100, {SS_ULA: 1, SS_ARA: 1}),
     SkillEnum.AXE:
-        Skill("Axe", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 2, {SS_AHN: 1, SS_FEN: 1, SS_ANG: 1}),
+        Skill("Axe", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 2, 100, {SS_AHN: 1, SS_FEN: 1, SS_ANG: 1}),
     SkillEnum.BLOWGUN:
-        Skill("Blowgun", SkillClassEnum.COMBAT, ATTR_STA, ATTR_DEX, ATTR_EYE, 2, {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Blowgun", SkillClassEnum.COMBAT, ATTR_STA, ATTR_DEX, ATTR_EYE, 2, 100, {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.BOW:
-        Skill("Bow", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_EYE, 2, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Bow", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_EYE, 2, 100, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.CLUB:
-        Skill("Club", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 3, {SS_ULA: 1, SS_ARA: 1}),
+        Skill("Club", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 3, 100, {SS_ULA: 1, SS_ARA: 1}),
     SkillEnum.DAGGER:
-        Skill("Dagger", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 3, {SS_ANG: 2, SS_NAD: 2}),
+        Skill("Dagger", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 3, 100, {SS_ANG: 2, SS_NAD: 2}),
     SkillEnum.FLAIL:
-        Skill("Flail", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_DEX, 1, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Flail", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_DEX, 1, 100, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.NET:
-        Skill("Net", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, {SS_MAS: 1, SS_SKO: 1, SS_LAD: 1}),
+        Skill("Net", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, 100, {SS_MAS: 1, SS_SKO: 1, SS_LAD: 1}),
     SkillEnum.POLEARM:
-        Skill("Polearm", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 2, {SS_ANG: 1, SS_ARA: 1}),
+        Skill("Polearm", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 2, 100, {SS_ANG: 1, SS_ARA: 1}),
     SkillEnum.SHIELD:
-        Skill("Shield", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_DEX, 3, {SS_ULA: 1, SS_LAD: 1, SS_MAS: 1}),
+        Skill("Shield", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_DEX, 3, 100, {SS_ULA: 1, SS_LAD: 1, SS_MAS: 1}),
     SkillEnum.SLING:
-        Skill("Sling", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Sling", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, 100, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.SPEAR:
-        Skill("Spear", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 2, {SS_ARA: 1, SS_FEN: 1, SS_ULA: 1}),
+        Skill("Spear", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 2, 100, {SS_ARA: 1, SS_FEN: 1, SS_ULA: 1}),
     SkillEnum.SWORD:
-        Skill("Sword", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_DEX, 2, {SS_ANG: 3, SS_AHN: 1, SS_NAD: 1}),
+        Skill("Sword", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_DEX, 2, 100, {SS_ANG: 3, SS_AHN: 1, SS_NAD: 1}),
     SkillEnum.WHIP:
-        Skill("Whip", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, {SS_HIR: 1, SS_NAD: 1}),
+        Skill("Whip", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, 100, {SS_HIR: 1, SS_NAD: 1}),
     # LORE / CRAFT
     SkillEnum.AGRICULTURE:
-        Skill("Agriculture", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_STA, ATTR_WIL, 2, {SS_ULA: 2, SS_ARA: 2}),
+        Skill("Agriculture", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_STA, ATTR_WIL, 2, 10, {SS_ULA: 2, SS_ARA: 2}),
     SkillEnum.ALCHEMY:
-        Skill("Alchemy", SkillClassEnum.LORE_CRAFTS, ATTR_SML, ATTR_INT, ATTR_AUR, 1, {SS_SKO: 3, SS_TAI: 2, SS_MAS: 2}),
+        Skill("Alchemy", SkillClassEnum.LORE_CRAFTS, ATTR_SML, ATTR_INT, ATTR_AUR, 1, 10, {SS_SKO: 3, SS_TAI: 2, SS_MAS: 2}),
     SkillEnum.ANIMALCRAFT:
-        Skill("Animalcraft", SkillClassEnum.LORE_CRAFTS, ATTR_AGL, ATTR_VOI, ATTR_WIL, 1, {SS_ULA: 1, SS_ARA: 1}),
+        Skill("Animalcraft", SkillClassEnum.LORE_CRAFTS, ATTR_AGL, ATTR_VOI, ATTR_WIL, 1, 10, {SS_ULA: 1, SS_ARA: 1}),
     SkillEnum.BREWING:
-        Skill("Brewing", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_SML, ATTR_SML, 2, {SS_SKO: 3, SS_TAI: 2, SS_MAS: 2}),
+        Skill("Brewing", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_SML, ATTR_SML, 2, 10, {SS_SKO: 3, SS_TAI: 2, SS_MAS: 2}),
     SkillEnum.COOKERY:
-        Skill("Cookery", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_SML, ATTR_SML, 3, {SS_SKO: 1}),
+        Skill("Cookery", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_SML, ATTR_SML, 3, 10, {SS_SKO: 1}),
     SkillEnum.FISHING:
-        Skill("Fishing", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_EYE, ATTR_WIL, 3, {SS_MAS: 2, SS_LAD: 2}),
+        Skill("Fishing", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_EYE, ATTR_WIL, 3, 10, {SS_MAS: 2, SS_LAD: 2}),
     SkillEnum.FLETCHING:
-        Skill("Fletching", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Fletching", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, 10, {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.FORAGING:
-        Skill("Foraging", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_SML, ATTR_INT, 3, {SS_ULA: 2, SS_ARA: 2}),
+        Skill("Foraging", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_SML, ATTR_INT, 3, 10, {SS_ULA: 2, SS_ARA: 2}),
     SkillEnum.HERBLORE:
-        Skill("Herblore", SkillClassEnum.LORE_CRAFTS, ATTR_EYE, ATTR_SML, ATTR_INT, 1, {SS_ULA: 3, SS_ARA: 2}),
+        Skill("Herblore", SkillClassEnum.LORE_CRAFTS, ATTR_EYE, ATTR_SML, ATTR_INT, 1, 10, {SS_ULA: 3, SS_ARA: 2}),
     SkillEnum.HIDEWORK:
-        Skill("Hidework", SkillClassEnum.LORE_CRAFTS, ATTR_EYE, ATTR_SML, ATTR_WIL, 2, {SS_ULA: 1, SS_ARA: 1}),
+        Skill("Hidework", SkillClassEnum.LORE_CRAFTS, ATTR_EYE, ATTR_SML, ATTR_WIL, 2, 10, {SS_ULA: 1, SS_ARA: 1}),
     SkillEnum.JEWELCRAFT:
-        Skill("Jewelcraft", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_EYE, ATTR_WIL, 1, {SS_FEN: 3, SS_TAR: 1, SS_ARA: 1}),
+        Skill("Jewelcraft", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_EYE, ATTR_WIL, 1, 10, {SS_FEN: 3, SS_TAR: 1, SS_ARA: 1}),
     SkillEnum.LOCKCRAFT:
-        Skill("Lockcraft", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_EYE, ATTR_WIL, 1, {SS_FEN: 3}),
+        Skill("Lockcraft", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_EYE, ATTR_WIL, 1, 10, {SS_FEN: 3}),
     SkillEnum.METALCRAFT:
-        Skill("Metalcraft", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_DEX, ATTR_WIL, 1, {SS_FEN: 3, SS_AHN: 1, SS_ANG: 1}),
+        Skill("Metalcraft", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_DEX, ATTR_WIL, 1, 10, {SS_FEN: 3, SS_AHN: 1, SS_ANG: 1}),
     SkillEnum.MINING:
-        Skill("Mining", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_DEX, ATTR_INT, 1, {SS_ULA: 2, SS_ARA: 2, SS_FEN: 1}),
+        Skill("Mining", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_DEX, ATTR_INT, 1, 10, {SS_ULA: 2, SS_ARA: 2, SS_FEN: 1}),
     SkillEnum.PHYSICIAN:
-        Skill("Physician", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_EYE, ATTR_INT, 1, {SS_MAS: 2, SS_SKO: 1, SS_TAI: 1}),
+        Skill("Physician", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_EYE, ATTR_INT, 1, 10, {SS_MAS: 2, SS_SKO: 1, SS_TAI: 1}),
     SkillEnum.SURVIVAL:
-        Skill("Survival", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_DEX, ATTR_INT, 3, {SS_ULA: 2, SS_ARA: 1}),
+        Skill("Survival", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_DEX, ATTR_INT, 3, 10, {SS_ULA: 2, SS_ARA: 1}),
     SkillEnum.TIMBERCRAFT:
-        Skill("Timbercraft", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_DEX, ATTR_AGL, 2, {SS_ULA: 3, SS_ARA: 1}),
+        Skill("Timbercraft", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_DEX, ATTR_AGL, 2, 10, {SS_ULA: 3, SS_ARA: 1}),
     SkillEnum.TRACKING:
-        Skill("Tracking", SkillClassEnum.LORE_CRAFTS, ATTR_EYE, ATTR_SML, ATTR_WIL, 2, {SS_ULA: 3, SS_ARA: 3}),
+        Skill("Tracking", SkillClassEnum.LORE_CRAFTS, ATTR_EYE, ATTR_SML, ATTR_WIL, 2, 10, {SS_ULA: 3, SS_ARA: 3}),
     SkillEnum.WEAPONCRAFT:
-        Skill("Weaponcraft", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_DEX, ATTR_WIL, 1, {SS_FEN: 3, SS_AHN: 1, SS_ANG: 1}),
+        Skill("Weaponcraft", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_DEX, ATTR_WIL, 1, 10, {SS_FEN: 3, SS_AHN: 1, SS_ANG: 1}),
     SkillEnum.WOODCRAFT:
-        Skill("Woodcraft", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_DEX, ATTR_WIL, 2, {SS_ULA: 2, SS_ARA: 2, SS_LAD: 1}),
+        Skill("Woodcraft", SkillClassEnum.LORE_CRAFTS, ATTR_DEX, ATTR_DEX, ATTR_WIL, 2, 10, {SS_ULA: 2, SS_ARA: 2, SS_LAD: 1}),
 }
 
 
