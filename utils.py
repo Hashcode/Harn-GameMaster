@@ -125,9 +125,7 @@ def printRoomDescription(room_id):
     if len(rooms[room_id].Exits) > 0:
       cm.Print("")
       for exit_dir, ex in rooms[room_id].Exits.items():
-        exit_str = "%s%-9s%s: " % (ANSI.TEXT_BOLD,
-                                      directions[exit_dir].Names[0].upper(),
-                                      ANSI.TEXT_NORMAL)
+        exit_str = "%s%-9s%s: " % (ANSI.TEXT_BOLD, directions[exit_dir].Names[0].upper(), ANSI.TEXT_NORMAL)
         if ex.Door == DoorEnum.NONE:
           if rooms[ex.Room].HasLight():
             cm.Print("%s%s" % (exit_str, rooms[ex.Room].ShortDescription))
@@ -140,8 +138,7 @@ def printRoomDescription(room_id):
           else:
             if rooms[ex.Room].HasLight():
               cm.Print("%s%s (via open %s)" %
-                       (exit_str, rooms[ex.Room].ShortDescription,
-                        doors[ex.Door].Name))
+                       (exit_str, rooms[ex.Room].ShortDescription, doors[ex.Door].Name))
             else:
               cm.Print("%s is darkness (via open %s)" % (exit_str, doors[ex.Door].Name))
 
@@ -177,18 +174,14 @@ def printStats(person):
     for ac_id, ac in attribute_classes.items():
       if ac.Hidden:
         continue
-      cm.Print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, ac.Name.upper(),
-                                     ANSI.TEXT_NORMAL))
+      cm.Print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, ac.Name.upper(), ANSI.TEXT_NORMAL))
       for attr, val in person.Attr.items():
         if not attributes[attr].Hidden:
           if attributes[attr].AttrClass == ac_id:
-            cm.Print("%-15s: %s%d%s" % (attributes[attr].Name,
-                                        attrColor(val), val,
-                                        ANSI.TEXT_NORMAL))
+            cm.Print("%-15s: %s%d%s" % (attributes[attr].Name, attrColor(val), val, ANSI.TEXT_NORMAL))
     cm.Print("\n%sCHARACTER STATS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   else:
-    cm.Print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, person.Name.upper(),
-                                   ANSI.TEXT_NORMAL))
+    cm.Print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, person.Name.upper(), ANSI.TEXT_NORMAL))
   cm.Print("%-15s: %d" % ("Endurance", person.AttrEndurance()))
   cm.Print("%-15s: %d lbs" % ("Inven. Weight", person.ItemWeight()))
   cm.Print("%-15s: %d" % ("Enc. Points", person.EncumbrancePenalty()))
