@@ -492,10 +492,11 @@ items = {
         Item(ItemTypeEnum.MISC, "rat fur", QualityEnum.AVE,
              MaterialEnum.FUR_LT, 2,
              onDrop=[
-                 Trigger(TriggerTypeEnum.MESSAGE, ["With a sigh of relief you drop a rate fur."]),
+                 Trigger(TriggerTypeEnum.MESSAGE, ["With a sigh of relief you drop a rat fur."]),
              ],
              onGet=[
-                 Trigger(TriggerTypeEnum.MESSAGE, ["You pinch your nose and attempt to get a rate fur."]),
+                 Trigger(TriggerTypeEnum.MESSAGE, ["You pinch your nose trying to pick up the rat fur, "
+                                                   " wondering if this time you'll be successful."]),
                  Trigger(TriggerTypeEnum.DENY, chance=50),
              ]),
     ItemEnum.MISC_TORCH:
