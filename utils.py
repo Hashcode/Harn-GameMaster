@@ -125,19 +125,25 @@ def printRoomDescription(room_id):
     if len(rooms[room_id].Exits) > 0:
       cm.Print("")
       for exit_dir, ex in rooms[room_id].Exits.items():
-        exit_str = "To the %s%s%s" % (ANSI.TEXT_BOLD,
+        exit_str = "%s%-9s%s: " % (ANSI.TEXT_BOLD,
                                       directions[exit_dir].Names[0].upper(),
                                       ANSI.TEXT_NORMAL)
         if ex.Door == DoorEnum.NONE:
-          cm.Print("%s is %s" % (exit_str, rooms[ex.Room].ShortDescription))
+          if rooms[ex.Room].HasLight():
+            cm.Print("%s%s" % (exit_str, rooms[ex.Room].ShortDescription))
+          else:
+            cm.Print("%sdarkness ..." % (exit_str))
         else:
           if player.DoorState(ex.Door).Closed:
-            cm.Print("%s %s closed %s" %
+            cm.Print("%s%s closed %s" %
                      (exit_str, doors[ex.Door].Verb(), doors[ex.Door].Name))
           else:
-            cm.Print("%s is %s (via open %s)" %
-                     (exit_str, rooms[ex.Room].ShortDescription,
-                      doors[ex.Door].Name))
+            if rooms[ex.Room].HasLight():
+              cm.Print("%s%s (via open %s)" %
+                       (exit_str, rooms[ex.Room].ShortDescription,
+                        doors[ex.Door].Name))
+            else:
+              cm.Print("%s is darkness (via open %s)" % (exit_str, doors[ex.Door].Name))
 
 
 def printRoomObjects(room_id):
@@ -423,7 +429,7 @@ def actionSkills():
         continue
       if sk.Hidden:
         continue
-      cm.Print("%-15s: %s%s%s/%s%s%s/%s%s%s  ML:%-3d" %
+      cm.Print("%-15s: %s%s%s/%s%s%s/%s%s%s  ML:%-3d %d" %
                (sk.Name,
                 attrColor(player.Attr[skills[sk_id].Attr1]),
                 attributes[skills[sk_id].Attr1].Abbrev,
@@ -434,7 +440,8 @@ def actionSkills():
                 attrColor(player.Attr[skills[sk_id].Attr3]),
                 attributes[skills[sk_id].Attr3].Abbrev,
                 ANSI.TEXT_NORMAL,
-                player.SkillML(sk_id)))
+                player.SkillML(sk_id),
+                player.SkillAttempts(sk_id)))
 
 
 def actionInfo():
@@ -1243,20 +1250,12 @@ def actionListPlayers():
   if len(pinfo) == 0:
     cm.Print("\nThere are no saved characters!")
   else:
-    cm.Print("\n%s%-20s %-5s %-11s %s%s" %
-             (ANSI.TEXT_BOLD, "CHARACTER NAME", "SCORE", "TIME PLAYED",
-              "SAVED IN ROOM", ANSI.TEXT_NORMAL))
-    cm.Print("%s%-20s %-5s %-11s %s%s" %
-             (ANSI.TEXT_BOLD, "--------------", "-----", "-----------",
-              "-------------", ANSI.TEXT_NORMAL))
+    cm.Print("\n%s%-20s %-11s %s%s" %
+             (ANSI.TEXT_BOLD, "CHARACTER NAME", "TIME PLAYED", "SAVED IN ROOM", ANSI.TEXT_NORMAL))
+    cm.Print("%s%-20s %-11s %s%s" %
+             (ANSI.TEXT_BOLD, "--------------", "-----------", "-------------", ANSI.TEXT_NORMAL))
     for x in sorted(pinfo):
-      day_plural = "s"
-      if pinfo[x]["played"] == 1:
-        day_plural = ""
-      cm.Print("%-20s %-5s %-11s %s" %
-               (x, str(pinfo[x]["score"]),
-                "%d day%s" % (pinfo[x]["played"], day_plural),
-                pinfo[x]["info"]))
+      cm.Print("%-20s %-11s %s" % (x, "%0.2f days" % (pinfo[x]["played"]), pinfo[x]["info"]))
 
 
 def actionLook():
@@ -1451,7 +1450,7 @@ commands.append(GenericCommand(["password"], actionChangePassword))
 commands.append(GenericCommand(["quests", "quest"], actionQuest))
 commands.append(GenericCommand(["quit", "q"], actionQuit))
 commands.append(GenericCommand(["remove", "rm"], actionRemoveItem))
-commands.append(GenericCommand(["rest"], actionRest))
+commands.append(GenericCommand(["rest", "r"], actionRest))
 commands.append(GenericCommand(["save"], actionSaveGeneric))
 commands.append(GenericCommand(["sell"], actionTalkSell))
 commands.append(GenericCommand(["skills", "sk"], actionSkills))
