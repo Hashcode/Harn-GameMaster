@@ -102,14 +102,17 @@ def SaveStatsDB(name, played, info):
 
 
 def SavePlayer(save_obj, info, password):
-  password = password.upper()
+  temp = password.upper()
+  save_obj.Password = ""
   state_bytes = pickle.dumps(save_obj)
   if global_use_encrypt:
     enc_state_bytes = encrypt(password, state_bytes)
     state_str = codecs.encode(enc_state_bytes, "base64").decode("utf-8")
   else:
     state_str = codecs.encode(state_bytes, "base64").decode("utf-8")
-  if SaveDB(save_obj.Name, password, state_str):
+  ret = SaveDB(save_obj.Name, password, state_str)
+  save_obj.Password = temp
+  if ret:
     return SaveStatsDB(save_obj.Name, round(save_obj.SecondsPlayed / 86400, 2), info)
   return False
 

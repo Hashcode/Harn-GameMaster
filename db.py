@@ -114,9 +114,9 @@ def SavePlayer(save_obj, info, password):
   return False
 
 
-def LoadPlayer(player, name, password, legacy=False):
+def LoadPlayer(player, name, password):
   password = password.upper()
-  state_str = LoadDB(name, password, legacy)
+  state_str = LoadDB(name, password)
   if state_str == "":
     return False
   state_bytes = codecs.decode(state_str.encode("utf-8"), "base64")
