@@ -482,7 +482,6 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
   defe = None
 
   if att.Flags & FLAG_DEAD > 0:
-    logd("skip %s == DEAD" % att.Person.Name)
     return ret
 
   if att.StunLevel > 0:
@@ -507,11 +506,13 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
             break
       if att.Target is None and count == 1:
         att.Target = m
-      else:
+      elif count > 1:
         while True:
           chooseTarget(att, order)
           if att.Target is not None:
             break
+      else:
+        return ret
     defe = att.Target
 
     logd("PLAYER ACTION: %s vs. %s" %
