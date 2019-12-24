@@ -43,7 +43,7 @@ persons = {
             }),
     PersonEnum.MON_RAT_LARGE:
         Mob(PersonEnum.MON_RAT_LARGE, "an large nasty-looking rat",
-            "An large nasty-looking rat scrambles across the ground.", 45, 5, 35,
+            "An large nasty-looking rat scrambles across the ground.", 40, 5, 30,
             AimEnum.LOW, PersonFlag.AGGRESSIVE, MaterialEnum.FUR_LT,
             attrs={
                 AttrEnum.SEX: 0,
@@ -67,6 +67,7 @@ persons = {
                 SkillEnum.STEALTH: 0,
             },
             loot={
+                ItemEnum.ARMOR_STAINED_QUILT_COWL: 50,
                 ItemEnum.MISC_RAT_FUR: 100,
             }),
     PersonEnum.MON_RAT_GUARD:
@@ -96,6 +97,7 @@ persons = {
                 SkillEnum.STEALTH: 0,
             },
             loot={
+                ItemEnum.ARMOR_STAINED_QUILT_LEGGINGS: 50,
                 ItemEnum.MISC_RAT_FUR: 100,
             }),
     PersonEnum.MON_RAT_NOBLE:
@@ -125,6 +127,7 @@ persons = {
                 MobAttack("Claws", 100, 35, 0, 0, DiceRoll(1, 3), DamageTypeEnum.EDGE),
             ],
             loot={
+                ItemEnum.WEAPON_WICKED_DAGGER: 100,
                 ItemEnum.MISC_RAT_FUR: 100,
             }),
     PersonEnum.BL_KEEP_GUARD:

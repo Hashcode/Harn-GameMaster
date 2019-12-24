@@ -91,6 +91,10 @@ items = {
         Weapon("sharp dagger", QualityEnum.AVE, MaterialEnum.STEEL, 1,
                SkillEnum.DAGGER, 5, 5, 0, DiceRoll(1, 6),
                DamageTypeEnum.PIERCE),
+    ItemEnum.WEAPON_WICKED_DAGGER:
+        Weapon("wicked-looking dagger", QualityEnum.INF, MaterialEnum.STEEL, 1,
+               SkillEnum.DAGGER, 5, 5, 0, DiceRoll(1, 6),
+               DamageTypeEnum.PIERCE),
     ItemEnum.WEAPON_MAIN_GAUCHE:
         Weapon("small parrying blade", QualityEnum.AVE,
                MaterialEnum.STEEL, 1.4,
@@ -470,8 +474,16 @@ items = {
     # MISC ARMOR
     ItemEnum.ARMOR_STAINED_QUILT_TUNIC:
         Armor("stained quilt tunic",
-              QualityEnum.INF, MaterialEnum.QUILT, AL_3,
+              QualityEnum.INF, MaterialEnum.QUILT, AL_2,
               COV_Ua | COV_Sh | COV_Tx | COV_Ab | COV_Hp | COV_Gr),
+    ItemEnum.ARMOR_STAINED_QUILT_COWL:
+        Armor("stained quilt cowl",
+              QualityEnum.INF, MaterialEnum.QUILT, AL_2,
+              COV_Sk | COV_Nk),
+    ItemEnum.ARMOR_STAINED_QUILT_LEGGINGS:
+        Armor("stained quilt leggings",
+              QualityEnum.INF, MaterialEnum.QUILT, AL_2_5,
+              COV_Hp | COV_Gr | COV_Th | COV_Kn | COV_Ca | COV_Ft),
 
     # RING
 
@@ -496,7 +508,7 @@ items = {
              ],
              onGet=[
                  Trigger(TriggerTypeEnum.MESSAGE, ["You pinch your nose trying to pick up the rat fur, "
-                                                   " wondering if this time you'll be successful."]),
+                                                   "wondering if this time you'll be successful."]),
                  Trigger(TriggerTypeEnum.DENY, chance=50),
              ]),
     ItemEnum.MISC_TORCH:
