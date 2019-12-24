@@ -60,7 +60,7 @@ persons = {
             },
             mob_attacks=[
                 MobAttack("Bite", 60, 41, 0, 0, DiceRoll(1, 3), DamageTypeEnum.PIERCE),
-                MobAttack("Claws", 100, 31, 0, 0, DiceRoll(1, 3), DamageTypeEnum.EDGE),
+                MobAttack("Claws", 100, 31, 0, 0, DiceRoll(1, 2), DamageTypeEnum.EDGE),
             ],
             mob_skills={
                 SkillEnum.AWARENESS: 10,
@@ -88,8 +88,8 @@ persons = {
                 AttrEnum.WILL: 9,
             },
             mob_attacks=[
-                MobAttack("Bite", 60, 45, 0, 0, DiceRoll(1, 4), DamageTypeEnum.PIERCE),
-                MobAttack("Claws", 100, 35, 0, 0, DiceRoll(1, 3), DamageTypeEnum.EDGE),
+                MobAttack("Bite", 60, 41, 0, 0, DiceRoll(1, 4), DamageTypeEnum.PIERCE),
+                MobAttack("Claws", 100, 31, 0, 0, DiceRoll(1, 3), DamageTypeEnum.EDGE),
             ],
             mob_skills={
                 SkillEnum.AWARENESS: 10,
@@ -100,7 +100,7 @@ persons = {
             }),
     PersonEnum.MON_RAT_NOBLE:
         Mob(PersonEnum.MON_RAT_NOBLE, "a rat noble",
-            "A rat noble calmly nibbles some cheese.", 45, 7, 40,
+            "A rat noble calmly nibbles some cheese.", 45, 6, 35,
             AimEnum.LOW, PersonFlag.AGGRESSIVE, MaterialEnum.FUR_LT,
             cur=DiceRoll(1, 6, 40),
             attrs={
@@ -119,15 +119,12 @@ persons = {
             mob_skills={
                 SkillEnum.AWARENESS: 10,
                 SkillEnum.STEALTH: 0,
-                SkillEnum.SWORD: 45,
             },
-            eq={
-                ItemEnum.WEAPON_SHORTSWORD: ItemLink(1, True),
-                ItemEnum.ARMOR_TUNIC_QUILT: ItemLink(1, True),
-            },
+            mob_attacks=[
+                MobAttack("Bite", 60, 45, 0, 0, DiceRoll(1, 4), DamageTypeEnum.PIERCE),
+                MobAttack("Claws", 100, 35, 0, 0, DiceRoll(1, 3), DamageTypeEnum.EDGE),
+            ],
             loot={
-                ItemEnum.WEAPON_SHORTSWORD: 50,
-                ItemEnum.ARMOR_TUNIC_QUILT: 50,
                 ItemEnum.MISC_RAT_FUR: 100,
             }),
     PersonEnum.BL_KEEP_GUARD:
@@ -448,6 +445,7 @@ persons = {
                     ], 300),
                 Periodic(
                     [
+                        Condition(ConditionCheckEnum.HAS, TargetTypeEnum.LOCATED_IN_ROOM, RoomEnum.BL_ENTRY_YARD),
                         Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.FLAG_CHECK, PersonFlag.BEHAVIOR_1),
                         Condition(ConditionCheckEnum.HAS, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.BL_KEEP_YARD_SCRIBE),
                         Condition(ConditionCheckEnum.GREATER_THAN, TargetTypeEnum.HOUR_OF_DAY_CHECK, value=19),
