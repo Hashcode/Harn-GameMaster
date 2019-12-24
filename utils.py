@@ -854,10 +854,16 @@ def processTriggers(obj, triggers):
       elif tr.TriggerType == TriggerTypeEnum.MESSAGE:
         logd("[trigger] MESSAGE")
         if tr.Data2 is None:
-          if type(obj) == Mob and rooms[player.Room].PersonInRoom(obj.UUID):
-            for m in tr.Data:
-              cm.Print("\n" + wrapper.fill(obj.TextTranslate(m)))
-          elif type(obj) == RoomEnum and player.Room == obj:
+          logd("[trigger] 1")
+          if type(obj) == Mob:
+            if rooms[player.Room].PersonInRoom(obj.UUID):
+              for m in tr.Data:
+                cm.Print("\n" + wrapper.fill(obj.TextTranslate(m)))
+          elif type(obj) == RoomEnum:
+            if player.Room == obj:
+              for m in tr.Data:
+                cm.Print(wrapper.fill(rooms[player.Room].TextTranslate(m)))
+          else:
             for m in tr.Data:
               cm.Print(wrapper.fill(rooms[player.Room].TextTranslate(m)))
         elif player.Room == tr.Data2:
