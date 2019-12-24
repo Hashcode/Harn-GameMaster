@@ -1260,7 +1260,7 @@ class SkillEnum(IntEnum):
 
 class Skill:
   def __init__(self, name, skill_class, attr1=AttrEnum.NONE, attr2=AttrEnum.NONE, attr3=AttrEnum.NONE,
-               oml_mod=1, apsuc=100, sunsign_mod=None, hidden=False):
+               oml_mod=1, apsuc=50, sunsign_mod=None, hidden=False):
     self.Name = name
     self.SkillClass = skill_class
     self.Attr1 = attr1
@@ -1278,25 +1278,25 @@ class Skill:
 skills = {
     # PHYSICAL
     SkillEnum.ACROBATICS:
-        Skill("Acrobatics", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_AGL, ATTR_AGL, 2, 100, {SS_NAD: 2, SS_HIR: 1}),
+        Skill("Acrobatics", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_AGL, ATTR_AGL, 2, 50, {SS_NAD: 2, SS_HIR: 1}),
     SkillEnum.CLIMBING:
-        Skill("Climbing", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_DEX, ATTR_AGL, 3, 50, {SS_ULA: 2, SS_ARA: 2}),
+        Skill("Climbing", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_DEX, ATTR_AGL, 3, 25, {SS_ULA: 2, SS_ARA: 2}),
     SkillEnum.CONDITIONING:
-        Skill("Conditioning", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_STA, ATTR_WIL, 4, 100, {SS_ULA: 1, SS_LAD: 1}),
+        Skill("Conditioning", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_STA, ATTR_WIL, 4, 50, {SS_ULA: 1, SS_LAD: 1}),
     SkillEnum.DANCING:
-        Skill("Dancing", SkillClassEnum.PHYSICAL, ATTR_DEX, ATTR_AGL, ATTR_AGL, 2, 50, {SS_ULA: 1, SS_LAD: 1}, hidden=True),
+        Skill("Dancing", SkillClassEnum.PHYSICAL, ATTR_DEX, ATTR_AGL, ATTR_AGL, 2, 10, {SS_ULA: 1, SS_LAD: 1}, hidden=True),
     SkillEnum.DODGE:
-        Skill("Dodge", SkillClassEnum.PHYSICAL, ATTR_AGL, ATTR_AGL, ATTR_AGL, 3, 100, {SS_HIR: 1, SS_TAR: 1, SS_TAI: 1}),
+        Skill("Dodge", SkillClassEnum.PHYSICAL, ATTR_AGL, ATTR_AGL, ATTR_AGL, 3, 50, {SS_HIR: 1, SS_TAR: 1, SS_TAI: 1}),
     SkillEnum.JUMPING:
-        Skill("Jumping", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_AGL, ATTR_AGL, 3, 50, {SS_NAD: 2, SS_HIR: 2}),
+        Skill("Jumping", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_AGL, ATTR_AGL, 3, 25, {SS_NAD: 2, SS_HIR: 2}),
     SkillEnum.LEGERDEMAIN:
-        Skill("Legerdemain", SkillClassEnum.PHYSICAL, ATTR_DEX, ATTR_DEX, ATTR_WIL, 1, 50, {SS_SKO: 2, SS_TAI: 2, SS_TAR: 2}),
+        Skill("Legerdemain", SkillClassEnum.PHYSICAL, ATTR_DEX, ATTR_DEX, ATTR_WIL, 1, 25, {SS_SKO: 2, SS_TAI: 2, SS_TAR: 2}),
     SkillEnum.STEALTH:
-        Skill("Stealth", SkillClassEnum.PHYSICAL, ATTR_AGL, ATTR_HRG, ATTR_WIL, 3, 100, {SS_HIR: 2, SS_TAR: 2, SS_TAI: 2}),
+        Skill("Stealth", SkillClassEnum.PHYSICAL, ATTR_AGL, ATTR_HRG, ATTR_WIL, 3, 50, {SS_HIR: 2, SS_TAR: 2, SS_TAI: 2}),
     SkillEnum.SWIMMING:
-        Skill("Swimming", SkillClassEnum.PHYSICAL, ATTR_STA, ATTR_DEX, ATTR_AGL, 1, 100, {SS_SKO: 1, SS_MAS: 3, SS_LAD: 3}),
+        Skill("Swimming", SkillClassEnum.PHYSICAL, ATTR_STA, ATTR_DEX, ATTR_AGL, 1, 25, {SS_SKO: 1, SS_MAS: 3, SS_LAD: 3}),
     SkillEnum.THROWING:
-        Skill("Throwing", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_DEX, ATTR_EYE, 3, 100, {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Throwing", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_DEX, ATTR_EYE, 3, 25, {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
     # COMMUNICATION
     SkillEnum.AWARENESS:
         Skill("Awareness", SkillClassEnum.COMMUNICATION, ATTR_EYE, ATTR_HRG, ATTR_SML, 3, 50, {SS_HIR: 2, SS_TAR: 2}),
@@ -1312,37 +1312,37 @@ skills = {
         Skill("Singing", SkillClassEnum.COMMUNICATION, ATTR_HRG, ATTR_VOI, ATTR_VOI, 3, 50, {SS_MAS: 1}, hidden=True),
     # COMBAT
     SkillEnum.INITIATIVE:
-        Skill("Initiative", SkillClassEnum.COMBAT, ATTR_AGL, ATTR_WIL, ATTR_WIL, 3, 100),
+        Skill("Initiative", SkillClassEnum.COMBAT, ATTR_AGL, ATTR_WIL, ATTR_WIL, 3, 50),
     SkillEnum.UNARMED:
-        Skill("Unarmed Combat", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_AGL, 3, 100, {SS_MAS: 2, SS_LAD: 2, SS_ULA: 2}),
+        Skill("Unarmed Combat", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_AGL, 3, 50, {SS_MAS: 2, SS_LAD: 2, SS_ULA: 2}),
     SkillEnum.RIDING:
-        Skill("Riding", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_AGL, ATTR_WIL, 1, 100, {SS_ULA: 1, SS_ARA: 1}),
+        Skill("Riding", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_AGL, ATTR_WIL, 1, 50, {SS_ULA: 1, SS_ARA: 1}),
     SkillEnum.AXE:
-        Skill("Axe", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 2, 100, {SS_AHN: 1, SS_FEN: 1, SS_ANG: 1}),
+        Skill("Axe", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 2, 50, {SS_AHN: 1, SS_FEN: 1, SS_ANG: 1}),
     SkillEnum.BLOWGUN:
-        Skill("Blowgun", SkillClassEnum.COMBAT, ATTR_STA, ATTR_DEX, ATTR_EYE, 2, 100, {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Blowgun", SkillClassEnum.COMBAT, ATTR_STA, ATTR_DEX, ATTR_EYE, 2, 50, {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.BOW:
-        Skill("Bow", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_EYE, 2, 100, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Bow", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_EYE, 2, 50, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.CLUB:
-        Skill("Club", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 3, 100, {SS_ULA: 1, SS_ARA: 1}),
+        Skill("Club", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 3, 50, {SS_ULA: 1, SS_ARA: 1}),
     SkillEnum.DAGGER:
-        Skill("Dagger", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 3, 100, {SS_ANG: 2, SS_NAD: 2}),
+        Skill("Dagger", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 3, 50, {SS_ANG: 2, SS_NAD: 2}),
     SkillEnum.FLAIL:
-        Skill("Flail", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_DEX, 1, 100, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Flail", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_DEX, 1, 50, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.NET:
-        Skill("Net", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, 100, {SS_MAS: 1, SS_SKO: 1, SS_LAD: 1}),
+        Skill("Net", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, 50, {SS_MAS: 1, SS_SKO: 1, SS_LAD: 1}),
     SkillEnum.POLEARM:
-        Skill("Polearm", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 2, 100, {SS_ANG: 1, SS_ARA: 1}),
+        Skill("Polearm", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 2, 50, {SS_ANG: 1, SS_ARA: 1}),
     SkillEnum.SHIELD:
-        Skill("Shield", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_DEX, 3, 100, {SS_ULA: 1, SS_LAD: 1, SS_MAS: 1}),
+        Skill("Shield", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_DEX, 3, 50, {SS_ULA: 1, SS_LAD: 1, SS_MAS: 1}),
     SkillEnum.SLING:
-        Skill("Sling", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, 100, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Sling", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, 50, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.SPEAR:
-        Skill("Spear", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 2, 100, {SS_ARA: 1, SS_FEN: 1, SS_ULA: 1}),
+        Skill("Spear", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 2, 50, {SS_ARA: 1, SS_FEN: 1, SS_ULA: 1}),
     SkillEnum.SWORD:
-        Skill("Sword", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_DEX, 2, 100, {SS_ANG: 3, SS_AHN: 1, SS_NAD: 1}),
+        Skill("Sword", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_DEX, 2, 50, {SS_ANG: 3, SS_AHN: 1, SS_NAD: 1}),
     SkillEnum.WHIP:
-        Skill("Whip", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, 100, {SS_HIR: 1, SS_NAD: 1}),
+        Skill("Whip", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, 50, {SS_HIR: 1, SS_NAD: 1}),
     # LORE / CRAFT
     SkillEnum.AGRICULTURE:
         Skill("Agriculture", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_STA, ATTR_WIL, 2, 10, {SS_ULA: 2, SS_ARA: 2}),
@@ -1676,18 +1676,19 @@ class Person:
     if type(self) is Player:
       # store attempts
       if skill_id != SkillEnum.NONE:
-        if skill_id in self.SkillLinks:
-          self.SkillLinks[skill_id].Attempts += 1
-        else:
-          self.SkillLinks.update({skill_id: SkillLink(0, 1)})
-      # check for skillup
-      if self.SkillLinks[skill_id].Attempts > skills[skill_id].AttemptsPerSkillUpCheck:
-        # attempt to raise skill
-        r = DiceRoll(1, 100).Result() + self.SkillBase(skill_id)
-        if r > self.SkillML(skill_id, skipPenalty=True):
-          GameData.GetConsole().Print("\nYou've become better at the %s skill!" % (skills[skill_id].Name.lower()))
-          self.SkillLinks[skill_id].Points += 1
-        self.SkillLinks[skill_id].Attempts -= skills[skill_id].AttemptsPerSkillUpCheck
+        if self.SkillML(skill_id, True) < self.SkillMax(skill_id):
+          if skill_id in self.SkillLinks:
+            self.SkillLinks[skill_id].Attempts += 1
+          else:
+            self.SkillLinks.update({skill_id: SkillLink(0, 1)})
+          # check for skillup
+          if self.SkillLinks[skill_id].Attempts > skills[skill_id].AttemptsPerSkillUpCheck:
+            # attempt to raise skill
+            r = DiceRoll(1, 100).Result() + self.SkillBase(skill_id)
+            if r > self.SkillML(skill_id, skipPenalty=True):
+              GameData.GetConsole().Print("\nYou've become better at the %s skill!" % (skills[skill_id].Name.lower()))
+              self.SkillLinks[skill_id].Points += 1
+            self.SkillLinks[skill_id].Attempts -= skills[skill_id].AttemptsPerSkillUpCheck
     r = DiceRoll(1, 100).Result()
     if ml < 5:
       ml = 5
