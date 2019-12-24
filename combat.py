@@ -496,6 +496,8 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
       count = 0
       m = None
       for x in order:
+        if x.Person is None:
+          continue
         if x.Person.PersonType == PersonTypeEnum.NPC and \
            x.Flags & FLAG_DEAD == 0:
           count += 1
