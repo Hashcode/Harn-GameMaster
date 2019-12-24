@@ -113,7 +113,7 @@ class GameData:
       r.Initialize(GameData._processConditions, GameData._processTriggers)
 
   @staticmethod
-  def ProcessEvents():
+  def ProcessEvents(first=False):
     rooms = GameData.GetRooms()
     player = GameData.GetPlayer()
     # Check for time updates
@@ -131,7 +131,7 @@ class GameData:
         if rooms[room_id].Periodics is not None:
           for per in rooms[room_id].Periodics:
             next = per.LastCheck + per.DelaySeconds
-            if next >= seconds:
+            if not first and next >= seconds:
               if GameData._NextRoomEvent > next:
                 GameData._NextRoomEvent = next
               continue
@@ -150,8 +150,8 @@ class GameData:
               npc.Flags |= PERIODIC_TRIGGERED
               for per in npc.Periodics:
                 next = per.LastCheck + per.DelaySeconds
-                if next >= seconds:
-                  if GameData._NextRoomEvent > next:
+                if not first and next >= seconds:
+                  if not first and GameData._NextRoomEvent > next:
                     GameData._NextRoomEvent = next
                   continue
                 per.LastCheck = seconds

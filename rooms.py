@@ -50,6 +50,7 @@ def room_RestoreSave():
   player.ResetStats()
   # Finish Map Setup
   GameData.InitializeRooms()
+  GameData.ProcessEvents(True)
   player.SetRoom(player.Room)
   return RoomFuncResponse.SKIP
 
@@ -82,6 +83,7 @@ def room_CreateCharacter():
   player.AddItem(ItemEnum.ARMOR_LEGGINGS_CLOTH, ItemLink(1, equip=True))
   # Finish Map Setup
   GameData.InitializeRooms()
+  GameData.ProcessEvents(True)
   player.SetRoom(GameData.ROOM_START)
 
   #  cm.Print("\nSaving character ...")
@@ -364,6 +366,7 @@ rooms = {
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.EAST: Exit(RoomEnum.BL_EASTERN_WALK, DoorEnum.WAREHOUSE_DBL_DOOR),
+                 DirectionEnum.DOWN: Exit(RoomEnum.BL_RAT_WARREN_1),
              },
              periodics=[
                  Periodic(
@@ -639,6 +642,142 @@ rooms = {
                  DirectionEnum.WEST: Exit(RoomEnum.BL_CHAPEL_MAINROOM),
              }),
 
+
+    # RAT WARREN
+    RoomEnum.BL_RAT_WARREN_1:
+        Room(RoomEnum.BL_RAT_WARREN_1, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.UP: Exit(RoomEnum.BL_WAREHOUSE),
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_2),
+             }),
+    RoomEnum.BL_RAT_WARREN_2:
+        Room(RoomEnum.BL_RAT_WARREN_2, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_3),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_1),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_4),
+             }),
+    RoomEnum.BL_RAT_WARREN_3:
+        Room(RoomEnum.BL_RAT_WARREN_3, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_2),
+             }),
+    RoomEnum.BL_RAT_WARREN_4:
+        Room(RoomEnum.BL_RAT_WARREN_4, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_2),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_5),
+             }),
+    RoomEnum.BL_RAT_WARREN_5:
+        Room(RoomEnum.BL_RAT_WARREN_5, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_4),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_6),
+             }),
+    RoomEnum.BL_RAT_WARREN_6:
+        Room(RoomEnum.BL_RAT_WARREN_6, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_7),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_5),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_8),
+             }),
+    RoomEnum.BL_RAT_WARREN_7:
+        Room(RoomEnum.BL_RAT_WARREN_7, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_9),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_6),
+             }),
+    RoomEnum.BL_RAT_WARREN_8:
+        Room(RoomEnum.BL_RAT_WARREN_8, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_6),
+             }),
+    RoomEnum.BL_RAT_WARREN_9:
+        Room(RoomEnum.BL_RAT_WARREN_9, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_10),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_7),
+             }),
+    RoomEnum.BL_RAT_WARREN_10:
+        Room(RoomEnum.BL_RAT_WARREN_10, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_9),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_11),
+             }),
+    RoomEnum.BL_RAT_WARREN_11:
+        Room(RoomEnum.BL_RAT_WARREN_11, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_13),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_10),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_12),
+             }),
+    RoomEnum.BL_RAT_WARREN_12:
+        Room(RoomEnum.BL_RAT_WARREN_12, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_11),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_14),
+             }),
+    RoomEnum.BL_RAT_WARREN_13:
+        Room(RoomEnum.BL_RAT_WARREN_13, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_11),
+             },
+             periodics=[
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT_GUARD, 1),
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT_GUARD)),
+                     ], 3600),
+             ]),
+    RoomEnum.BL_RAT_WARREN_14:
+        Room(RoomEnum.BL_RAT_WARREN_14, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_12),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_15),
+             },
+             periodics=[
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT_GUARD, 1),
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT_GUARD)),
+                     ], 3600),
+             ]),
+    RoomEnum.BL_RAT_WARREN_15:
+        Room(RoomEnum.BL_RAT_WARREN_15, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             ["** TODO **"],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_14),
+             },
+             periodics=[
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT_NOBLE, 1),
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT_NOBLE)),
+                     ], 3600),
+             ]),
 
     # OUTSIDE KEEP
     RoomEnum.BL_ROAD_TO_KEEP:
