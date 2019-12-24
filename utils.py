@@ -429,7 +429,7 @@ def actionSkills():
         continue
       if sk.Hidden:
         continue
-      cm.Print("%-15s: %s%s%s/%s%s%s/%s%s%s  ML:%-3d %d" %
+      cm.Print("%-15s: %s%s%s/%s%s%s/%s%s%s  ML:%-3d" %
                (sk.Name,
                 attrColor(player.Attr[skills[sk_id].Attr1]),
                 attributes[skills[sk_id].Attr1].Abbrev,
@@ -440,8 +440,7 @@ def actionSkills():
                 attrColor(player.Attr[skills[sk_id].Attr3]),
                 attributes[skills[sk_id].Attr3].Abbrev,
                 ANSI.TEXT_NORMAL,
-                player.SkillML(sk_id),
-                player.SkillAttempts(sk_id)))
+                player.SkillML(sk_id)))
 
 
 def actionInfo():
