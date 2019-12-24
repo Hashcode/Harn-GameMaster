@@ -87,11 +87,11 @@ def LoadStatsDB():
     return players
 
 
-def SaveStatsDB(name, played, info, score):
+def SaveStatsDB(name, played, info):
   url = "%s/%s/%s" % (URL_BASE, DB_UUID, STATS_FILE)
   name = name.upper()
   players = LoadStatsDB()
-  players.update({name: {"played": played, "info": info, "score": score}})
+  players.update({name: {"played": played, "info": info}})
   try:
     r = requests.put(url, json=json.dumps(players, indent=4))
     if r.status_code in [200, 201]:
@@ -110,8 +110,7 @@ def SavePlayer(save_obj, info, password):
   else:
     state_str = codecs.encode(state_bytes, "base64").decode("utf-8")
   if SaveDB(save_obj.Name, password, state_str):
-    return SaveStatsDB(save_obj.Name, int(save_obj.SecondsPlayed / 86400),
-                       info, 0)
+    return SaveStatsDB(save_obj.Name, round(save_obj.SecondsPlayed / 86400, 2), info)
   return False
 
 
