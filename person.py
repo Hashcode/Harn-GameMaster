@@ -441,7 +441,7 @@ persons = {
                     ],
                     [
                         Trigger(TriggerTypeEnum.MESSAGE,
-                                "@@NAME_CAP@@ glances at the scribe and grumbles under his breath."),
+                                ["@@NAME_CAP@@ glances at the scribe and grumbles under his breath."]),
                     ], 300),
                 Periodic(
                     [
@@ -454,8 +454,10 @@ persons = {
                         Trigger(TriggerTypeEnum.PERSON_DESC,
                                 "@@NAME_CAP@@ seems to be on his way somewhere."),
                         Trigger(TriggerTypeEnum.MESSAGE,
-                                "@@NAME_CAP@@ turns to the scribe. \"The hour grows late and I am "
-                                "in need of a good meal. I shall see you in the morn.\""),
+                                [
+                                    "@@NAME_CAP@@ turns to the scribe. \"The hour grows late and I am "
+                                    "in need of a good meal. I shall see you in the morn.\"",
+                                ]),
                         Trigger(TriggerTypeEnum.PERSON_MOVE, DirectionEnum.SOUTH),
                         Trigger(TriggerTypeEnum.GIVE_FLAG, PersonFlag.BEHAVIOR_1),
                         Trigger(TriggerTypeEnum.END),
@@ -486,11 +488,11 @@ persons = {
                     [
                         Trigger(TriggerTypeEnum.PERSON_DESC, "@@NAME_CAP@@ is resting here."),
                         Trigger(TriggerTypeEnum.MESSAGE,
-                                "@@NAME_CAP@@ unlocks the door to a private apartment with an iron key."),
+                                ["@@NAME_CAP@@ unlocks the door to a private apartment with an iron key."]),
                         Trigger(TriggerTypeEnum.DOOR_UNLOCK, DoorEnum.CORPORAL_APPT_DOOR),
                         Trigger(TriggerTypeEnum.PERSON_MOVE, DirectionEnum.SOUTH),
                         Trigger(TriggerTypeEnum.MESSAGE,
-                                "@@NAME_CAP@@ lays down on the bed."),
+                                ["@@NAME_CAP@@ lays down on the bed."]),
                         Trigger(TriggerTypeEnum.END),
                     ], 30),
                 Periodic(
@@ -511,10 +513,10 @@ persons = {
                     [
                         Trigger(TriggerTypeEnum.PERSON_DESC,
                                 "@@NAME_CAP@@ seems to be on his way somewhere."),
-                        Trigger(TriggerTypeEnum.MESSAGE, "@@NAME_CAP@@ stands up."),
+                        Trigger(TriggerTypeEnum.MESSAGE, ["@@NAME_CAP@@ stands up."]),
                         Trigger(TriggerTypeEnum.PERSON_MOVE, DirectionEnum.NORTH),
                         Trigger(TriggerTypeEnum.MESSAGE,
-                                "@@NAME_CAP@@ locks the door to a private apartment with an iron key."),
+                                ["@@NAME_CAP@@ locks the door to a private apartment with an iron key."]),
                         Trigger(TriggerTypeEnum.DOOR_LOCK, DoorEnum.CORPORAL_APPT_DOOR),
                         Trigger(TriggerTypeEnum.GIVE_FLAG, PersonFlag.BEHAVIOR_2),
                         Trigger(TriggerTypeEnum.END),
@@ -578,7 +580,7 @@ persons = {
                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=15),
                     ],
                     [
-                        Trigger(TriggerTypeEnum.MESSAGE, "@@NAME_CAP@@ scribbles something in his notes."),
+                        Trigger(TriggerTypeEnum.MESSAGE, ["@@NAME_CAP@@ scribbles something in his notes."]),
                     ], 300),
             ]),
     PersonEnum.BL_SMITHY:
