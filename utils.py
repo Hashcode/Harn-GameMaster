@@ -646,6 +646,7 @@ def processConditions(room_id, obj, conditions):
   if conditions is not None:
     for c in conditions:
       if c.TargetType == TargetTypeEnum.PLAYER_INVEN:
+        logd("[cond] PLAYER_INVEN: %d" % (c.Data))
         if c.ConditionCheck == ConditionCheckEnum.HAS:
           if c.Data not in player.ItemLinks.keys():
             return False
@@ -653,6 +654,7 @@ def processConditions(room_id, obj, conditions):
           if c.Data in player.ItemLinks.keys():
             return False
       elif c.TargetType == TargetTypeEnum.PLAYER_QUEST:
+        logd("[cond] PLAYER_QUEST: %d" % (c.Data))
         if c.ConditionCheck == ConditionCheckEnum.HAS:
           if not player.HasQuest(c.Data):
             return False
@@ -660,6 +662,7 @@ def processConditions(room_id, obj, conditions):
           if player.HasQuest(c.Data):
             return False
       elif c.TargetType == TargetTypeEnum.PLAYER_QUEST_COMPLETE:
+        logd("[cond] PLAYER_QUEST_COMPLETE: %d" % (c.Data))
         if c.ConditionCheck == ConditionCheckEnum.HAS:
           if not player.HasQuest(c.Data):
             return False
@@ -671,6 +674,7 @@ def processConditions(room_id, obj, conditions):
           if player.HasQuest(c.Data, completed=True):
             return False
       elif c.TargetType == TargetTypeEnum.ITEM_IN_ROOM:
+        logd("[cond] ITEM_IN_ROOM: room=%d, item=%d" % (room_id, c.Data))
         count = 0
         for item_id, ri in rooms[room_id].RoomItems.items():
           if item_id == c.Data:
@@ -689,13 +693,13 @@ def processConditions(room_id, obj, conditions):
           if count >= c.Value:
             return False
       elif c.TargetType == TargetTypeEnum.MOB_IN_ROOM:
+        logd("[cond] MOB_IN_ROOM: room=%d, mob=%d" % (room_id, c.Data))
         match = False
         count = 0
         for p in rooms[room_id].Persons:
           if p.PersonID == c.Data:
             count += 1
             match = True
-        logd("[cond] MOB_IN_ROOM: %d == %d" % (c.Data, count))
         if c.ConditionCheck == ConditionCheckEnum.HAS and not match:
             return False
         if c.ConditionCheck == ConditionCheckEnum.HAS_NOT and match:
@@ -710,12 +714,14 @@ def processConditions(room_id, obj, conditions):
           if count >= c.Value:
             return False
       elif c.TargetType == TargetTypeEnum.LOCATED_IN_ROOM:
+        logd("[cond] LOCATED_IN_ROOM: room=%d" % (c.Data))
         if type(obj) is Mob:
           if c.ConditionCheck == ConditionCheckEnum.HAS and not rooms[c.Data].PersonInRoom(obj.UUID):
             return False
           if c.ConditionCheck == ConditionCheckEnum.HAS_NOT and rooms[c.Data].PersonInRoom(obj.UUID):
             return False
       elif c.TargetType == TargetTypeEnum.PERCENT_CHANCE:
+        logd("[cond] PERCENT_CHANCE: percent=%d" % (c.Value))
         r = DiceRoll(1, 100).Result()
         if c.ConditionCheck == ConditionCheckEnum.GREATER_THAN and \
            r <= c.Value:
@@ -792,30 +798,40 @@ def processTriggers(obj, triggers):
     r = DiceRoll(1, 100).Result()
     if r <= tr.Chance:
       if tr.TriggerType == TriggerTypeEnum.ITEM_GIVE:
+        logd("[trigger] ITEM_GIVE: %d" % (tr.Data))
         player.AddItem(tr.Data, ItemLink())
       elif tr.TriggerType == TriggerTypeEnum.ITEM_TAKE:
+        logd("[trigger] ITEM_TAKE: %d" % (tr.Data))
         player.RemoveItem(tr.Data, ItemLink())
       elif tr.TriggerType == TriggerTypeEnum.ITEM_SELL:
+        logd("[trigger] ITEM_SELL")
         actionShopSell(obj)
       elif tr.TriggerType == TriggerTypeEnum.ITEM_BUY:
+        logd("[trigger] ITEM_BUY")
         actionShopBuy(obj)
       elif tr.TriggerType == TriggerTypeEnum.ROOM_SPAWN:
-        logd("[trigger] Room Spawn [%s]: %d" % (rooms[obj].Title, tr.Data.Person))
+        logd("[trigger] ROOM_SPAWN [%s]: %d" % (rooms[obj].Title, tr.Data.Person))
         p = tr.Data.Create(obj, processConditions, processTriggers)
         if p is not None:
           rooms[obj].AddPerson(p)
       elif tr.TriggerType == TriggerTypeEnum.ROOM_DESPAWN:
+        logd("[trigger] ROOM_DESPAWN")
         # TODO:
         cm.Print("* Coming Soon *")
       elif tr.TriggerType == TriggerTypeEnum.CURRENCY_GIVE:
+        logd("[trigger] CURRENCY_GIVE")
         player.Currency += int(tr.Data)
       elif tr.TriggerType == TriggerTypeEnum.CURRENCY_TAKE:
+        logd("[trigger] CURRENCY_TAKE")
         player.Currency -= int(tr.Data)
       elif tr.TriggerType == TriggerTypeEnum.QUEST_GIVE:
+        logd("[trigger] QUEST_GIVE")
         player.AddQuest(tr.Data)
       elif tr.TriggerType == TriggerTypeEnum.QUEST_COMPLETE:
+        logd("[trigger] QUEST_COMPLETE")
         player.CompleteQuest(tr.Data)
       elif tr.TriggerType == TriggerTypeEnum.PERSON_ATTACK:
+        logd("[trigger] PERSON_ATTACK")
         if type(obj) is Mob:
           player.SetTalking(False)
           cm.Print("%s%s attacks you!%s" %
@@ -823,9 +839,11 @@ def processTriggers(obj, triggers):
                     ANSI.TEXT_NORMAL))
           player.CombatTarget = obj.UUID
       elif tr.TriggerType == TriggerTypeEnum.PERSON_DESC:
+        logd("[trigger] PERSON_DESC")
         if type(obj) == Mob:
           obj.LongDescription = obj.TextTranslate(tr.Data)
       elif tr.TriggerType == TriggerTypeEnum.ZONE_MESSAGE:
+        logd("[trigger] ZONE_MESSAGE")
         if tr.Data2 is None:
           if player.Room != obj and rooms[player.Room].Zone == rooms[obj].Zone:
             for m in tr.Data:
@@ -835,6 +853,7 @@ def processTriggers(obj, triggers):
             for m in tr.Data:
               cm.Print("\n" + wrapper.fill(rooms[obj].TextTranslate(m)))
       elif tr.TriggerType == TriggerTypeEnum.MESSAGE:
+        logd("[trigger] MESSAGE")
         if tr.Data2 is None:
           if type(obj) == Mob and rooms[player.Room].PersonInRoom(obj.UUID):
             for m in tr.Data:
@@ -846,18 +865,23 @@ def processTriggers(obj, triggers):
           for m in tr.Data:
             cm.Print(wrapper.fill(m))
       elif tr.TriggerType == TriggerTypeEnum.MOVE:
+        logd("[trigger] MOVE")
         # TODO:
         cm.Print("* Coming Soon *")
       elif tr.TriggerType == TriggerTypeEnum.DELAY:
+        logd("[trigger] DELAY")
         obj.DelayTimestamp = player.PlayerTime()
         obj.DelaySeconds = int(tr.Data)
       elif tr.TriggerType == TriggerTypeEnum.GIVE_FLAG:
+        logd("[trigger] GIVE_FLAG")
         if type(obj) == Mob or type(obj) == Player:
           obj.Flags |= tr.Data
       elif tr.TriggerType == TriggerTypeEnum.TAKE_FLAG:
+        logd("[trigger] TAKE_FLAG")
         if type(obj) == Mob or type(obj) == Player:
           obj.Flags &= ~tr.Data
       elif tr.TriggerType == TriggerTypeEnum.PERSON_MOVE:
+        logd("[trigger] PERSON_MOVE")
         if type(obj) == Mob:
           r = None
           for room_id in rooms.keys():
@@ -884,16 +908,19 @@ def processTriggers(obj, triggers):
             else:
               loge("%s cannot move %s from %s" % (obj.Name.capitalize(), directions[tr.Data].Names[0], r.Title))
       elif tr.TriggerType == TriggerTypeEnum.DOOR_UNLOCK:
+        logd("[trigger] DOOR_UNLOCK")
         ds = player.DoorState(tr.Data)
         if ds is not None:
           ds.Closed = True
           ds.Locked = False
       elif tr.TriggerType == TriggerTypeEnum.DOOR_LOCK:
+        logd("[trigger] DOOR_LOCK")
         ds = player.DoorState(tr.Data)
         if ds is not None:
           ds.Closed = True
           ds.Locked = True
       elif tr.TriggerType == TriggerTypeEnum.PAUSE:
+        logd("[trigger] PAUSE")
         sleep(tr.Data)
       elif tr.TriggerType == TriggerTypeEnum.END:
         logd("[trigger] END")
