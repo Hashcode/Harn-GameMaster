@@ -2570,7 +2570,7 @@ class Room:
   def HasLight(self):
     player = GameData.GetPlayer()
     items = GameData.GetItems()
-    if player.GameTimeIsDay():
+    if self.Flags & RoomFlag.OUTSIDE > 0 and player.GameTimeIsDay():
       return True
     if self.Flags & RoomFlag.LIGHT > 0:
       return True
