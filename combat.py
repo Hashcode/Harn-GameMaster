@@ -376,9 +376,9 @@ def HandleImpactDMG(player, att, defe, at, res_level):
       if ia.Action == ImpactActionEnum.FUMBLE:
         # treat unarmed fumble as stumble
         if len(defe.Attacks) < 1:
-          ia.Action = ResultEnum.STUMBLE
+          ia.Action = ImpactActionEnum.STUMBLE
         elif defe.Attacks[0].SkillID == SkillEnum.UNARMED:
-          ia.Action = ResultEnum.STUMBLE
+          ia.Action = ImpactActionEnum.STUMBLE
         else:
           r = DiceRoll(ia.Level, 6).Result() + defe.Person.PhysicalPenalty()
           if r > defe.Person.Attr[AttrEnum.DEXTERITY]:
@@ -714,6 +714,8 @@ def combat(player, enemies):
     # - bloodloss
     all_dead = True
     for x in order:
+      if x.Person is None:
+        continue
       # check for bleed every 6 rounds (1 minute)
       if round_count % 6 == 0:
         if x.Bleed > 0:
