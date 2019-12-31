@@ -320,7 +320,7 @@ def HandleImpactDMG(player, att, defe, at, res_level):
                         impact + wounds[ia.Action].IPBonus)
         defe.Person.Wounds.append(w)
 
-        # determine if the Injury Point Index is > END == DEATH
+        # determine if the Injury Point Index is > STA == DEATH
         logd("%s WOUND DEATH check: %d vs. %d STA" %
              (defe.Person.Name, defe.Person.IPIndex(),
               defe.Person.Attr[AttrEnum.STAMINA]))
