@@ -127,9 +127,9 @@ items = {
                SkillEnum.CLUB, 10, 5, 0, DiceRoll(0, 0, 2),
                DamageTypeEnum.BLUNT, flags=IFLAG_NO_SELL),
     ItemEnum.WEAPON_CLUB:
-        Weapon("wooden club", QualityEnum.SUP, MaterialEnum.WOOD, 4.5,
+        Weapon("wooden club", QualityEnum.INF, MaterialEnum.WOOD, 4.5,
                SkillEnum.CLUB, 15, 5, 0, DiceRoll(1, 4),
-               DamageTypeEnum.BLUNT, flags=IFLAG_NO_SELL),
+               DamageTypeEnum.BLUNT),
     ItemEnum.WEAPON_MACE:
         Weapon("iron mace", QualityEnum.SUP, MaterialEnum.STEEL_WOOD, 6,
                SkillEnum.CLUB, 15, 5, 0, DiceRoll(1, 6, 1),
@@ -474,22 +474,22 @@ items = {
     # MISC ARMOR
     ItemEnum.ARMOR_STAINED_QUILT_TUNIC:
         Armor("stained quilt tunic",
-              QualityEnum.INF, MaterialEnum.QUILT, AL_2,
+              QualityEnum.TER, MaterialEnum.QUILT, AL_2,
               COV_Ua | COV_Sh | COV_Tx | COV_Ab | COV_Hp | COV_Gr),
     ItemEnum.ARMOR_STAINED_QUILT_COWL:
         Armor("stained quilt cowl",
-              QualityEnum.INF, MaterialEnum.QUILT, AL_2,
+              QualityEnum.TER, MaterialEnum.QUILT, AL_2,
               COV_Sk | COV_Nk),
     ItemEnum.ARMOR_STAINED_QUILT_LEGGINGS:
         Armor("stained quilt leggings",
-              QualityEnum.INF, MaterialEnum.QUILT, AL_2_5,
+              QualityEnum.TER, MaterialEnum.QUILT, AL_2_5,
               COV_Hp | COV_Gr | COV_Th | COV_Kn | COV_Ca | COV_Ft),
 
     # RING
 
     ItemEnum.RING_ATTACK_SILVER:
         Ring("silver ring", QualityEnum.SUP, MaterialEnum.SILVER, 0.1, 1500,
-             flags=IFLAG_MAGIC, eff=[Effect(EffectTypeEnum.ATK, 2)]),
+             flags=IFLAG_MAGIC, eff=[Effect(EffectTypeEnum.DEX, 1)]),
 
     ItemEnum.RING_HP_GOLD:
         Ring("gold ring", QualityEnum.SUP, MaterialEnum.GOLD, 0.1, 2500,
@@ -509,7 +509,7 @@ items = {
              onGet=[
                  Trigger(TriggerTypeEnum.MESSAGE, ["You pinch your nose trying to pick up the rat fur, "
                                                    "wondering if this time you'll be successful."]),
-                 Trigger(TriggerTypeEnum.DENY, chance=50),
+                 Trigger(TriggerTypeEnum.DENY, chance=90),
              ]),
     ItemEnum.MISC_TORCH:
         Item(ItemTypeEnum.MISC, "torch",
