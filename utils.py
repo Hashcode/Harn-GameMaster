@@ -53,7 +53,10 @@ def filterLinks(item_links, equipped=False, equippable=False, flags=0,
     if equippable:
       if not items[item_id].ItemType in [ItemTypeEnum.WEAPON, ItemTypeEnum.ARMOR, ItemTypeEnum.RING]:
         continue
-    if not equipped and il.Equipped and il.Quantity == 1:
+    qty = il.Quantity
+    if not equipped and il.Equipped:
+      qty -= 1
+    if qty < 1:
       continue
     if equipped and not il.Equipped:
       continue
@@ -61,7 +64,10 @@ def filterLinks(item_links, equipped=False, equippable=False, flags=0,
       continue
     if noflags > 0 and items[item_id].Flags & noflags > 0:
       continue
-    item_dict.update({item_id: il})
+    if equipped:
+      item_dict.update({item_id: ItemLink(1, True)})
+    else:
+      item_dict.update({item_id: ItemLink(qty)})
   return item_dict
 
 
@@ -86,7 +92,7 @@ def printItems(item_links, number=False, stats=False, shop=False,
     if number:
       cm.Print("%2d. %-30s%s%s" % (count, item_name, item_info, item_value))
     else:
-      if il.Quantity > 1 and not il.Equipped:
+      if il.Quantity > 1:
         cm.Print("%-30s%s%s" %
                  (("(%d) " % il.Quantity) + item_name, item_info, item_value))
       else:
