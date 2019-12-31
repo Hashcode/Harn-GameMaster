@@ -42,8 +42,8 @@ persons = {
                 ItemEnum.MISC_RAT_FUR: 100,
             }),
     PersonEnum.MON_RAT_LARGE:
-        Mob(PersonEnum.MON_RAT_LARGE, "an large nasty-looking rat",
-            "An large nasty-looking rat scrambles across the ground.", 40, 4, 30,
+        Mob(PersonEnum.MON_RAT_LARGE, "a large nasty-looking rat",
+            "A large nasty-looking rat scrambles across the ground.", 40, 4, 30,
             AimEnum.LOW, PersonFlag.AGGRESSIVE, MaterialEnum.FUR_LT,
             attrs={
                 AttrEnum.SEX: 0,
