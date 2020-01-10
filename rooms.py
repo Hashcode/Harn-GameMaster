@@ -11,7 +11,7 @@ from db_jsonstore import (ExistsDB, LoadPlayer)
 from gamedata import (GameData)
 from global_defines import (PersonEnum, PersonFlag, ItemEnum, ItemLink, DoorEnum, Door, DoorState, DirectionEnum,
                             NewPerson, ConditionCheckEnum, TargetTypeEnum, Condition, TriggerTypeEnum, Trigger, Periodic,
-                            RoomFuncResponse, RoomEnum, Exit, RoomFlag, Room)
+                            RoomFuncResponse, RoomEnum, Exit, RoomFlag, Room, QuestEnum)
 # from utils import (actionSave)
 
 
@@ -376,7 +376,7 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT)),
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT)),
                          Trigger(TriggerTypeEnum.MESSAGE, ["The sound of scurring claws comes from the west."],
                                  RoomEnum.BL_EASTERN_WALK),
                      ], 300),
@@ -659,7 +659,7 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT)),
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT)),
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_2:
@@ -679,11 +679,19 @@ rooms = {
              periodics=[
                  Periodic(
                      [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.ITEM_IN_ROOM, ItemEnum.ARMOR_STAINED_QUILT_COWL, 1),
+                         Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST, QuestEnum.WAREHOUSE_COWL),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_ITEM, ItemEnum.ARMOR_STAINED_QUILT_COWL),
+                     ], 36000),
+                 Periodic(
+                     [
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT_LARGE, 1),
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT_LARGE)),
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_LARGE)),
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_4:
@@ -700,7 +708,7 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT)),
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT)),
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_5:
@@ -717,7 +725,7 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT)),
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT)),
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_6:
@@ -742,7 +750,7 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT_LARGE)),
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_LARGE)),
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_8:
@@ -758,7 +766,7 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT_LARGE)),
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_LARGE)),
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_9:
@@ -775,7 +783,7 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT_LARGE)),
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_LARGE)),
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_10:
@@ -792,7 +800,7 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT_LARGE)),
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_LARGE)),
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_11:
@@ -817,7 +825,7 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT_GUARD)),
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_GUARD)),
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_13:
@@ -829,11 +837,19 @@ rooms = {
              periodics=[
                  Periodic(
                      [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.ITEM_IN_ROOM, ItemEnum.ARMOR_STAINED_QUILT_LEGGINGS, 1),
+                         Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST, QuestEnum.WAREHOUSE_LEGGINGS),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_ITEM, ItemEnum.ARMOR_STAINED_QUILT_LEGGINGS),
+                     ], 36000),
+                 Periodic(
+                     [
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT_LARGE, 1),
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT_LARGE)),
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_LARGE)),
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_14:
@@ -850,7 +866,7 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT_GUARD)),
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_GUARD)),
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_15:
@@ -866,7 +882,7 @@ rooms = {
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN, NewPerson(PersonEnum.MON_RAT_NOBLE)),
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_NOBLE)),
                      ], 3600),
              ]),
 

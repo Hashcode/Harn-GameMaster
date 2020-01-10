@@ -524,8 +524,10 @@ class Item:
 
 
 class Shield(Item):
-  def __init__(self, name, qual, material, mass, skill, ar, dr, flags=0, eff=None):
-    super().__init__(ItemTypeEnum.SHIELD, name, qual, material, mass, flags, eff)
+  def __init__(self, name, qual, material, mass, skill, ar, dr, flags=0, eff=None,
+               onGet=None, onDrop=None, onEquip=None, onRemove=None):
+    super().__init__(ItemTypeEnum.SHIELD, name, qual, material, mass, flags, eff,
+                     onGet, onDrop, onEquip, onRemove)
     self.Skill = skill
     self.AttackRating = ar
     self.DefenseRating = dr
@@ -538,8 +540,9 @@ class Shield(Item):
 
 class Weapon(Item):
   def __init__(self, name, qual, material, mass, skill, ar, dr, sh_penalty, dice_roll, dmg_type=DamageTypeEnum.BLUNT,
-               flags=0, eff=None):
-    super().__init__(ItemTypeEnum.WEAPON, name, qual, material, mass, flags, eff)
+               flags=0, eff=None, onGet=None, onDrop=None, onEquip=None, onRemove=None):
+    super().__init__(ItemTypeEnum.WEAPON, name, qual, material, mass, flags, eff,
+                     onGet, onDrop, onEquip, onRemove)
     self.Skill = skill
     self.AttackRating = ar
     self.DefenseRating = dr
@@ -554,13 +557,15 @@ class Weapon(Item):
 
 
 class Armor(Item):
-  def __init__(self, name, qual, material, layer=0, coverage=0, flags=0, eff=None):
+  def __init__(self, name, qual, material, layer=0, coverage=0, flags=0, eff=None,
+               onGet=None, onDrop=None, onEquip=None, onRemove=None):
     # TODO use coverage / material Type
     mass = 0
     for x in CoverageEnum:
       if coverage & 1 << x > 0:
         mass += body_parts[x].Mass
-    super().__init__(ItemTypeEnum.ARMOR, name, qual, material, mass, flags, eff)
+    super().__init__(ItemTypeEnum.ARMOR, name, qual, material, mass, flags, eff,
+                     onGet, onDrop, onEquip, onRemove)
     self.Layer = layer
     self.Coverage = coverage
 
@@ -583,8 +588,10 @@ class Armor(Item):
 
 
 class Ring(Item):
-  def __init__(self, name, qual, material, mass, value=0, flags=0, eff=None):
-    super().__init__(ItemTypeEnum.RING, name, qual, material, mass, flags, eff)
+  def __init__(self, name, qual, material, mass, value=0, flags=0, eff=None,
+               onGet=None, onDrop=None, onEquip=None, onRemove=None):
+    super().__init__(ItemTypeEnum.RING, name, qual, material, mass, flags, eff,
+                     onGet, onDrop, onEquip, onRemove)
     self.Value = value
 
 
@@ -1837,8 +1844,8 @@ class TriggerTypeEnum(IntEnum):
   ITEM_TAKE = 2
   ITEM_BUY = 3
   ITEM_SELL = 4
-  ROOM_SPAWN = 5
-  ROOM_DESPAWN = 6
+  ROOM_SPAWN_MOB = 5
+  ROOM_DESPAWN_MOB = 6
   CURRENCY_GIVE = 7
   CURRENCY_TAKE = 8
   QUEST_GIVE = 9
@@ -1856,6 +1863,8 @@ class TriggerTypeEnum(IntEnum):
   DOOR_UNLOCK = 21
   DOOR_LOCK = 22
   PAUSE = 23
+  ROOM_SPAWN_ITEM = 24
+  ROOM_DESPAWN_ITEM = 25
   END = 127
 
 
@@ -1972,6 +1981,8 @@ class QuestEnum(IntEnum):
   GUARD_DELIVERY = 1
   GUARD_INTRO = 2
   WAREHOUSE_RATS = 3
+  WAREHOUSE_COWL = 4
+  WAREHOUSE_LEGGINGS = 5
 
 
 class Quest:
@@ -1986,6 +1997,8 @@ quests = {
     QuestEnum.GUARD_INTRO: Quest("Talk to the guard.", hidden=True),
     QuestEnum.GUARD_DELIVERY: Quest("Deliver a weathered package to the provisioner."),
     QuestEnum.WAREHOUSE_RATS: Quest("Sell rat furs to the provisioner.", repeatable=True),
+    QuestEnum.WAREHOUSE_COWL: Quest("Find the stained cowl.", hidden=True),
+    QuestEnum.WAREHOUSE_LEGGINGS: Quest("Find the stained leggings.", hidden=True),
 }
 
 

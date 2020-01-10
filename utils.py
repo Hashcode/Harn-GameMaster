@@ -814,13 +814,13 @@ def processTriggers(obj, triggers):
       elif tr.TriggerType == TriggerTypeEnum.ITEM_BUY:
         logd("[trigger] ITEM_BUY")
         actionShopBuy(obj)
-      elif tr.TriggerType == TriggerTypeEnum.ROOM_SPAWN:
-        logd("[trigger] ROOM_SPAWN [%s]: %d" % (rooms[obj].Title, tr.Data.Person))
+      elif tr.TriggerType == TriggerTypeEnum.ROOM_SPAWN_MOB:
+        logd("[trigger] ROOM_SPAWN_MOB [%s]: %d" % (rooms[obj].Title, tr.Data.Person))
         p = tr.Data.Create(obj, processConditions, processTriggers)
         if p is not None:
           rooms[obj].AddPerson(p)
-      elif tr.TriggerType == TriggerTypeEnum.ROOM_DESPAWN:
-        logd("[trigger] ROOM_DESPAWN")
+      elif tr.TriggerType == TriggerTypeEnum.ROOM_DESPAWN_MOB:
+        logd("[trigger] ROOM_DESPAWN_MOB")
         # TODO:
         cm.Print("* Coming Soon *")
       elif tr.TriggerType == TriggerTypeEnum.CURRENCY_GIVE:
@@ -933,6 +933,13 @@ def processTriggers(obj, triggers):
       elif tr.TriggerType == TriggerTypeEnum.PAUSE:
         logd("[trigger] PAUSE")
         sleep(tr.Data)
+      elif tr.TriggerType == TriggerTypeEnum.ROOM_SPAWN_ITEM:
+        logd("[trigger] ROOM_SPAWN_ITEM: %d" % (tr.Data))
+        rooms[obj].AddItem(tr.Data, ItemLink())
+      elif tr.TriggerType == TriggerTypeEnum.ROOM_DESPAWN_ITEM:
+        logd("[trigger] ROOM_DESPAWN_ITEM: %d" % (tr.Data))
+        # TODO:
+        cm.Print("* Coming Soon *")
       elif tr.TriggerType == TriggerTypeEnum.END:
         logd("[trigger] END")
         return False

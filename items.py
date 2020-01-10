@@ -5,7 +5,7 @@
 from global_defines import (DiceRoll, MaterialEnum, QualityEnum, CoverageEnum,
                             Effect, EffectTypeEnum, ItemFlagEnum, ItemTypeEnum,
                             ItemEnum, Item, Weapon, Shield, Armor, Ring,
-                            DamageTypeEnum, SkillEnum,
+                            DamageTypeEnum, SkillEnum, QuestEnum,
                             Trigger, TriggerTypeEnum)
 
 
@@ -479,11 +479,17 @@ items = {
     ItemEnum.ARMOR_STAINED_QUILT_COWL:
         Armor("stained quilt cowl",
               QualityEnum.TER, MaterialEnum.QUILT, AL_2,
-              COV_Sk | COV_Nk),
+              COV_Sk | COV_Nk,
+              onGet=[
+                  Trigger(TriggerTypeEnum.QUEST_COMPLETE, QuestEnum.WAREHOUSE_COWL)
+              ]),
     ItemEnum.ARMOR_STAINED_QUILT_LEGGINGS:
         Armor("stained quilt leggings",
               QualityEnum.TER, MaterialEnum.QUILT, AL_2_5,
-              COV_Hp | COV_Gr | COV_Th | COV_Kn | COV_Ca | COV_Ft),
+              COV_Hp | COV_Gr | COV_Th | COV_Kn | COV_Ca | COV_Ft,
+              onGet=[
+                  Trigger(TriggerTypeEnum.QUEST_COMPLETE, QuestEnum.WAREHOUSE_LEGGINGS)
+              ]),
 
     # RING
 

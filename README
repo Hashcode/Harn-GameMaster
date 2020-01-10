@@ -31,7 +31,7 @@ x Lighting / Darkness
 x Time / Hour of Day
 / Tutorial
 x Dynamic Mob Placement
-- Dynamic Item Placement
+x Dynamic Item Placement
 - Room Objects
   - Examine Action
 - Turn / Push / Pull Actions
@@ -44,10 +44,13 @@ x Dynamic Mob Placement
   x Smithy
   x Tanner
   x Weaponsmith
+- Trainer:
+  - Weapon Trainer (price based on current skill level -- up to max ML5)
 - Rooms:
   x Entry: Descriptions
   / Entry: Mobs
   / Entry: Quests
+  / Rat Warren (Entry Dungeon)
   - Eastern Walk: Descriptions
   - Eastern Walk: Mobs / Talk Data
   - Eastern Walk: Quests

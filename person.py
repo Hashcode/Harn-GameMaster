@@ -67,7 +67,6 @@ persons = {
                 SkillEnum.STEALTH: 0,
             },
             loot={
-                ItemEnum.ARMOR_STAINED_QUILT_COWL: 50,
                 ItemEnum.MISC_RAT_FUR: 100,
             }),
     PersonEnum.MON_RAT_GUARD:
@@ -97,7 +96,6 @@ persons = {
                 SkillEnum.STEALTH: 0,
             },
             loot={
-                ItemEnum.ARMOR_STAINED_QUILT_LEGGINGS: 50,
                 ItemEnum.MISC_RAT_FUR: 100,
             }),
     PersonEnum.MON_RAT_NOBLE:
