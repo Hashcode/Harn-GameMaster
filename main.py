@@ -20,8 +20,6 @@ from console import (ANSI, ConsoleManager)
 from gamedata import (GameData)
 from global_defines import (quests, Player, RoomEnum, RoomFuncResponse)
 
-TestMode = True
-
 ROOM_START = RoomEnum.BL_KEEP_GATEHOUSE
 ROOM_RESPAWN = RoomEnum.BL_PRIEST_CHAMBER
 
