@@ -245,7 +245,7 @@ persons = {
                                         "You'll want to train your SKILLS up over time with practice.\"",
                                         "\"To use items like weapons, armor and other things, you'll need to GET, DROP, EQUIP and "
                                         "REMOVE them. Mind you, I wouldn't leave anything on the ground for long.\"",
-                                        "\"You should take some time and look at the STATS and INFO about yourself.  Best to know "
+                                        "\"You should take some time and look at the STATS and CHARACTER about yourself.  Best to know "
                                         "what you're good at.\"",
                                     ]),
                         ]),
