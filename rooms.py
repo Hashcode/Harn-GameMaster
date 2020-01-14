@@ -13,7 +13,7 @@ from global_defines import (PersonEnum, PersonFlag, ItemEnum, ItemLink, DoorEnum
                             NewPerson, ConditionCheckEnum, TargetTypeEnum, Condition, TriggerTypeEnum, Trigger, Periodic,
                             RoomFuncResponse, RoomEnum, Exit, RoomFlag, Room, QuestEnum,
                             AttrEnum, attribute_classes, attributes)
-from utils import (actionInfo)
+from utils import (actionInfo, actionSave)
 
 # from utils import (actionSave)
 
@@ -226,10 +226,9 @@ def room_CreateCharacter():
   GameData.ProcessEvents(True)
   player.SetRoom(GameData.ROOM_START)
 
-  #  cm.Print("\nSaving character ...")
-  #  if not actionSave():
-  #    return RoomFuncResponse.SKIP
-  #  cm.Print("Done.")
+  cm.Print("\nSaving character ...")
+  actionSave()
+  cm.Print("Done.")
 
   cm.Print("\nGood luck, %s!" % (player.Name))
   return RoomFuncResponse.SKIP
