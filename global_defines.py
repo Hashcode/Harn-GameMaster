@@ -1324,35 +1324,35 @@ skills = {
     SkillEnum.INITIATIVE:
         Skill("Initiative", SkillClassEnum.COMBAT, ATTR_AGL, ATTR_WIL, ATTR_WIL, 3, 50),
     SkillEnum.UNARMED:
-        Skill("Unarmed Combat", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_AGL, 3, 50, {SS_MAS: 2, SS_LAD: 2, SS_ULA: 2}),
+        Skill("Unarmed Combat", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_AGL, 4, 50, {SS_MAS: 2, SS_LAD: 2, SS_ULA: 2}),
     SkillEnum.RIDING:
         Skill("Riding", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_AGL, ATTR_WIL, 1, 50, {SS_ULA: 1, SS_ARA: 1}),
     SkillEnum.AXE:
-        Skill("Axe", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 2, 50, {SS_AHN: 1, SS_FEN: 1, SS_ANG: 1}),
+        Skill("Axe", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 4, 50, {SS_AHN: 1, SS_FEN: 1, SS_ANG: 1}),
     SkillEnum.BLOWGUN:
-        Skill("Blowgun", SkillClassEnum.COMBAT, ATTR_STA, ATTR_DEX, ATTR_EYE, 2, 50, {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Blowgun", SkillClassEnum.COMBAT, ATTR_STA, ATTR_DEX, ATTR_EYE, 4, 50, {SS_HIR: 2, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.BOW:
-        Skill("Bow", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_EYE, 2, 50, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Bow", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_EYE, 4, 50, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.CLUB:
-        Skill("Club", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 3, 50, {SS_ULA: 1, SS_ARA: 1}),
+        Skill("Club", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 4, 50, {SS_ULA: 1, SS_ARA: 1}),
     SkillEnum.DAGGER:
-        Skill("Dagger", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 3, 50, {SS_ANG: 2, SS_NAD: 2}),
+        Skill("Dagger", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 4, 50, {SS_ANG: 2, SS_NAD: 2}),
     SkillEnum.FLAIL:
-        Skill("Flail", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_DEX, 1, 50, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Flail", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_DEX, 4, 50, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.NET:
-        Skill("Net", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, 50, {SS_MAS: 1, SS_SKO: 1, SS_LAD: 1}),
+        Skill("Net", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 4, 50, {SS_MAS: 1, SS_SKO: 1, SS_LAD: 1}),
     SkillEnum.POLEARM:
-        Skill("Polearm", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 2, 50, {SS_ANG: 1, SS_ARA: 1}),
+        Skill("Polearm", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 4, 50, {SS_ANG: 1, SS_ARA: 1}),
     SkillEnum.SHIELD:
-        Skill("Shield", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_DEX, 3, 50, {SS_ULA: 1, SS_LAD: 1, SS_MAS: 1}),
+        Skill("Shield", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_DEX, 4, 50, {SS_ULA: 1, SS_LAD: 1, SS_MAS: 1}),
     SkillEnum.SLING:
-        Skill("Sling", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, 50, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
+        Skill("Sling", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 4, 50, {SS_HIR: 1, SS_TAR: 1, SS_NAD: 1}),
     SkillEnum.SPEAR:
-        Skill("Spear", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 2, 50, {SS_ARA: 1, SS_FEN: 1, SS_ULA: 1}),
+        Skill("Spear", SkillClassEnum.COMBAT, ATTR_STR, ATTR_STR, ATTR_DEX, 4, 50, {SS_ARA: 1, SS_FEN: 1, SS_ULA: 1}),
     SkillEnum.SWORD:
-        Skill("Sword", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_DEX, 2, 50, {SS_ANG: 3, SS_AHN: 1, SS_NAD: 1}),
+        Skill("Sword", SkillClassEnum.COMBAT, ATTR_STR, ATTR_DEX, ATTR_DEX, 4, 50, {SS_ANG: 3, SS_AHN: 1, SS_NAD: 1}),
     SkillEnum.WHIP:
-        Skill("Whip", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 1, 50, {SS_HIR: 1, SS_NAD: 1}),
+        Skill("Whip", SkillClassEnum.COMBAT, ATTR_DEX, ATTR_DEX, ATTR_EYE, 4, 50, {SS_HIR: 1, SS_NAD: 1}),
     # LORE / CRAFT
     SkillEnum.AGRICULTURE:
         Skill("Agriculture", SkillClassEnum.LORE_CRAFTS, ATTR_STR, ATTR_STA, ATTR_WIL, 2, 10, {SS_ULA: 2, SS_ARA: 2}),
