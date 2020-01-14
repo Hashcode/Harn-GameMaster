@@ -121,7 +121,7 @@ def printCombatAttackActions(combatant, target):
   if combatant.DefAction == Action.DODGE or len(defe_att) < 1:
     defe_name = "%d ML [%s]" % (combatant.Person.AttrDodge(), "DODGE")
   else:
-    defe_name = "%s ML [BLOCK with %s" % (defe_att[0].SkillML,
+    defe_name = "%s ML [BLOCK with %s]" % (defe_att[0].SkillML,
                                           defe_att[0].Name)
   cm.Print("%-8s %-5s : %s" % ("DEFENSE", "[DEF]", defe_name))
   cm.Print("%-8s %-5s : %d ML" % ("FLEE", "[F]",
