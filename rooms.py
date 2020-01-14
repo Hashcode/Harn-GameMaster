@@ -11,7 +11,10 @@ from db_jsonstore import (ExistsDB, LoadPlayer)
 from gamedata import (GameData)
 from global_defines import (PersonEnum, PersonFlag, ItemEnum, ItemLink, DoorEnum, Door, DoorState, DirectionEnum,
                             NewPerson, ConditionCheckEnum, TargetTypeEnum, Condition, TriggerTypeEnum, Trigger, Periodic,
-                            RoomFuncResponse, RoomEnum, Exit, RoomFlag, Room, QuestEnum)
+                            RoomFuncResponse, RoomEnum, Exit, RoomFlag, Room, QuestEnum,
+                            AttrEnum, attribute_classes, attributes)
+from utils import (actionInfo)
+
 # from utils import (actionSave)
 
 
@@ -55,6 +58,41 @@ def room_RestoreSave():
   return RoomFuncResponse.SKIP
 
 
+def attrColor(attr):
+  if attr <= 5:
+    return ANSI.TEXT_COLOR_RED
+  elif attr <= 8:
+    return ANSI.TEXT_COLOR_YELLOW
+  elif attr <= 13:
+    return ANSI.TEXT_COLOR_WHITE
+  else:
+    return ANSI.TEXT_COLOR_GREEN
+
+
+def downCost(val):
+  if val == 10:
+    return 1
+  if val < 10:
+    return abs((val - 1) - 10)
+  if val > 10:
+    return abs(val - 10)
+
+
+def upCost(val):
+  if val == 10:
+    return 1
+  if val < 10:
+    return abs(val - 10)
+  if val > 10:
+    return abs((val + 1) - 10)
+
+
+def primaryAttr(attr):
+  if attr in [AttrEnum.EYESIGHT, AttrEnum.HEARING, AttrEnum.SMELL, AttrEnum.VOICE]:
+    return False
+  return True
+
+
 def room_CreateCharacter():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
@@ -76,7 +114,109 @@ def room_CreateCharacter():
     player.SetRoom(RoomEnum.GAME_START)
     return RoomFuncResponse.SKIP
 
-  player.GenAttr()
+  keep = False
+  while not keep:
+    cm.Print(ANSI.CLEAR + ANSI.RESET_CURSOR, end="")
+    player.GenAttr()
+    actionInfo()
+    while True:
+      x = cm.Input("[K]eep or [R]eroll:", line_length=1).lower()
+      if x == "k":
+        keep = True
+        break
+      if x == "r":
+        break
+
+  attr_list = [
+      AttrEnum.STRENGTH,
+      AttrEnum.STAMINA,
+      AttrEnum.DEXTERITY,
+      AttrEnum.AGILITY,
+      AttrEnum.HEARING,
+      AttrEnum.EYESIGHT,
+      AttrEnum.SMELL,
+      AttrEnum.VOICE,
+      AttrEnum.INTELLIGENCE,
+      AttrEnum.AURA,
+      AttrEnum.WILL,
+  ]
+  keep = False
+  selection = 0
+  points = 20
+
+  # calculate points to spend
+  for x in attr_list:
+    if player.Attr[x] != 10:
+      for d in range(abs(player.Attr[x] - 10)):
+        if player.Attr[x] < 10:
+          points += downCost(10 - d)
+        else:
+          points -= upCost(10 + d)
+  while not keep:
+    cm.Print(ANSI.CLEAR + ANSI.RESET_CURSOR, end="")
+    cm.Print("%sCURRENT TRAINING POINTS: %d%s" % (ANSI.TEXT_BOLD, points,
+                                                  ANSI.TEXT_NORMAL))
+    cm.Print("NOTES:")
+    cm.Print("- Training becomes more difficult as attribute goes higher")
+    cm.Print("- Lower attributes to gain more training")
+    cm.Print("- Primary attributes marked with *")
+    for ac_id, ac in attribute_classes.items():
+      if ac.Hidden:
+        continue
+      cm.Print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, ac.Name.upper(),
+                                     ANSI.TEXT_NORMAL))
+      for attr in attr_list:
+        val = player.Attr[attr]
+        if not attributes[attr].Hidden:
+          if attributes[attr].AttrClass == ac_id:
+            pri = ""
+            if primaryAttr(attr):
+              pri = "*"
+            if attr_list[selection] == attr:
+              cm.Print("%s%s%-15s: %d :: < +%d | -%d >%s" %
+                       (ANSI.TEXT_REVERSE, attrColor(val),
+                        "%s%s" % (attributes[attr].Name, pri),
+                        val, downCost(val), upCost(val), ANSI.TEXT_NORMAL))
+            else:
+              cm.Print("%s%-15s: %d%s" %
+                       (attrColor(val), "%s%s" % (attributes[attr].Name, pri),
+                        val, ANSI.TEXT_NORMAL))
+    while True:
+      x = cm.Input("Arrows to Adjust or [D]one:", line_length=1).lower()
+      if x == "d":
+        keep = True
+        break
+      if x == "arrow_up":
+        if selection > 0:
+          selection -= 1
+        else:
+          cm.Bell()
+        break
+      if x == "arrow_down":
+        if selection < len(attr_list) - 1:
+          selection += 1
+        else:
+          cm.Bell()
+        break
+      if x == "arrow_right":
+        if player.Attr[attr_list[selection]] == 18:
+          cm.Bell()
+        elif upCost(player.Attr[attr_list[selection]]) > points:
+          cm.Bell()
+        else:
+          points -= upCost(player.Attr[attr_list[selection]])
+          player.Attr[attr_list[selection]] += 1
+        break
+      if x == "arrow_left":
+        if primaryAttr(attr_list[selection]) and player.Attr[attr_list[selection]] <= 4:
+          cm.Bell()
+        if not primaryAttr(attr_list[selection]) and player.Attr[attr_list[selection]] <= 3:
+          cm.Bell()
+        else:
+          points += downCost(player.Attr[attr_list[selection]])
+          player.Attr[attr_list[selection]] -= 1
+        break
+
   player.GenSkills()
   player.ResetStats()
   player.AddItem(ItemEnum.ARMOR_TUNIC_CLOTH, ItemLink(1, equip=True))
