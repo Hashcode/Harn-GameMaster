@@ -122,8 +122,33 @@ class ConsoleManager(Thread):
             self._echoed.wait()
             self._echoed.clear()
           elif ord(c) == 27:
-            # TODO: handle escape codes
-            self.Bell()
+            c = sys.stdin.read(1)
+            if ord(c) == 91:
+              c = sys.stdin.read(1)
+              if ord(c) == 65:
+                self._in_queue.put("arrow_up")
+                self._interrupted = 1
+                self._echoed.wait()
+                self._echoed.clear()
+              elif ord(c) == 66:
+                self._in_queue.put("arrow_down")
+                self._interrupted = 1
+                self._echoed.wait()
+                self._echoed.clear()
+              elif ord(c) == 67:
+                self._in_queue.put("arrow_right")
+                self._interrupted = 1
+                self._echoed.wait()
+                self._echoed.clear()
+              elif ord(c) == 68:
+                self._in_queue.put("arrow_left")
+                self._interrupted = 1
+                self._echoed.wait()
+                self._echoed.clear()
+              else:
+                self.Bell()
+            else:
+              self.Bell()
           elif ord(c) == 127:
             if len(self.cur_input) > 0:
               self.cur_input = self.cur_input[:-1]
