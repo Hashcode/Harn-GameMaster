@@ -1737,7 +1737,7 @@ class Person:
   def AttrEndurance(self):
     sb = self.SkillBase(SkillEnum.CONDITIONING)
     ml = self.SkillML(SkillEnum.CONDITIONING, skipPenalty=True)
-    return round(sb + (ml / sb - 5))
+    return round(sb + (ml / sb - skills[SkillEnum.CONDITIONING].OMLMod))
 
   def AttrDodge(self):
     return self.SkillML(SkillEnum.DODGE)
