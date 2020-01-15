@@ -22,7 +22,7 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             DiceRoll, DoorEnum, Mob, Player,
                             TargetTypeEnum, ConditionCheckEnum,
                             TriggerTypeEnum, RoomEnum, RoomFlag,
-                            DirectionEnum, directions, Roll)
+                            DirectionEnum, directions, Roll, armor_shapes)
 from logger import (logd, loge)
 
 
@@ -294,7 +294,7 @@ def actionEquipItem():
       continue
     # check armor coverage / layer conflicts
     if equip_item.ItemType == ItemTypeEnum.ARMOR and item.ItemType == ItemTypeEnum.ARMOR:
-      if item.Layer & equip_item.Layer > 0 and item.Coverage & equip_item.Coverage > 0:
+      if item.Layer & equip_item.Layer > 0 and armor_shapes[item.Shape] & armor_shapes[equip_item.Shape] > 0:
         cm.Print("\n%s is already equipped." % item.ItemName.capitalize())
         return
     # only 2 weapons/shields
