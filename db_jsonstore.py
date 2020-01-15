@@ -14,9 +14,8 @@ from gamedata import GameData
 from logger import logd
 
 # from simplecrypt import encrypt, decrypt
-
 URL_BASE = "https://www.jsonstore.io"
-DB_UUID = "e4cf4dfd5c61f35b78a0c07a01a3c1ca00d8cb3b98345829336c40caf4753183"
+DB_UUID = "1ebede85a009e7e622d4905741bdf1979943503d4d65bfcb7d981cd51c2a39f7"
 STATS_FILE = "stats"
 
 
