@@ -1249,7 +1249,7 @@ skills = {
     SkillEnum.DANCING:
         Skill("Dancing", SkillClassEnum.PHYSICAL, ATTR_DEX, ATTR_AGL, ATTR_AGL, 2, 10, {SS_ULA: 1, SS_LAD: 1}, hidden=True),
     SkillEnum.DODGE:
-        Skill("Dodge", SkillClassEnum.PHYSICAL, ATTR_AGL, ATTR_AGL, ATTR_AGL, 3, 50, {SS_HIR: 1, SS_TAR: 1, SS_TAI: 1}),
+        Skill("Dodge", SkillClassEnum.PHYSICAL, ATTR_AGL, ATTR_AGL, ATTR_AGL, 4, 50, {SS_HIR: 1, SS_TAR: 1, SS_TAI: 1}),
     SkillEnum.JUMPING:
         Skill("Jumping", SkillClassEnum.PHYSICAL, ATTR_STR, ATTR_AGL, ATTR_AGL, 3, 25, {SS_NAD: 2, SS_HIR: 2}),
     SkillEnum.LEGERDEMAIN:
