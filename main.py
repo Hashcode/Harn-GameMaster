@@ -34,8 +34,6 @@ player = Player("Unknown")
 player.SetRoom(RoomEnum.GAME_START)
 GameData.SetPlayer(player)
 
-from items import items
-GameData.SetItems(items)
 GameData.SetQuests(quests)
 from person import persons
 GameData.SetPersons(persons)

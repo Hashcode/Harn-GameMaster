@@ -18,11 +18,11 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             skill_classes, skills, body_parts,
                             materials, DamageTypeEnum, AttrEnum,
                             Material, PlayerCombatState, PersonTypeEnum,
-                            ItemTypeEnum, ItemFlagEnum, ItemEnum,
+                            ItemTypeEnum, ItemFlagEnum,
                             DiceRoll, DoorEnum, Mob, Player,
                             TargetTypeEnum, ConditionCheckEnum,
                             TriggerTypeEnum, RoomEnum, RoomFlag,
-                            ItemLink, DirectionEnum, directions, Roll)
+                            DirectionEnum, directions, Roll)
 from logger import (logd, loge)
 
 
@@ -31,13 +31,12 @@ wrapper = TextWrapper(width=70, fix_sentence_endings=True)
 
 def CalcEffect(eff_type):
   player = GameData.GetPlayer()
-  items = GameData.GetItems()
   value = 0
-  for item_id, il in player.ItemLinks.items():
-    if not items[item_id].Effects is None:
-      for y in items[item_id].Effects:
+  for item in player.Items:
+    if item.Effects is not None:
+      for y in item.Effects:
         if y.EffectType == eff_type:
-          value += y.Modifier * il.Quantity
+          value += y.Modifier
   if player.Effects is not None:
     for y in player.Effects:
       if y.EffectType == eff_type:
@@ -45,58 +44,44 @@ def CalcEffect(eff_type):
   return value
 
 
-def filterLinks(item_links, equipped=False, equippable=False, flags=0,
-                noflags=0):
-  items = GameData.GetItems()
-  item_dict = {}
-  for item_id, il in item_links.items():
+def filterItems(items, equipped=False, equippable=False, flags=0, noflags=0):
+  item_array = []
+  for item in items:
     if equippable:
-      if not items[item_id].ItemType in [ItemTypeEnum.WEAPON, ItemTypeEnum.ARMOR, ItemTypeEnum.RING]:
+      if item.ItemType not in [ItemTypeEnum.WEAPON, ItemTypeEnum.ARMOR, ItemTypeEnum.RING]:
         continue
-    qty = il.Quantity
-    if not equipped and il.Equipped:
-      qty -= 1
-    if qty < 1:
+    if not equipped and item.Equipped:
       continue
-    if equipped and not il.Equipped:
+    if equipped and not item.Equipped:
       continue
-    if flags > 0 and items[item_id].Flags & flags == 0:
+    if flags > 0 and item.Flags & flags == 0:
       continue
-    if noflags > 0 and items[item_id].Flags & noflags > 0:
+    if noflags > 0 and item.Flags & noflags > 0:
       continue
-    if equipped:
-      item_dict.update({item_id: ItemLink(1, True)})
-    else:
-      item_dict.update({item_id: ItemLink(qty)})
-  return item_dict
+    item_array.append(item)
+  return item_array
 
 
-def printItems(item_links, number=False, stats=False, shop=False,
-               valueAdj=1):
+def printItems(items, number=False, stats=False, shop=False, valueAdj=1):
   cm = GameData.GetConsole()
-  items = GameData.GetItems()
   count = 0
-  for item_id, il in item_links.items():
+  for item in items:
     count += 1
-    item_name = items[item_id].ItemName.capitalize()
-    item_name += items[item_id].ItemFlagStr(" (%s)")
+    item_name = item.ItemName.capitalize()
+    item_name += item.ItemFlagStr(" (%s)")
     if stats:
-      weight = items[item_id].Weight * il.Quantity
+      weight = item.Weight
       item_info = " : %5s lbs" % "{:3.1f}".format(weight)
     else:
       item_info = ""
     if shop:
-      item_value = " [%d SP]" % int(items[item_id].Value * valueAdj)
+      item_value = " [%d SP]" % int(item.Value * valueAdj)
     else:
       item_value = ""
     if number:
       cm.Print("%2d. %-30s%s%s" % (count, item_name, item_info, item_value))
     else:
-      if il.Quantity > 1:
-        cm.Print("%-30s%s%s" %
-                 (("(%d) " % il.Quantity) + item_name, item_info, item_value))
-      else:
-        cm.Print("%-30s%s%s" % (item_name, item_info, item_value))
+      cm.Print("%-30s%s%s" % (item_name, item_info, item_value))
 
 
 def printRoomDescription(room_id):
@@ -158,9 +143,9 @@ def printRoomObjects(room_id):
     for x in rooms[room_id].Persons:
       cm.Print("%s" % x.LongDescription)
   # Items
-  if len(rooms[room_id].RoomItems) > 0:
+  if len(rooms[room_id].Items) > 0:
     cm.Print("\nThe following items are here:")
-    printItems(rooms[room_id].RoomItems)
+    printItems(rooms[room_id].Items)
 
 
 def attrColor(attr):
@@ -199,10 +184,10 @@ def printStats(person):
   cm.Print("%s%-15s: %d%s" % (ANSI.TEXT_BOLD, "Physical Pen.",
                               person.PhysicalPenalty(), ANSI.TEXT_NORMAL))
   if person.PersonType == PersonTypeEnum.NPC:
-    links = filterLinks(person.ItemLinks, equipped=True)
-    if len(links) > 0:
+    items = filterItems(person.Items, equipped=True)
+    if len(items) > 0:
       cm.Print("\n%sEQUIPMENT%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-      printItems(links, stats=True)
+      printItems(items, stats=True)
   cm.Print("\n%sWOUND LIST%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   if len(person.Wounds) < 1:
     cm.Print("[NONE]")
@@ -221,157 +206,141 @@ def actionComingSoon():
   cm.Print("\nComing soon!")
 
 
-def chooseItem(links, verb, stats=False, shop=False, valueAdj=1):
+def chooseItem(items, verb, stats=False, shop=False, valueAdj=1):
   cm = GameData.GetConsole()
   cm.Print("\nItems:\n")
-  printItems(links, number=True, stats=stats, shop=shop, valueAdj=valueAdj)
+  printItems(items, number=True, stats=stats, shop=shop, valueAdj=valueAdj)
   x = cm.Input("Which item # to %s:" % verb, line_length=3,
                input_flags=InputFlag.NUMERIC)
   if not x.isnumeric():
     cm.Print("\nInvalid item.")
-    return ItemEnum.NONE
+    return None
   itemNum = int(x)
-  if itemNum < 1 or itemNum > len(links):
+  if itemNum < 1 or itemNum > len(items):
     cm.Print("\nInvalid item.")
-    return ItemEnum.NONE
+    return None
   count = 0
-  for item_id, il in links.items():
+  for item in items:
     count += 1
     if count == itemNum:
-      return item_id
-  return ItemEnum.NONE
+      return item
+  return None
 
 
 def actionGetItem():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  items = GameData.GetItems()
   rooms = GameData.GetRooms()
-  links = filterLinks(rooms[player.Room].RoomItems, equipped=False)
-  if len(links) < 1:
+  items = filterItems(rooms[player.Room].Items, equipped=False)
+  if len(items) < 1:
     cm.Print("\nThere are no items in the room.")
     return
   if not rooms[player.Room].HasLight():
     cm.Print("\nYou can't see anything in the dark.")
     return
-  item_id = chooseItem(links, "pick up")
-  if item_id == ItemEnum.NONE:
+  item = chooseItem(items, "pick up")
+  if item is None:
     return
-  if processTriggers(None, items[item_id].OnGet) is False:
-    cm.Print("\nYou can't seem to pick up %s." %
-             items[item_id].ItemName)
+  if processTriggers(None, item.OnGet) is False:
+    cm.Print("\nYou can't seem to pick up %s." % item.ItemName)
     return
-  rooms[player.Room].RemoveItem(item_id, ItemLink(1))
-  player.AddItem(item_id, ItemLink(1))
-  cm.Print("\n%s picked up." % items[item_id].ItemName.capitalize())
+  rooms[player.Room].RemoveItem(item)
+  player.AttachItem(item)
+  cm.Print("\n%s picked up." % item.ItemName.capitalize())
 
 
 def actionDropItem():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  items = GameData.GetItems()
   rooms = GameData.GetRooms()
-  links = filterLinks(player.ItemLinks, equipped=False)
-  if len(links) < 1:
+  items = filterItems(player.Items, equipped=False)
+  if len(items) < 1:
     cm.Print("\nNothing is droppable at the moment.")
     return
   if not rooms[player.Room].HasLight():
     cm.Print("\nYou can't see anything in the dark.")
     return
-  item_id = chooseItem(links, "drop")
-  if item_id == ItemEnum.NONE:
+  item = chooseItem(items, "drop")
+  if item is None:
     return
-  if items[item_id].Flags & 1 << ItemFlagEnum.NO_DROP > 0:
-    cm.Print("\n%s cannot be dropped." %
-             items[item_id].ItemName.capitalize())
+  if item.Flags & ItemFlagEnum.NO_DROP > 0:
+    cm.Print("\n%s cannot be dropped." % item.ItemName.capitalize())
     return
-  if items[item_id].Flags & 1 << ItemFlagEnum.QUEST > 0:
-    cm.Print("\n%s cannot be dropped." %
-             items[item_id].ItemName.capitalize())
+  if items.Flags & ItemFlagEnum.QUEST > 0:
+    cm.Print("\n%s cannot be dropped." % item.ItemName.capitalize())
     return
-  if processTriggers(None, items[item_id].OnDrop) is False:
-    cm.Print("\nYou can't seem to drop %s." %
-             items[item_id].ItemName)
+  if processTriggers(None, items.OnDrop) is False:
+    cm.Print("\nYou can't seem to drop %s." % items.ItemName)
     return
-  player.RemoveItem(item_id, ItemLink(1))
-  rooms[player.Room].AddItem(item_id, ItemLink(1))
-  cm.Print("\n%s dropped." % items[item_id].ItemName.capitalize())
+  player.RemoveItem(item)
+  rooms[player.Room].AttachItem(item)
+  cm.Print("\n%s dropped." % item.ItemName.capitalize())
 
 
 def actionEquipItem():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  items = GameData.GetItems()
-  links = filterLinks(player.ItemLinks, equipped=False, equippable=True)
-  if len(links) < 1:
+  items = filterItems(player.Items, equipped=False, equippable=True)
+  if len(items) < 1:
     cm.Print("\nNothing is equippable at the moment.")
     return
-  equip_id = chooseItem(links, "equip")
-  if equip_id == ItemEnum.NONE:
+  equip_item = chooseItem(items, "equip")
+  if equip_item is None:
     return
   # check for item conflicts
   count = 0
-  for item_id, il in player.ItemLinks.items():
-    if not il.Equipped:
+  for item in player.Items:
+    if not item.Equipped:
       continue
     # check armor coverage / layer conflicts
-    if items[equip_id].ItemType == ItemTypeEnum.ARMOR and \
-       items[item_id].ItemType == ItemTypeEnum.ARMOR:
-      if items[item_id].Layer & items[equip_id].Layer > 0 and \
-         items[item_id].Coverage & items[equip_id].Coverage > 0:
-          cm.Print("\n%s is already equipped." %
-                   items[item_id].ItemName.capitalize())
-          return
+    if equip_item.ItemType == ItemTypeEnum.ARMOR and item.ItemType == ItemTypeEnum.ARMOR:
+      if item.Layer & equip_item.Layer > 0 and item.Coverage & equip_item.Coverage > 0:
+        cm.Print("\n%s is already equipped." % item.ItemName.capitalize())
+        return
     # only 2 weapons/shields
-    if items[equip_id].ItemType == ItemTypeEnum.WEAPON or \
-       items[equip_id].ItemType == ItemTypeEnum.WEAPON:
-      if items[item_id].ItemType == ItemTypeEnum.SHIELD or \
-         items[item_id].ItemType == ItemTypeEnum.WEAPON:
+    if equip_item.ItemType in [ItemTypeEnum.SHIELD, ItemTypeEnum.WEAPON]:
+      if item.ItemType in [ItemTypeEnum.SHIELD, ItemTypeEnum.WEAPON]:
         count += 1
         if count > 1:
-            cm.Print("\nAlready wielding 2 weapons or shields.")
-            return
+          cm.Print("\nAlready wielding 2 weapons or shields.")
+          return
     # only 2 rings
-    if items[equip_id].ItemType == ItemTypeEnum.RING and \
-       items[item_id].ItemType == ItemTypeEnum.RING:
+    if equip_item.ItemType == ItemTypeEnum.RING and item.ItemType == ItemTypeEnum.RING:
       count += 1
       if count > 1:
-          cm.Print("\nAlready wielding 2 rings.")
-          return
-  if processTriggers(None, items[item_id].OnEquip) is False:
-    cm.Print("\nYou can't seem to eqiup %s." %
-             items[item_id].ItemName)
+        cm.Print("\nAlready wielding 2 rings.")
+        return
+  if processTriggers(None, equip_item.OnEquip) is False:
+    cm.Print("\nYou can't seem to eqiup %s." % equip_item.ItemName)
     return
-  player.ItemLinks[equip_id].Equipped = True
+  equip_item.Equipped = True
   # use a player's "attack" if in combat
   if player.CombatState != PlayerCombatState.NONE:
-    cm.Print("\nYou take a moment to equip %s." % items[equip_id].ItemName)
+    cm.Print("\nYou take a moment to equip %s." % equip_item.ItemName)
     return False
   else:
     # 1 minute to equip
     player.GameTime += 60
-    cm.Print("\n%s equipped." % items[equip_id].ItemName.capitalize())
+    cm.Print("\n%s equipped." % equip_item.ItemName.capitalize())
 
 
 def actionRemoveItem():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  items = GameData.GetItems()
-  links = filterLinks(player.ItemLinks, equipped=True)
-  if len(links) < 1:
+  items = filterItems(player.Items, equipped=True)
+  if len(items) < 1:
     cm.Print("\nNothing is equipped.")
     return
-  item_id = chooseItem(links, "remove")
-  if item_id == ItemEnum.NONE:
+  item = chooseItem(items, "remove")
+  if item is None:
     return
-  if processTriggers(None, items[item_id].OnRemove) is False:
-    cm.Print("\nYou can't seem to remove %s." %
-             items[item_id].ItemName)
+  if processTriggers(None, item.OnRemove) is False:
+    cm.Print("\nYou can't seem to remove %s." % item.ItemName)
     return
-  player.ItemLinks[item_id].Equipped = False
+  item.Equipped = False
   # 1 minute to equip
   player.GameTime += 60
-  cm.Print("\n%s removed." % items[item_id].ItemName.capitalize())
+  cm.Print("\n%s removed." % item.ItemName.capitalize())
 
 
 def actionInventory():
@@ -380,22 +349,22 @@ def actionInventory():
   cm.Print("\n%sCURRENCY%s: %d SP" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL,
                                       player.Currency))
   cm.Print("\n%sEQUIPMENT%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-  links = filterLinks(player.ItemLinks, equipped=True)
-  if len(links) < 1:
+  items = filterItems(player.Items, equipped=True)
+  if len(items) < 1:
     cm.Print("[NONE]")
   else:
-    printItems(links, stats=True)
+    printItems(items, stats=True)
   cm.Print("%s%-30s : %5s lbs%s" % (ANSI.TEXT_BOLD, "EQUIPPED WEIGHT",
                                     "{:3.1f}".format(player.EquipWeight()),
                                     ANSI.TEXT_NORMAL))
   cm.Print("\n%sITEMS%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-  links = filterLinks(player.ItemLinks, equipped=False)
-  if len(links) < 1:
+  items = filterItems(player.Items, equipped=False)
+  if len(items) < 1:
     cm.Print("[NONE]")
   else:
-    printItems(links, stats=True)
+    printItems(items, stats=True)
   cm.Print("%s%-30s : %5s lbs%s" % (ANSI.TEXT_BOLD, "INVENTORY WEIGHT",
-                                    "{:3.1f}".format(player.InvenWeight()),
+                                    "{:3.1f}".format(player.EquipWeight(False)),
                                     ANSI.TEXT_NORMAL))
   cm.Print("\n%s%-30s : %5s lbs%s" % (ANSI.TEXT_BOLD, "TOTAL WEIGHT",
                                       "{:3.1f}".format(player.ItemWeight()),
@@ -485,20 +454,19 @@ def actionInfo():
 def actionArmor():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  items = GameData.GetItems()
   cm.Print("\n%sARMOR COVERAGE%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
   cm.Print("%s%-15s  BLUNT EDGE PIERCE ELEMENTAL%s" %
            (ANSI.TEXT_BOLD, "LOCATION", ANSI.TEXT_NORMAL))
   m = Material("None", 0, 0, [0, 0, 0, 0])
   for bp_id, bp in body_parts.items():
     m.Copy(materials[player.SkinMaterial])
-    for item_id, il in player.ItemLinks.items():
-      if items[item_id].ItemType != ItemTypeEnum.ARMOR:
+    for item in player.Items:
+      if item.ItemType != ItemTypeEnum.ARMOR:
         continue
-      if not il.Equipped:
+      if not item.Equipped:
         continue
-      if items[item_id].Covered(bp_id):
-        m.Add(materials[items[item_id].Material])
+      if item.Covered(bp_id):
+        m.Add(materials[item.Material])
     cm.Print("%-15s: %-5d %-4d %-6d %-9d" %
              (body_parts[bp_id].PartName,
               m.Protection[DamageTypeEnum.BLUNT],
@@ -651,13 +619,12 @@ def processConditions(room_id, obj, conditions):
   if conditions is not None:
     for c in conditions:
       if c.TargetType == TargetTypeEnum.PLAYER_INVEN:
-        logd("[cond] PLAYER_INVEN: %d" % (c.Data))
-        if c.ConditionCheck == ConditionCheckEnum.HAS:
-          if c.Data not in player.ItemLinks.keys():
-            return False
-        if c.ConditionCheck == ConditionCheckEnum.HAS_NOT:
-          if c.Data in player.ItemLinks.keys():
-            return False
+        logd("[cond] PLAYER_INVEN: %s" % (c.Data))
+        item = player.HasItem(c.Data)
+        if c.ConditionCheck == ConditionCheckEnum.HAS and item is None:
+          return False
+        if c.ConditionCheck == ConditionCheckEnum.HAS_NOT and item is not None:
+          return False
       elif c.TargetType == TargetTypeEnum.PLAYER_QUEST:
         logd("[cond] PLAYER_QUEST: %d" % (c.Data))
         if c.ConditionCheck == ConditionCheckEnum.HAS:
@@ -679,10 +646,10 @@ def processConditions(room_id, obj, conditions):
           if player.HasQuest(c.Data, completed=True):
             return False
       elif c.TargetType == TargetTypeEnum.ITEM_IN_ROOM:
-        logd("[cond] ITEM_IN_ROOM: room=%d, item=%d" % (room_id, c.Data))
+        logd("[cond] ITEM_IN_ROOM: room=%d, item=%s" % (room_id, c.Data))
         count = 0
-        for item_id, ri in rooms[room_id].RoomItems.items():
-          if item_id == c.Data:
+        for item in rooms[room_id].Items:
+          if item.Name.lower() == c.Data:
             count += 1
         if c.ConditionCheck == ConditionCheckEnum.HAS and count < 1:
           return False
@@ -803,11 +770,14 @@ def processTriggers(obj, triggers):
     r = DiceRoll(1, 100).Result()
     if r <= tr.Chance:
       if tr.TriggerType == TriggerTypeEnum.ITEM_GIVE:
-        logd("[trigger] ITEM_GIVE: %d" % (tr.Data))
-        player.AddItem(tr.Data, ItemLink())
+        logd("[trigger] ITEM_GIVE: %s" % (tr.Data.ItemName))
+        player.AddItem(tr.Data)
       elif tr.TriggerType == TriggerTypeEnum.ITEM_TAKE:
-        logd("[trigger] ITEM_TAKE: %d" % (tr.Data))
-        player.RemoveItem(tr.Data, ItemLink())
+        logd("[trigger] ITEM_TAKE: %s" % (tr.Data))
+        item = player.HasItem(tr.Data)
+        if item is not None:
+          player.RemoveItem(item)
+          del item
       elif tr.TriggerType == TriggerTypeEnum.ITEM_SELL:
         logd("[trigger] ITEM_SELL")
         actionShopSell(obj)
@@ -815,7 +785,7 @@ def processTriggers(obj, triggers):
         logd("[trigger] ITEM_BUY")
         actionShopBuy(obj)
       elif tr.TriggerType == TriggerTypeEnum.ROOM_SPAWN_MOB:
-        logd("[trigger] ROOM_SPAWN_MOB [%s]: %d" % (rooms[obj].Title, tr.Data.Person))
+        logd("[trigger] ROOM_SPAWN_MOB [%s]: %s" % (rooms[obj].Title, tr.Data.Person))
         p = tr.Data.Create(obj, processConditions, processTriggers)
         if p is not None:
           rooms[obj].AddPerson(p)
@@ -934,10 +904,14 @@ def processTriggers(obj, triggers):
         logd("[trigger] PAUSE")
         sleep(tr.Data)
       elif tr.TriggerType == TriggerTypeEnum.ROOM_SPAWN_ITEM:
-        logd("[trigger] ROOM_SPAWN_ITEM: %d" % (tr.Data))
-        rooms[obj].AddItem(tr.Data, ItemLink())
+        logd("[trigger] ROOM_SPAWN_ITEM: %s" % (tr.Data.ItemName))
+        rooms[obj].AddItem(tr.Data)
       elif tr.TriggerType == TriggerTypeEnum.ROOM_DESPAWN_ITEM:
-        logd("[trigger] ROOM_DESPAWN_ITEM: %d" % (tr.Data))
+        logd("[trigger] ROOM_DESPAWN_ITEM: %s" % (tr.Data))
+        item = rooms[obj].HasItem(tr.Data)
+        if item is not None:
+          rooms[obj].RemoveItem(item)
+          del item
         # TODO:
         cm.Print("* Coming Soon *")
       elif tr.TriggerType == TriggerTypeEnum.END:
@@ -950,7 +924,6 @@ def processTriggers(obj, triggers):
 def printNPCTalk(p, keyword):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  items = GameData.GetItems()
   ret = False
   for tk in p.Talks:
     if tk.Keyword.lower() == keyword:
@@ -959,11 +932,11 @@ def printNPCTalk(p, keyword):
         if tk.Triggers is not None:
           processTriggers(p, tk.Triggers)
   # handle shopkeep item names
-  if p.SellItemLinks is not None:
-    for item_id in p.SellItemLinks.keys():
-      if items[item_id].ItemName.lower() == keyword:
+  if p.SellItems is not None:
+    for item in p.SellItems:
+      if item.ItemName.lower() == keyword:
         ret = True
-        cm.Print("\n" + wrapper.fill(items[item_id].Description()))
+        cm.Print("\n" + wrapper.fill(item.Description()))
   return ret
 
 
@@ -988,32 +961,29 @@ def roomTalkTrigger(keyword):
 def actionShopBuy(shopkeep):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  items = GameData.GetItems()
   if player.CombatState != PlayerCombatState.NONE:
     cm.Print("\n%sYou can't BUY during combat!%s" %
              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
     return
-  links = filterLinks(shopkeep.SellItemLinks)
-  if len(links) < 1:
+  items = filterItems(shopkeep.SellItems)
+  if len(items) < 1:
     cm.Print("\nThere is nothing to buy.")
     return
-  item_id = chooseItem(links, "buy", stats=True, shop=True)
-  if item_id == ItemEnum.NONE:
+  item = chooseItem(items, "buy", stats=True, shop=True)
+  if item is None:
     return
-  if items[item_id].Value > player.Currency:
-    cm.Print("\n%sYou cannot afford [%s].%s" %
-             (ANSI.TEXT_BOLD, items[item_id].ItemName, ANSI.TEXT_NORMAL))
+  if item.Value > player.Currency:
+    cm.Print("\n%sYou cannot afford [%s].%s" % (ANSI.TEXT_BOLD, item.ItemName, ANSI.TEXT_NORMAL))
     return
   # TODO possible factors to raise price?
-  price = items[item_id].Value
+  price = item.Value
   x = cm.Input("Confirm purchase of [%s] for %d SP [y/n]:" %
-               (items[item_id].ItemName, price), line_length=1).lower()
+               (item.ItemName, price), line_length=1).lower()
   if x == "y":
     player.Currency -= price
-    player.AddItem(item_id, ItemLink(1))
+    player.AddItem(item)
     cm.Print("\n%s%s hands you [%s].%s" %
-             (ANSI.TEXT_BOLD, shopkeep.Name.capitalize(),
-              items[item_id].ItemName, ANSI.TEXT_NORMAL))
+             (ANSI.TEXT_BOLD, shopkeep.Name.capitalize(), item.ItemName, ANSI.TEXT_NORMAL))
   else:
     cm.Print("\n%sPurchase aborted.%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
 
@@ -1021,39 +991,34 @@ def actionShopBuy(shopkeep):
 def actionShopSell(shopkeep):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  items = GameData.GetItems()
   if player.CombatState != PlayerCombatState.NONE:
     cm.Print("\n%sYou can't SELL during combat!%s" %
              (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
     return
-  links = {}
-  if shopkeep.BuyItemLinks is None:
-    cm.Print("\n%s doesn't want to buy anything." %
-             shopkeep.Name.capitalize())
+  items = []
+  if shopkeep.BuyItems is None:
+    cm.Print("\n%s doesn't want to buy anything." % shopkeep.Name.capitalize())
     return
-  for item_id, il in player.ItemLinks.items():
-    if not il.Equipped or il.Quantity > 1:
-      if item_id in shopkeep.BuyItemLinks.keys():
-        links.update({item_id: il})
-  if len(links) < 1:
-    cm.Print("\n%s doesn't want to buy anything you have." %
-             shopkeep.Name.capitalize())
+  for item in player.Items:
+    if not item.Equipped and item.ItemName.lower() in shopkeep.BuyItems:
+      items.append(item)
+  if len(items) < 1:
+    cm.Print("\n%s doesn't want to buy anything you have." % shopkeep.Name.capitalize())
     return
   # sell items for 1/2 value
   priceAdj = .5
-  item_id = chooseItem(links, "sell", stats=True, shop=True,
-                       valueAdj=priceAdj)
-  if item_id == ItemEnum.NONE:
+  item = chooseItem(items, "sell", stats=True, shop=True, valueAdj=priceAdj)
+  if item is None:
     return
-  price = items[item_id].Value * priceAdj
-  x = cm.Input("Confirm sale of [%s] for %d SP [y/n]:" %
-               (items[item_id].ItemName, price), line_length=1).lower()
+  price = item.Value * priceAdj
+  x = cm.Input("Confirm sale of [%s] for %d SP [y/n]:" % (item.ItemName, price), line_length=1).lower()
   if x == "y":
     player.Currency += price
-    player.RemoveItem(item_id, ItemLink())
+    player.RemoveItem(item)
     cm.Print("\n%sYou hand [%s] to %s.%s" %
-             (ANSI.TEXT_BOLD, items[item_id].ItemName,
+             (ANSI.TEXT_BOLD, item.ItemName,
               shopkeep.Name.capitalize(), ANSI.TEXT_NORMAL))
+    del item
   else:
     cm.Print("\n%sSale aborted.%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
 
@@ -1131,7 +1096,7 @@ def actionTalkBuy():
   else:
     shopkeep = None
     for npc in rooms[player.Room].Persons:
-      if npc.SellItemLinks is not None:
+      if npc.SellItems is not None:
         shopkeep = npc
         break
     if shopkeep is None:
@@ -1150,7 +1115,7 @@ def actionTalkSell():
   else:
     shopkeep = None
     for npc in rooms[player.Room].Persons:
-      if npc.BuyItemLinks is not None:
+      if npc.BuyItems is not None:
         shopkeep = npc
         break
     if shopkeep is None:
@@ -1209,21 +1174,19 @@ def chooseDoor(room_id, action, door_closed=None, door_locked=None):
 def actionUnlock():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  items = GameData.GetItems()
   doors = GameData.GetDoors()
-  door_id = chooseDoor(GameData.GetPlayer().Room, "unlock",
-                       door_locked=True)
-  if door_id != DoorEnum.NONE:
-    key = doors[door_id].Key
-    if key in player.ItemLinks.keys():
-      player.SetDoorState(door_id).Locked = False
-      cm.Print("\nYou unlock the %s with %s." %
-               (doors[door_id].Name, items[key].ItemName))
-      # 30 seconds door action
-      player.GameTime += 30
-    else:
-      cm.Print("\n%sYou don't have the key for that!%s" %
-               (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  door_id = chooseDoor(GameData.GetPlayer().Room, "unlock", door_locked=True)
+  if door_id == DoorEnum.NONE:
+    return
+  item = player.HasItem(doors[door_id].KeyName)
+  if item is not None:
+    player.SetDoorState(door_id).Locked = False
+    cm.Print("\nYou unlock the %s with %s." % (doors[door_id].Name, item.ItemName))
+    # 30 seconds door action
+    player.GameTime += 30
+  else:
+    cm.Print("\n%sYou don't have the key for that!%s" %
+             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
 
 
 def actionClose():

@@ -8,10 +8,9 @@ from time import sleep
 
 from console import (ANSI, InputFlag)
 from global_defines import (DiceRoll, Roll, CoverageEnum, body_parts, aims,
-                            AimEnum, SkillEnum, ItemEnum, ItemTypeEnum,
+                            AimEnum, SkillEnum, ItemTypeEnum,
                             PlayerCombatState, wounds, PersonWound,
-                            AttrEnum, PersonTypeEnum, ItemLink,
-                            ImpactActionEnum)
+                            AttrEnum, PersonTypeEnum, ImpactActionEnum)
 from gamedata import (GameData)
 from logger import (logd, loge)
 from table_melee_attack import (Action, ResultEnum, T_ATK, T_DEF,
@@ -41,7 +40,7 @@ class Combatant:
     self.Roll = Roll.NONE
     self.Attacks = None
     self.TurnTaken = False
-    self.FumbleItemID = ItemEnum.NONE
+    self.FumbleItem = None
     self.DefAction = Action.IGNORE
 
   def Refresh(self):
@@ -121,8 +120,7 @@ def printCombatAttackActions(combatant, target):
   if combatant.DefAction == Action.DODGE or len(defe_att) < 1:
     defe_name = "%d ML [%s]" % (combatant.Person.AttrDodge(), "DODGE")
   else:
-    defe_name = "%s ML [BLOCK with %s]" % (defe_att[0].SkillML,
-                                          defe_att[0].Name)
+    defe_name = "%s ML [BLOCK with %s]" % (defe_att[0].SkillML, defe_att[0].Name)
   cm.Print("%-8s %-5s : %s" % ("DEFENSE", "[DEF]", defe_name))
   cm.Print("%-8s %-5s : %d ML" % ("FLEE", "[F]",
                                   combatant.Person.AttrDodge()))
@@ -193,7 +191,6 @@ def HandlePlayerDeath(player):
 def HandleMobDeath(att, defe):
   cm = GameData.GetConsole()
   rooms = GameData.GetRooms()
-  items = GameData.GetItems()
   if defe.Person.CurrencyGen is not None:
     # currency
     r = defe.Person.CurrencyGen.Result()
@@ -202,13 +199,12 @@ def HandleMobDeath(att, defe):
   # handle loot
   if defe.Person.Loot is not None:
     logd("%s LOOT handling" % (defe.Person.Name))
-    for item_id, chance in defe.Person.Loot.items():
+    for item, chance in defe.Person.Loot.items():
       r = DiceRoll(1, 100).Result()
       logd("%s LOOT_CHECK %s: %d vs. %d" %
-           (defe.Person.Name, items[item_id].ItemName,
-            r, chance))
+           (defe.Person.Name, item.ItemName, r, chance))
       if r <= chance:
-        rooms[att.Person.Room].AddItem(item_id, ItemLink(1))
+        rooms[att.Person.Room].AddItem(item)
   # remove enemy from room
   rooms[att.Person.Room].RemovePerson(defe.UUID)
   del defe.Person
@@ -216,7 +212,7 @@ def HandleMobDeath(att, defe):
   att.Target = None
 
 
-def CombatantFumble(combatant, item_id):
+def CombatantFumble(combatant, att_item):
   cm = GameData.GetConsole()
   if combatant.Person is GameData.GetPlayer():
     cm.Print("\n%sYou FUMBLE your %s!%s" %
@@ -228,10 +224,10 @@ def CombatantFumble(combatant, item_id):
               combatant.Person.AttrSexPossessivePronounStr().lower(),
               combatant.Attacks[0].Name.lower(), ANSI.TEXT_NORMAL))
   # unequip weapon
-  for it_id, il in combatant.Person.ItemLinks.items():
-    if it_id == item_id and il.Equipped:
-      combatant.FumbleItemID = item_id
-      il.Equipped = False
+  for item in combatant.Person.Items:
+    if att_item.UUID == item.UUID and item.Equipped:
+      combatant.FumbleItem = item
+      item.Equipped = False
       break
 
 
@@ -382,7 +378,7 @@ def HandleImpactDMG(player, att, defe, at, res_level):
         else:
           r = DiceRoll(ia.Level, 6).Result() + defe.Person.PhysicalPenalty()
           if r > defe.Person.Attr[AttrEnum.DEXTERITY]:
-            CombatantFumble(defe, defe.Attacks[0].ItemID)
+            CombatantFumble(defe, defe.Attacks[0].Item)
       if ia.Action == ImpactActionEnum.STUMBLE:
         r = DiceRoll(ia.Level, 6).Result() + defe.Person.PhysicalPenalty()
         if r > defe.Person.Attr[AttrEnum.AGILITY]:
@@ -478,7 +474,6 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
   ret = None
 
   player = GameData.GetPlayer()
-  items = GameData.GetItems()
   defe = None
 
   if att.Flags & FLAG_DEAD > 0:
@@ -536,16 +531,15 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
       att.Action = Action.IGNORE
       cm.Print("\n%s gets up." % (att.Person.Name.capitalize()))
     # check for weapon to equip (FUMBLE)
-    elif att.FumbleItemID != ItemEnum.NONE:
+    elif att.FumbleItem is not None:
       cm.Print("\n%s takes a moment to equip %s." %
-               (att.Person.Name.capitalize(),
-                items[att.FumbleItemID].ItemName))
-      for item_id, il in att.Person.ItemLinks.items():
-        if item_id == att.FumbleItemID and not il.Equipped:
-          il.Equipped = True
+               (att.Person.Name.capitalize(), att.FumbleItem.ItemName))
+      for item in att.Person.Items:
+        if item.UUID == att.FumbleItem.UUID and not item.Equipped:
+          item.Equipped = True
           break
       att.Action = Action.IGNORE
-      att.FumbleItemID = ItemEnum.NONE
+      att.FumbleItem = None
     else:
       att.Action = Action.MELEE
       logd("%s: Generate Attack" % (att.Person.Name))
@@ -612,10 +606,10 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
             r = DiceRoll(res.Level, 6).Result()
             r += att.Person.PhysicalPenalty()
             # account for strapped on shield
-            if items[at.ItemID].ItemType == ItemTypeEnum.SHIELD:
+            if at.Item.ItemType == ItemTypeEnum.SHIELD:
               r -= 5
             if r > att.Person.Attr[AttrEnum.DEXTERITY]:
-              CombatantFumble(att, at.ItemID)
+              CombatantFumble(att, at.Item)
             else:
               res.Result = ResultEnum.MISS
         if T_DEF & res.TargetFlag > 0:
@@ -627,11 +621,10 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
             r = DiceRoll(res.Level, 6).Result()
             r += defe.Person.PhysicalPenalty()
             # account for strapped on shield
-            if items[defe.Attacks[0].ItemID].ItemType == \
-               ItemTypeEnum.SHIELD:
+            if defe.Attacks[0].Item.ItemType == ItemTypeEnum.SHIELD:
               r -= 5
             if r > defe.Person.Attr[AttrEnum.DEXTERITY]:
-              CombatantFumble(defe, defe.Attacks[0].ItemID)
+              CombatantFumble(defe, defe.Attacks[0].Item)
           # T_ATK is not in targets, reset this to also show attacker missed
           if T_ATK & origTargetFlag == 0:
             res.Result = ResultEnum.MISS

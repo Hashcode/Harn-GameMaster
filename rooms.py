@@ -9,10 +9,11 @@ from enum import IntEnum
 from console import (ANSI, InputFlag)
 from db_jsonstore import (ExistsDB, LoadPlayer)
 from gamedata import (GameData)
-from global_defines import (PersonEnum, PersonFlag, ItemEnum, ItemLink, DoorEnum, Door, DoorState, DirectionEnum,
+from global_defines import (PersonEnum, PersonFlag, DoorEnum, Door, DoorState, DirectionEnum,
                             NewPerson, ConditionCheckEnum, TargetTypeEnum, Condition, TriggerTypeEnum, Trigger, Periodic,
                             RoomFuncResponse, RoomEnum, Exit, RoomFlag, Room, QuestEnum,
-                            AttrEnum, attribute_classes, attributes)
+                            AttrEnum, attribute_classes, attributes,
+                            ShapeEnum, QualityEnum, MaterialEnum, ItemTypeEnum, Item, ArmorLayer, Armor)
 from utils import (actionInfo, actionSave)
 
 # from utils import (actionSave)
@@ -219,8 +220,8 @@ def room_CreateCharacter():
 
   player.GenSkills()
   player.ResetStats()
-  player.AddItem(ItemEnum.ARMOR_TUNIC_CLOTH, ItemLink(1, equip=True))
-  player.AddItem(ItemEnum.ARMOR_LEGGINGS_CLOTH, ItemLink(1, equip=True))
+  player.AddItem(Armor("cloth tunic", QualityEnum.AVE, MaterialEnum.CLOTH, ArmorLayer.AL_1, ShapeEnum.TUNIC), True)
+  player.AddItem(Armor("cloth leggings", QualityEnum.AVE, MaterialEnum.CLOTH, ArmorLayer.AL_1_5, ShapeEnum.LEGGINGS), True)
   # Finish Map Setup
   GameData.InitializeRooms()
   GameData.ProcessEvents(True)
@@ -243,9 +244,9 @@ class ZoneEnum(IntEnum):
 
 
 doors = {
-    DoorEnum.KEEP_DRAWBRIDGE: Door("drawbridge", DoorState(True, True), ItemEnum.NONE),
-    DoorEnum.WAREHOUSE_DBL_DOOR: Door("double doors to a warehouse", DoorState(True, True), ItemEnum.KEY_WAREHOUSE_DBL_DOOR),
-    DoorEnum.CORPORAL_APPT_DOOR: Door("oak door to an apartment", DoorState(True, True), ItemEnum.KEY_CORPORAL_APPT),
+    DoorEnum.KEEP_DRAWBRIDGE: Door("drawbridge", DoorState(True, True)),
+    DoorEnum.WAREHOUSE_DBL_DOOR: Door("double doors to a warehouse", DoorState(True, True), "a large bronze warehouse key"),
+    DoorEnum.CORPORAL_APPT_DOOR: Door("oak door to an apartment", DoorState(True, True), "a small iron apartment key"),
     DoorEnum.N_TOWER_TRAPDOOR_LEVEL_2: Door("bottom floor trapdoor", DoorState(True, False)),
     DoorEnum.N_TOWER_TRAPDOOR_LEVEL_3: Door("top floor trapdoor", DoorState(True, False)),
     DoorEnum.S_TOWER_TRAPDOOR_LEVEL_2: Door("bottom floor trapdoor", DoorState(True, False)),
@@ -565,9 +566,9 @@ rooms = {
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK, DoorEnum.CORPORAL_APPT_DOOR),
              },
-             room_items={
-                 ItemEnum.KEY_CORPORAL_APPT: ItemLink(1),
-             },
+             room_items=[
+                 Item(ItemTypeEnum.MISC, "a small iron apartment key", QualityEnum.AVE, MaterialEnum.STEEL, 1),
+             ],
              room_pers=[
                  NewPerson(PersonEnum.BL_KEEP_CORPORAL_WATCH,
                            conditions=[
@@ -818,11 +819,15 @@ rooms = {
              periodics=[
                  Periodic(
                      [
-                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.ITEM_IN_ROOM, ItemEnum.ARMOR_STAINED_QUILT_COWL, 1),
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.ITEM_IN_ROOM, "stained quilt cowl", 1),
                          Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST, QuestEnum.WAREHOUSE_COWL),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN_ITEM, ItemEnum.ARMOR_STAINED_QUILT_COWL),
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_ITEM,
+                                 Armor("stained quilt cowl", QualityEnum.TER, MaterialEnum.QUILT, ArmorLayer.AL_2, ShapeEnum.COWL,
+                                       onGet=[
+                                           Trigger(TriggerTypeEnum.QUEST_COMPLETE, QuestEnum.WAREHOUSE_COWL)
+                                       ])),
                      ], 36000),
                  Periodic(
                      [
@@ -976,11 +981,15 @@ rooms = {
              periodics=[
                  Periodic(
                      [
-                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.ITEM_IN_ROOM, ItemEnum.ARMOR_STAINED_QUILT_LEGGINGS, 1),
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.ITEM_IN_ROOM, "stained quilt leggings", 1),
                          Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST, QuestEnum.WAREHOUSE_LEGGINGS),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN_ITEM, ItemEnum.ARMOR_STAINED_QUILT_LEGGINGS),
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_ITEM,
+                                 Armor("stained quilt leggings", QualityEnum.TER, MaterialEnum.QUILT, ArmorLayer.AL_2_5, ShapeEnum.LEGGINGS,
+                                       onGet=[
+                                           Trigger(TriggerTypeEnum.QUEST_COMPLETE, QuestEnum.WAREHOUSE_LEGGINGS)
+                                       ])),
                      ], 36000),
                  Periodic(
                      [

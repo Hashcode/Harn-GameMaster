@@ -278,6 +278,82 @@ body_parts = {
 }
 
 
+class ShapeEnum(IntEnum):
+  NONE = 0
+  CAP = 10
+  COWL = 11
+  FULL_HELM = 12
+  APRON = 20
+  VEST = 21
+  TUNIC = 22
+  SURCOAT = 23
+  ROBE = 24
+  HAUBERK = 26
+  BREASTPLATE = 27
+  BACKPLATE = 28
+  AILETTES = 29
+  REREBRACES = 30
+  COUDES = 31
+  VAMBRACES = 32
+  KNEECOPS = 33
+  GREAVES = 34
+  GAUNTLETS = 50
+  LEGGINGS = 51
+  SHOES = 52
+  BOOTS_CALF = 53
+  BOOTS_KNEE = 54
+
+
+armor_shapes = {
+    ShapeEnum.NONE: 0,
+    ShapeEnum.CAP: (1 << CoverageEnum.SKULL),
+    ShapeEnum.COWL: (1 << CoverageEnum.SKULL | 1 << CoverageEnum.NECK),
+    ShapeEnum.FULL_HELM: (1 << CoverageEnum.SKULL | 1 << CoverageEnum.NECK | 1 << CoverageEnum.FACE),
+    ShapeEnum.APRON:
+        (1 << CoverageEnum.THORAX_FRONT | 1 << CoverageEnum.THORAX_REAR |
+         1 << CoverageEnum.ABDOMEN_FRONT | 1 << CoverageEnum.ABDOMEN_REAR |
+         1 << CoverageEnum.HIPS | 1 << CoverageEnum.GROIN | 1 << CoverageEnum.THIGHS),
+    ShapeEnum.VEST:
+        (1 << CoverageEnum.SHOULDERS | 1 << CoverageEnum.THORAX_FRONT | 1 << CoverageEnum.THORAX_REAR |
+         1 << CoverageEnum.ABDOMEN_FRONT | 1 << CoverageEnum.ABDOMEN_REAR),
+    ShapeEnum.TUNIC:
+        (1 << CoverageEnum.UPPER_ARMS | 1 << CoverageEnum.SHOULDERS |
+         1 << CoverageEnum.THORAX_FRONT | 1 << CoverageEnum.THORAX_REAR |
+         1 << CoverageEnum.ABDOMEN_FRONT | 1 << CoverageEnum.ABDOMEN_REAR |
+         1 << CoverageEnum.HIPS | 1 << CoverageEnum.GROIN),
+    ShapeEnum.SURCOAT:
+        (1 << CoverageEnum.SHOULDERS | 1 << CoverageEnum.THORAX_FRONT | 1 << CoverageEnum.THORAX_REAR |
+         1 << CoverageEnum.ABDOMEN_FRONT | 1 << CoverageEnum.ABDOMEN_REAR |
+         1 << CoverageEnum.HIPS | 1 << CoverageEnum.GROIN | 1 << CoverageEnum.THIGHS),
+    ShapeEnum.ROBE:
+        (1 << CoverageEnum.FOREARMS | 1 << CoverageEnum.ELBOWS | 1 << CoverageEnum.UPPER_ARMS |
+         1 << CoverageEnum.SHOULDERS | 1 << CoverageEnum.THORAX_FRONT | 1 << CoverageEnum.THORAX_REAR |
+         1 << CoverageEnum.ABDOMEN_FRONT | 1 << CoverageEnum.ABDOMEN_REAR |
+         1 << CoverageEnum.HIPS | 1 << CoverageEnum.GROIN | 1 << CoverageEnum.THIGHS |
+         1 << CoverageEnum.KNEES | 1 << CoverageEnum.CALVES),
+    ShapeEnum.HAUBERK:
+        (1 << CoverageEnum.FOREARMS | 1 << CoverageEnum.ELBOWS | 1 << CoverageEnum.UPPER_ARMS |
+         1 << CoverageEnum.SHOULDERS | 1 << CoverageEnum.THORAX_FRONT | 1 << CoverageEnum.THORAX_REAR |
+         1 << CoverageEnum.ABDOMEN_FRONT | 1 << CoverageEnum.ABDOMEN_REAR |
+         1 << CoverageEnum.HIPS | 1 << CoverageEnum.GROIN | 1 << CoverageEnum.THIGHS),
+    ShapeEnum.BREASTPLATE: (1 << CoverageEnum.THORAX_FRONT | 1 << CoverageEnum.ABDOMEN_FRONT),
+    ShapeEnum.BACKPLATE: (1 << CoverageEnum.THORAX_REAR | 1 << CoverageEnum.ABDOMEN_REAR),
+    ShapeEnum.AILETTES: (1 << CoverageEnum.SHOULDERS),
+    ShapeEnum.REREBRACES: (1 << CoverageEnum.UPPER_ARMS),
+    ShapeEnum.COUDES: (1 << CoverageEnum.ELBOWS),
+    ShapeEnum.VAMBRACES: (1 << CoverageEnum.FOREARMS),
+    ShapeEnum.KNEECOPS: (1 << CoverageEnum.KNEES),
+    ShapeEnum.GREAVES: (1 << CoverageEnum.CALVES),
+    ShapeEnum.GAUNTLETS: (1 << CoverageEnum.HANDS),
+    ShapeEnum.LEGGINGS:
+        (1 << CoverageEnum.HIPS | 1 << CoverageEnum.GROIN | 1 << CoverageEnum.THIGHS |
+         1 << CoverageEnum.KNEES | 1 << CoverageEnum.CALVES | 1 << CoverageEnum.FEET),
+    ShapeEnum.SHOES: (1 << CoverageEnum.FEET),
+    ShapeEnum.BOOTS_CALF: (1 << CoverageEnum.CALVES | 1 << CoverageEnum.FEET),
+    ShapeEnum.BOOTS_KNEE: (1 << CoverageEnum.KNEES | 1 << CoverageEnum.CALVES | 1 << CoverageEnum.FEET),
+}
+
+
 # EFFECTS
 
 class EffectTypeEnum(IntEnum):
@@ -305,145 +381,6 @@ class Effect:
 
 # ITEMS
 
-class ItemEnum(IntEnum):
-  NONE = 0
-  # WEAPON [UNARMED]
-  WEAPON_HAND = 10000
-  WEAPON_FOOT = 10001
-  # WEAPON [DAGGER]
-  WEAPON_KNIFE = 10200
-  WEAPON_DAGGER = 10210
-  WEAPON_WICKED_DAGGER = 10211
-  WEAPON_MAIN_GAUCHE = 10220
-  # WEAPON [SWORD]
-  WEAPON_SHORTSWORD = 10300
-  WEAPON_BROADSWORD = 10310
-  WEAPON_FALCHION = 10320
-  WEAPON_BASTARD_SWORD = 10330
-  WEAPON_BATTLESWORD = 10340
-  # WEAPON [CLUB]
-  WEAPON_STICK = 10400
-  WEAPON_CLUB = 10401
-  WEAPON_MACE = 10402
-  WEAPON_MORNINGSTAR = 10403
-  WEAPON_MAUL = 10404
-  # WEAPON [AXE]
-  WEAPON_SICKLE = 10500
-  WEAPON_HATCHET = 10501
-  WEAPON_HANDAXE = 10502
-  WEAPON_WARHAMMER = 10503
-  WEAPON_BATTLEAXE = 10504
-  # WEAPON [FLAIL]
-  WEAPON_GRAINFLAIL = 10600
-  WEAPON_BALL_AND_CHAIN = 10601
-  WEAPON_WARFLAIL = 10602
-  # WEAPON [SPEAR]
-  WEAPON_STAFF = 10700
-  WEAPON_JAVELIN = 10701
-  WEAPON_SPEAR = 10702
-  WEAPON_TRIDENT = 10703
-  # WEAPON [POLEARM]
-  WEAPON_LANCE = 10800
-  WEAPON_GLAIVE = 10801
-  WEAPON_POLEAXE = 10802
-  WEAPON_PIKE = 10803
-  # WEAPON [NET]
-  # WEAPON [WHIP]
-  # WEAPON [BOW]
-  # WEAPON [BLOWGUN]
-  # WEAPON [SLING]
-  # SHIELD
-  SHIELD_BUCKLER_WOOD = 15000
-  SHIELD_BUCKLER_BANDED = 15001
-  SHIELD_BUCKLER_STEEL = 15002
-  SHIELD_KNIGHT_STEEL = 15010
-  SHIELD_ROUND_WOOD = 15020
-  SHIELD_ROUND_BANDED = 15021
-  SHIELD_KITE_BANDED = 15030
-  SHIELD_TOWER_WOOD = 15040
-  SHIELD_TOWER_BANDED = 15041
-  # ARMOR [CLOTH]
-  ARMOR_CAP_CLOTH = 20000
-  ARMOR_HOOD_CLOTH = 20001
-  ARMOR_VEST_CLOTH = 20002
-  ARMOR_TUNIC_CLOTH = 20003
-  ARMOR_SURCOAT_CLOTH = 20004
-  ARMOR_ROBE_CLOTH = 20005
-  ARMOR_LEGGINGS_CLOTH = 20006
-  # ARMOR [QUILT]
-  ARMOR_CAP_QUILT = 20100
-  ARMOR_COWL_QUILT = 20101
-  ARMOR_TUNIC_QUILT = 20102
-  ARMOR_GAMBESON_QUILT = 20103
-  ARMOR_LEGGINGS_QUILT = 20104
-  # ARMOR [LEATHER]
-  ARMOR_CAP_LEATHER = 20200
-  ARMOR_COWL_LEATHER = 20201
-  ARMOR_VEST_LEATHER = 20202
-  ARMOR_TUNIC_LEATHER = 20203
-  ARMOR_SURCOAT_LEATHER = 20204
-  ARMOR_LEGGINGS_LEATHER = 20205
-  ARMOR_SHOES_LEATHER = 20206
-  ARMOR_CALF_BOOTS_LEATHER = 20207
-  ARMOR_KNEE_BOOTS_LEATHER = 20208
-  ARMOR_GAUNTLETS_LEATHER = 20209
-  ARMOR_APRON_LEATHER = 20210
-  # ARMOR [KURBUL]
-  ARMOR_HALFHELM_KURBUL = 20300
-  ARMOR_BREASTPLATE_KURBUL = 20301
-  ARMOR_BACKPLATE_KURBUL = 20302
-  ARMOR_AILETTES_KURBUL = 20303
-  ARMOR_REREBRACES_KURBUL = 20304
-  ARMOR_COUDES_KURBUL = 20305
-  ARMOR_VAMBRACES_KURBUL = 20306
-  ARMOR_KNEECOPS_KURBUL = 20307
-  ARMOR_GREAVES_KURBUL = 20308
-  # ARMOR [LEATHER RING]
-  ARMOR_HALFHELM_LEATHER_RING = 20400
-  ARMOR_VEST_LEATHER_RING = 20401
-  ARMOR_BYRNIE_LEATHER_RING = 20402
-  ARMOR_HAUBERK_LEATHER_RING = 20403
-  ARMOR_LEGGINGS_LEATHER_RING = 20404
-  ARMOR_GAUNTLETS_LEATHER_RING = 20405
-  # ARMOR [MAIL]
-  ARMOR_COWL_MAIL = 20500
-  ARMOR_BYRNIE_MAIL = 20501
-  ARMOR_HAUBERK_MAIL = 20502
-  ARMOR_LEGGINGS_MAIL = 20503
-  ARMOR_MITTENS_MAIL = 20504
-  # ARMOR [SCALE]
-  ARMOR_VEST_SCALE = 20600
-  ARMOR_BYRNIE_SCALE = 20601
-  ARMOR_HAUBERK_SCALE = 20602
-  # ARMOR [PLATE]
-  ARMOR_HALFHELM_STEEL = 20700
-  ARMOR_GREAT_HELM_STEEL = 20701
-  ARMOR_BREASTPLATE_STEEL = 20702
-  ARMOR_BACKPLATE_STEEL = 20703
-  ARMOR_AILETTES_STEEL = 20704
-  ARMOR_REREBRACES_STEEL = 20705
-  ARMOR_COUDES_STEEL = 20706
-  ARMOR_VAMBRACES_STEEL = 20707
-  ARMOR_KNEECOPS_STEEL = 20708
-  ARMOR_GREAVES_STEEL = 20709
-  # ARMOR MISC
-  ARMOR_STAINED_QUILT_TUNIC = 25000
-  ARMOR_STAINED_QUILT_COWL = 25001
-  ARMOR_STAINED_QUILT_LEGGINGS = 25002
-  # RINGS
-  RING_ATTACK_SILVER = 30000
-  RING_HP_GOLD = 30001
-  # MISC
-  MISC_STONE = 50000
-  MISC_RAT_FUR = 50001
-  MISC_TORCH = 50100
-  # QUEST
-  QUEST_WEATHERED_PACKAGE = 51000
-  # KEYS
-  KEY_WAREHOUSE_DBL_DOOR = 60000
-  KEY_CORPORAL_APPT = 60001
-
-
 class ItemTypeEnum(IntEnum):
   NONE = 0
   WEAPON = 1
@@ -457,14 +394,14 @@ class ItemTypeEnum(IntEnum):
 
 
 class ItemFlagEnum(IntEnum):
-  NO_SELL = 0
-  NO_DROP = 1
-  NO_GET = 2
-  LIGHT = 2
-  MAGIC = 3
-  HIDDEN = 4
-  INVIS = 5
-  QUEST = 5
+  NO_SELL = 1 << 0
+  NO_DROP = 1 << 1
+  NO_GET = 1 << 2
+  LIGHT = 1 << 3
+  MAGIC = 1 << 4
+  HIDDEN = 1 << 5
+  INVIS = 1 << 6
+  QUEST = 1 << 7
 
 
 class ItemFlag:
@@ -486,7 +423,7 @@ item_flags = {
 
 class Item:
   def __init__(self, item_type=ItemTypeEnum.NONE, name="", qual=QualityEnum.NONE, material=MaterialEnum.NONE,
-               mass=0, flags=0, eff=None, onGet=None, onDrop=None, onEquip=None, onRemove=None):
+               mass=0, flags=0, eff=None, onGet=None, onDrop=None, onEquip=None, onRemove=None, equipped=False):
     self.ItemType = item_type
     self.ItemName = name
     self.Quality = qual
@@ -501,11 +438,12 @@ class Item:
     self.OnDrop = onDrop
     self.OnEquip = onEquip
     self.OnRemove = onRemove
+    self.Equipped = equipped
 
   def ItemFlagStr(self, format="%s"):
     flag_list = []
     for x in ItemFlagEnum:
-        if 1 << x & self.Flags > 0:
+        if x & self.Flags > 0:
           flag_list.append(item_flags[x].Name)
     if len(flag_list) == 0:
       return ""
@@ -513,7 +451,7 @@ class Item:
       return format % ", ".join(flag_list)
 
   def IsLight(self):
-    if 1 << ItemFlagEnum.LIGHT & self.Flags > 0:
+    if ItemFlagEnum.LIGHT & self.Flags > 0:
       return True
     return False
 
@@ -525,9 +463,9 @@ class Item:
 
 class Shield(Item):
   def __init__(self, name, qual, material, mass, skill, ar, dr, flags=0, eff=None,
-               onGet=None, onDrop=None, onEquip=None, onRemove=None):
+               onGet=None, onDrop=None, onEquip=None, onRemove=None, equipped=False):
     super().__init__(ItemTypeEnum.SHIELD, name, qual, material, mass, flags, eff,
-                     onGet, onDrop, onEquip, onRemove)
+                     onGet, onDrop, onEquip, onRemove, equipped)
     self.Skill = skill
     self.AttackRating = ar
     self.DefenseRating = dr
@@ -540,9 +478,9 @@ class Shield(Item):
 
 class Weapon(Item):
   def __init__(self, name, qual, material, mass, skill, ar, dr, sh_penalty, dice_roll, dmg_type=DamageTypeEnum.BLUNT,
-               flags=0, eff=None, onGet=None, onDrop=None, onEquip=None, onRemove=None):
+               flags=0, eff=None, onGet=None, onDrop=None, onEquip=None, onRemove=None, equipped=False):
     super().__init__(ItemTypeEnum.WEAPON, name, qual, material, mass, flags, eff,
-                     onGet, onDrop, onEquip, onRemove)
+                     onGet, onDrop, onEquip, onRemove, equipped)
     self.Skill = skill
     self.AttackRating = ar
     self.DefenseRating = dr
@@ -556,30 +494,45 @@ class Weapon(Item):
         damages[self.DamageType], skills[self.Skill].Name.lower(), self.ItemFlagStr(" (%s)"))
 
 
+class ArmorLayer(IntEnum):
+  NONE = 0
+  AL_1 = 1 << 0
+  AL_1_5 = 1 << 1
+  AL_2 = 1 << 2
+  AL_2_5 = 1 << 3
+  AL_3 = 1 << 4
+  AL_3_5 = 1 << 5
+  AL_4 = 1 << 6
+  AL_4_5 = 1 << 7
+  AL_5 = 1 << 8
+  AL_5_5 = 1 << 9
+
+
 class Armor(Item):
-  def __init__(self, name, qual, material, layer=0, coverage=0, flags=0, eff=None,
-               onGet=None, onDrop=None, onEquip=None, onRemove=None):
+  def __init__(self, name, qual, material, layer=0, shape=ShapeEnum.NONE, flags=0, eff=None,
+               onGet=None, onDrop=None, onEquip=None, onRemove=None, equipped=False):
     # TODO use coverage / material Type
     mass = 0
-    for x in CoverageEnum:
-      if coverage & 1 << x > 0:
-        mass += body_parts[x].Mass
-    super().__init__(ItemTypeEnum.ARMOR, name, qual, material, mass, flags, eff,
-                     onGet, onDrop, onEquip, onRemove)
+    self.Shape = shape
     self.Layer = layer
-    self.Coverage = coverage
+    if shape > ShapeEnum.NONE:
+      for x in CoverageEnum:
+        if self.Covered(x):
+          mass += body_parts[x].Mass
+    super().__init__(ItemTypeEnum.ARMOR, name, qual, material, mass, flags, eff,
+                     onGet, onDrop, onEquip, onRemove, equipped)
+
+  def Covered(self, bp_id):
+    if armor_shapes[self.Shape] & (1 << bp_id) > 0:
+        return True
+    return False
 
   def CoverageStr(self):
     cov_list = []
     for x in CoverageEnum:
-      if self.Coverage & 1 << x > 0:
+      if self.Covered(x):
         cov_list.append(body_parts[x].PartName)
     return ", ".join(cov_list)
-
-  def Covered(self, bp_id):
-    if self.Coverage & 1 << bp_id > 0:
-        return True
-    return False
 
   def Description(self):
     return "%s : Made of %s and covers %s%s" % (
@@ -589,9 +542,9 @@ class Armor(Item):
 
 class Ring(Item):
   def __init__(self, name, qual, material, mass, value=0, flags=0, eff=None,
-               onGet=None, onDrop=None, onEquip=None, onRemove=None):
+               onGet=None, onDrop=None, onEquip=None, onRemove=None, equipped=False):
     super().__init__(ItemTypeEnum.RING, name, qual, material, mass, flags, eff,
-                     onGet, onDrop, onEquip, onRemove)
+                     onGet, onDrop, onEquip, onRemove, equipped)
     self.Value = value
 
 
@@ -617,11 +570,11 @@ aims = {
 
 
 class CombatAttack:
-  def __init__(self, name, ml, skill_id, item_id, roll, dmg_type):
+  def __init__(self, name, ml, skill_id, item, roll, dmg_type):
     self.Name = name
     self.SkillML = ml
     self.SkillID = skill_id
-    self.ItemID = item_id
+    self.Item = item
     self.Roll = roll
     self.DamageType = dmg_type
 
@@ -1435,12 +1388,6 @@ class PersonFlag(IntEnum):
   PERIODIC_TRIGGERED = 1 << 15  # keep in sync with gamedata
 
 
-class ItemLink:
-  def __init__(self, qty=1, equip=False):
-    self.Quantity = qty
-    self.Equipped = equip
-
-
 class WoundDesc:
   def __init__(self, name, verbs, ip_bonus=0):
     self.Name = name
@@ -1499,10 +1446,10 @@ class Person:
     self.SkillLinks = dict()
     self.Wounds = []
     self.Effects = []
-    self.ItemLinks = dict()
+    self.Items = []
     if it is not None:
-      for item_id, il in it.items():
-        self.AddItem(item_id, il)
+      for i in it:
+        self.AddItem(i, i.Equipped)
 
   def Copy(self, p):
     self.PersonType = p.PersonType
@@ -1535,29 +1482,37 @@ class Person:
     self.Effects.clear()
     for x in p.Effects:
       self.Effects.append(x)
-    self.ItemLinks.clear()
-    for item_id, il in p.ItemLinks.items():
-      self.AddItem(item_id, il)
+    self.Items.clear()
+    for it in p.Items:
+      self.AddItem(it, it.Equipped)
 
   def ResetStats(self):
     self.Effects.clear()
 
-  def AddItem(self, item_id, item):
-    if item_id in self.ItemLinks:
-      self.ItemLinks[item_id].Quantity += item.Quantity
-    else:
-      self.ItemLinks.update({item_id: item})
+  def AddItem(self, item, equipped=False):
+    i = deepcopy(item)
+    i.UUID = uuid4()
+    i.Equipped = equipped
+    self.Items.append(i)
     return True
 
-  def RemoveItem(self, item_id, item):
-    if item_id in self.ItemLinks:
-      if self.ItemLinks[item_id].Equipped and self.ItemLinks[item_id].Quantity == 1:
-        return False
-      if self.ItemLinks[item_id].Quantity > item.Quantity:
-        self.ItemLinks[item_id].Quantity -= item.Quantity
-      else:
-        self.ItemLinks.pop(item_id)
+  def AttachItem(self, item, equipped=False):
+    item.Equipped = equipped
+    self.Items.append(item)
     return True
+
+  def RemoveItem(self, it):
+    for item in self.Items:
+      if item.UUID == it.UUID:
+        self.Items.remove(item)
+        return True
+    return False
+
+  def HasItem(self, item_name):
+    for item in self.Items:
+      if item.ItemName.lower() == item_name.lower():
+        return item
+    return None
 
   def AttrSex(self):
     ret = SexEnum.NONE
@@ -1610,27 +1565,15 @@ class Person:
   def UniversalPenaltyIndex(self):
     return int(self.UniversalPenalty() / 10)
 
-  def EquipWeight(self):
-    items = GameData.GetItems()
+  def EquipWeight(self, equipped=True):
     eq = 0
-    for item_id, il in self.ItemLinks.items():
-      if il.Equipped:
-        eq += items[item_id].Weight
+    for item in self.Items:
+      if item.Equipped == equipped:
+        eq += item.Weight
     return eq
 
-  def InvenWeight(self):
-    items = GameData.GetItems()
-    inv = 0
-    for item_id, il in self.ItemLinks.items():
-      if il.Equipped:
-        if il.Quantity > 1:
-          inv += items[item_id].Weight * (il.Quantity - 1)
-      else:
-        inv += items[item_id].Weight * il.Quantity
-    return inv
-
   def ItemWeight(self):
-    return self.EquipWeight() + self.InvenWeight()
+    return self.EquipWeight() + self.EquipWeight(False)
 
   def FatigueRate(self):
     return self.ItemWeight() / self.AttrEndurance()
@@ -1719,16 +1662,15 @@ class Person:
         return Roll.MF
 
   def Defense(self, bp_id, dmg_type):
-    items = GameData.GetItems()
     m = Material("None", 0, 0, [0, 0, 0, 0])
     m.Copy(materials[self.SkinMaterial])
-    for item_id, il in self.ItemLinks.items():
-      if items[item_id].ItemType != ItemTypeEnum.ARMOR:
+    for item in self.Items:
+      if item.ItemType != ItemTypeEnum.ARMOR:
         continue
-      if not il.Equipped:
+      if not item.Equipped:
         continue
-      if items[item_id].Covered(bp_id):
-        m.Add(materials[items[item_id].Material])
+      if item.Covered(bp_id):
+        m.Add(materials[item.Material])
     return m.Protection[dmg_type]
 
   def AttrInitiative(self):
@@ -1754,57 +1696,58 @@ class Person:
     else:
       self.Flags &= ~PersonFlag.TALKING
 
-  def GenerateCombatAttacks(self, block=False, default=ItemEnum.NONE):
-    items = GameData.GetItems()
+  def GenerateCombatAttacks(self, block=False):
+    default = Weapon("punch", QualityEnum.AVE, MaterialEnum.BONE, 0,
+                     SkillEnum.UNARMED, 0, 5, 0, DiceRoll(1, 2), DamageTypeEnum.BLUNT)
     attacks = []
     # count hands used
     count = 0
     def_skill = 0
-    def_item_id = ItemEnum.NONE
-    for item_id, il in self.ItemLinks.items():
-      if not il.Equipped:
+    def_item = None
+    for item in self.Items:
+      if not item.Equipped:
         continue
-      if items[item_id].ItemType == ItemTypeEnum.WEAPON or items[item_id].ItemType == ItemTypeEnum.SHIELD:
+      if item.ItemType == ItemTypeEnum.WEAPON or item.ItemType == ItemTypeEnum.SHIELD:
         if block:
-          skill = self.SkillML(items[item_id].Skill)
-          skill += items[item_id].DefenseRating
+          skill = self.SkillML(item.Skill)
+          skill += item.DefenseRating
           if skill > def_skill:
             def_skill = skill
-            def_item_id = item_id
+            def_item = item
         count += 1
     # create attacks
     # for BLOCK only generate the blocking weapon / shield
     if block:
-      if def_item_id == ItemEnum.NONE:
+      if def_item is None:
         return attacks
-      skill_id = items[def_item_id].Skill
+      skill_id = def_item.Skill
       ml = self.SkillML(skill_id)
-      ml += items[def_item_id].DefenseRating
-      attacks.append(CombatAttack(items[def_item_id].ItemName, ml, skill_id, def_item_id, None, DamageTypeEnum.BLUNT))
+      ml += def_item.DefenseRating
+      attacks.append(CombatAttack(def_item.ItemName, ml, skill_id, def_item, None, DamageTypeEnum.BLUNT))
     else:
-      for item_id, il in self.ItemLinks.items():
-        if not il.Equipped:
+      for item in self.Items:
+        if not item.Equipped:
           continue
-        if items[item_id].ItemType == ItemTypeEnum.WEAPON:
-          skill_id = items[item_id].Skill
+        if item.ItemType == ItemTypeEnum.WEAPON:
+          skill_id = item.Skill
           ml = self.SkillML(skill_id)
-          ml += items[item_id].AttackRating
+          ml += item.AttackRating
           if count > 1:
-            ml -= items[item_id].SingleHandPenalty
-          attacks.append(CombatAttack(items[item_id].ItemName, ml, skill_id, item_id, items[item_id].Roll,
-                                      items[item_id].DamageType))
-    if len(attacks) < 1 and default != ItemEnum.NONE:
-      skill_id = items[default].Skill
+            ml -= item.SingleHandPenalty
+          attacks.append(CombatAttack(item.ItemName, ml, skill_id, item, item.Roll,
+                                      item.DamageType))
+    if len(attacks) < 1 and default is not None:
+      skill_id = default.Skill
       ml = self.SkillML(skill_id)
-      ml += items[default].AttackRating
-      attacks.append(CombatAttack(items[default].ItemName, ml, skill_id, default, items[default].Roll, items[default].DamageType))
+      ml += default.AttackRating
+      attacks.append(CombatAttack(default.ItemName, ml, skill_id, default, default.Roll,
+                                  default.DamageType))
     return attacks
 
   def HasLight(self):
-    items = GameData.GetItems()
-    if self.ItemLinks is not None:
-      for item_id, il in self.ItemLinks.items():
-        if items[item_id].IsLight():
+    if self.Items is not None:
+      for item in self.Items:
+        if item.IsLight():
           return True
     return False
 
@@ -1939,8 +1882,8 @@ class Mob(Person):
       for skill_id, points in mob_skills.items():
         self.SkillLinks.update({skill_id: SkillLink(points)})
     self.Loot = loot
-    self.SellItemLinks = sell_items
-    self.BuyItemLinks = buy_items
+    self.SellItems = sell_items
+    self.BuyItems = buy_items
     self.DelayTimestamp = 0
     self.DelaySeconds = 0
     self.Talks = talk
@@ -1956,7 +1899,7 @@ class Mob(Person):
   def AttrDodge(self):
     return self.Dodge - (self.PhysicalPenalty() * 5)
 
-  def GenerateCombatAttacks(self, block=False, default=ItemEnum.WEAPON_HAND):
+  def GenerateCombatAttacks(self, block=False):
     attacks = []
     # Look for a "natural" attack
     if not block and self.MobAttacks is not None:
@@ -1965,12 +1908,12 @@ class Mob(Person):
           if DiceRoll(1, 100).Result() <= ma.ChanceMax:
             ml = ma.SkillML + ma.AttackRating
             ml -= (self.PhysicalPenalty() * 5)
-            ca = CombatAttack(ma.Name, ml, SkillEnum.UNARMED, ItemEnum.NONE, ma.Damage, ma.DamageType)
+            ca = CombatAttack(ma.Name, ml, SkillEnum.UNARMED, None, ma.Damage, ma.DamageType)
             attacks.append(ca)
             break
     # Look for equipped weapons
     if len(attacks) < 1:
-      attacks = super().GenerateCombatAttacks(block, default)
+      attacks = super().GenerateCombatAttacks(block)
     return attacks
 
 
@@ -2199,8 +2142,8 @@ class Player(Person):
         break
     return ret
 
-  def GenerateCombatAttacks(self, block=False, default=ItemEnum.WEAPON_HAND):
-    return super().GenerateCombatAttacks(block, default)
+  def GenerateCombatAttacks(self, block=False):
+    return super().GenerateCombatAttacks(block)
 
   def DoorState(self, door_id):
     doors = GameData.GetDoors()
@@ -2458,10 +2401,10 @@ class DoorState:
 
 
 class Door:
-  def __init__(self, name, state, key_item=ItemEnum.NONE):
+  def __init__(self, name, state, key_name=""):
     self.Name = name
     self.State = state
-    self.Key = key_item
+    self.KeyName = key_name
 
   def Verb(self):
     if self.Name.endswith("s"):
@@ -2516,7 +2459,7 @@ class Room:
     self.Persons = []
     self.Periodics = []
     self.Exits = dict()
-    self.RoomItems = dict()
+    self.Items = []
     self.OnLook = onLook
     if long_desc is not None:
       for para in long_desc:
@@ -2525,8 +2468,8 @@ class Room:
       for exit_dir, exit in exits.items():
         self.AddExit(exit_dir, exit)
     if room_items is not None:
-      for item_id, il in room_items.items():
-        self.AddItem(item_id, il)
+      for item in room_items:
+        self.AddItem(item)
     if periodics is not None:
       for per in periodics:
         self.Periodics.append(per)
@@ -2552,18 +2495,28 @@ class Room:
     if direction in self.Exits:
         self.Exits.pop(direction)
 
-  def AddItem(self, item_id, il):
-    if item_id in self.RoomItems:
-      self.RoomItems[item_id].Quantity += il.Quantity
-    else:
-      self.RoomItems.update({item_id: il})
+  def AddItem(self, item):
+    i = deepcopy(item)
+    i.UUID = uuid4()
+    self.Items.append(i)
+    return True
 
-  def RemoveItem(self, item_id, item):
-    if item_id in self.RoomItems:
-      if self.RoomItems[item_id].Quantity > item.Quantity:
-        self.RoomItems[item_id].Quantity -= item.Quantity
-      else:
-        self.RoomItems.pop(item_id)
+  def AttachItem(self, item):
+    self.Items.append(item)
+    return True
+
+  def RemoveItem(self, it):
+    for item in self.Items:
+      if item.UUID == it.UUID:
+        self.Items.remove(item)
+        return True
+    return False
+
+  def HasItem(self, item_name):
+    for item in self.Items:
+      if item.ItemName.lower() == item_name.lower():
+        return item
+    return None
 
   def AddPerson(self, person):
     self.Persons.append(person)
@@ -2585,7 +2538,6 @@ class Room:
 
   def HasLight(self):
     player = GameData.GetPlayer()
-    items = GameData.GetItems()
     if self.Flags & RoomFlag.OUTSIDE > 0 and player.GameTimeIsDay():
       return True
     if self.Flags & RoomFlag.LIGHT > 0:
@@ -2595,10 +2547,9 @@ class Room:
     for x in self.Persons:
       if x.HasLight():
         return True
-    if self.RoomItems is not None:
-      for item_id in self.RoomItems.keys():
-        if items[item_id].IsLight():
-          return True
+    for item in self.Items:
+      if item.IsLight():
+        return True
     return False
 
 # vim: tabstop=2 shiftwidth=2 expandtab:

@@ -14,7 +14,6 @@ class GameData:
   _console = None
   _doors = None
   _rooms = None
-  _items = None
   _quests = None
   _persons = None
   _player = None
@@ -34,14 +33,6 @@ class GameData:
   @staticmethod
   def GetConsole():
     return GameData._console
-
-  @staticmethod
-  def SetItems(items):
-    GameData._items = items
-
-  @staticmethod
-  def GetItems():
-    return GameData._items
 
   @staticmethod
   def SetPersons(persons):

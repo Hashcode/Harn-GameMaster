@@ -5,13 +5,22 @@
 # Person Definitions
 
 from console import (ANSI)
-from global_defines import (DiceRoll, DamageTypeEnum, ItemEnum, AttrEnum,
-                            SkillEnum, PersonEnum, ItemLink, Periodic,
-                            TargetTypeEnum, ConditionCheckEnum, Condition,
-                            TriggerTypeEnum, Trigger, QuestEnum,
-                            PersonFlag, Mob, MobTalk, MobAttack,
-                            MaterialEnum, AimEnum, DoorEnum, RoomEnum,
-                            DirectionEnum)
+from global_defines import (DiceRoll, DamageTypeEnum, AttrEnum, SkillEnum, PersonEnum, Periodic, QuestEnum,
+                            TargetTypeEnum, ConditionCheckEnum, Condition, TriggerTypeEnum, Trigger, AimEnum,
+                            PersonFlag, Mob, MobTalk, MobAttack, DirectionEnum, DoorEnum, RoomEnum, MaterialEnum,
+                            QualityEnum, ShapeEnum, ItemTypeEnum, ItemFlagEnum, Item,
+                            Weapon, Shield, ArmorLayer, Armor, Ring,
+                            EffectTypeEnum, Effect)
+
+rat_fur = Item(ItemTypeEnum.MISC, "rat fur", QualityEnum.AVE, MaterialEnum.FUR_LT, 2,
+               onDrop=[
+                   Trigger(TriggerTypeEnum.MESSAGE, ["With a sigh of relief you drop a rat fur."]),
+               ],
+               onGet=[
+                   Trigger(TriggerTypeEnum.MESSAGE, ["You pinch your nose trying to pick up the rat fur, "
+                                                     "wondering if this time you'll be successful."]),
+                   Trigger(TriggerTypeEnum.DENY, chance=90),
+               ])
 
 persons = {
     PersonEnum.MON_RAT:
@@ -39,7 +48,7 @@ persons = {
                 SkillEnum.STEALTH: 0,
             },
             loot={
-                ItemEnum.MISC_RAT_FUR: 100,
+                rat_fur: 100,
             }),
     PersonEnum.MON_RAT_LARGE:
         Mob(PersonEnum.MON_RAT_LARGE, "a large nasty-looking rat",
@@ -67,7 +76,7 @@ persons = {
                 SkillEnum.STEALTH: 0,
             },
             loot={
-                ItemEnum.MISC_RAT_FUR: 100,
+                rat_fur: 100,
             }),
     PersonEnum.MON_RAT_GUARD:
         Mob(PersonEnum.MON_RAT_GUARD, "a rat guardian",
@@ -96,7 +105,7 @@ persons = {
                 SkillEnum.STEALTH: 0,
             },
             loot={
-                ItemEnum.MISC_RAT_FUR: 100,
+                rat_fur: 100,
             }),
     PersonEnum.MON_RAT_NOBLE:
         Mob(PersonEnum.MON_RAT_NOBLE, "a rat noble",
@@ -125,12 +134,12 @@ persons = {
                 MobAttack("Claws", 100, 35, 0, 0, DiceRoll(1, 3), DamageTypeEnum.EDGE),
             ],
             loot={
-                ItemEnum.RING_ATTACK_SILVER: 100,
-                ItemEnum.MISC_RAT_FUR: 100,
+                Ring("silver ring", QualityEnum.SUP, MaterialEnum.SILVER, 0.1, 1500, flags=ItemFlagEnum.MAGIC, eff=[Effect(EffectTypeEnum.DEX, 1)]): 100,
+                rat_fur: 100,
             }),
     PersonEnum.BL_KEEP_GUARD:
         Mob(PersonEnum.BL_KEEP_GUARD, "a gatehouse guard",
-            "A gatehouse guard keeps watch over his post.", 60, 17, 50,
+            "A gatehouse guard keeps watch over his post.", 60, 14, 50,
             cur=DiceRoll(1, 6, 40),
             attrs={
                 AttrEnum.SEX: 1,
@@ -143,21 +152,22 @@ persons = {
                 AttrEnum.SMELL: 10,
                 AttrEnum.INTELLIGENCE: 12,
                 AttrEnum.AURA: 12,
-                AttrEnum.WILL: 13,
+                AttrEnum.WILL: 14,
             },
             mob_skills={
                 SkillEnum.POLEARM: 50,  # 21 Based + 50 Train
             },
-            eq={
-                ItemEnum.WEAPON_PIKE: ItemLink(1, True),
-                ItemEnum.ARMOR_COWL_QUILT: ItemLink(1, True),
-                ItemEnum.ARMOR_TUNIC_QUILT: ItemLink(1, True),
-                ItemEnum.ARMOR_LEGGINGS_QUILT: ItemLink(1, True),
-                ItemEnum.ARMOR_HALFHELM_LEATHER_RING: ItemLink(1, True),
-                ItemEnum.ARMOR_HAUBERK_LEATHER_RING: ItemLink(1, True),
-                ItemEnum.ARMOR_LEGGINGS_LEATHER_RING: ItemLink(1, True),
-                ItemEnum.ARMOR_GAUNTLETS_LEATHER_RING: ItemLink(1, True),
-            },
+            eq=[
+                Weapon("pike", QualityEnum.INF, MaterialEnum.STEEL_WOOD, 15, SkillEnum.POLEARM, 25, 5, 25, DiceRoll(2, 6, 0),
+                       DamageTypeEnum.PIERCE, equipped=True),
+                Armor("quilt cowl", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2, ShapeEnum.COWL, equipped=True),
+                Armor("quilt tunic", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2, ShapeEnum.TUNIC, equipped=True),
+                Armor("quilt leggings", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2_5, ShapeEnum.LEGGINGS, equipped=True),
+                Armor("studded leather halfhelm", QualityEnum.AVE, MaterialEnum.LEATHER_RING, ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5, ShapeEnum.CAP, equipped=True),
+                Armor("studded leather hauberk", QualityEnum.AVE, MaterialEnum.LEATHER_RING, ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5, ShapeEnum.HAUBERK, equipped=True),
+                Armor("studded leather leggings", QualityEnum.AVE, MaterialEnum.LEATHER_RING, ArmorLayer.AL_3_5 | ArmorLayer.AL_4_5 | ArmorLayer.AL_5_5, ShapeEnum.LEGGINGS, equipped=True),
+                Armor("studded leather gauntlets", QualityEnum.AVE, MaterialEnum.LEATHER_RING, ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5, ShapeEnum.GAUNTLETS, equipped=True),
+            ],
             talk=[
                 MobTalk("~on_enter~",
                         [
@@ -268,7 +278,8 @@ persons = {
                                         "abbreviation 'I'). Also, 'HELP' will display all of the commands for the "
                                         "game.]%s" % (ANSI.TEXT_COLOR_CYAN, ANSI.TEXT_NORMAL),
                                     ]),
-                            Trigger(TriggerTypeEnum.ITEM_GIVE, ItemEnum.QUEST_WEATHERED_PACKAGE),
+                            Trigger(TriggerTypeEnum.ITEM_GIVE,
+                                    Item(ItemTypeEnum.QUEST, "weathered package", QualityEnum.AVE, MaterialEnum.LEATHER, 0.1, flags=ItemFlagEnum.QUEST)),
                             Trigger(TriggerTypeEnum.QUEST_GIVE, QuestEnum.GUARD_DELIVERY),
                         ]),
                 MobTalk("~",
@@ -300,16 +311,21 @@ persons = {
             mob_skills={
                 SkillEnum.POLEARM: 40,
             },
-            eq={
-                ItemEnum.WEAPON_POLEAXE: ItemLink(1, True),
-                ItemEnum.ARMOR_COWL_QUILT: ItemLink(1, True),
-                ItemEnum.ARMOR_TUNIC_QUILT: ItemLink(1, True),
-                ItemEnum.ARMOR_LEGGINGS_QUILT: ItemLink(1, True),
-                ItemEnum.ARMOR_HALFHELM_KURBUL: ItemLink(1, True),
-                ItemEnum.ARMOR_BYRNIE_LEATHER_RING: ItemLink(1, True),
-                ItemEnum.ARMOR_LEGGINGS_LEATHER: ItemLink(1, True),
-                ItemEnum.ARMOR_GAUNTLETS_LEATHER_RING: ItemLink(1, True),
-            },
+            eq=[
+                Weapon("poleaxe", QualityEnum.AVE, MaterialEnum.STEEL_WOOD, 10.5, SkillEnum.POLEARM, 25, 5, 20, DiceRoll(2, 6, 0),
+                       DamageTypeEnum.EDGE, equipped=True),
+                Armor("quilt cowl", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2, ShapeEnum.COWL, equipped=True),
+                Armor("quilt tunic", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2, ShapeEnum.TUNIC, equipped=True),
+                Armor("quilt leggings", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2_5, ShapeEnum.LEGGINGS, equipped=True),
+                Armor("hardened leather halfhelm", QualityEnum.AVE, MaterialEnum.KURBUL, ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5,
+                      ShapeEnum.CAP, equipped=True),
+                Armor("studded leather byrnie", QualityEnum.AVE, MaterialEnum.LEATHER_RING, ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5,
+                      ShapeEnum.TUNIC, equipped=True),
+                Armor("studded leather leggings", QualityEnum.AVE, MaterialEnum.LEATHER_RING, ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5,
+                      ShapeEnum.LEGGINGS, equipped=True),
+                Armor("studded leather gauntlets", QualityEnum.AVE, MaterialEnum.LEATHER_RING, ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5,
+                      ShapeEnum.GAUNTLETS, equipped=True),
+            ],
             periodics=[
                 Periodic(
                     [
@@ -354,11 +370,11 @@ persons = {
                 AttrEnum.WILL: 11,
             },
             mob_skills={
-                SkillEnum.UNARMED: 40,
+                SkillEnum.UNARMED: 30,
             },
-            eq={
-                ItemEnum.ARMOR_TUNIC_CLOTH: ItemLink(1, True),
-            },
+            eq=[
+                Armor("dirty cloth tunic", QualityEnum.INF, MaterialEnum.CLOTH, ArmorLayer.AL_1, ShapeEnum.TUNIC, equipped=True),
+            ],
             periodics=[
                 Periodic(
                     [
@@ -421,19 +437,20 @@ persons = {
                 AttrEnum.WILL: 12,
             },
             mob_skills={
-                SkillEnum.SWORD: 70,
+                SkillEnum.SWORD: 50,
             },
-            eq={
-                ItemEnum.WEAPON_BASTARD_SWORD: ItemLink(1, True),
-                ItemEnum.SHIELD_ROUND_BANDED: ItemLink(1, True),
-                ItemEnum.ARMOR_COWL_QUILT: ItemLink(1, True),
-                ItemEnum.ARMOR_TUNIC_QUILT: ItemLink(1, True),
-                ItemEnum.ARMOR_LEGGINGS_QUILT: ItemLink(1, True),
-                ItemEnum.ARMOR_COWL_MAIL: ItemLink(1, True),
-                ItemEnum.ARMOR_BYRNIE_MAIL: ItemLink(1, True),
-                ItemEnum.ARMOR_LEGGINGS_MAIL: ItemLink(1, True),
-                ItemEnum.ARMOR_MITTENS_MAIL: ItemLink(1, True),
-            },
+            eq=[
+                Weapon("steel bastard sword", QualityEnum.AVE, MaterialEnum.STEEL, 7.5, SkillEnum.SWORD, 20, 10, 10, DiceRoll(1, 6, 2),
+                       DamageTypeEnum.EDGE, equipped=True),
+                Shield("round shield", QualityEnum.INF, MaterialEnum.STEEL_WOOD, 6.8, SkillEnum.SHIELD, 5, 20),
+                Armor("quilt cowl", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2, ShapeEnum.COWL, equipped=True),
+                Armor("quilt tunic", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2, ShapeEnum.TUNIC, equipped=True),
+                Armor("quilt leggings", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2_5, ShapeEnum.LEGGINGS, equipped=True),
+                Armor("chainmail cowl", QualityEnum.AVE, MaterialEnum.MAIL, ArmorLayer.AL_4, ShapeEnum.COWL, equipped=True),
+                Armor("chainmail byrnie", QualityEnum.AVE, MaterialEnum.MAIL, ArmorLayer.AL_4, ShapeEnum.TUNIC, equipped=True),
+                Armor("chainmail leggings", QualityEnum.AVE, MaterialEnum.MAIL, ArmorLayer.AL_4_5, ShapeEnum.LEGGINGS, equipped=True),
+                Armor("chainmail mittens", QualityEnum.AVE, MaterialEnum.MAIL, ArmorLayer.AL_4, ShapeEnum.GAUNTLETS, equipped=True),
+            ],
             periodics=[
                 Periodic(
                     [
@@ -572,9 +589,9 @@ persons = {
             mob_skills={
                 SkillEnum.UNARMED: 50,
             },
-            eq={
-                ItemEnum.ARMOR_ROBE_CLOTH: ItemLink(1, True),
-            },
+            eq=[
+                Armor("cloth robe", QualityEnum.AVE, MaterialEnum.CLOTH, ArmorLayer.AL_1, ShapeEnum.ROBE, equipped=True),
+            ],
             periodics=[
                 Periodic(
                     [
@@ -602,26 +619,28 @@ persons = {
                 AttrEnum.WILL: 16,
             },
             mob_skills={
-                SkillEnum.CLUB: 75,
+                SkillEnum.CLUB: 50,
                 SkillEnum.METALCRAFT: 50,
             },
-            eq={
-                ItemEnum.WEAPON_MAUL: ItemLink(1, True),
-                ItemEnum.ARMOR_GAMBESON_QUILT: ItemLink(1, True),
-                ItemEnum.ARMOR_CAP_LEATHER: ItemLink(1, True),
-                ItemEnum.ARMOR_APRON_LEATHER: ItemLink(1, True),
-                ItemEnum.ARMOR_SHOES_LEATHER: ItemLink(1, True),
-            },
-            sell_items={
-                ItemEnum.ARMOR_COWL_MAIL: ItemLink(1),
-                ItemEnum.ARMOR_BYRNIE_MAIL: ItemLink(1),
-                ItemEnum.ARMOR_HAUBERK_MAIL: ItemLink(1),
-                ItemEnum.ARMOR_LEGGINGS_MAIL: ItemLink(1),
-                ItemEnum.ARMOR_MITTENS_MAIL: ItemLink(1),
-                ItemEnum.ARMOR_VEST_SCALE: ItemLink(1),
-                ItemEnum.ARMOR_BYRNIE_SCALE: ItemLink(1),
-                ItemEnum.ARMOR_HAUBERK_SCALE: ItemLink(1),
-            },
+            eq=[
+                Weapon("wicked-looking spiked maul", QualityEnum.SUP, MaterialEnum.WOOD, 8, SkillEnum.CLUB, 20, 5, 20, DiceRoll(1, 6, 3),
+                       DamageTypeEnum.BLUNT, equipped=True),
+                Armor("worn quilt gambeson", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2, ShapeEnum.HAUBERK, equipped=True),
+                Armor("worn quilt leggings", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2_5, ShapeEnum.LEGGINGS, equipped=True),
+                Armor("red leather cap", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3, ShapeEnum.CAP, equipped=True),
+                Armor("blackened leather apron", QualityEnum.INF, MaterialEnum.LEATHER, ArmorLayer.AL_3, ShapeEnum.APRON, equipped=True),
+                Armor("leather shoes", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3_5, ShapeEnum.SHOES, equipped=True),
+            ],
+            sell_items=[
+                Armor("chainmail cowl", QualityEnum.AVE, MaterialEnum.MAIL, ArmorLayer.AL_4, ShapeEnum.COWL),
+                Armor("chainmail byrnie", QualityEnum.AVE, MaterialEnum.MAIL, ArmorLayer.AL_4, ShapeEnum.TUNIC),
+                Armor("chainmail leggings", QualityEnum.AVE, MaterialEnum.MAIL, ArmorLayer.AL_4_5, ShapeEnum.LEGGINGS),
+                Armor("chainmail mittens", QualityEnum.AVE, MaterialEnum.MAIL, ArmorLayer.AL_4, ShapeEnum.GAUNTLETS),
+                Armor("chainmail hauberk", QualityEnum.AVE, MaterialEnum.MAIL, ArmorLayer.AL_4, ShapeEnum.HAUBERK),
+                Armor("scale armor vest", QualityEnum.AVE, MaterialEnum.SCALE, ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5, ShapeEnum.VEST),
+                Armor("scale armor byrnie", QualityEnum.AVE, MaterialEnum.SCALE, ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5, ShapeEnum.TUNIC),
+                Armor("scale armor hauberk", QualityEnum.AVE, MaterialEnum.SCALE, ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5, ShapeEnum.HAUBERK),
+            ],
             talk=[
                 MobTalk("",
                         triggers=[
@@ -661,40 +680,46 @@ persons = {
                 AttrEnum.WILL: 13,
             },
             mob_skills={
-                SkillEnum.DAGGER: 75,
+                SkillEnum.DAGGER: 50,
             },
-            eq={
-                ItemEnum.WEAPON_DAGGER: ItemLink(1, True),
-                ItemEnum.ARMOR_GAMBESON_QUILT: ItemLink(1, True),
-                ItemEnum.ARMOR_CAP_LEATHER: ItemLink(1, True),
-                ItemEnum.ARMOR_SURCOAT_LEATHER: ItemLink(1, True),
-                ItemEnum.ARMOR_SHOES_LEATHER: ItemLink(1, True),
-            },
-            sell_items={
-                ItemEnum.WEAPON_KNIFE: ItemLink(1),
-                ItemEnum.WEAPON_SICKLE: ItemLink(1),
-                ItemEnum.WEAPON_CLUB: ItemLink(1),
-                ItemEnum.WEAPON_STAFF: ItemLink(1),
-                ItemEnum.ARMOR_CAP_CLOTH: ItemLink(1),
-                ItemEnum.ARMOR_HOOD_CLOTH: ItemLink(1),
-                ItemEnum.ARMOR_VEST_CLOTH: ItemLink(1),
-                ItemEnum.ARMOR_TUNIC_CLOTH: ItemLink(1),
-                ItemEnum.ARMOR_SURCOAT_CLOTH: ItemLink(1),
-                ItemEnum.ARMOR_ROBE_CLOTH: ItemLink(1),
-                ItemEnum.ARMOR_LEGGINGS_CLOTH: ItemLink(1),
-                ItemEnum.ARMOR_CAP_QUILT: ItemLink(1),
-                ItemEnum.ARMOR_COWL_QUILT: ItemLink(1),
-                ItemEnum.ARMOR_TUNIC_QUILT: ItemLink(1),
-                ItemEnum.ARMOR_GAMBESON_QUILT: ItemLink(1),
-                ItemEnum.ARMOR_LEGGINGS_QUILT: ItemLink(1),
-                ItemEnum.MISC_TORCH: ItemLink(1),
-            },
-            buy_items={
-                ItemEnum.WEAPON_CLUB: ItemLink(1),
-                ItemEnum.MISC_RAT_FUR: ItemLink(1),
-                ItemEnum.ARMOR_STAINED_QUILT_COWL: ItemLink(1),
-                ItemEnum.ARMOR_STAINED_QUILT_LEGGINGS: ItemLink(1),
-            },
+            eq=[
+                Weapon("sharp dagger", QualityEnum.AVE, MaterialEnum.STEEL, 1, SkillEnum.DAGGER, 5, 5, 0, DiceRoll(1, 6),
+                       DamageTypeEnum.PIERCE, equipped=True),
+                Armor("quilt gambeson", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2, ShapeEnum.HAUBERK, equipped=True),
+                Armor("quilt leggings", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2_5, ShapeEnum.LEGGINGS, equipped=True),
+                Armor("leather cap", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3, ShapeEnum.CAP, equipped=True),
+                Armor("leather surcoat", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3, ShapeEnum.SURCOAT, equipped=True),
+                Armor("leather shoes", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3_5, ShapeEnum.SHOES, equipped=True),
+            ],
+            sell_items=[
+                Weapon("hunting knife", QualityEnum.POR, MaterialEnum.STEEL_WOOD, 1.5, SkillEnum.DAGGER, 5, 0, 0, DiceRoll(1, 4),
+                       DamageTypeEnum.PIERCE),
+                Weapon("sickle", QualityEnum.INF, MaterialEnum.STEEL_WOOD, 1.5, SkillEnum.AXE, 5, 5, 0, DiceRoll(1, 4, 0),
+                       DamageTypeEnum.EDGE),
+                Weapon("wooden club", QualityEnum.INF, MaterialEnum.WOOD, 4.5, SkillEnum.CLUB, 15, 5, 0, DiceRoll(1, 4),
+                       DamageTypeEnum.BLUNT),
+                Weapon("wooden staff", QualityEnum.SUP, MaterialEnum.WOOD, 6, SkillEnum.SPEAR, 20, 15, 10, DiceRoll(1, 6),
+                       DamageTypeEnum.BLUNT),
+                Armor("cloth cap", QualityEnum.AVE, MaterialEnum.CLOTH, ArmorLayer.AL_1, ShapeEnum.CAP),
+                Armor("cloth hood", QualityEnum.AVE, MaterialEnum.CLOTH, ArmorLayer.AL_1, ShapeEnum.COWL),
+                Armor("cloth vest", QualityEnum.AVE, MaterialEnum.CLOTH, ArmorLayer.AL_1, ShapeEnum.VEST),
+                Armor("cloth tunic", QualityEnum.AVE, MaterialEnum.CLOTH, ArmorLayer.AL_1, ShapeEnum.TUNIC),
+                Armor("cloth surcoat", QualityEnum.AVE, MaterialEnum.CLOTH, ArmorLayer.AL_1, ShapeEnum.SURCOAT),
+                Armor("cloth robe", QualityEnum.AVE, MaterialEnum.CLOTH, ArmorLayer.AL_1, ShapeEnum.ROBE),
+                Armor("cloth leggings", QualityEnum.AVE, MaterialEnum.CLOTH, ArmorLayer.AL_1_5, ShapeEnum.LEGGINGS),
+                Armor("quilt cap", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2, ShapeEnum.CAP),
+                Armor("quilt cowl", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2, ShapeEnum.COWL),
+                Armor("quilt tunic", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2, ShapeEnum.TUNIC),
+                Armor("quilt gambeson", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2, ShapeEnum.HAUBERK),
+                Armor("quilt leggings", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2_5, ShapeEnum.LEGGINGS),
+                Item(ItemTypeEnum.MISC, "torch", QualityEnum.AVE, MaterialEnum.WOOD, 0.5, flags=ItemFlagEnum.LIGHT),
+            ],
+            buy_items=[
+                "wooden club",
+                "rat fur",
+                "stained quilt cowl",
+                "stained quilt leggings",
+            ],
             talk=[
                 MobTalk("",
                         triggers=[
@@ -724,7 +749,7 @@ persons = {
                                         "around behind the counter.  After a moment @@SEX_PRONOUN@@ steps up to you and presses "
                                         "a few coins into your hand.",
                                     ]),
-                            Trigger(TriggerTypeEnum.ITEM_TAKE, ItemEnum.QUEST_WEATHERED_PACKAGE),
+                            Trigger(TriggerTypeEnum.ITEM_TAKE, "weathered package"),
                             Trigger(TriggerTypeEnum.CURRENCY_GIVE, 5),
                             Trigger(TriggerTypeEnum.QUEST_COMPLETE, QuestEnum.GUARD_DELIVERY),
                         ]),
@@ -785,12 +810,16 @@ persons = {
                             Trigger(TriggerTypeEnum.MESSAGE,
                                     [
                                         "@@NAME_CAP@@ gives you a stained quilt tunic.",
-                                        "@@NAME_CAP@@ gives you a wooden club.",
-                                        "@@NAME_CAP@@ gives you a large bronze key.",
+                                        "@@NAME_CAP@@ gives you a \"rat catcher\" club.",
+                                        "@@NAME_CAP@@ gives you a large bronze warehouse key.",
                                     ]),
-                            Trigger(TriggerTypeEnum.ITEM_GIVE, ItemEnum.WEAPON_CLUB),
-                            Trigger(TriggerTypeEnum.ITEM_GIVE, ItemEnum.ARMOR_STAINED_QUILT_TUNIC),
-                            Trigger(TriggerTypeEnum.ITEM_GIVE, ItemEnum.KEY_WAREHOUSE_DBL_DOOR),
+                            Trigger(TriggerTypeEnum.ITEM_GIVE,
+                                    Weapon("\"rat catcher\" club", QualityEnum.INF, MaterialEnum.WOOD, 4.5, SkillEnum.CLUB, 15, 5, 0, DiceRoll(1, 4),
+                                           DamageTypeEnum.BLUNT)),
+                            Trigger(TriggerTypeEnum.ITEM_GIVE,
+                                    Armor("stained quilt tunic", QualityEnum.TER, MaterialEnum.QUILT, ArmorLayer.AL_2, ShapeEnum.TUNIC)),
+                            Trigger(TriggerTypeEnum.ITEM_GIVE,
+                                    Item(ItemTypeEnum.MISC, "a large bronze warehouse key", QualityEnum.AVE, MaterialEnum.BRONZE, 1)),
                             Trigger(TriggerTypeEnum.QUEST_GIVE, QuestEnum.WAREHOUSE_RATS),
                             Trigger(TriggerTypeEnum.PAUSE, 1),
                             Trigger(TriggerTypeEnum.MESSAGE,
@@ -800,7 +829,7 @@ persons = {
                         [
                             Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_QUEST_COMPLETE,
                                       QuestEnum.WAREHOUSE_RATS),
-                            Condition(ConditionCheckEnum.HAS, TargetTypeEnum.PLAYER_INVEN, ItemEnum.MISC_RAT_FUR),
+                            Condition(ConditionCheckEnum.HAS, TargetTypeEnum.PLAYER_INVEN, "rat fur"),
                         ],
                         [
                             Trigger(TriggerTypeEnum.MESSAGE,
@@ -849,37 +878,48 @@ persons = {
                 AttrEnum.WILL: 13,
             },
             mob_skills={
-                SkillEnum.DAGGER: 75,
+                SkillEnum.DAGGER: 50,
                 SkillEnum.HIDEWORK: 50,
             },
-            eq={
-                ItemEnum.WEAPON_DAGGER: ItemLink(1, True),
-                ItemEnum.ARMOR_GAMBESON_QUILT: ItemLink(1, True),
-                ItemEnum.ARMOR_CAP_LEATHER: ItemLink(1, True),
-                ItemEnum.ARMOR_SURCOAT_LEATHER: ItemLink(1, True),
-                ItemEnum.ARMOR_SHOES_LEATHER: ItemLink(1, True),
-            },
-            sell_items={
-                ItemEnum.ARMOR_CAP_LEATHER: ItemLink(1),
-                ItemEnum.ARMOR_COWL_LEATHER: ItemLink(1),
-                ItemEnum.ARMOR_VEST_LEATHER: ItemLink(1),
-                ItemEnum.ARMOR_TUNIC_LEATHER: ItemLink(1),
-                ItemEnum.ARMOR_SURCOAT_LEATHER: ItemLink(1),
-                ItemEnum.ARMOR_LEGGINGS_LEATHER: ItemLink(1),
-                ItemEnum.ARMOR_SHOES_LEATHER: ItemLink(1),
-                ItemEnum.ARMOR_CALF_BOOTS_LEATHER: ItemLink(1),
-                ItemEnum.ARMOR_KNEE_BOOTS_LEATHER: ItemLink(1),
-                ItemEnum.ARMOR_GAUNTLETS_LEATHER: ItemLink(1),
-                ItemEnum.ARMOR_HALFHELM_KURBUL: ItemLink(1),
-                ItemEnum.ARMOR_BREASTPLATE_KURBUL: ItemLink(1),
-                ItemEnum.ARMOR_BACKPLATE_KURBUL: ItemLink(1),
-                ItemEnum.ARMOR_AILETTES_KURBUL: ItemLink(1),
-                ItemEnum.ARMOR_REREBRACES_KURBUL: ItemLink(1),
-                ItemEnum.ARMOR_COUDES_KURBUL: ItemLink(1),
-                ItemEnum.ARMOR_VAMBRACES_KURBUL: ItemLink(1),
-                ItemEnum.ARMOR_KNEECOPS_KURBUL: ItemLink(1),
-                ItemEnum.ARMOR_GREAVES_KURBUL: ItemLink(1),
-            },
+            eq=[
+                Weapon("sharp dagger", QualityEnum.AVE, MaterialEnum.STEEL, 1, SkillEnum.DAGGER, 5, 5, 0, DiceRoll(1, 6),
+                       DamageTypeEnum.PIERCE, equipped=True),
+                Armor("quilt gambeson", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2, ShapeEnum.HAUBERK, equipped=True),
+                Armor("quilt leggings", QualityEnum.AVE, MaterialEnum.QUILT, ArmorLayer.AL_2_5, ShapeEnum.LEGGINGS, equipped=True),
+                Armor("leather cap", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3, ShapeEnum.CAP, equipped=True),
+                Armor("leather surcoat", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3, ShapeEnum.SURCOAT, equipped=True),
+                Armor("leather shoes", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3_5, ShapeEnum.SHOES, equipped=True),
+            ],
+            sell_items=[
+                Armor("leather cap", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3, ShapeEnum.CAP),
+                Armor("leather cowl", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3, ShapeEnum.COWL),
+                Armor("leather vest", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3, ShapeEnum.VEST),
+                Armor("leather tunic", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3, ShapeEnum.TUNIC),
+                Armor("leather surcoat", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3, ShapeEnum.SURCOAT),
+                Armor("leather leggings", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3_5, ShapeEnum.LEGGINGS),
+                Armor("leather shoes", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3_5, ShapeEnum.SHOES),
+                Armor("leather calf boots", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3_5, ShapeEnum.BOOTS_CALF),
+                Armor("leather knee boots", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3_5, ShapeEnum.BOOTS_KNEE),
+                Armor("leather gauntlets", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3, ShapeEnum.GAUNTLETS),
+                Armor("hardened leather halfhelm", QualityEnum.AVE, MaterialEnum.KURBUL,
+                      ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5, ShapeEnum.CAP),
+                Armor("hardened leather breastplate", QualityEnum.AVE, MaterialEnum.KURBUL,
+                      ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5, ShapeEnum.BREASTPLATE),
+                Armor("hardened leather backplate", QualityEnum.AVE, MaterialEnum.KURBUL,
+                      ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5, ShapeEnum.BACKPLATE),
+                Armor("hardened leather ailettes", QualityEnum.AVE, MaterialEnum.KURBUL,
+                      ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5, ShapeEnum.AILETTES),
+                Armor("hardened leather rerebraces", QualityEnum.AVE, MaterialEnum.KURBUL,
+                      ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5, ShapeEnum.REREBRACES),
+                Armor("hardened leather coudes", QualityEnum.AVE, MaterialEnum.KURBUL,
+                      ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5, ShapeEnum.COUDES),
+                Armor("hardened leather vambraces", QualityEnum.AVE, MaterialEnum.KURBUL,
+                      ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5, ShapeEnum.VAMBRACES),
+                Armor("hardened leather kneecops", QualityEnum.AVE, MaterialEnum.KURBUL,
+                      ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5, ShapeEnum.KNEECOPS),
+                Armor("hardened leather greaves", QualityEnum.AVE, MaterialEnum.KURBUL,
+                      ArmorLayer.AL_3 | ArmorLayer.AL_4 | ArmorLayer.AL_5, ShapeEnum.GREAVES),
+            ],
             talk=[
                 MobTalk("",
                         triggers=[
@@ -925,29 +965,41 @@ persons = {
                 SkillEnum.DAGGER: 75,
                 SkillEnum.SURVIVAL: 50,
             },
-            eq={
-                ItemEnum.WEAPON_DAGGER: ItemLink(1, True),
-                ItemEnum.ARMOR_VEST_CLOTH: ItemLink(1, True),
-                ItemEnum.ARMOR_COWL_LEATHER: ItemLink(1, True),
-                ItemEnum.ARMOR_SURCOAT_LEATHER: ItemLink(1, True),
-                ItemEnum.ARMOR_LEGGINGS_CLOTH: ItemLink(1, True),
-                ItemEnum.ARMOR_KNEE_BOOTS_LEATHER: ItemLink(1, True),
-            },
-            sell_items={
-                ItemEnum.WEAPON_DAGGER: ItemLink(1),
-                ItemEnum.WEAPON_MAIN_GAUCHE: ItemLink(1),
-                ItemEnum.WEAPON_SHORTSWORD: ItemLink(1),
-                ItemEnum.WEAPON_BROADSWORD: ItemLink(1),
-                ItemEnum.WEAPON_BASTARD_SWORD: ItemLink(1),
-                ItemEnum.WEAPON_MACE: ItemLink(1),
-                ItemEnum.WEAPON_MORNINGSTAR: ItemLink(1),
-                ItemEnum.WEAPON_HANDAXE: ItemLink(1),
-                ItemEnum.WEAPON_WARHAMMER: ItemLink(1),
-                ItemEnum.WEAPON_BALL_AND_CHAIN: ItemLink(1),
-                ItemEnum.WEAPON_STAFF: ItemLink(1),
-                ItemEnum.WEAPON_SPEAR: ItemLink(1),
-                ItemEnum.WEAPON_POLEAXE: ItemLink(1),
-            },
+            eq=[
+                Weapon("sharp dagger", QualityEnum.AVE, MaterialEnum.STEEL, 1, SkillEnum.DAGGER, 5, 5, 0, DiceRoll(1, 6),
+                       DamageTypeEnum.PIERCE, equipped=True),
+                Armor("leather cowl", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3, ShapeEnum.COWL, equipped=True),
+                Armor("cloth vest", QualityEnum.AVE, MaterialEnum.CLOTH, ArmorLayer.AL_1, ShapeEnum.VEST, equipped=True),
+                Armor("cloth leggings", QualityEnum.AVE, MaterialEnum.CLOTH, ArmorLayer.AL_1_5, ShapeEnum.LEGGINGS, equipped=True),
+                Armor("leather surcoat", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3, ShapeEnum.SURCOAT, equipped=True),
+                Armor("leather knee boots", QualityEnum.AVE, MaterialEnum.LEATHER, ArmorLayer.AL_3_5, ShapeEnum.BOOTS_KNEE, equipped=True),
+            ],
+            sell_items=[
+                Weapon("sharp dagger", QualityEnum.AVE, MaterialEnum.STEEL, 1, SkillEnum.DAGGER, 5, 5, 0, DiceRoll(1, 6),
+                       DamageTypeEnum.PIERCE),
+                Weapon("small parrying blade", QualityEnum.AVE, MaterialEnum.STEEL, 1.4, SkillEnum.DAGGER, 5, 10, 0, DiceRoll(1, 6),
+                       DamageTypeEnum.PIERCE),
+                Weapon("steel shortsword", QualityEnum.SUP, MaterialEnum.STEEL, 2.5, SkillEnum.SWORD, 10, 5, 0, DiceRoll(1, 6, 1),
+                       DamageTypeEnum.EDGE),
+                Weapon("steel broadsword", QualityEnum.AVE, MaterialEnum.STEEL, 6, SkillEnum.SWORD, 15, 10, 0, DiceRoll(1, 6, 2),
+                       DamageTypeEnum.EDGE),
+                Weapon("steel bastard sword", QualityEnum.AVE, MaterialEnum.STEEL, 7.5, SkillEnum.SWORD, 20, 10, 10, DiceRoll(1, 6, 2),
+                       DamageTypeEnum.EDGE),
+                Weapon("iron mace", QualityEnum.SUP, MaterialEnum.STEEL_WOOD, 6, SkillEnum.CLUB, 15, 5, 0, DiceRoll(1, 6, 1),
+                       DamageTypeEnum.BLUNT),
+                Weapon("morningstar", QualityEnum.INF, MaterialEnum.STEEL_WOOD, 7.5, SkillEnum.CLUB, 20, 5, 10, DiceRoll(1, 6, 2),
+                       DamageTypeEnum.PIERCE),
+                Weapon("handaxe", QualityEnum.SUP, MaterialEnum.STEEL_WOOD, 5, SkillEnum.AXE, 10, 5, 0, DiceRoll(1, 6, 1),
+                       DamageTypeEnum.EDGE),
+                Weapon("warhammer", QualityEnum.SUP, MaterialEnum.STEEL_WOOD, 6.3, SkillEnum.AXE, 15, 5, 5, DiceRoll(1, 6, 1),
+                       DamageTypeEnum.BLUNT),
+                Weapon("ball and chain", QualityEnum.AVE, MaterialEnum.STEEL_WOOD, 6.4, SkillEnum.FLAIL, 20, 10, 0, DiceRoll(1, 6, 2),
+                       DamageTypeEnum.BLUNT),
+                Weapon("spear", QualityEnum.AVE, MaterialEnum.STEEL_WOOD, 6, SkillEnum.SPEAR, 20, 10, 5, DiceRoll(1, 6, 2),
+                       DamageTypeEnum.PIERCE),
+                Weapon("poleaxe", QualityEnum.AVE, MaterialEnum.STEEL_WOOD, 10.5, SkillEnum.POLEARM, 25, 5, 20, DiceRoll(2, 6, 0),
+                       DamageTypeEnum.EDGE),
+            ],
             talk=[
                 MobTalk("",
                         triggers=[
