@@ -266,10 +266,10 @@ def actionDropItem():
   if item.Flags & ItemFlagEnum.NO_DROP > 0:
     cm.Print("\n%s cannot be dropped." % item.ItemName.capitalize())
     return
-  if items.Flags & ItemFlagEnum.QUEST > 0:
+  if item.Flags & ItemFlagEnum.QUEST > 0:
     cm.Print("\n%s cannot be dropped." % item.ItemName.capitalize())
     return
-  if processTriggers(None, items.OnDrop) is False:
+  if processTriggers(None, item.OnDrop) is False:
     cm.Print("\nYou can't seem to drop %s." % items.ItemName)
     return
   player.RemoveItem(item)
