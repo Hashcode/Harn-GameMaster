@@ -567,7 +567,6 @@ rooms = {
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK, DoorEnum.CORPORAL_APPT_DOOR),
              },
              room_items=[
-                 Item(ItemTypeEnum.MISC, "a small iron apartment key", QualityEnum.AVE, MaterialEnum.STEEL, 1),
              ],
              room_pers=[
                  NewPerson(PersonEnum.BL_KEEP_CORPORAL_WATCH,
@@ -587,7 +586,18 @@ rooms = {
                                Trigger(TriggerTypeEnum.DOOR_UNLOCK, DoorEnum.CORPORAL_APPT_DOOR),
                                Trigger(TriggerTypeEnum.PERSON_DESC, "The corporal of the watch is resting here."),
                            ]),
-             ]),
+             ],
+             periodics=[
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.ITEM_IN_ROOM, "a small iron apartment key", 1),
+                         Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_INVEN, "a small iron apartment key"),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_ITEM,
+                                 Item(ItemTypeEnum.MISC, "a small iron apartment key", QualityEnum.AVE, MaterialEnum.STEEL, 1)),
+                     ], 36000),
+            ]),
     RoomEnum.BL_SOUTHERN_WALK_2:
         Room(RoomEnum.BL_SOUTHERN_WALK_2, ZoneEnum.KEEP, "Southern Walk", "the southern walk",
              ["** TODO **"],
