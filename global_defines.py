@@ -2261,6 +2261,7 @@ class RoomEnum(IntEnum):
   BL_N_GATEHOUSE_TOWER = 10012
   BL_N_GATEHOUSE_TOWER_LEVEL_2 = 10013
   BL_N_GATEHOUSE_TOWER_LEVEL_3 = 10014
+  BL_NORTHEASTERN_WALK = 10015
   BL_EASTERN_WALK = 10020
   BL_WAREHOUSE = 10021
   BL_S_GATEHOUSE_TOWER = 10022
@@ -2276,10 +2277,8 @@ class RoomEnum(IntEnum):
   BL_SOUTHERN_WALK_3 = 10060
   BL_PROVISIONS = 10061
   BL_LEATHERWORKS = 10062
-  BL_APARMENT_3 = 10063
   BL_SOUTHWESTERN_WALK = 10070
   BL_WEAPONSMITH = 10071
-  BL_APARMENT_4 = 10072
   BL_WATCH_TOWER = 10073
   BL_FOUNTAIN_SQUARE = 10080
   BL_TAVERN_MAINROOM = 10081
@@ -2297,7 +2296,6 @@ class RoomEnum(IntEnum):
   BL_MAIN_WALK_2 = 10099
   BL_ALLEYWAY = 10100
   BL_APARMENT_5 = 10101
-  BL_APARMENT_6 = 10102
   BL_ENTRY_INNER_GATEHOUSE = 10110
   BL_CHAPEL_MAINROOM = 10111
   BL_PRIEST_CHAMBER = 10112
@@ -2366,10 +2364,6 @@ class DirectionEnum(IntEnum):
   SOUTH = 2
   WEST = 3
   EAST = 4
-  NORTHWEST = 5
-  NORTHEAST = 6
-  SOUTHWEST = 7
-  SOUTHEAST = 8
   UP = 9
   DOWN = 10
 
@@ -2385,10 +2379,6 @@ directions = {
     DirectionEnum.SOUTH: Direction(["south", "s"], DirectionEnum.NORTH),
     DirectionEnum.WEST: Direction(["west", "w"], DirectionEnum.EAST),
     DirectionEnum.EAST: Direction(["east", "e"], DirectionEnum.WEST),
-    DirectionEnum.NORTHWEST: Direction(["northwest", "nw"], DirectionEnum.SOUTHEAST),
-    DirectionEnum.NORTHEAST: Direction(["northeast", "ne"], DirectionEnum.SOUTHWEST),
-    DirectionEnum.SOUTHWEST: Direction(["southwest", "sw"], DirectionEnum.NORTHEAST),
-    DirectionEnum.SOUTHEAST: Direction(["southeast", "se"], DirectionEnum.NORTHWEST),
     DirectionEnum.UP: Direction(["up", "u"], DirectionEnum.DOWN),
     DirectionEnum.DOWN: Direction(["down", "d"], DirectionEnum.UP),
 }
