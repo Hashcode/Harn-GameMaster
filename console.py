@@ -83,7 +83,7 @@ class ConsoleManager(Thread):
 
     self.window = self.screen.subwin(self.screenY, MIN_WIDTH - 1, 0, 0)
     self.window.scrollok(True)
-    self.hud = self.screen.subwin(26, 30, 0, MIN_WIDTH)
+    self.hud = self.screen.subwin(28, 30, 0, MIN_WIDTH)
     self.hud.scrollok(True)
 
     curses.start_color()
@@ -95,35 +95,9 @@ class ConsoleManager(Thread):
     self.window.erase()
     self.window.move(0, 0)
 
-  def RenderHud(self):
-    #                12345678901234567890123456789
-    self.hud.addstr(0, 0,
-                    "+---------------------------+\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|   THIS AREA COMING SOON   |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("|                           |\n")
-    self.hud.addstr("+---------------------------+\n")
-    self.hud.refresh()
+  def ClearHud(self):
+    self.hud.erase()
+    self.hud.move(0, 0)
 
   def SetPrompt(self, prompt):
     self._prompt = prompt
@@ -148,6 +122,10 @@ class ConsoleManager(Thread):
     self.window.addstr("%s%s" % (msg, end), attr)
     self.window.refresh()
     self._interrupted = 1
+
+  def PrintHud(self, msg, attr=0, end="\n"):
+    self.hud.addstr("%s%s" % (msg, end), attr)
+    self.hud.refresh()
 
   def Bell(self):
     curses.beep()

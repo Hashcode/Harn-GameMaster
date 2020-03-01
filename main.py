@@ -59,7 +59,6 @@ def main(stdscr):
   cm.StartScreen(stdscr)
 
   while True:
-    cm.RenderHud()
     res = RoomFuncResponse.NONE
     printRoomDescription(player.Room)
 

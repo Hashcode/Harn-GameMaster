@@ -2369,18 +2369,20 @@ class DirectionEnum(IntEnum):
 
 
 class Direction:
-  def __init__(self, names, reverse):
+  def __init__(self, names, left, right, reverse):
     self.Names = names
+    self.Left = left
+    self.Right = right
     self.Reverse = reverse
 
 
 directions = {
-    DirectionEnum.NORTH: Direction(["north", "n"], DirectionEnum.SOUTH),
-    DirectionEnum.SOUTH: Direction(["south", "s"], DirectionEnum.NORTH),
-    DirectionEnum.WEST: Direction(["west", "w"], DirectionEnum.EAST),
-    DirectionEnum.EAST: Direction(["east", "e"], DirectionEnum.WEST),
-    DirectionEnum.UP: Direction(["up", "u"], DirectionEnum.DOWN),
-    DirectionEnum.DOWN: Direction(["down", "d"], DirectionEnum.UP),
+    DirectionEnum.NORTH: Direction(["north", "n"], DirectionEnum.WEST, DirectionEnum.EAST, DirectionEnum.SOUTH),
+    DirectionEnum.SOUTH: Direction(["south", "s"], DirectionEnum.EAST, DirectionEnum.WEST, DirectionEnum.NORTH),
+    DirectionEnum.WEST: Direction(["west", "w"], DirectionEnum.SOUTH, DirectionEnum.NORTH, DirectionEnum.EAST),
+    DirectionEnum.EAST: Direction(["east", "e"], DirectionEnum.NORTH, DirectionEnum.SOUTH, DirectionEnum.WEST),
+    DirectionEnum.UP: Direction(["up", "u"], DirectionEnum.NONE, DirectionEnum.NONE, DirectionEnum.DOWN),
+    DirectionEnum.DOWN: Direction(["down", "d"], DirectionEnum.NONE, DirectionEnum.NONE, DirectionEnum.UP),
 }
 
 

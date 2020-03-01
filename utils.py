@@ -10,6 +10,7 @@ from time import sleep
 
 from console import (TEXT_COLOR, ANSI, InputFlag)
 from db_jsonstore import (LoadStatsDB, SavePlayer)
+from frame import (Frame, FrameEnum, frame_parts)
 from gamedata import (GameData)
 from global_defines import (attribute_classes, attributes, months, sunsigns,
                             cultures, social_classes, sibling_ranks, wounds,
@@ -90,6 +91,13 @@ def printRoomDescription(room_id):
   doors = GameData.GetDoors()
   rooms = GameData.GetRooms()
 
+  frame = Frame()
+  lighting_level = 1
+  if rooms[room_id].HasLight():
+    lighting_level = 3
+  renderHudToFrame(cm, frame, player.Room, 1, lighting_level)
+  frame.Render(cm, directions[GameData.GetFacing()].Names[0].capitalize())
+
   cm.Print("")
 
   # check for darkness w/o light source
@@ -146,6 +154,63 @@ def printRoomObjects(room_id):
   if len(rooms[room_id].Items) > 0:
     cm.Print("\nThe following items are here:")
     printItems(rooms[room_id].Items)
+
+
+def renderHudToFrame(cm, frame, room_id, level, lighting_level):
+  rooms = GameData.GetRooms()
+  facing = GameData.GetFacing()
+
+  # TODO: misc items / enemies in the room
+
+  # left
+  if level == 1:
+    if directions[facing].Left in rooms[room_id].Exits.keys():
+      frame.Merge(frame_parts[FrameEnum.LEFT_1_NO_WALL])
+    else:
+      frame.Merge(frame_parts[FrameEnum.LEFT_1_WALL])
+  elif level == 2:
+    if directions[facing].Left in rooms[room_id].Exits.keys():
+      frame.Merge(frame_parts[FrameEnum.LEFT_2_NO_WALL])
+    else:
+      frame.Merge(frame_parts[FrameEnum.LEFT_2_WALL])
+  elif level == 3:
+    if directions[facing].Left in rooms[room_id].Exits.keys():
+      frame.Merge(frame_parts[FrameEnum.LEFT_3_NO_WALL])
+    else:
+      frame.Merge(frame_parts[FrameEnum.LEFT_3_WALL])
+
+  # right
+  if level == 1:
+    if directions[facing].Right in rooms[room_id].Exits.keys():
+      frame.Merge(frame_parts[FrameEnum.RIGHT_1_NO_WALL])
+    else:
+      frame.Merge(frame_parts[FrameEnum.RIGHT_1_WALL])
+  elif level == 2:
+    if directions[facing].Right in rooms[room_id].Exits.keys():
+      frame.Merge(frame_parts[FrameEnum.RIGHT_2_NO_WALL])
+    else:
+      frame.Merge(frame_parts[FrameEnum.RIGHT_2_WALL])
+  elif level == 3:
+    if directions[facing].Right in rooms[room_id].Exits.keys():
+      frame.Merge(frame_parts[FrameEnum.RIGHT_3_NO_WALL])
+    else:
+      frame.Merge(frame_parts[FrameEnum.RIGHT_3_WALL])
+
+  # forward (level 1)
+  if level == 1:
+    if facing not in rooms[room_id].Exits.keys():
+      frame.Merge(frame_parts[FrameEnum.FACING_1_WALL])
+  elif level == 2:
+    if facing not in rooms[room_id].Exits.keys():
+      frame.Merge(frame_parts[FrameEnum.FACING_2_WALL])
+  elif level == 3:
+    if facing not in rooms[room_id].Exits.keys():
+      frame.Merge(frame_parts[FrameEnum.FACING_3_WALL])
+    else:
+      frame.Merge(frame_parts[FrameEnum.FACING_3_NO_WALL])
+  if level < lighting_level and facing in rooms[room_id].Exits.keys():
+    renderHudToFrame(cm, frame, rooms[room_id].Exits[facing].Room,
+                     level + 1, lighting_level)
 
 
 def attrColor(attr):
@@ -1451,13 +1516,37 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
         # attack and talk cmds can return true to re-enter main for combat
         break
     else:
-      # Handle directions
       match_dir = DirectionEnum.NONE
-      for d, d_info in directions.items():
-        for d_cmd in d_info.Names:
-          if x == d_cmd.lower():
-            match_dir = d
-            break
+      orig_facing = facing = GameData.GetFacing()
+      # Handle facing
+      if (x == "arrow_right"):
+        facing = directions[orig_facing].Right
+      elif (x == "arrow_left"):
+        facing = directions[orig_facing].Left
+      elif (x == "arrow_up"):
+        x = "arrow_"
+        match_dir = orig_facing
+      elif (x == "arrow_down"):
+        x = "arrow_"
+        match_dir = directions[orig_facing].Reverse
+
+      if (orig_facing != facing):
+        GameData.SetFacing(facing)
+        frame = Frame()
+        lighting_level = 1
+        if rooms[player.Room].HasLight():
+          lighting_level = 3
+        renderHudToFrame(cm, frame, player.Room, 1, lighting_level)
+        frame.Render(cm, directions[facing].Names[0].capitalize())
+        continue
+
+      # Handle directions
+      if match_dir == DirectionEnum.NONE:
+        for d, d_info in directions.items():
+          for d_cmd in d_info.Names:
+            if x == d_cmd.lower():
+              match_dir = d
+              break
 
       if match_dir != DirectionEnum.NONE:
         if player.CombatState != PlayerCombatState.NONE:
@@ -1481,6 +1570,8 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
                   # time to cross room
                   player.GameTime += rooms[player.Room].TravelTime
                   player.SetRoom(ex.Room)
+                  if x != "arrow_" and match_dir not in [DirectionEnum.DOWN, DirectionEnum.UP]:
+                    GameData.SetFacing(match_dir)
               else:
                 if not roomTalkTrigger("on_exit"):
                   trigger_deny = True
@@ -1488,6 +1579,8 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
                 # time to cross room
                 player.GameTime += rooms[player.Room].TravelTime
                 player.SetRoom(ex.Room)
+                if x != "arrow_" and match_dir not in [DirectionEnum.DOWN, DirectionEnum.UP]:
+                  GameData.SetFacing(match_dir)
               return
           if not trigger_deny:
             cm.Print("\nYou can't go in that direction.", attr=ANSI.TEXT_BOLD)

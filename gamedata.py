@@ -17,6 +17,7 @@ class GameData:
   _quests = None
   _persons = None
   _player = None
+  _facing = 1
   _NextRoomEvent = 0
   _processConditions = None
   _processTriggers = None
@@ -65,6 +66,14 @@ class GameData:
   @staticmethod
   def GetPlayer():
     return GameData._player
+
+  @staticmethod
+  def SetFacing(facing):
+    GameData._facing = facing
+
+  @staticmethod
+  def GetFacing():
+    return GameData._facing
 
   @staticmethod
   def SetQuests(quests):
