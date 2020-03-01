@@ -168,9 +168,7 @@ class GameData:
         if count == 1:
           cm.Print("")
         enemies.append(x)
-        cm.Print("%s%s attacks you!%s" %
-                 (ANSI.TEXT_BOLD, x.Name.capitalize(),
-                  ANSI.TEXT_NORMAL))
+        cm.Print("%s attacks you!" % (x.Name.capitalize()), attr=ANSI.TEXT_BOLD)
       if player.CombatTarget is not None:
         if player.CombatTarget == x.UUID:
           enemies.append(x)

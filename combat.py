@@ -6,7 +6,7 @@
 
 from time import sleep
 
-from console import (ANSI, InputFlag)
+from console import (TEXT_COLOR, ANSI, InputFlag)
 from global_defines import (DiceRoll, Roll, CoverageEnum, body_parts, aims,
                             AimEnum, SkillEnum, ItemTypeEnum,
                             PlayerCombatState, wounds, PersonWound,
@@ -128,7 +128,8 @@ def printCombatAttackActions(combatant, target):
   # cm.Print("  MISSILE")
   cm.Print("%-8s %-5s :" % ("PASS", "[P]"))
   if combatant.Prone:
-    cm.Print("%s%-8s %-5s :%s" % (ANSI.TEXT_COLOR_YELLOW, "STAND", "", ANSI.TEXT_NORMAL))
+    cm.Print("%-8s %-5s :" % ("STAND", ""),
+             attr=cm.ColorPair(TEXT_COLOR.YELLOW))
   cm.Print("%-8s %-5s : %s" %
            ("TARGET", "[T]", target_name))
 
@@ -215,14 +216,15 @@ def HandleMobDeath(att, defe):
 def CombatantFumble(combatant, att_item):
   cm = GameData.GetConsole()
   if combatant.Person is GameData.GetPlayer():
-    cm.Print("\n%sYou FUMBLE your %s!%s" %
-             (ANSI.TEXT_BOLD, combatant.Attacks[0].Name.lower(),
-              ANSI.TEXT_NORMAL))
+    cm.Print("\nYou FUMBLE your %s!" %
+             (combatant.Attacks[0].Name.lower()),
+             attr=ANSI.TEXT_BOLD)
   else:
-    cm.Print("\n%s%s FUMBLES %s %s!%s" %
-             (ANSI.TEXT_BOLD, combatant.Person.Name.capitalize(),
+    cm.Print("\n%s FUMBLES %s %s!" %
+             (combatant.Person.Name.capitalize(),
               combatant.Person.AttrSexPossessivePronounStr().lower(),
-              combatant.Attacks[0].Name.lower(), ANSI.TEXT_NORMAL))
+              combatant.Attacks[0].Name.lower()),
+             attr=ANSI.TEXT_BOLD)
   # unequip weapon
   for item in combatant.Person.Items:
     if att_item.UUID == item.UUID and item.Equipped:
@@ -234,12 +236,12 @@ def CombatantFumble(combatant, att_item):
 def CombatantStumble(combatant):
   cm = GameData.GetConsole()
   if combatant.Person is GameData.GetPlayer():
-    cm.Print("%sYou STUMBLE to the ground!%s" %
-             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("You STUMBLE to the ground!",
+             attr=cm.ColorPair(TEXT_COLOR.BRIGHT_YELLOW))
   else:
-    cm.Print("%s%s STUMBLES to the ground!%s" %
-             (ANSI.TEXT_BOLD, combatant.Person.Name.capitalize(),
-              ANSI.TEXT_NORMAL))
+    cm.Print("%s STUMBLES to the ground!" %
+             (combatant.Person.Name.capitalize()),
+             attr=cm.ColorPair(TEXT_COLOR.BRIGHT_YELLOW))
   combatant.Prone = True
 
 
@@ -304,14 +306,13 @@ def HandleImpactDMG(player, att, defe, at, res_level):
                        ImpactActionEnum.WOUND_SRS,
                        ImpactActionEnum.WOUND_GRV]:
         if att.Person == player:
-          cm.Print("%s%s suffers a %s wound!%s" %
-                   (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
-                    wounds[ia.Action].Name.lower(),
-                    ANSI.TEXT_NORMAL))
+          cm.Print("%s suffers a %s wound!" %
+                   (defe.Person.Name.capitalize(),
+                    wounds[ia.Action].Name.lower()),
+                   attr=ANSI.TEXT_BOLD)
         else:
-          cm.Print("%sYou suffer a %s wound!%s" %
-                   (ANSI.TEXT_BOLD, wounds[ia.Action].Name.lower(),
-                    ANSI.TEXT_NORMAL))
+          cm.Print("You suffer a %s wound!" % (wounds[ia.Action].Name.lower()),
+                   attr=ANSI.TEXT_BOLD)
         w = PersonWound(ia.Action, at.DamageType, loc,
                         impact + wounds[ia.Action].IPBonus)
         defe.Person.Wounds.append(w)
@@ -323,13 +324,13 @@ def HandleImpactDMG(player, att, defe, at, res_level):
         if defe.Person.IPIndex() > \
            defe.Person.Attr[AttrEnum.STAMINA]:
           if att.Person == player:
-            cm.Print("%s%s DIES from %s wounds!%s" %
-                     (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
-                      defe.Person.AttrSexPossessivePronounStr(),
-                      ANSI.TEXT_NORMAL))
+            cm.Print("%s DIES from %s wounds!" %
+                     (defe.Person.Name.capitalize(),
+                      defe.Person.AttrSexPossessivePronounStr()),
+                     attr=cm.ColorPair(TEXT_COLOR.BRIGHT_RED))
           else:
-            cm.Print("%sYou DIE from your wounds!%s" %
-                     (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+            cm.Print("You DIE from your wounds!",
+                     attr=ANSI.TEXT_BLINK | cm.ColorPair(TEXT_COLOR.BRIGHT_RED))
           defe.Flags |= FLAG_DEAD
           return True
 
@@ -341,12 +342,11 @@ def HandleImpactDMG(player, att, defe, at, res_level):
         if r > defe.Person.Attr[AttrEnum.STAMINA]:
           # DEATH!
           if att.Person == player:
-            cm.Print("%s%s DIES instantly!%s" %
-                     (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
-                      ANSI.TEXT_NORMAL))
+            cm.Print("%s DIES instantly!" % (defe.Person.Name.capitalize()),
+                     attr=cm.ColorPair(TEXT_COLOR.BRIGHT_RED))
           else:
-            cm.Print("%sYou DIE instantly!%s" %
-                     (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+            cm.Print("You DIE instantly!",
+                     attr=ANSI.TEXT_BLINK | cm.ColorPair(TEXT_COLOR.BRIGHT_RED))
           defe.Flags |= FLAG_DEAD
           return True
 
@@ -360,12 +360,11 @@ def HandleImpactDMG(player, att, defe, at, res_level):
               defe.Person.AttrEndurance()))
         if r > defe.Person.AttrEndurance():
           if att.Person == player:
-            cm.Print("%s%s is STUNNED!%s" %
-                     (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
-                      ANSI.TEXT_NORMAL))
+            cm.Print("%s is STUNNED!" % (defe.Person.Name.capitalize()),
+                     attr=cm.ColorPair(TEXT_COLOR.BRIGHT_YELLOW))
           else:
-            cm.Print("%sYou are STUNNED!%s" %
-                     (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+            cm.Print("You are STUNNED!",
+                     attr=cm.ColorPair(TEXT_COLOR.BRIGHT_YELLOW))
           defe.StunLevel += 2
           logd("%s STUN_LEVEL %d" % (defe.Person.Name, defe.StunLevel))
 
@@ -385,12 +384,11 @@ def HandleImpactDMG(player, att, defe, at, res_level):
           CombatantStumble(defe)
       if ia.Action == ImpactActionEnum.BLEED:
         if att.Person == player:
-          cm.Print("%s%s's wound is BLEEDING!%s" %
-                   (ANSI.TEXT_BOLD, defe.Person.Name.capitalize(),
-                    ANSI.TEXT_NORMAL))
+          cm.Print("%s's wound is BLEEDING!" % (defe.Person.Name.capitalize()),
+                   attr=cm.ColorPair(TEXT_COLOR.BRIGHT_RED))
         else:
-          cm.Print("%sYour wound is BLEEDING!%s" %
-                   (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+          cm.Print("Your wound is BLEEDING!",
+                   attr=cm.ColorPair(TEXT_COLOR.BRIGHT_RED))
         defe.Bleed += ia.Level
         logd("%s BLEED %d" % (defe.Person.Name, defe.Bleed))
 
@@ -516,7 +514,8 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
     DetermineDefense(defe)
 
     if TAdv:
-      cm.Print("\n%sTACTICAL ADVANTAGE!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+      cm.Print("\nTACTICAL ADVANTAGE!",
+               attr=ANSI.TEXT_BOLD | cm.ColorPair(TEXT_COLOR.GREEN))
     printCombatAttackActions(att, defe)
     prompt(commandHandler, [order, att, defe])
 
@@ -529,11 +528,13 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
     if att.Prone:
       att.Prone = False
       att.Action = Action.IGNORE
-      cm.Print("\n%s gets up." % (att.Person.Name.capitalize()))
+      cm.Print("\n%s gets up." % (att.Person.Name.capitalize()),
+               attr=cm.ColorPair(TEXT_COLOR.YELLOW))
     # check for weapon to equip (FUMBLE)
     elif att.FumbleItem is not None:
       cm.Print("\n%s takes a moment to equip %s." %
-               (att.Person.Name.capitalize(), att.FumbleItem.ItemName))
+               (att.Person.Name.capitalize(), att.FumbleItem.ItemName),
+               attr=cm.ColorPair(TEXT_COLOR.YELLOW))
       for item in att.Person.Items:
         if item.UUID == att.FumbleItem.UUID and not item.Equipped:
           item.Equipped = True
@@ -650,10 +651,12 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
         if res.TargetFlag & T_DEF > 0 and defe.TAdvCount < 1:
           defe.TAdvCount += 1
           if defe.Person == player:
-            cm.Print("\nAttacker FAILURE! You get a free action!")
+            cm.Print("\nAttacker FAILURE! You get a free action!",
+                     attr=ANSI.TEXT_BOLD)
           else:
             cm.Print("\nAttacker FAILURE! %s gets a free action!" %
-                     defe.Person.Name.capitalize())
+                     defe.Person.Name.capitalize(),
+                     attr=cm.ColorPair(TEXT_COLOR.YELLOW))
           ret = defe
         # more than 1 TAdv in a turn == MISS text
         else:
@@ -713,22 +716,21 @@ def combat(player, enemies):
       if round_count % 6 == 0:
         if x.Bleed > 0:
           if x.Person is player:
-            cm.Print("\n%sYou are BLEEDING!%s" %
-                     (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+            cm.Print("\nYou are BLEEDING!",
+                     attr=cm.ColorPair(TEXT_COLOR.BRIGHT_RED))
           else:
-            cm.Print("\n%s%s is BLEEDING!%s" %
-                     (ANSI.TEXT_BOLD, x.Person.Name.capitalize(),
-                      ANSI.TEXT_NORMAL))
+            cm.Print("\n%s is BLEEDING!" % (x.Person.Name.capitalize()),
+                     attr=cm.ColorPair(TEXT_COLOR.BRIGHT_RED))
           x.Bloodloss += x.Bleed
           if x.Bloodloss > x.Person.AttrEndurance():
             # death from blood loss
             if x.Person is player:
-              cm.Print("%sYou EXPIRE from loss of blood!%s" %
-                       (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+              cm.Print("You EXPIRE from loss of blood!",
+                       attr=ANSI.TEXT_BLINK | cm.ColorPair(TEXT_COLOR.BRIGHT_RED))
             else:
-              cm.Print("%s%s EXPIRES from loss of blood!%s" %
-                       (ANSI.TEXT_BOLD, x.Person.Name.capitalize(),
-                        ANSI.TEXT_NORMAL))
+              cm.Print("%s EXPIRES from loss of blood!" %
+                       (x.Person.Name.capitalize()),
+                       attr=cm.ColorPair(TEXT_COLOR.BRIGHT_RED))
             x.Flags |= FLAG_DEAD
             if x.Person is player:
               HandlePlayerDeath(player)
@@ -741,12 +743,12 @@ def combat(player, enemies):
              (x.Person.Name, x.StunLevel))
         if x.StunLevel < 1:
           if x.Person is player:
-            cm.Print("\n%sYour stun WEARS OFF!%s" %
-                     (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+            cm.Print("\nYour stun WEARS OFF!",
+                     attr=cm.ColorPair(TEXT_COLOR.BRIGHT_YELLOW))
           else:
-            cm.Print("\n%s%s's stun WEARS OFF!%s" %
-                     (ANSI.TEXT_BOLD, x.Person.Name.capitalize(),
-                      ANSI.TEXT_NORMAL))
+            cm.Print("\n%s's stun WEARS OFF!" %
+                     (x.Person.Name.capitalize()),
+                     attr=cm.ColorPair(TEXT_COLOR.BRIGHT_YELLOW))
       if x is not player_combatant and x.Flags & FLAG_DEAD == 0:
         all_dead = False
     if all_dead:
@@ -799,7 +801,7 @@ def combat(player, enemies):
     if att.Action == Action.FLEE:
       player.Room = player.LastRoom
       player.CombatState = PlayerCombatState.NONE
-      cm.Print("\n%sYou FLEE!%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+      cm.Print("\nYou FLEE!", attr=cm.ColorPair(TEXT_COLOR.BRIGHT_YELLOW))
       break
 
 # vim: set tabstop=2 shiftwidth=2 expandtab:

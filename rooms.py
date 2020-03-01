@@ -14,7 +14,7 @@ from global_defines import (PersonEnum, PersonFlag, DoorEnum, Door, DoorState, D
                             RoomFuncResponse, RoomEnum, Exit, RoomFlag, Room, QuestEnum,
                             AttrEnum, attribute_classes, attributes,
                             ShapeEnum, QualityEnum, MaterialEnum, ItemTypeEnum, Item, ArmorLayer, Armor)
-from utils import (actionInfo, actionSave)
+from utils import (attrColor, actionInfo, actionSave)
 
 # from utils import (actionSave)
 
@@ -22,11 +22,9 @@ from utils import (actionInfo, actionSave)
 def room_StartGame():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
+
   while True:
-    desc = ANSI.TEXT_BOLD + "CREATE" + ANSI.TEXT_NORMAL + \
-        " a new character or " + ANSI.TEXT_BOLD + "RESTORE" + \
-        ANSI.TEXT_NORMAL + " a saved game"
-    x = cm.Input("%s?" % desc, line_length=10).lower()
+    x = cm.Input("CREATE a new character or RESTORE a saved game?", line_length=10).lower()
     if x == "restore":
       player.SetRoom(RoomEnum.GAME_RESTORE_SAVE)
       break
@@ -45,8 +43,7 @@ def room_RestoreSave():
   cm.Print("\nPlease wait while saved data is loaded ...")
   ret = LoadPlayer(player, name, pwd)
   if not ret:
-    cm.Print("%sUnable to find save data for %s!%s" %
-             (ANSI.TEXT_BOLD, name, ANSI.TEXT_NORMAL))
+    cm.Print("Unable to find save data for %s!" % (name), attr=ANSI.TEXT_BOLD)
     player.SetRoom(RoomEnum.GAME_START)
     return RoomFuncResponse.SKIP
 
@@ -57,17 +54,6 @@ def room_RestoreSave():
   GameData.ProcessEvents(True)
   player.SetRoom(player.Room)
   return RoomFuncResponse.SKIP
-
-
-def attrColor(attr):
-  if attr <= 5:
-    return ANSI.TEXT_COLOR_RED
-  elif attr <= 8:
-    return ANSI.TEXT_COLOR_YELLOW
-  elif attr <= 13:
-    return ANSI.TEXT_COLOR_WHITE
-  else:
-    return ANSI.TEXT_COLOR_GREEN
 
 
 def downCost(val):
@@ -117,7 +103,7 @@ def room_CreateCharacter():
 
   keep = False
   while not keep:
-    cm.Print(ANSI.CLEAR + ANSI.RESET_CURSOR, end="")
+    cm.ClearWindow()
     player.GenAttr()
     actionInfo()
     while True:
@@ -154,9 +140,8 @@ def room_CreateCharacter():
         else:
           points -= upCost(10 + d)
   while not keep:
-    cm.Print(ANSI.CLEAR + ANSI.RESET_CURSOR, end="")
-    cm.Print("%sCURRENT TRAINING POINTS: %d%s" % (ANSI.TEXT_BOLD, points,
-                                                  ANSI.TEXT_NORMAL))
+    cm.ClearWindow()
+    cm.Print("CURRENT TRAINING POINTS: %d" % (points), attr=ANSI.TEXT_BOLD)
     cm.Print("NOTES:")
     cm.Print("- Training becomes more difficult as attribute goes higher")
     cm.Print("- Lower attributes to gain more training")
@@ -164,8 +149,7 @@ def room_CreateCharacter():
     for ac_id, ac in attribute_classes.items():
       if ac.Hidden:
         continue
-      cm.Print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, ac.Name.upper(),
-                                     ANSI.TEXT_NORMAL))
+      cm.Print("\n%s STATS\n" % (ac.Name.upper()), attr=ANSI.TEXT_BOLD)
       for attr in attr_list:
         val = player.Attr[attr]
         if not attributes[attr].Hidden:
@@ -174,14 +158,14 @@ def room_CreateCharacter():
             if primaryAttr(attr):
               pri = "*"
             if attr_list[selection] == attr:
-              cm.Print("%s%s%-15s: %d :: < +%d | -%d >%s" %
-                       (ANSI.TEXT_REVERSE, attrColor(val),
-                        "%s%s" % (attributes[attr].Name, pri),
-                        val, downCost(val), upCost(val), ANSI.TEXT_NORMAL))
+              cm.Print("%-15s: %d :: < +%d | -%d >" %
+                       ("%s%s" % (attributes[attr].Name, pri),
+                        val, downCost(val), upCost(val)),
+                       attr=cm.ColorPair(attrColor(val)) | ANSI.TEXT_REVERSE)
             else:
-              cm.Print("%s%-15s: %d%s" %
-                       (attrColor(val), "%s%s" % (attributes[attr].Name, pri),
-                        val, ANSI.TEXT_NORMAL))
+              cm.Print("%-15s: %d" %
+                       ("%s%s" % (attributes[attr].Name, pri), val),
+                       attr=cm.ColorPair(attrColor(val)))
     while True:
       x = cm.Input("Arrows to Adjust or [D]one:", line_length=1).lower()
       if x == "d":
@@ -607,7 +591,7 @@ rooms = {
                          Trigger(TriggerTypeEnum.ROOM_SPAWN_ITEM,
                                  Item(ItemTypeEnum.MISC, "a small iron apartment key", QualityEnum.AVE, MaterialEnum.STEEL, 1)),
                      ], 36000),
-            ]),
+             ]),
     RoomEnum.BL_SOUTHERN_WALK_2:
         Room(RoomEnum.BL_SOUTHERN_WALK_2, ZoneEnum.KEEP, "Southern Walk", "the southern walk",
              ["** TODO **"],

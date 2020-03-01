@@ -14,9 +14,10 @@
 
 # Main setup
 
+import curses
 from random import seed
 
-from console import (ANSI, ConsoleManager)
+from console import (ConsoleManager)
 from gamedata import (GameData)
 from global_defines import (quests, Player, RoomEnum, RoomFuncResponse)
 
@@ -24,7 +25,6 @@ ROOM_START = RoomEnum.BL_KEEP_GATEHOUSE
 ROOM_RESPAWN = RoomEnum.BL_PRIEST_CHAMBER
 
 seed()
-print(ANSI.CLEAR + ANSI.RESET_CURSOR, end='')
 
 cm = ConsoleManager()
 cm.start()
@@ -54,35 +54,41 @@ GameData.SetProcessWeather(processWeather)
 
 from combat import combat
 
-while True:
-  res = RoomFuncResponse.NONE
-  printRoomDescription(player.Room)
 
-  # Call Room Function
-  if rooms[player.Room].Function is not None:
-    # Return value means: True == Print Prompt, False == Skip Prompt
-    res = rooms[player.Room].Function()
+def main(stdscr):
+  cm.StartScreen(stdscr)
 
-  if res == RoomFuncResponse.SKIP:
-    continue
+  while True:
+    cm.RenderHud()
+    res = RoomFuncResponse.NONE
+    printRoomDescription(player.Room)
 
-  # Check for events
-  GameData.ProcessEvents()
+    # Call Room Function
+    if rooms[player.Room].Function is not None:
+      # Return value means: True == Print Prompt, False == Skip Prompt
+      res = rooms[player.Room].Function()
 
-  printRoomObjects(player.Room)
-  roomTalkTrigger("on_enter")
+    if res == RoomFuncResponse.SKIP:
+      continue
 
-  # Check if the room persons need to attack
-  enemies = GameData.ProcessRoomCombat()
-  if len(enemies) > 0:
-    combat(player, enemies)
-    continue
+    # Check for events
+    GameData.ProcessEvents()
 
-  # Handle Commands
-  if res != RoomFuncResponse.NO_PROMPT:
-    prompt()
+    printRoomObjects(player.Room)
+    roomTalkTrigger("on_enter")
 
-cm.SetNormalTerm()
+    # Check if the room persons need to attack
+    enemies = GameData.ProcessRoomCombat()
+    if len(enemies) > 0:
+      combat(player, enemies)
+      continue
+
+    # Handle Commands
+    if res != RoomFuncResponse.NO_PROMPT:
+      prompt()
+
+
+curses.wrapper(main)
 
 
 # vim: set tabstop=2 shiftwidth=2 expandtab:

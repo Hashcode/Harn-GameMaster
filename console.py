@@ -4,9 +4,8 @@
 
 # Console Handler
 
-import atexit
 import sys
-import termios
+import curses
 
 from enum import IntEnum
 from queue import Queue
@@ -15,32 +14,35 @@ from threading import Thread, Event
 from time import (sleep, time)
 
 
+MIN_WIDTH = 75
+
+
 # FORMATTING
 
+class TEXT_COLOR:
+  NORMAL = 0
+  BLACK = 1
+  RED = 2
+  GREEN = 3
+  YELLOW = 4
+  BLUE = 5
+  PURPLE = 6
+  CYAN = 7
+  BRIGHT_WHITE = 8
+  BRIGHT_BLACK = 9
+  BRIGHT_RED = 10
+  BRIGHT_GREEN = 11
+  BRIGHT_YELLOW = 12
+  BRIGHT_BLUE = 13
+  BRIGHT_PURPLE = 14
+  BRIGHT_CYAN = 15
+
+
 class ANSI:
-  RESET_CURSOR = "\x1B[1;1H"
-  CLEAR = "\x1B[2J"
-  CLEAR_LINE = "\x1B[1K"
-  TEXT_NORMAL = "\x1B[0m"
-  TEXT_BOLD = "\x1B[1m"
-  TEXT_UNDERLINE = "\x1B[4m"
-  TEXT_REVERSE = "\x1B[7m"
-  TEXT_COLOR_BLACK = "\x1B[30m"
-  TEXT_COLOR_RED = "\x1B[31m"
-  TEXT_COLOR_GREEN = "\x1B[32m"
-  TEXT_COLOR_YELLOW = "\x1B[33m"
-  TEXT_COLOR_BLUE = "\x1B[34m"
-  TEXT_COLOR_MAGENTA = "\x1B[35m"
-  TEXT_COLOR_CYAN = "\x1B[36m"
-  TEXT_COLOR_WHITE = "\x1B[37m"
-  TEXT_COLOR_BLACK_BRIGHT = "\x1B[30;1m"
-  TEXT_COLOR_RED_BRIGHT = "\x1B[31;1m"
-  TEXT_COLOR_GREEN_BRIGHT = "\x1B[32;1m"
-  TEXT_COLOR_YELLOW_BRIGHT = "\x1B[33;1m"
-  TEXT_COLOR_BLUE_BRIGHT = "\x1B[34;1m"
-  TEXT_COLOR_MAGENTA_BRIGHT = "\x1B[35;1m"
-  TEXT_COLOR_CYAN_BRIGHT = "\x1B[36;1m"
-  TEXT_COLOR_WHITE_BRIGHT = "\x1B[37;1m"
+  TEXT_NORMAL = 0
+  TEXT_BOLD = curses.A_BOLD
+  TEXT_REVERSE = curses.A_REVERSE
+  TEXT_BLINK = curses.A_BLINK
 
 
 class InputFlag(IntEnum):
@@ -53,11 +55,6 @@ class ConsoleManager(Thread):
   def __init__(self, prompt="[]:", line_length=60, input_flags=0):
     super().__init__()
     self.daemon = True
-    self.fd = sys.stdin.fileno()
-    self.out = sys.stdout
-    self.new_term = termios.tcgetattr(self.fd)
-    self.old_term = termios.tcgetattr(self.fd)
-    self.new_term[3] = (self.new_term[3] & ~termios.ICANON & ~termios.ECHO)
     self.cur_input = ""
     self._in_queue = Queue()
     self._echoed = Event()
@@ -66,13 +63,67 @@ class ConsoleManager(Thread):
     self._interrupted = 0
     self._prompted = False
     self._line_length = line_length
-    atexit.register(self.SetNormalTerm)
 
-  def SetNormalTerm(self):
-    termios.tcsetattr(self.fd, termios.TCSAFLUSH, self.old_term)
+  def ColorPair(self, color_enum):
+    return curses.color_pair(color_enum)
 
-  def SetRawTerm(self):
-    termios.tcsetattr(self.fd, termios.TCSAFLUSH, self.new_term)
+  def StartScreen(self, stdscr):
+    self.screen = stdscr
+    curses.noecho()
+    curses.cbreak()
+    curses.nonl()
+    self.screen.erase()
+    self.screen.scrollok(True)
+    self.screen.idlok(True)
+    self.screen.keypad(True)
+    self.screen.nodelay(True)
+    curses.curs_set(0)
+    curses.mousemask(True)
+    (self.screenY, self.screenX) = self.screen.getmaxyx()
+
+    self.window = self.screen.subwin(self.screenY, MIN_WIDTH - 1, 0, 0)
+    self.window.scrollok(True)
+    self.hud = self.screen.subwin(26, 30, 0, MIN_WIDTH)
+    self.hud.scrollok(True)
+
+    curses.start_color()
+    curses.use_default_colors()
+    for i in range(0, 16):
+      curses.init_pair(i + 1, i, -1)
+
+  def ClearWindow(self):
+    self.window.erase()
+    self.window.move(0, 0)
+
+  def RenderHud(self):
+    #                12345678901234567890123456789
+    self.hud.addstr(0, 0,
+                    "+---------------------------+\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|   THIS AREA COMING SOON   |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("|                           |\n")
+    self.hud.addstr("+---------------------------+\n")
+    self.hud.refresh()
 
   def SetPrompt(self, prompt):
     self._prompt = prompt
@@ -84,35 +135,36 @@ class ConsoleManager(Thread):
     self._input_flags = input_flags
 
   def PrintCH(self, char):
-    self.out.write(char)
-    self.out.flush()
+    self.window.addch(char)
+    self.window.refresh()
 
-  def Print(self, msg, end="\n"):
+  def Print(self, msg, attr=0, end="\n"):
     if self._prompted:
-      self.out.write("%s" % (ANSI.CLEAR_LINE))
-      self.out.write("\x1B[%dD" %
-                     (len(self._prompt) + len(self.cur_input) + 1))
+      (Y, X) = self.window.getyx()
+      self.window.move(Y, 0)
+      self.window.clrtoeol()
+      self.window.move(Y, 0)
       self._prompted = False
-    self.out.write("%s%s" % (msg, end))
+    self.window.addstr("%s%s" % (msg, end), attr)
+    self.window.refresh()
     self._interrupted = 1
 
   def Bell(self):
-    self.PrintCH("\a")
+    curses.beep()
 
   def run(self):
     self._echoed.wait()
     self._echoed.clear()
-    self.SetRawTerm()
     while True:
-      self.out.write("\n%s %s" % (self._prompt, self.cur_input))
-      self.out.flush()
+      self.window.addstr("\n%s %s" % (self._prompt, self.cur_input))
+      self.window.refresh()
       self._prompted = True
       self._interrupted = 0
       while self._interrupted == 0:
         dr, dw, de = select([sys.stdin, self._interrupted], [], [], 1)
-        if sys.stdin in dr:
-          c = sys.stdin.read(1)
-          if ord(c) in {10, 13}:
+        c = self.screen.getch()
+        if c > -1:
+          if c in {curses.KEY_ENTER, 10, 13}:
             self._in_queue.put(self.cur_input)
             self.cur_input = ""
             self._prompted = False
@@ -121,39 +173,35 @@ class ConsoleManager(Thread):
             self._interrupted = 1
             self._echoed.wait()
             self._echoed.clear()
-          elif ord(c) == 27:
-            c = sys.stdin.read(1)
-            if ord(c) == 91:
-              c = sys.stdin.read(1)
-              if ord(c) == 65:
-                self._in_queue.put("arrow_up")
-                self._interrupted = 1
-                self._echoed.wait()
-                self._echoed.clear()
-              elif ord(c) == 66:
-                self._in_queue.put("arrow_down")
-                self._interrupted = 1
-                self._echoed.wait()
-                self._echoed.clear()
-              elif ord(c) == 67:
-                self._in_queue.put("arrow_right")
-                self._interrupted = 1
-                self._echoed.wait()
-                self._echoed.clear()
-              elif ord(c) == 68:
-                self._in_queue.put("arrow_left")
-                self._interrupted = 1
-                self._echoed.wait()
-                self._echoed.clear()
-              else:
-                self.Bell()
-            else:
-              self.Bell()
-          elif ord(c) == 127:
+          elif c == curses.KEY_UP:
+            self._in_queue.put("arrow_up")
+            self._interrupted = 1
+            self._echoed.wait()
+            self._echoed.clear()
+          elif c == curses.KEY_DOWN:
+            self._in_queue.put("arrow_down")
+            self._interrupted = 1
+            self._echoed.wait()
+            self._echoed.clear()
+          elif c == curses.KEY_RIGHT:
+            self._in_queue.put("arrow_right")
+            self._interrupted = 1
+            self._echoed.wait()
+            self._echoed.clear()
+          elif c == curses.KEY_LEFT:
+            self._in_queue.put("arrow_left")
+            self._interrupted = 1
+            self._echoed.wait()
+            self._echoed.clear()
+          elif c == curses.KEY_MOUSE:
+            pass
+          elif c == curses.KEY_RESIZE:
+            (self.screenY, self.screenX) = self.screen.getmaxyx()
+          elif c == curses.KEY_DC or c == curses.KEY_BACKSPACE or c == 127:
             if len(self.cur_input) > 0:
               self.cur_input = self.cur_input[:-1]
-              self.out.write("\b \b")
-              self.out.flush()
+              self.window.addstr("\b \b")
+              self.window.refresh()
             else:
               self.Bell()
           else:
@@ -161,21 +209,21 @@ class ConsoleManager(Thread):
               self.Bell()
               continue
             if self._input_flags & InputFlag.NUMERIC == 0:
-              if ord(c) >= 32 and ord(c) <= 126:
+              if c >= 32 and c <= 126:
                 if self._input_flags & InputFlag.UPPERCASE > 0:
-                  c = c.upper()
-                self.cur_input += "%c" % c
+                  c = ord(("%s" % chr(c)).upper())
+                self.cur_input += "%c" % chr(c)
                 if self._interrupted == 0:
                   if self._input_flags & InputFlag.PASSWORD > 0:
                     self.PrintCH("*")
                   else:
-                    self.PrintCH("%c" % c)
+                    self.PrintCH("%c" % chr(c))
                 continue
             else:
-              if ord(c) >= 48 and ord(c) <= 57:
-                self.cur_input += "%c" % c
+              if c >= 48 and c <= 57:
+                self.cur_input += "%c" % chr(c)
                 if self._interrupted == 0:
-                  self.PrintCH("%c" % c)
+                  self.PrintCH("%c" % chr(c))
                 continue
             self.Bell()
 

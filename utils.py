@@ -8,7 +8,7 @@ from sys import exit
 from textwrap import TextWrapper
 from time import sleep
 
-from console import (ANSI, InputFlag)
+from console import (TEXT_COLOR, ANSI, InputFlag)
 from db_jsonstore import (LoadStatsDB, SavePlayer)
 from gamedata import (GameData)
 from global_defines import (attribute_classes, attributes, months, sunsigns,
@@ -94,14 +94,13 @@ def printRoomDescription(room_id):
 
   # check for darkness w/o light source
   if not rooms[room_id].HasLight():
-    cm.Print("%sDarkness%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("Darkness", attr=ANSI.TEXT_BOLD)
     cm.Print("\nIt's completely dark and you can't see.")
     return
 
   # Room Title
   if rooms[room_id].Title != "":
-    cm.Print("%s%s%s" % (ANSI.TEXT_BOLD,
-                         rooms[room_id].Title, ANSI.TEXT_NORMAL))
+    cm.Print(rooms[room_id].Title, attr=ANSI.TEXT_BOLD)
   # Room Description
   if len(rooms[room_id].LongDescription) > 0:
     for para in rooms[room_id].LongDescription:
@@ -116,22 +115,23 @@ def printRoomDescription(room_id):
     if len(rooms[room_id].Exits) > 0:
       cm.Print("")
       for exit_dir, ex in rooms[room_id].Exits.items():
-        exit_str = "%s%-9s%s: " % (ANSI.TEXT_BOLD, directions[exit_dir].Names[0].upper(), ANSI.TEXT_NORMAL)
+        cm.Print("%-9s" % (directions[exit_dir].Names[0].upper()),
+                 attr=ANSI.TEXT_BOLD, end="")
         if ex.Door == DoorEnum.NONE:
           if rooms[ex.Room].HasLight():
-            cm.Print("%s%s" % (exit_str, rooms[ex.Room].ShortDescription))
+            cm.Print(": %s" % (rooms[ex.Room].ShortDescription))
           else:
-            cm.Print("%sdarkness ..." % (exit_str))
+            cm.Print(": is darkness")
         else:
           if player.DoorState(ex.Door).Closed:
-            cm.Print("%s%s closed %s" %
-                     (exit_str, doors[ex.Door].Verb(), doors[ex.Door].Name))
+            cm.Print(": %s closed %s" %
+                     (doors[ex.Door].Verb(), doors[ex.Door].Name))
           else:
             if rooms[ex.Room].HasLight():
-              cm.Print("%s%s (via open %s)" %
-                       (exit_str, rooms[ex.Room].ShortDescription, doors[ex.Door].Name))
+              cm.Print(": %s (via open %s)" %
+                       (rooms[ex.Room].ShortDescription, doors[ex.Door].Name))
             else:
-              cm.Print("%s is darkness (via open %s)" % (exit_str, doors[ex.Door].Name))
+              cm.Print(": is darkness (via open %s)" % (doors[ex.Door].Name))
 
 
 def printRoomObjects(room_id):
@@ -150,13 +150,13 @@ def printRoomObjects(room_id):
 
 def attrColor(attr):
   if attr <= 5:
-    return ANSI.TEXT_COLOR_RED
+    return TEXT_COLOR.RED
   elif attr <= 8:
-    return ANSI.TEXT_COLOR_YELLOW
+    return TEXT_COLOR.YELLOW
   elif attr <= 13:
-    return ANSI.TEXT_COLOR_WHITE
+    return TEXT_COLOR.NORMAL
   else:
-    return ANSI.TEXT_COLOR_GREEN
+    return TEXT_COLOR.GREEN
 
 
 def printStats(person):
@@ -165,30 +165,29 @@ def printStats(person):
     for ac_id, ac in attribute_classes.items():
       if ac.Hidden:
         continue
-      cm.Print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, ac.Name.upper(), ANSI.TEXT_NORMAL))
+      cm.Print("\n%s STATS\n" % (ac.Name.upper()), attr=ANSI.TEXT_BOLD)
       for attr, val in person.Attr.items():
         if not attributes[attr].Hidden:
           if attributes[attr].AttrClass == ac_id:
-            cm.Print("%-15s: %s%d%s" % (attributes[attr].Name, attrColor(val), val, ANSI.TEXT_NORMAL))
-    cm.Print("\n%sCHARACTER STATS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+            cm.Print("%-15s: " % (attributes[attr].Name), end="")
+            cm.Print("%d" % (val), attr=cm.ColorPair(attrColor(val)))
+    cm.Print("\nCHARACTER STATS\n", attr=ANSI.TEXT_BOLD)
   else:
-    cm.Print("\n%s%s STATS%s\n" % (ANSI.TEXT_BOLD, person.Name.upper(), ANSI.TEXT_NORMAL))
+    cm.Print("\n%s STATS\n" % (person.Name.upper()), attr=ANSI.TEXT_BOLD)
   cm.Print("%-15s: %d" % ("Endurance", person.AttrEndurance()))
   cm.Print("%-15s: %d lbs" % ("Inven. Weight", person.ItemWeight()))
   cm.Print("%-15s: %d" % ("Enc. Points", person.EncumbrancePenalty()))
   cm.Print("%-15s: %d" % ("Injury Points", person.IP()))
   cm.Print("%-15s: %d" % ("Fatigue Points", person.FatiguePoints()))
   cm.Print("%-15s: %d" % ("Initiative", person.AttrInitiative()))
-  cm.Print("\n%s%-15s: %d%s" % (ANSI.TEXT_BOLD, "Universal Pen.",
-                                person.UniversalPenalty(), ANSI.TEXT_NORMAL))
-  cm.Print("%s%-15s: %d%s" % (ANSI.TEXT_BOLD, "Physical Pen.",
-                              person.PhysicalPenalty(), ANSI.TEXT_NORMAL))
+  cm.Print("\n%-15s: %d" % ("Universal Pen.", person.UniversalPenalty()), attr=ANSI.TEXT_BOLD)
+  cm.Print("%-15s: %d" % ("Physical Pen.", person.PhysicalPenalty()), attr=ANSI.TEXT_BOLD)
   if person.PersonType == PersonTypeEnum.NPC:
     items = filterItems(person.Items, equipped=True)
     if len(items) > 0:
-      cm.Print("\n%sEQUIPMENT%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+      cm.Print("\nEQUIPMENT\n", attr=ANSI.TEXT_BOLD)
       printItems(items, stats=True)
-  cm.Print("\n%sWOUND LIST%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  cm.Print("\nWOUND LIST\n", attr=ANSI.TEXT_BOLD)
   if len(person.Wounds) < 1:
     cm.Print("[NONE]")
   else:
@@ -346,29 +345,29 @@ def actionRemoveItem():
 def actionInventory():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  cm.Print("\n%sCURRENCY%s: %d SP" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL,
-                                      player.Currency))
-  cm.Print("\n%sEQUIPMENT%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  cm.Print("\nCURRENCY", attr=ANSI.TEXT_BOLD, end="")
+  cm.Print(": %d SP" % (player.Currency))
+  cm.Print("\nEQUIPMENT", attr=ANSI.TEXT_BOLD)
   items = filterItems(player.Items, equipped=True)
   if len(items) < 1:
     cm.Print("[NONE]")
   else:
     printItems(items, stats=True)
-  cm.Print("%s%-30s : %5s lbs%s" % (ANSI.TEXT_BOLD, "EQUIPPED WEIGHT",
-                                    "{:3.1f}".format(player.EquipWeight()),
-                                    ANSI.TEXT_NORMAL))
-  cm.Print("\n%sITEMS%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  cm.Print("%-30s : %5s lbs" % ("EQUIPPED WEIGHT",
+                                "{:3.1f}".format(player.EquipWeight())),
+           attr=ANSI.TEXT_BOLD)
+  cm.Print("\nITEMS", attr=ANSI.TEXT_BOLD)
   items = filterItems(player.Items, equipped=False)
   if len(items) < 1:
     cm.Print("[NONE]")
   else:
     printItems(items, stats=True)
-  cm.Print("%s%-30s : %5s lbs%s" % (ANSI.TEXT_BOLD, "INVENTORY WEIGHT",
-                                    "{:3.1f}".format(player.EquipWeight(False)),
-                                    ANSI.TEXT_NORMAL))
-  cm.Print("\n%s%-30s : %5s lbs%s" % (ANSI.TEXT_BOLD, "TOTAL WEIGHT",
-                                      "{:3.1f}".format(player.ItemWeight()),
-                                      ANSI.TEXT_NORMAL))
+  cm.Print("%-30s : %5s lbs" % ("INVENTORY WEIGHT",
+                                "{:3.1f}".format(player.EquipWeight(False))),
+           attr=ANSI.TEXT_BOLD)
+  cm.Print("\n%-30s : %5s lbs" % ("TOTAL WEIGHT",
+                                  "{:3.1f}".format(player.ItemWeight())),
+           attr=ANSI.TEXT_BOLD)
 
 
 def actionSave():
@@ -379,8 +378,7 @@ def actionSave():
   if SavePlayer(player, rooms[player.Room].Title, player.Password):
     return True
   else:
-    cm.Print("%sAn error occured during SAVE!%s" %
-             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("An error occured during SAVE!", attr=ANSI.TEXT_BOLD)
     return False
 
 
@@ -390,31 +388,31 @@ def actionSkills():
   for skc_id, skc in skill_classes.items():
     if skc.Hidden:
       continue
-    cm.Print("\n%s%s SKILLS%s\n" %
-             (ANSI.TEXT_BOLD, skc.Name.upper(), ANSI.TEXT_NORMAL))
+    cm.Print("\n%s SKILLS\n" % (skc.Name.upper()), attr=ANSI.TEXT_BOLD)
     for sk_id, sk in skills.items():
       if sk.SkillClass != skc_id:
         continue
       if sk.Hidden:
         continue
-      cm.Print("%-15s: %s%s%s/%s%s%s/%s%s%s  ML:%-3d" %
-               (sk.Name,
-                attrColor(player.Attr[skills[sk_id].Attr1]),
-                attributes[skills[sk_id].Attr1].Abbrev,
-                ANSI.TEXT_NORMAL,
-                attrColor(player.Attr[skills[sk_id].Attr2]),
-                attributes[skills[sk_id].Attr2].Abbrev,
-                ANSI.TEXT_NORMAL,
-                attrColor(player.Attr[skills[sk_id].Attr3]),
-                attributes[skills[sk_id].Attr3].Abbrev,
-                ANSI.TEXT_NORMAL,
-                player.SkillML(sk_id)))
+      cm.Print("%-15s: " % (sk.Name), end="")
+      cm.Print("%s" % (attributes[skills[sk_id].Attr1].Abbrev),
+               attr=cm.ColorPair(attrColor(player.Attr[skills[sk_id].Attr1])),
+               end="")
+      cm.Print("/", end="")
+      cm.Print("%s" % (attributes[skills[sk_id].Attr2].Abbrev),
+               attr=cm.ColorPair(attrColor(player.Attr[skills[sk_id].Attr2])),
+               end="")
+      cm.Print("/", end="")
+      cm.Print("%s" % (attributes[skills[sk_id].Attr3].Abbrev),
+               attr=cm.ColorPair(attrColor(player.Attr[skills[sk_id].Attr3])),
+               end="")
+      cm.Print("  ML:%-3d" % (player.SkillML(sk_id)))
 
 
 def actionInfo():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  cm.Print("\n%sBIRTH INFORMATION%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  cm.Print("\nBIRTH INFORMATION\n", attr=ANSI.TEXT_BOLD)
   # TODO: hardcoded Human for now
   cm.Print("%-15s: %s" % ("Name", player.Name))
   cm.Print("%-15s: %s" % (attributes[AttrEnum.SPECIES].Name, "Human"))
@@ -433,7 +431,7 @@ def actionInfo():
                                 player.Attr[AttrEnum.SIBLING_COUNT]))
   cm.Print("%-15s: %s" % (attributes[AttrEnum.PARENT].Name,
                           parent_statuses[player.AttrParentStatus()].Name))
-  cm.Print("\n%sAPPEARANCE%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  cm.Print("\nAPPEARANCE\n", attr=ANSI.TEXT_BOLD)
   cm.Print("%-15s: %d\'%d\"" % (attributes[AttrEnum.HEIGHT].Name,
                                 int(player.Attr[AttrEnum.HEIGHT] / 12),
                                 player.Attr[AttrEnum.HEIGHT] % 12))
@@ -454,9 +452,9 @@ def actionInfo():
 def actionArmor():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  cm.Print("\n%sARMOR COVERAGE%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
-  cm.Print("%s%-15s  BLUNT EDGE PIERCE ELEMENTAL%s" %
-           (ANSI.TEXT_BOLD, "LOCATION", ANSI.TEXT_NORMAL))
+  cm.Print("\nARMOR COVERAGE\n", attr=ANSI.TEXT_BOLD)
+  cm.Print("%-15s  BLUNT EDGE PIERCE ELEMENTAL" % ("LOCATION"),
+           attr=ANSI.TEXT_BOLD)
   m = Material("None", 0, 0, [0, 0, 0, 0])
   for bp_id, bp in body_parts.items():
     m.Copy(materials[player.SkinMaterial])
@@ -481,7 +479,7 @@ def actionQuest():
   player = GameData.GetPlayer()
   quests = GameData.GetQuests()
   count = 0
-  cm.Print("\n%sCOMPLETED QUESTS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  cm.Print("\nCOMPLETED QUESTS\n", attr=ANSI.TEXT_BOLD)
   for quest_id, completed in player.Quests.items():
     if quests[quest_id].Hidden:
       continue
@@ -494,7 +492,7 @@ def actionQuest():
   if count < 1:
     cm.Print("[NONE]")
   count = 0
-  cm.Print("\n%sCURRENT QUESTS%s\n" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+  cm.Print("\nCURRENT QUESTS\n", attr=ANSI.TEXT_BOLD)
   for quest_id, completed in player.Quests.items():
     if quests[quest_id].Hidden:
       continue
@@ -536,9 +534,8 @@ def actionAttack():
   rooms = GameData.GetRooms()
   npcs = []
   if player.IsTalking():
-    cm.Print("\n%sYou are talking! Enter \"DONE\" "
-             "to end conversation.%s" %
-             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("\nYou are talking! Enter \"DONE\" to end conversation.",
+             attr=ANSI.TEXT_BOLD)
     return
   # let combat "attack" handle work if in combat
   if player.CombatState != PlayerCombatState.NONE:
@@ -809,9 +806,7 @@ def processTriggers(obj, triggers):
         logd("[trigger] PERSON_ATTACK")
         if type(obj) is Mob:
           player.SetTalking(False)
-          cm.Print("%s%s attacks you!%s" %
-                   (ANSI.TEXT_BOLD, obj.Name.capitalize(),
-                    ANSI.TEXT_NORMAL))
+          cm.Print("%s attacks you!" % (obj.Name.capitalize()), attr=ANSI.TEXT_BOLD)
           player.CombatTarget = obj.UUID
       elif tr.TriggerType == TriggerTypeEnum.PERSON_DESC:
         logd("[trigger] PERSON_DESC")
@@ -962,8 +957,7 @@ def actionShopBuy(shopkeep):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   if player.CombatState != PlayerCombatState.NONE:
-    cm.Print("\n%sYou can't BUY during combat!%s" %
-             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("\nYou can't BUY during combat!", attr=ANSI.TEXT_BOLD)
     return
   items = filterItems(shopkeep.SellItems)
   if len(items) < 1:
@@ -973,7 +967,7 @@ def actionShopBuy(shopkeep):
   if item is None:
     return
   if item.Value > player.Currency:
-    cm.Print("\n%sYou cannot afford [%s].%s" % (ANSI.TEXT_BOLD, item.ItemName, ANSI.TEXT_NORMAL))
+    cm.Print("\nYou cannot afford [%s]." % (item.ItemName), attr=ANSI.TEXT_BOLD)
     return
   # TODO possible factors to raise price?
   price = item.Value
@@ -982,18 +976,18 @@ def actionShopBuy(shopkeep):
   if x == "y":
     player.Currency -= price
     player.AddItem(item)
-    cm.Print("\n%s%s hands you [%s].%s" %
-             (ANSI.TEXT_BOLD, shopkeep.Name.capitalize(), item.ItemName, ANSI.TEXT_NORMAL))
+    cm.Print("\n%s hands you [%s]." %
+             (shopkeep.Name.capitalize(), item.ItemName),
+             attr=ANSI.TEXT_BOLD)
   else:
-    cm.Print("\n%sPurchase aborted.%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("\nPurchase aborted.", attr=ANSI.TEXT_BOLD)
 
 
 def actionShopSell(shopkeep):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   if player.CombatState != PlayerCombatState.NONE:
-    cm.Print("\n%sYou can't SELL during combat!%s" %
-             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("\nYou can't SELL during combat!", attr=ANSI.TEXT_BOLD)
     return
   items = []
   if shopkeep.BuyItems is None:
@@ -1015,12 +1009,12 @@ def actionShopSell(shopkeep):
   if x == "y":
     player.Currency += price
     player.RemoveItem(item)
-    cm.Print("\n%sYou hand [%s] to %s.%s" %
-             (ANSI.TEXT_BOLD, item.ItemName,
-              shopkeep.Name.capitalize(), ANSI.TEXT_NORMAL))
+    cm.Print("\nYou hand [%s] to %s." %
+             (item.ItemName, shopkeep.Name.capitalize()),
+             attr=ANSI.TEXT_BOLD)
     del item
   else:
-    cm.Print("\n%sSale aborted.%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("\nSale aborted.", attr=ANSI.TEXT_BOLD)
 
 
 def talkHandler(command, data):
@@ -1059,13 +1053,11 @@ def actionTalk(keyword=""):
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
   if player.CombatState != PlayerCombatState.NONE:
-    cm.Print("\n%sYou can't TALK during combat!%s" %
-             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("\nYou can't TALK during combat!", attr=ANSI.TEXT_BOLD)
     return
   npcs = []
   if player.IsTalking():
-    cm.Print("\n%sYou are already talking!!%s" %
-             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("\nYou are already talking!!", attr=ANSI.TEXT_BOLD)
     return
   for npc in rooms[player.Room].Persons:
     npcs.append(npc)
@@ -1185,8 +1177,7 @@ def actionUnlock():
     # 30 seconds door action
     player.GameTime += 30
   else:
-    cm.Print("\n%sYou don't have the key for that!%s" %
-             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("\nYou don't have the key for that!", attr=ANSI.TEXT_BOLD)
 
 
 def actionClose():
@@ -1208,9 +1199,9 @@ def actionOpen():
   door_id = chooseDoor(GameData.GetPlayer().Room, "open", door_closed=True)
   if door_id != DoorEnum.NONE:
     if player.DoorState(door_id).Locked:
-      cm.Print("\n%sThe %s %s locked!%s" %
-               (ANSI.TEXT_BOLD, doors[door_id].Name, doors[door_id].Verb(),
-                ANSI.TEXT_NORMAL))
+      cm.Print("\nThe %s %s locked!" %
+               (doors[door_id].Name, doors[door_id].Verb()),
+               attr=ANSI.TEXT_BOLD)
     else:
       player.SetDoorState(door_id).Closed = False
       cm.Print("\nYou open the %s." % doors[door_id].Name)
@@ -1224,10 +1215,12 @@ def actionListPlayers():
   if len(pinfo) == 0:
     cm.Print("\nThere are no saved characters!")
   else:
-    cm.Print("\n%s%-20s %-11s %s%s" %
-             (ANSI.TEXT_BOLD, "CHARACTER NAME", "TIME PLAYED", "SAVED IN ROOM", ANSI.TEXT_NORMAL))
-    cm.Print("%s%-20s %-11s %s%s" %
-             (ANSI.TEXT_BOLD, "--------------", "-----------", "-------------", ANSI.TEXT_NORMAL))
+    cm.Print("\n%-20s %-11s %s" %
+             ("CHARACTER NAME", "TIME PLAYED", "SAVED IN ROOM"),
+             attr=ANSI.TEXT_BOLD)
+    cm.Print("%-20s %-11s %s" %
+             ("--------------", "-----------", "-------------"),
+             attr=ANSI.TEXT_BOLD)
     for x in sorted(pinfo):
       cm.Print("%-20s %-11s %s" % (x, "%0.2f days" % (pinfo[x]["played"]), pinfo[x]["info"]))
 
@@ -1242,13 +1235,10 @@ def actionChangePassword():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   if player.CombatState != PlayerCombatState.NONE:
-    cm.Print("\n%sYou can't change your password in combat!%s" %
-             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("\nYou can't change your password in combat!", attr=ANSI.TEXT_BOLD)
     return
   if player.IsTalking():
-    cm.Print("\n%sYou are talking! Enter \"DONE\" "
-             "to end conversation.%s" %
-             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("\nYou are talking! Enter \"DONE\" to end conversation.", attr=ANSI.TEXT_BOLD)
     return
   cm.Print("\nYour password is used to encrypt SAVE data.")
   cm.Print("It should NOT be a password used for anything important.")
@@ -1266,13 +1256,10 @@ def actionQuit():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   if player.CombatState != PlayerCombatState.NONE:
-    cm.Print("\n%sYou can't QUIT in combat!%s" %
-             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("\nYou can't QUIT in combat!", attr=ANSI.TEXT_BOLD)
     return
   if player.IsTalking():
-    cm.Print("\n%sYou are talking! Enter \"DONE\" "
-             "to end conversation.%s" %
-             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("\nYou are talking! Enter \"DONE\" to end conversation.", attr=ANSI.TEXT_BOLD)
     return
   x = cm.Input("Are you sure you wish to quit [y/n]:", line_length=1).lower()
   if x == "y":
@@ -1287,13 +1274,10 @@ def actionRest():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   if player.CombatState != PlayerCombatState.NONE:
-    cm.Print("\n%sYou can't REST during combat!%s" %
-             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("\nYou can't REST during combat!", attr=ANSI.TEXT_BOLD)
     return
   if player.IsTalking():
-    cm.Print("\n%sYou are talking! Enter \"DONE\" "
-             "to end conversation.%s" %
-             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("\nYou are talking! Enter \"DONE\" to end conversation.", attr=ANSI.TEXT_BOLD)
     return
   cm.Print("\nYou take a moment to rest ...")
   combat = False
@@ -1336,13 +1320,10 @@ def actionSaveGeneric():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   if player.CombatState != PlayerCombatState.NONE:
-    cm.Print("\n%sYou can't SAVE in combat!%s" %
-             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("\nYou can't SAVE in combat!", attr=ANSI.TEXT_BOLD)
     return
   if player.IsTalking():
-    cm.Print("\n%sYou are talking! Enter \"DONE\" "
-             "to end conversation.%s" %
-             (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+    cm.Print("\nYou are talking! Enter \"DONE\" to end conversation.", attr=ANSI.TEXT_BOLD)
     return
   if actionSave():
     cm.Print("\nCharacter saved.")
@@ -1452,7 +1433,7 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
     if player.IsTalking():
       prompt_text += ", \"DONE\" = Exit Talk"
     prompt_text += "]:"
-    x = cm.Input(prompt_text, timeout=10, timeoutFunc=promptTimeout).lower()
+    x = cm.Input(prompt_text, timeout=5, timeoutFunc=promptTimeout).lower()
     # Handle universal commands
     cmd_match = None
     for gen_cmd in commands:
@@ -1480,21 +1461,18 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
 
       if match_dir != DirectionEnum.NONE:
         if player.CombatState != PlayerCombatState.NONE:
-          cm.Print("\n%sYou can't move in combat!  Try to FLEE!%s" %
-                   (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+          cm.Print("\nYou can't move in combat!  Try to FLEE!", attr=ANSI.TEXT_BOLD)
         elif player.IsTalking():
-          cm.Print("\n%sYou are talking! Enter \"DONE\" "
-                   "to end conversation.%s" %
-                   (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+          cm.Print("\nYou are talking! Enter \"DONE\" to end conversation.", attr=ANSI.TEXT_BOLD)
         else:
           trigger_deny = False
           for exit_dir, ex in rooms[player.Room].Exits.items():
             if match_dir == exit_dir:
               if ex.Door != DoorEnum.NONE:
                 if player.DoorState(ex.Door).Closed:
-                  cm.Print("\n%sThe %s %s closed.%s" %
-                           (ANSI.TEXT_BOLD, doors[ex.Door].Name,
-                            doors[ex.Door].Verb(), ANSI.TEXT_NORMAL))
+                  cm.Print("\nThe %s %s closed." %
+                           (doors[ex.Door].Name, doors[ex.Door].Verb()),
+                           attr=ANSI.TEXT_BOLD)
                   break
                 else:
                   if not roomTalkTrigger("on_exit"):
@@ -1512,8 +1490,7 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
                 player.SetRoom(ex.Room)
               return
           if not trigger_deny:
-            cm.Print("\n%sYou can't go in that direction.%s" %
-                     (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+            cm.Print("\nYou can't go in that direction.", attr=ANSI.TEXT_BOLD)
         continue
 
       res = False
@@ -1522,6 +1499,6 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
       if res is True:
         break
       elif res is False:
-        cm.Print("\n%sYou cannot do that here.%s" % (ANSI.TEXT_BOLD, ANSI.TEXT_NORMAL))
+        cm.Print("\nYou cannot do that here.", attr=ANSI.TEXT_BOLD)
 
 # vim: tabstop=2 shiftwidth=2 expandtab:

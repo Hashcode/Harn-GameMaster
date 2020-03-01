@@ -4,7 +4,6 @@
 
 # Person Definitions
 
-from console import (ANSI)
 from global_defines import (DiceRoll, DamageTypeEnum, AttrEnum, SkillEnum, PersonEnum, Periodic, QuestEnum,
                             TargetTypeEnum, ConditionCheckEnum, Condition, TriggerTypeEnum, Trigger, AimEnum,
                             PersonFlag, Mob, MobTalk, MobAttack, DirectionEnum, DoorEnum, RoomEnum, MaterialEnum,
@@ -178,10 +177,9 @@ persons = {
                                     [
                                         "@@NAME_CAP@@ in your direction. \"Come TALK to me, Traveller, when you get "
                                         "a moment.\"",
-                                        "%s[TIP: Sometimes keywords will be presented in all capitals such as 'TALK'. "
+                                        "[TIP: Sometimes keywords will be presented in all capitals such as 'TALK'. "
                                         "You can type these keywords to start interactions or talk about different subjects. "
-                                        "As the adventure progresses this will happen less and less.]"
-                                        "%s" % (ANSI.TEXT_COLOR_CYAN, ANSI.TEXT_NORMAL)
+                                        "As the adventure progresses this will happen less and less.]",
                                     ]),
                         ]),
                 MobTalk("~on_exit~",
@@ -224,9 +222,8 @@ persons = {
                             Trigger(TriggerTypeEnum.MESSAGE,
                                     [
                                         "\"Would you be interested in performing a DELIVERY for me?\"",
-                                        "%s[TIP: The guard is offering a quest. To accept the quest type 'DELIVERY'. The 'QUESTS' "
-                                        "command displays more information about your current and completed quests.]"
-                                        "%s" % (ANSI.TEXT_COLOR_CYAN, ANSI.TEXT_NORMAL),
+                                        "[TIP: The guard is offering a quest. To accept the quest type 'DELIVERY'. The 'QUESTS' "
+                                        "command displays more information about your current and completed quests.]",
                                     ]),
                             Trigger(TriggerTypeEnum.QUEST_COMPLETE, QuestEnum.GUARD_INTRO),
                         ]),
@@ -273,10 +270,10 @@ persons = {
                             Trigger(TriggerTypeEnum.MESSAGE,
                                     [
                                         "@@NAME_CAP@@ gives you a small weathered package.",
-                                        "%s[TIP: You are still in 'TALK' mode with the guard. To stop talking type 'DONE'. Then "
+                                        "[TIP: You are still in 'TALK' mode with the guard. To stop talking type 'DONE'. Then "
                                         "you can see what's in your inventory with the 'INVENTORY' command (or it's "
                                         "abbreviation 'I'). Also, 'HELP' will display all of the commands for the "
-                                        "game.]%s" % (ANSI.TEXT_COLOR_CYAN, ANSI.TEXT_NORMAL),
+                                        "game.]",
                                     ]),
                             Trigger(TriggerTypeEnum.ITEM_GIVE,
                                     Item(ItemTypeEnum.QUEST, "weathered package", QualityEnum.AVE, MaterialEnum.LEATHER, 0.1, flags=ItemFlagEnum.QUEST)),
