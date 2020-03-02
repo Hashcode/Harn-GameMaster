@@ -84,7 +84,8 @@ class ConsoleManager(Thread):
     self.window = self.screen.subwin(self.screenY, MIN_WIDTH - 1, 0, 0)
     self.window.scrollok(True)
     self.hud = self.screen.subwin(28, 30, 0, MIN_WIDTH)
-    self.hud.scrollok(True)
+    if self.hud is not None:
+      self.hud.scrollok(True)
 
     curses.start_color()
     curses.use_default_colors()
@@ -96,8 +97,9 @@ class ConsoleManager(Thread):
     self.window.move(0, 0)
 
   def ClearHud(self):
-    self.hud.erase()
-    self.hud.move(0, 0)
+    if self.hud is not None:
+      self.hud.erase()
+      self.hud.move(0, 0)
 
   def SetPrompt(self, prompt):
     self._prompt = prompt
@@ -124,8 +126,9 @@ class ConsoleManager(Thread):
     self._interrupted = 1
 
   def PrintHud(self, msg, attr=0, end="\n"):
-    self.hud.addstr("%s%s" % (msg, end), attr)
-    self.hud.refresh()
+    if self.hud is not None:
+      self.hud.addstr("%s%s" % (msg, end), attr)
+      self.hud.refresh()
 
   def Bell(self):
     curses.beep()
