@@ -4,7 +4,9 @@
 
 from enum import (IntEnum)
 
-from console import (ANSI)
+
+FRAME_HEIGHT = 24
+FRAME_WIDTH = 26
 
 
 def CopyLine(line1, line2):
@@ -24,33 +26,71 @@ def MergeLine(line1, line2):
       line1[x] = line2[x]
 
 
-class Frame:
-  FRAME_HEIGHT = 24
-  FRAME_WIDTH = 26
-  FRAME_LOC = "frames"
+class FramePart:
+  def __init__(self, filename):
+    self._framePart = []
+    self._framePartLines = 0
+    with open(filename, "r") as f:
+      for line in f:
+        if self._framePartLines >= FRAME_HEIGHT:
+          break
+        self._framePart.append([])
+        count = 0
+        for c in line:
+          if count >= FRAME_WIDTH:
+            break
+          self._framePart[self._framePartLines].append(c)
+          count += 1
+        self._framePartLines += 1
 
-  def __init__(self, filename=None):
+
+class FrameGroup:
+  def __init__(self, filepaths):
+    self.Facing = [
+        FramePart("frames/%s_1.txt" % filepaths[0]),
+        FramePart("frames/%s_2.txt" % filepaths[0]),
+        FramePart("frames/%s_3.txt" % filepaths[0]),
+    ]
+    self.Left = [
+        FramePart("frames/%s_1.txt" % filepaths[1]),
+        FramePart("frames/%s_2.txt" % filepaths[1]),
+        FramePart("frames/%s_3.txt" % filepaths[1]),
+    ]
+    self.Right = [
+        FramePart("frames/%s_1.txt" % filepaths[2]),
+        FramePart("frames/%s_2.txt" % filepaths[2]),
+        FramePart("frames/%s_3.txt" % filepaths[2]),
+    ]
+
+
+class FrameItem:
+  def __init__(self, filepath):
+    self.Facing = [
+        FramePart("frames/%s_1.txt" % filepath),
+        FramePart("frames/%s_2.txt" % filepath),
+        FramePart("frames/%s_3.txt" % filepath),
+    ]
+
+
+class Frame:
+  def __init__(self):
     self._frame = []
     self._frameLines = 0
-    if filename is not None:
-      with open(filename, "r") as f:
-        for line in f:
-          if self._frameLines >= Frame.FRAME_HEIGHT:
-            break
-          self._frame.append([])
-          count = 0
-          for c in line:
-            if count >= Frame.FRAME_WIDTH:
-              break
-            self._frame[self._frameLines].append(c)
-            count += 1
-          self._frameLines += 1
-    else:
-      for line in range(Frame.FRAME_HEIGHT):
-        self._frame.append([])
-        for c in range(Frame.FRAME_WIDTH):
-          self._frame[self._frameLines].append(chr(32))
-        self._frameLines += 1
+    for line in range(FRAME_HEIGHT):
+      self._frame.append([])
+      for c in range(FRAME_WIDTH):
+        self._frame[self._frameLines].append(chr(32))
+      self._frameLines += 1
+
+  def Copy(self, fp):
+    for l in range(len(fp._framePart)):
+      if l < self._frameLines:
+        CopyLine(self._frame[l], fp._framePart[l])
+
+  def Merge(self, fp):
+    for l in range(len(fp._framePart)):
+      if l < self._frameLines:
+        MergeLine(self._frame[l], fp._framePart[l])
 
   def Render(self, cm, facing_caption):
     cm.ClearHud()
@@ -66,62 +106,29 @@ class Frame:
       cm.PrintHud("|")
     cm.PrintHud("+--------------------------+")
 
-  def Copy(self, f):
-    for l in range(len(f._frame)):
-      if l < self._frameLines:
-        CopyLine(self._frame[l], f._frame[l])
 
-  def Merge(self, f):
-    for l in range(len(f._frame)):
-      if l < self._frameLines:
-        MergeLine(self._frame[l], f._frame[l])
+class FrameGroupEnum(IntEnum):
+  NO_WALL = 0
+  WALL = 1
+  ARCHWAY = 2
+  DOOR = 3
 
 
-class FrameEnum(IntEnum):
-  BLANK = 0
-  FACING_1_WALL = 10
-  LEFT_1_WALL = 12
-  LEFT_1_NO_WALL = 13
-  RIGHT_1_WALL = 14
-  RIGHT_1_NO_WALL = 15
-  FACING_2_WALL = 20
-  LEFT_2_WALL = 22
-  LEFT_2_NO_WALL = 23
-  RIGHT_2_WALL = 24
-  RIGHT_2_NO_WALL = 25
-  FACING_3_WALL = 30
-  FACING_3_NO_WALL = 31
-  LEFT_3_WALL = 32
-  LEFT_3_NO_WALL = 33
-  RIGHT_3_WALL = 34
-  RIGHT_3_NO_WALL = 35
-  # MISC
-  TREASURE_1 = 100
-  TREASURE_2 = 101
-  TREASURE_3 = 102
+class FrameItemEnum(IntEnum):
+  NONE = 0
+  TREASURE = 1
 
 
-frame_parts = {
-    FrameEnum.BLANK: Frame("%s/blank.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.FACING_1_WALL: Frame("%s/facing_1_wall.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.LEFT_1_WALL: Frame("%s/left_1_wall.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.LEFT_1_NO_WALL: Frame("%s/left_1_no_wall.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.RIGHT_1_WALL: Frame("%s/right_1_wall.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.RIGHT_1_NO_WALL: Frame("%s/right_1_no_wall.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.FACING_2_WALL: Frame("%s/facing_2_wall.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.LEFT_2_WALL: Frame("%s/left_2_wall.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.LEFT_2_NO_WALL: Frame("%s/left_2_no_wall.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.RIGHT_2_WALL: Frame("%s/right_2_wall.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.RIGHT_2_NO_WALL: Frame("%s/right_2_no_wall.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.FACING_3_WALL: Frame("%s/facing_3_wall.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.FACING_3_NO_WALL: Frame("%s/facing_3_no_wall.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.LEFT_3_WALL: Frame("%s/left_3_wall.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.LEFT_3_NO_WALL: Frame("%s/left_3_no_wall.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.RIGHT_3_WALL: Frame("%s/right_3_wall.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.RIGHT_3_NO_WALL: Frame("%s/right_3_no_wall.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.TREASURE_1: Frame("%s/treasure_1.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.TREASURE_2: Frame("%s/treasure_2.txt" % (Frame.FRAME_LOC)),
-    FrameEnum.TREASURE_3: Frame("%s/treasure_3.txt" % (Frame.FRAME_LOC)),
+frame_groups = {
+    FrameGroupEnum.NO_WALL: FrameGroup(["facing_no_wall", "left_no_wall", "right_no_wall"]),
+    FrameGroupEnum.WALL: FrameGroup(["facing_wall", "left_wall", "right_wall"]),
+    FrameGroupEnum.ARCHWAY: FrameGroup(["facing_archway", "left_archway", "right_archway"]),
 }
+
+
+frame_items = {
+    FrameItemEnum.TREASURE: FrameItem("treasure"),
+}
+
 
 # vim: set tabstop=2 shiftwidth=2 expandtab:

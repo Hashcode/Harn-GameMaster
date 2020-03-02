@@ -10,7 +10,8 @@ from time import sleep
 
 from console import (TEXT_COLOR, ANSI, InputFlag)
 from db_jsonstore import (LoadStatsDB, SavePlayer)
-from frame import (Frame, FrameEnum, frame_parts)
+from frame import (Frame, FrameGroupEnum, FrameItemEnum,
+                   frame_groups, frame_items)
 from gamedata import (GameData)
 from global_defines import (attribute_classes, attributes, months, sunsigns,
                             cultures, social_classes, sibling_ranks, wounds,
@@ -163,51 +164,24 @@ def renderHudToFrame(cm, frame, room_id, level, lighting_level):
   # TODO: misc items / enemies in the room
 
   # left
-  if level == 1:
-    if directions[facing].Left in rooms[room_id].Exits.keys():
-      frame.Merge(frame_parts[FrameEnum.LEFT_1_NO_WALL])
-    else:
-      frame.Merge(frame_parts[FrameEnum.LEFT_1_WALL])
-  elif level == 2:
-    if directions[facing].Left in rooms[room_id].Exits.keys():
-      frame.Merge(frame_parts[FrameEnum.LEFT_2_NO_WALL])
-    else:
-      frame.Merge(frame_parts[FrameEnum.LEFT_2_WALL])
-  elif level == 3:
-    if directions[facing].Left in rooms[room_id].Exits.keys():
-      frame.Merge(frame_parts[FrameEnum.LEFT_3_NO_WALL])
-    else:
-      frame.Merge(frame_parts[FrameEnum.LEFT_3_WALL])
+  if directions[facing].Left in rooms[room_id].Exits.keys():
+    frame.Merge(frame_groups[rooms[room_id].Exits[directions[facing].Left].Frame].Left[level - 1])
+  else:
+    frame.Merge(frame_groups[FrameGroupEnum.WALL].Left[level - 1])
 
   # right
-  if level == 1:
-    if directions[facing].Right in rooms[room_id].Exits.keys():
-      frame.Merge(frame_parts[FrameEnum.RIGHT_1_NO_WALL])
-    else:
-      frame.Merge(frame_parts[FrameEnum.RIGHT_1_WALL])
-  elif level == 2:
-    if directions[facing].Right in rooms[room_id].Exits.keys():
-      frame.Merge(frame_parts[FrameEnum.RIGHT_2_NO_WALL])
-    else:
-      frame.Merge(frame_parts[FrameEnum.RIGHT_2_WALL])
-  elif level == 3:
-    if directions[facing].Right in rooms[room_id].Exits.keys():
-      frame.Merge(frame_parts[FrameEnum.RIGHT_3_NO_WALL])
-    else:
-      frame.Merge(frame_parts[FrameEnum.RIGHT_3_WALL])
+  if directions[facing].Right in rooms[room_id].Exits.keys():
+    frame.Merge(frame_groups[rooms[room_id].Exits[directions[facing].Right].Frame].Right[level - 1])
+  else:
+    frame.Merge(frame_groups[FrameGroupEnum.WALL].Right[level - 1])
 
   # forward (level 1)
-  if level == 1:
-    if facing not in rooms[room_id].Exits.keys():
-      frame.Merge(frame_parts[FrameEnum.FACING_1_WALL])
-  elif level == 2:
-    if facing not in rooms[room_id].Exits.keys():
-      frame.Merge(frame_parts[FrameEnum.FACING_2_WALL])
-  elif level == 3:
-    if facing not in rooms[room_id].Exits.keys():
-      frame.Merge(frame_parts[FrameEnum.FACING_3_WALL])
-    else:
-      frame.Merge(frame_parts[FrameEnum.FACING_3_NO_WALL])
+  if facing in rooms[room_id].Exits.keys():
+    frame.Merge(frame_groups[rooms[room_id].Exits[facing].Frame].Facing[level - 1])
+  else:
+    frame.Merge(frame_groups[FrameGroupEnum.WALL].Facing[level - 1])
+
+  # goto next level?
   if level < lighting_level and facing in rooms[room_id].Exits.keys():
     renderHudToFrame(cm, frame, rooms[room_id].Exits[facing].Room,
                      level + 1, lighting_level)

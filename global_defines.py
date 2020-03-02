@@ -2406,9 +2406,10 @@ class Door:
 
 
 class Exit:
-  def __init__(self, room_id, door_id=DoorEnum.NONE):
+  def __init__(self, room_id, frame_id=0, door_id=DoorEnum.NONE):
     self.Room = room_id
     self.Door = door_id
+    self.Frame = frame_id
 
 
 class NewPerson:

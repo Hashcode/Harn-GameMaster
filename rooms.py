@@ -8,6 +8,7 @@ from enum import IntEnum
 
 from console import (ANSI, InputFlag)
 from db_jsonstore import (ExistsDB, LoadPlayer)
+from frame import (FrameGroupEnum)
 from gamedata import (GameData)
 from global_defines import (PersonEnum, PersonFlag, DoorEnum, Door, DoorState, DirectionEnum,
                             NewPerson, ConditionCheckEnum, TargetTypeEnum, Condition, TriggerTypeEnum, Trigger, Periodic,
@@ -268,7 +269,8 @@ rooms = {
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
                  DirectionEnum.WEST: Exit(RoomEnum.BL_GATEHOUSE_PASSAGE),
-                 DirectionEnum.EAST: Exit(RoomEnum.BL_ROAD_TO_KEEP, DoorEnum.KEEP_DRAWBRIDGE),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_ROAD_TO_KEEP,
+                                          DoorEnum.KEEP_DRAWBRIDGE),
              },
              room_pers=[
                  NewPerson(PersonEnum.BL_KEEP_GUARD),
@@ -300,7 +302,8 @@ rooms = {
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_NORTHEASTERN_WALK),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_GATEHOUSE_PASSAGE),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_EASTERN_WALK),
-                 DirectionEnum.WEST: Exit(RoomEnum.BL_STABLE),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_STABLE,
+                                          FrameGroupEnum.ARCHWAY),
              },
              room_pers=[
                  NewPerson(PersonEnum.BL_KEEP_CORPORAL_WATCH,
@@ -351,7 +354,8 @@ rooms = {
              ],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
-                 DirectionEnum.EAST: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER,
+                                          FrameGroupEnum.ARCHWAY),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_ENTRY_YARD),
              }),
     RoomEnum.BL_N_GATEHOUSE_TOWER:
@@ -363,8 +367,11 @@ rooms = {
              ],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.WEST: Exit(RoomEnum.BL_NORTHEASTERN_WALK),
-                 DirectionEnum.UP: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_2, DoorEnum.N_TOWER_TRAPDOOR_LEVEL_2),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_NORTHEASTERN_WALK,
+                                          FrameGroupEnum.ARCHWAY),
+                 DirectionEnum.UP: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_2,
+                                        FrameGroupEnum.ARCHWAY,
+                                        DoorEnum.N_TOWER_TRAPDOOR_LEVEL_2),
              },
              room_pers=[
                  NewPerson(PersonEnum.BL_KEEP_SENTRY),
@@ -380,8 +387,10 @@ rooms = {
              ],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.DOWN: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER, DoorEnum.N_TOWER_TRAPDOOR_LEVEL_2),
-                 DirectionEnum.UP: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_3, DoorEnum.N_TOWER_TRAPDOOR_LEVEL_3),
+                 DirectionEnum.DOWN: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER,
+                                          DoorEnum.N_TOWER_TRAPDOOR_LEVEL_2),
+                 DirectionEnum.UP: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_3,
+                                        DoorEnum.N_TOWER_TRAPDOOR_LEVEL_3),
              }),
     RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_3:
         Room(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_3, ZoneEnum.KEEP,
@@ -395,7 +404,8 @@ rooms = {
              ],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.DOWN: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_2, DoorEnum.N_TOWER_TRAPDOOR_LEVEL_3),
+                 DirectionEnum.DOWN: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_2,
+                                          DoorEnum.N_TOWER_TRAPDOOR_LEVEL_3),
              }),
     RoomEnum.BL_STABLE:
         Room(RoomEnum.BL_STABLE, ZoneEnum.KEEP, "Common Stable", "a common stable",
@@ -405,7 +415,8 @@ rooms = {
              ],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.EAST: Exit(RoomEnum.BL_ENTRY_YARD),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_ENTRY_YARD,
+                                          FrameGroupEnum.ARCHWAY),
              },
              onLook=[
                  Periodic(
@@ -443,9 +454,12 @@ rooms = {
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_ENTRY_YARD),
-                 DirectionEnum.EAST: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER,
+                                          FrameGroupEnum.ARCHWAY),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHEASTERN_WALK),
-                 DirectionEnum.WEST: Exit(RoomEnum.BL_WAREHOUSE, DoorEnum.WAREHOUSE_DBL_DOOR),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_WAREHOUSE,
+                                          FrameGroupEnum.ARCHWAY,
+                                          DoorEnum.WAREHOUSE_DBL_DOOR),
              }),
     RoomEnum.BL_S_GATEHOUSE_TOWER:
         Room(RoomEnum.BL_S_GATEHOUSE_TOWER, ZoneEnum.KEEP, "South Gatehouse Tower", "the south gatehouse tower",
@@ -456,8 +470,10 @@ rooms = {
              ],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.WEST: Exit(RoomEnum.BL_EASTERN_WALK),
-                 DirectionEnum.UP: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_2, DoorEnum.S_TOWER_TRAPDOOR_LEVEL_2),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_EASTERN_WALK,
+                                          FrameGroupEnum.ARCHWAY),
+                 DirectionEnum.UP: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_2,
+                                        DoorEnum.S_TOWER_TRAPDOOR_LEVEL_2),
              },
              room_pers=[
                  NewPerson(PersonEnum.BL_KEEP_SENTRY),
@@ -473,8 +489,10 @@ rooms = {
              ],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.DOWN: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER, DoorEnum.S_TOWER_TRAPDOOR_LEVEL_2),
-                 DirectionEnum.UP: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_3, DoorEnum.S_TOWER_TRAPDOOR_LEVEL_3),
+                 DirectionEnum.DOWN: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER,
+                                          DoorEnum.S_TOWER_TRAPDOOR_LEVEL_2),
+                 DirectionEnum.UP: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_3,
+                                        DoorEnum.S_TOWER_TRAPDOOR_LEVEL_3),
              }),
     RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_3:
         Room(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_3, ZoneEnum.KEEP,
@@ -500,7 +518,9 @@ rooms = {
              ],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.EAST: Exit(RoomEnum.BL_EASTERN_WALK, DoorEnum.WAREHOUSE_DBL_DOOR),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_EASTERN_WALK,
+                                          FrameGroupEnum.ARCHWAY,
+                                          DoorEnum.WAREHOUSE_DBL_DOOR),
                  DirectionEnum.DOWN: Exit(RoomEnum.BL_RAT_WARREN_1),
              },
              periodics=[
@@ -523,7 +543,8 @@ rooms = {
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_EASTERN_WALK),
-                 DirectionEnum.EAST: Exit(RoomEnum.BL_BAILIFF_TOWER),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_BAILIFF_TOWER,
+                                          FrameGroupEnum.ARCHWAY),
                  DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHERN_WALK),
              }),
     RoomEnum.BL_BAILIFF_TOWER:
@@ -531,16 +552,20 @@ rooms = {
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHEASTERN_WALK),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHEASTERN_WALK,
+                                          FrameGroupEnum.ARCHWAY),
              }),
     RoomEnum.BL_SOUTHERN_WALK:
         Room(RoomEnum.BL_SOUTHERN_WALK, ZoneEnum.KEEP, "Southern Walk", "the southern walk",
              ["** TODO **"],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_SMITHY),
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_SMITHY,
+                                           FrameGroupEnum.ARCHWAY),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_SOUTHEASTERN_WALK),
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_APARMENT_1, DoorEnum.CORPORAL_APPT_DOOR),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_APARMENT_1,
+                                           FrameGroupEnum.ARCHWAY,
+                                           DoorEnum.CORPORAL_APPT_DOOR),
                  DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHERN_WALK_2),
              }),
     RoomEnum.BL_SMITHY:
@@ -548,7 +573,8 @@ rooms = {
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHERN_WALK),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHERN_WALK,
+                                           FrameGroupEnum.ARCHWAY),
              },
              room_pers=[
                  NewPerson(PersonEnum.BL_SMITHY),
@@ -558,7 +584,9 @@ rooms = {
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK, DoorEnum.CORPORAL_APPT_DOOR),
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK,
+                                           FrameGroupEnum.ARCHWAY,
+                                           DoorEnum.CORPORAL_APPT_DOOR),
              },
              room_items=[
              ],
@@ -599,7 +627,8 @@ rooms = {
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_MAIN_WALK),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_SOUTHERN_WALK),
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_APARMENT_2),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_APARMENT_2,
+                                           FrameGroupEnum.ARCHWAY),
                  DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHERN_WALK_3),
              }),
     RoomEnum.BL_APARMENT_2:
@@ -607,16 +636,19 @@ rooms = {
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK_2),
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK_2,
+                                           FrameGroupEnum.ARCHWAY),
              }),
     RoomEnum.BL_SOUTHERN_WALK_3:
         Room(RoomEnum.BL_SOUTHERN_WALK_3, ZoneEnum.KEEP, "Southern Walk", "the southern walk",
              ["** TODO **"],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_LEATHERWORKS),
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_LEATHERWORKS,
+                                           FrameGroupEnum.ARCHWAY),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_SOUTHERN_WALK_2),
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_PROVISIONS),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_PROVISIONS,
+                                           FrameGroupEnum.ARCHWAY),
                  DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
              }),
     RoomEnum.BL_LEATHERWORKS:
@@ -624,7 +656,8 @@ rooms = {
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHERN_WALK_3),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHERN_WALK_3,
+                                           FrameGroupEnum.ARCHWAY),
              },
              room_pers=[
                  NewPerson(PersonEnum.BL_TANNER),
@@ -634,7 +667,8 @@ rooms = {
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK_3),
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK_3,
+                                           FrameGroupEnum.ARCHWAY),
              },
              room_pers=[
                  NewPerson(PersonEnum.BL_PROVISIONER),
@@ -646,15 +680,18 @@ rooms = {
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_FOUNTAIN_SQUARE),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_SOUTHERN_WALK_3),
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_WATCH_TOWER),
-                 DirectionEnum.WEST: Exit(RoomEnum.BL_WEAPONSMITH),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_WATCH_TOWER,
+                                           FrameGroupEnum.ARCHWAY),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_WEAPONSMITH,
+                                          FrameGroupEnum.ARCHWAY),
              }),
     RoomEnum.BL_WEAPONSMITH:
         Room(RoomEnum.BL_WEAPONSMITH, ZoneEnum.KEEP, "The Arms Dealer", "the arms dealer",
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.EAST: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_SOUTHWESTERN_WALK,
+                                          FrameGroupEnum.ARCHWAY),
              },
              room_pers=[
                  NewPerson(PersonEnum.BL_ARMS_DEALER),
@@ -664,14 +701,16 @@ rooms = {
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHWESTERN_WALK,
+                                           FrameGroupEnum.ARCHWAY),
              }),
     RoomEnum.BL_FOUNTAIN_SQUARE:
         Room(RoomEnum.BL_FOUNTAIN_SQUARE, ZoneEnum.KEEP, "Fountain Square", "fountain square",
              ["** TODO **"],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_TAVERN_MAINROOM),
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_TAVERN_MAINROOM,
+                                           FrameGroupEnum.ARCHWAY),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
              }),
     RoomEnum.BL_TAVERN_MAINROOM:
@@ -679,7 +718,8 @@ rooms = {
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_FOUNTAIN_SQUARE),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_FOUNTAIN_SQUARE,
+                                           FrameGroupEnum.ARCHWAY),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_TAVERN_KITCHEN),
              }),
     RoomEnum.BL_TAVERN_KITCHEN:
@@ -702,7 +742,8 @@ rooms = {
              ["** TODO **"],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_INN_ENTRYWAY),
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_INN_ENTRYWAY,
+                                           FrameGroupEnum.ARCHWAY),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHERN_WALK_2),
                  DirectionEnum.WEST: Exit(RoomEnum.BL_MAIN_WALK_2),
              }),
@@ -711,14 +752,16 @@ rooms = {
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_MAIN_WALK),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_MAIN_WALK,
+                                           FrameGroupEnum.ARCHWAY),
              }),
     RoomEnum.BL_MAIN_WALK_2:
         Room(RoomEnum.BL_MAIN_WALK_2, ZoneEnum.KEEP, "Main Walk", "a main thorough fair",
              ["** TODO **"],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_ENTRY_INNER_GATEHOUSE),
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_ENTRY_INNER_GATEHOUSE,
+                                           FrameGroupEnum.ARCHWAY),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_MAIN_WALK),
                  DirectionEnum.WEST: Exit(RoomEnum.BL_ALLEYWAY),
              }),
@@ -727,30 +770,36 @@ rooms = {
              ["** TODO **"],
              flags=RoomFlag.OUTSIDE,
              exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_APARMENT_5),
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_APARMENT_5,
+                                           FrameGroupEnum.ARCHWAY),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_MAIN_WALK_2),
              }),
     RoomEnum.BL_APARMENT_5:
         Room(RoomEnum.BL_APARMENT_5, ZoneEnum.KEEP, "A Shabby Apartment", "a shabby apartment",
              ["** TODO **"],
              exits={
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_ALLEYWAY),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_ALLEYWAY,
+                                           FrameGroupEnum.ARCHWAY),
              }),
     RoomEnum.BL_ENTRY_INNER_GATEHOUSE:
         Room(RoomEnum.BL_ENTRY_INNER_GATEHOUSE, ZoneEnum.KEEP, "Outside the Inner Gatehouse", "the outside of the inner gatehouse",
              ["** TODO **"],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_MAIN_WALK_2),
-                 DirectionEnum.EAST: Exit(RoomEnum.BL_CHAPEL_MAINROOM),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_MAIN_WALK_2,
+                                           FrameGroupEnum.ARCHWAY),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_CHAPEL_MAINROOM,
+                                          FrameGroupEnum.ARCHWAY),
              }),
     RoomEnum.BL_CHAPEL_MAINROOM:
         Room(RoomEnum.BL_CHAPEL_MAINROOM, ZoneEnum.KEEP, "Chapel Mainroom", "the chapel mainroom",
              ["** TODO **"],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.WEST: Exit(RoomEnum.BL_ENTRY_INNER_GATEHOUSE),
-                 DirectionEnum.EAST: Exit(RoomEnum.BL_PRIEST_CHAMBER),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_ENTRY_INNER_GATEHOUSE,
+                                          FrameGroupEnum.ARCHWAY),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_PRIEST_CHAMBER,
+                                          FrameGroupEnum.ARCHWAY),
              }),
     RoomEnum.BL_PRIEST_CHAMBER:
         Room(RoomEnum.BL_PRIEST_CHAMBER, ZoneEnum.KEEP, "The Curates's Chamber", "the curate's chamber",
@@ -761,7 +810,8 @@ rooms = {
              ],
              flags=RoomFlag.LIGHT,
              exits={
-                 DirectionEnum.WEST: Exit(RoomEnum.BL_CHAPEL_MAINROOM),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_CHAPEL_MAINROOM,
+                                          FrameGroupEnum.ARCHWAY),
              }),
 
 
@@ -1021,7 +1071,9 @@ rooms = {
              ["** TODO **"],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
-                 DirectionEnum.WEST: Exit(RoomEnum.BL_KEEP_GATEHOUSE, DoorEnum.KEEP_DRAWBRIDGE),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_KEEP_GATEHOUSE,
+                                          FrameGroupEnum.ARCHWAY,
+                                          DoorEnum.KEEP_DRAWBRIDGE),
              }),
 }
 
