@@ -458,7 +458,7 @@ rooms = {
                                           FrameGroupEnum.ARCHWAY),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHEASTERN_WALK),
                  DirectionEnum.WEST: Exit(RoomEnum.BL_WAREHOUSE,
-                                          FrameGroupEnum.ARCHWAY,
+                                          FrameGroupEnum.DOOR,
                                           DoorEnum.WAREHOUSE_DBL_DOOR),
              }),
     RoomEnum.BL_S_GATEHOUSE_TOWER:
@@ -519,7 +519,7 @@ rooms = {
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.EAST: Exit(RoomEnum.BL_EASTERN_WALK,
-                                          FrameGroupEnum.ARCHWAY,
+                                          FrameGroupEnum.DOOR,
                                           DoorEnum.WAREHOUSE_DBL_DOOR),
                  DirectionEnum.DOWN: Exit(RoomEnum.BL_RAT_WARREN_1),
              },
@@ -564,7 +564,7 @@ rooms = {
                                            FrameGroupEnum.ARCHWAY),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_SOUTHEASTERN_WALK),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_APARMENT_1,
-                                           FrameGroupEnum.ARCHWAY,
+                                           FrameGroupEnum.DOOR,
                                            DoorEnum.CORPORAL_APPT_DOOR),
                  DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHERN_WALK_2),
              }),
@@ -585,7 +585,7 @@ rooms = {
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK,
-                                           FrameGroupEnum.ARCHWAY,
+                                           FrameGroupEnum.DOOR,
                                            DoorEnum.CORPORAL_APPT_DOOR),
              },
              room_items=[

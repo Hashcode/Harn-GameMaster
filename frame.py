@@ -123,6 +123,7 @@ frame_groups = {
     FrameGroupEnum.NO_WALL: FrameGroup(["facing_no_wall", "left_no_wall", "right_no_wall"]),
     FrameGroupEnum.WALL: FrameGroup(["facing_wall", "left_wall", "right_wall"]),
     FrameGroupEnum.ARCHWAY: FrameGroup(["facing_archway", "left_archway", "right_archway"]),
+    FrameGroupEnum.DOOR: FrameGroup(["facing_door_closed", "left_door_closed", "right_door_closed"]),
 }
 
 
