@@ -80,13 +80,18 @@ class ConsoleManager(Thread):
     curses.curs_set(0)
     curses.mousemask(True)
     (self.screenY, self.screenX) = self.screen.getmaxyx()
-
-    self.window = self.screen.subwin(self.screenY, MIN_WIDTH - 1, 0, 0)
+    self.screenMinX = self.screenX
+    if self.screenMinX > MIN_WIDTH - 1:
+      self.screenMinX = MIN_WIDTH - 1
+    self.window = self.screen.subwin(self.screenY, self.screenMinX, 0, 0)
     self.window.scrollok(True)
-    self.hud = self.screen.subwin(28, 30, 0, MIN_WIDTH)
-    if self.hud is not None:
-      self.hud.scrollok(True)
-
+    self.hud = None
+    try:
+      self.hud = self.screen.subwin(28, 30, 0, MIN_WIDTH)
+      if self.hud is not None:
+        self.hud.scrollok(True)
+    except:
+      pass
     curses.start_color()
     curses.use_default_colors()
     for i in range(0, 16):
@@ -178,6 +183,16 @@ class ConsoleManager(Thread):
             pass
           elif c == curses.KEY_RESIZE:
             (self.screenY, self.screenX) = self.screen.getmaxyx()
+            self.screenMinX = self.screenX
+            if self.screenMinX > MIN_WIDTH - 1:
+              self.screenMinX = MIN_WIDTH - 1
+            self.window.resize(self.screenY, self.screenMinX)
+            try:
+              self.hud = self.screen.subwin(28, 30, 0, MIN_WIDTH)
+              if self.hud is not None:
+                self.hud.scrollok(True)
+            except:
+              self.hud = None
           elif c == curses.KEY_DC or c == curses.KEY_BACKSPACE or c == 127:
             if len(self.cur_input) > 0:
               self.cur_input = self.cur_input[:-1]
