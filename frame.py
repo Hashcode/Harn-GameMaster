@@ -126,11 +126,11 @@ class Frame:
 
 class FrameGroupEnum(IntEnum):
   WALL = 1
-  ARCHWAY = 2
-  DOOR_CLOSED = 5
-  DOOR_OPEN = 6
-  DBL_DOOR_CLOSED = 10
-  DBL_DOOR_OPEN = 11
+  ARCHWAY = 10
+  DOOR_CLOSED = 20
+  DOOR_OPEN = 21
+  DBL_DOOR_CLOSED = 22
+  DBL_DOOR_OPEN = 23
 
 
 class FrameItemEnum(IntEnum):
