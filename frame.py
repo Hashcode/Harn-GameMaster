@@ -126,6 +126,7 @@ class Frame:
 
 class FrameGroupEnum(IntEnum):
   WALL = 1
+  WALL_TORCH = 2
   ARCHWAY = 10
   DOOR_CLOSED = 20
   DOOR_OPEN = 21
@@ -140,6 +141,7 @@ class FrameItemEnum(IntEnum):
 
 frame_groups = {
     FrameGroupEnum.WALL: FrameGroup(["facing_wall", "left_wall", "right_wall"], False),
+    FrameGroupEnum.WALL_TORCH: FrameGroup(["facing_wall_torch", "left_wall_torch", "right_wall_torch"], False),
     FrameGroupEnum.ARCHWAY: FrameGroup(["facing_archway", "left_archway", "right_archway"]),
     FrameGroupEnum.DOOR_CLOSED: FrameGroup(["facing_door_closed", "left_door_closed", "right_door_closed"], False),
     FrameGroupEnum.DOOR_OPEN: FrameGroup(["facing_door_open", "left_door_open", "right_door_open"], True),
