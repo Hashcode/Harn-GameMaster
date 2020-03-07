@@ -108,7 +108,6 @@ render_offset = [
 ]
 
 def renderOffset(facing, level, x_offset):
-  logd("renderOffset: l=%d, o=%d, f=%d" % (level, x_offset, facing))
   return render_offset[level - 1][x_offset + 2]
 
 
@@ -186,27 +185,19 @@ def renderHudToFrame(cm, facing, frame, room_id, level, lighting_level, x_offset
       re = rooms[room_id].Exits[directions[facing].Left]
       if re.Frame is None or frame_groups[re.Frame].Transparent:
         if REND_LEFT in dirs and facing in rooms[re.Room].Exits.keys():
-          if level == 1:
+          if level > 1:
             logd("%s[DIVE L%d] r=%d, offset=%d" % (indent, level, room_id, x_offset))
             renderHudToFrame(cm, facing, frame, rooms[re.Room].Exits[facing].Room,
                              level + 1, lighting_level, x_offset=x_offset - 1, indent=indent, dirs=[REND_FACING])
-          else:
-            logd("%s[DIVE L%d] r=%d, offset=%d" % (indent, level, room_id, x_offset))
-            renderHudToFrame(cm, facing, frame, rooms[re.Room].Exits[facing].Room,
-                             level + 1, lighting_level, x_offset=x_offset - 1, indent=indent, dirs=[REND_FACING, REND_LEFT])
     # dive down right path if the room to the right's exit is clear
     if directions[facing].Right in rooms[room_id].Exits.keys():
       re = rooms[room_id].Exits[directions[facing].Right]
       if re.Frame is None or frame_groups[re.Frame].Transparent:
         if REND_RIGHT in dirs and facing in rooms[re.Room].Exits.keys():
-          if level == 1:
+          if level > 1:
             logd("%s[DIVE R%d] r=%d, offset=%d" % (indent, level, room_id, x_offset))
             renderHudToFrame(cm, facing, frame, rooms[re.Room].Exits[facing].Room,
                              level + 1, lighting_level, x_offset=x_offset + 1, indent=indent, dirs=[REND_FACING])
-          else:
-            logd("%s[DIVE R%d] r=%d, offset=%d" % (indent, level, room_id, x_offset))
-            renderHudToFrame(cm, facing, frame, rooms[re.Room].Exits[facing].Room,
-                             level + 1, lighting_level, x_offset=x_offset + 1, indent=indent, dirs=[REND_FACING, REND_RIGHT])
 
 
 def printRoomDescription(room_id):
