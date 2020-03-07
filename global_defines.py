@@ -2409,10 +2409,23 @@ class Door:
 
 
 class Exit:
-  def __init__(self, room_id, frame_id=None, door_id=DoorEnum.NONE):
+  def __init__(self, room_id, door_id=DoorEnum.NONE,
+               frame_id=None, frame_id_open=None):
     self.Room = room_id
     self.Door = door_id
-    self.Frame = frame_id
+    self.FrameClosed = frame_id
+    self.FrameOpen = frame_id_open
+
+  def Frame(self):
+    player = GameData.GetPlayer()
+    if self.Door == DoorEnum.NONE:
+      return self.FrameClosed
+    elif player.DoorState(self.Door).Closed:
+      return self.FrameClosed
+    elif self.FrameOpen is None:
+      return self.FrameClosed
+    else:
+      return self.FrameOpen
 
 
 class NewPerson:
