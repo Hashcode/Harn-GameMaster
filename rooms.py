@@ -246,7 +246,8 @@ rooms = {
                  "Take your characters on exciting journeys in the gritty world of the HârnMaster Game System in classic Dungeon's "
                  "and Dragons(tm) modules.",
                  "During your adventures you will accumulate skills, items and wealth. Make sure to SAVE along the way to ensure "
-                 "your progress won't be lost."
+                 "your progress won't be lost.",
+                 "NOTE: Best played with a fairly large window!"
              ],
              flags=RoomFlag.LIGHT,
              func=room_StartGame),
