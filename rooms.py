@@ -290,6 +290,9 @@ rooms = {
              exits={
                  DirectionEnum.WEST: Exit(RoomEnum.BL_ENTRY_YARD),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_KEEP_GATEHOUSE),
+             },
+             walls={
+                 DirectionEnum.NORTH: FrameGroupEnum.WALL_TORCH,
              }),
     RoomEnum.BL_ENTRY_YARD:
         Room(RoomEnum.BL_ENTRY_YARD, ZoneEnum.KEEP, "Entry Yard", "an entry yard",
