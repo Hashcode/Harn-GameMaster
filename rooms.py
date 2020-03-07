@@ -7,7 +7,7 @@
 from enum import IntEnum
 
 from console import (ANSI, InputFlag)
-from db_jsonstore import (ExistsDB, LoadPlayer)
+from db import (ExistsDB, LoadPlayer)
 from frame import (FrameGroupEnum)
 from gamedata import (GameData)
 from global_defines import (PersonEnum, PersonFlag, DoorEnum, Door, DoorState, DirectionEnum,

@@ -9,7 +9,7 @@ from textwrap import TextWrapper
 from time import sleep
 
 from console import (TEXT_COLOR, ANSI, InputFlag)
-from db_jsonstore import (LoadStatsDB, SavePlayer)
+from db import (LoadStatsDB, SavePlayer)
 from frame import (Frame, FrameGroupEnum, FrameItemEnum,
                    frame_groups, frame_items)
 from gamedata import (GameData)
