@@ -2455,7 +2455,7 @@ class RoomFlag(IntEnum):
 
 class Room:
   def __init__(self, room_id, zone, title, short_desc="", long_desc=None, travel_time=60, flags=0, func=None,
-               room_pers=None, exits=None, room_items=None, onLook=None, periodics=None):
+               room_pers=None, exits=None, walls=None, room_items=None, onLook=None, periodics=None):
     self.RoomID = room_id
     self.Zone = zone
     self.Title = title
@@ -2468,6 +2468,7 @@ class Room:
     self.Persons = []
     self.Periodics = []
     self.Exits = dict()
+    self.Walls = dict()
     self.Items = []
     self.OnLook = onLook
     if long_desc is not None:
@@ -2476,6 +2477,9 @@ class Room:
     if exits is not None:
       for exit_dir, exit in exits.items():
         self.AddExit(exit_dir, exit)
+    if walls is not None:
+      for wall_dir, fg in walls.items():
+        self.AddWall(wall_dir, fg)
     if room_items is not None:
       for item in room_items:
         self.AddItem(item)
@@ -2499,6 +2503,12 @@ class Room:
       self.Exits[exit_dir] = exit
     else:
       self.Exits.update({exit_dir: exit})
+
+  def AddWall(self, wall_dir, fg):
+    if wall_dir in self.Walls:
+      self.Walls[wall_dir] = fg
+    else:
+      self.Walls.update({wall_dir: fg})
 
   def RemoveExit(self, direction):
     if direction in self.Exits:

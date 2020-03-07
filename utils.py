@@ -119,18 +119,28 @@ def renderHudToFrame(cm, facing, frame, room_id, level, lighting_level, x_offset
   # TODO: misc items / enemies in the room
   # forward facing
   if REND_FACING in dirs:
-    logd("%s[START F%d] r=%d, offset=%d/%d, dirs=%s" % (indent, level, room_id, x_offset, renderOffset(REND_FACING, level, x_offset), dirs))
+    logd("%s[START F%d] r=%d, offset=%d/%d, dirs=%s" % (indent, level, room_id, x_offset,
+                                                        renderOffset(REND_FACING, level, x_offset), dirs))
     if facing in rooms[room_id].Exits.keys():
       if rooms[room_id].Exits[facing].Frame() is not None:
-        logd("%s[F%dA] (%d/%d) %s" % (indent, level, x_offset, renderOffset(REND_FACING, level, x_offset),
-                                    rooms[room_id].Exits[facing].Frame()))
-        frame.Merge(frame_groups[rooms[room_id].Exits[facing].Frame()].Facing[level - 1], renderOffset(REND_FACING, level, x_offset))
+        logd("%s[F%dA] (%d/%d) %s" % (indent, level, x_offset,
+                                      renderOffset(REND_FACING, level, x_offset),
+                                      rooms[room_id].Exits[facing].Frame()))
+        frame.Merge(frame_groups[rooms[room_id].Exits[facing].Frame()].Facing[level - 1],
+                    renderOffset(REND_FACING, level, x_offset))
     else:
-      logd("%s[F%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset, renderOffset(REND_FACING, level, x_offset)))
-      frame.Merge(frame_groups[FrameGroupEnum.WALL].Facing[level - 1], renderOffset(REND_FACING, level, x_offset))
+      logd("%s[F%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset,
+                                                     renderOffset(REND_FACING, level, x_offset)))
+      if facing in rooms[room_id].Walls.keys():
+        frame.Merge(frame_groups[rooms[room_id].Walls[facing]].Facing[level - 1],
+                    renderOffset(REND_FACING, level, x_offset))
+      else:
+        frame.Merge(frame_groups[FrameGroupEnum.WALL].Facing[level - 1],
+                    renderOffset(REND_FACING, level, x_offset))
 
   # left of facing
-  logd("%s[START L%d] r=%d, offset=%d/%d" % (indent, level, room_id, x_offset, renderOffset(REND_LEFT, level, x_offset)))
+  logd("%s[START L%d] r=%d, offset=%d/%d" % (indent, level, room_id, x_offset,
+                                             renderOffset(REND_LEFT, level, x_offset)))
   if directions[facing].Left in rooms[room_id].Exits.keys():
     re = rooms[room_id].Exits[directions[facing].Left]
     if REND_LEFT in dirs and re.Frame() is not None:
@@ -141,34 +151,68 @@ def renderHudToFrame(cm, facing, frame, room_id, level, lighting_level, x_offset
       if facing in rooms[re.Room].Exits.keys():
         rre = rooms[re.Room].Exits[facing]
         if rre.Frame() is not None:
-          logd("%s[LF%dA] (%d/%d) %s" % (indent, level, x_offset, renderOffset(REND_FACING, level, x_offset - 1), rre.Frame()))
-          frame.Merge(frame_groups[rre.Frame()].Facing[level - 1], renderOffset(REND_FACING, level, x_offset - 1))
+          logd("%s[LF%dA] (%d/%d) %s" % (indent, level, x_offset,
+                                         renderOffset(REND_FACING, level, x_offset - 1),
+                                         rre.Frame()))
+          frame.Merge(frame_groups[rre.Frame()].Facing[level - 1],
+                      renderOffset(REND_FACING, level, x_offset - 1))
       else:
-        logd("%s[LF%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset, renderOffset(REND_FACING, level, x_offset - 1)))
-        frame.Merge(frame_groups[FrameGroupEnum.WALL].Facing[level - 1], renderOffset(REND_FACING, level, x_offset - 1))
+        logd("%s[LF%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset,
+                                                        renderOffset(REND_FACING, level, x_offset - 1)))
+        if facing in rooms[re.Room].Walls.keys():
+          frame.Merge(frame_groups[rooms[re.Room].Walls[facing]].Facing[level - 1],
+                      renderOffset(REND_FACING, level, x_offset - 1))
+        else:
+          frame.Merge(frame_groups[FrameGroupEnum.WALL].Facing[level - 1],
+                      renderOffset(REND_FACING, level, x_offset - 1))
   elif REND_LEFT in dirs:
-    logd("%s[L%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset, renderOffset(REND_LEFT, level, x_offset)))
-    frame.Merge(frame_groups[FrameGroupEnum.WALL].Left[level - 1], renderOffset(REND_LEFT, level, x_offset))
+    logd("%s[L%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset,
+                                                   renderOffset(REND_LEFT, level, x_offset)))
+    if directions[facing].Left in rooms[room_id].Walls.keys():
+      frame.Merge(frame_groups[rooms[room_id].Walls[directions[facing].Left]].Left[level - 1],
+                  renderOffset(REND_LEFT, level, x_offset))
+    else:
+      frame.Merge(frame_groups[FrameGroupEnum.WALL].Left[level - 1],
+                  renderOffset(REND_LEFT, level, x_offset))
 
   # right of facing
-  logd("%s[START R%d] r=%d, offset=%d/%d" % (indent, level, room_id, x_offset, renderOffset(REND_RIGHT, level, x_offset)))
+  logd("%s[START R%d] r=%d, offset=%d/%d" % (indent, level, room_id, x_offset,
+                                             renderOffset(REND_RIGHT, level, x_offset)))
   if directions[facing].Right in rooms[room_id].Exits.keys():
     re = rooms[room_id].Exits[directions[facing].Right]
     if REND_RIGHT in dirs and re.Frame() is not None:
-      logd("%s[R%dA] (%d/%d) %s" % (indent, level, x_offset, renderOffset(REND_RIGHT, level, x_offset), re.Frame()))
-      frame.Merge(frame_groups[re.Frame()].Right[level - 1], renderOffset(REND_RIGHT, level, x_offset))
+      logd("%s[R%dA] (%d/%d) %s" % (indent, level, x_offset,
+                                    renderOffset(REND_RIGHT, level, x_offset),
+                                    re.Frame()))
+      frame.Merge(frame_groups[re.Frame()].Right[level - 1],
+                  renderOffset(REND_RIGHT, level, x_offset))
     if REND_RIGHT in dirs and level <= lighting_level and (re.Frame() is None or frame_groups[re.Frame()].Transparent):
       if facing in rooms[re.Room].Exits.keys():
         rre = rooms[re.Room].Exits[facing]
         if rre.Frame() is not None:
-          logd("%s[RF%dA] (%d/%d) %s" % (indent, level, x_offset, renderOffset(REND_FACING, level, x_offset + 1), rre.Frame()))
-          frame.Merge(frame_groups[rre.Frame()].Facing[level - 1], renderOffset(REND_FACING, level, x_offset + 1))
+          logd("%s[RF%dA] (%d/%d) %s" % (indent, level, x_offset,
+                                         renderOffset(REND_FACING, level, x_offset + 1),
+                                         rre.Frame()))
+          frame.Merge(frame_groups[rre.Frame()].Facing[level - 1],
+                      renderOffset(REND_FACING, level, x_offset + 1))
       else:
-        logd("%s[RF%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset, renderOffset(REND_FACING, level, x_offset + 1)))
-        frame.Merge(frame_groups[FrameGroupEnum.WALL].Facing[level - 1], renderOffset(REND_FACING, level, x_offset + 1))
+        logd("%s[RF%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset,
+                                                        renderOffset(REND_FACING, level, x_offset + 1)))
+        if facing in rooms[re.Room].Walls.keys():
+          frame.Merge(frame_groups[rooms[re.Room].Walls[facing]].Facing[level - 1],
+                      renderOffset(REND_FACING, level, x_offset + 1))
+        else:
+          frame.Merge(frame_groups[FrameGroupEnum.WALL].Facing[level - 1],
+                      renderOffset(REND_FACING, level, x_offset + 1))
   elif REND_RIGHT in dirs:
-    logd("%s[R%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset, renderOffset(REND_RIGHT, level, x_offset)))
-    frame.Merge(frame_groups[FrameGroupEnum.WALL].Right[level - 1], renderOffset(REND_RIGHT, level, x_offset))
+    logd("%s[R%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset,
+                                                   renderOffset(REND_RIGHT, level, x_offset)))
+    if directions[facing].Right in rooms[room_id].Walls.keys():
+        frame.Merge(frame_groups[rooms[room_id].Walls[directions[facing].Right]].Right[level - 1],
+                    renderOffset(REND_RIGHT, level, x_offset))
+    else:
+        frame.Merge(frame_groups[FrameGroupEnum.WALL].Right[level - 1],
+                    renderOffset(REND_RIGHT, level, x_offset))
 
   if level > 2:
     return
