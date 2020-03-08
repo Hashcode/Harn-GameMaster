@@ -117,6 +117,10 @@ def renderHudToFrame(cm, facing, frame, room_id, level, lighting_level, x_offset
   indent = "%s " % (indent)
 
   # TODO: misc items / enemies in the room
+  for x in rooms[room_id].Persons:
+    if x.Frame > FrameItemEnum.NONE:
+      frame.Merge(frame_items[x.Frame].Facing[level - 1], renderOffset(REND_FACING, level, x_offset))
+
   # forward facing
   if REND_FACING in dirs:
     logd("%s[START F%d] r=%d, offset=%d/%d, dirs=%s" % (indent, level, room_id, x_offset,

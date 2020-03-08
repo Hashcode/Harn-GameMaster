@@ -4,6 +4,7 @@
 
 # Person Definitions
 
+from frame import (FrameItemEnum)
 from global_defines import (DiceRoll, DamageTypeEnum, AttrEnum, SkillEnum, PersonEnum, Periodic, QuestEnum,
                             TargetTypeEnum, ConditionCheckEnum, Condition, TriggerTypeEnum, Trigger, AimEnum,
                             PersonFlag, Mob, MobTalk, MobAttack, DirectionEnum, DoorEnum, RoomEnum, MaterialEnum,
@@ -48,7 +49,8 @@ persons = {
             },
             loot={
                 rat_fur: 100,
-            }),
+            },
+            frame=FrameItemEnum.RAT),
     PersonEnum.MON_RAT_LARGE:
         Mob(PersonEnum.MON_RAT_LARGE, "a large nasty-looking rat",
             "A large nasty-looking rat scrambles across the ground.", 40, 4, 30,
@@ -76,7 +78,8 @@ persons = {
             },
             loot={
                 rat_fur: 100,
-            }),
+            },
+            frame=FrameItemEnum.RAT),
     PersonEnum.MON_RAT_GUARD:
         Mob(PersonEnum.MON_RAT_GUARD, "a rat guardian",
             "A rat guardian glares around the room.", 45, 5, 35,
@@ -105,7 +108,8 @@ persons = {
             },
             loot={
                 rat_fur: 100,
-            }),
+            },
+            frame=FrameItemEnum.RAT),
     PersonEnum.MON_RAT_NOBLE:
         Mob(PersonEnum.MON_RAT_NOBLE, "a rat noble",
             "A rat noble calmly nibbles some cheese.", 45, 5, 35,
@@ -135,7 +139,8 @@ persons = {
             loot={
                 Ring("silver ring", QualityEnum.SUP, MaterialEnum.SILVER, 0.1, 1500, flags=ItemFlagEnum.MAGIC, eff=[Effect(EffectTypeEnum.DEX, 1)]): 100,
                 rat_fur: 100,
-            }),
+            },
+            frame=FrameItemEnum.RAT),
     PersonEnum.BL_KEEP_GUARD:
         Mob(PersonEnum.BL_KEEP_GUARD, "a gatehouse guard",
             "A gatehouse guard keeps watch over his post.", 60, 14, 50,

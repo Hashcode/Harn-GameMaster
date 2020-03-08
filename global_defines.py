@@ -1435,7 +1435,7 @@ class PersonWound:
 
 
 class Person:
-  def __init__(self, person_type, name, long_desc="", flags=0, skin=MaterialEnum.NONE, it=None):
+  def __init__(self, person_type, name, long_desc="", flags=0, skin=MaterialEnum.NONE, it=None, frame=0):
     self.PersonType = person_type
     self.Name = name
     self.LongDescription = long_desc
@@ -1444,6 +1444,7 @@ class Person:
     self.SkinMaterial = skin
     self.Attr = dict()
     self.SkillLinks = dict()
+    self.Frame = frame
     self.Wounds = []
     self.Effects = []
     self.Items = []
@@ -1863,8 +1864,8 @@ class MobAttack:
 class Mob(Person):
   def __init__(self, person_id, name, long_desc, ini, end, dodge, aim=AimEnum.MID, flags=0,
                skin=MaterialEnum.NONE, cur=None, attrs=None, num_attacks=1, mob_attacks=None, mob_skills=None, eq=None,
-               loot=None, sell_items=None, buy_items=None, talk=None, periodics=None):
-    super().__init__(PersonTypeEnum.NPC, name, long_desc, flags, skin, it=eq)
+               loot=None, sell_items=None, buy_items=None, talk=None, periodics=None, frame=0):
+    super().__init__(PersonTypeEnum.NPC, name, long_desc, flags, skin, it=eq, frame=frame)
     # None == Template / Char
     self.UUID = None
     self.PersonID = person_id
