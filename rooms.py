@@ -236,6 +236,8 @@ doors = {
     DoorEnum.N_TOWER_TRAPDOOR_LEVEL_3: Door("top floor trapdoor", DoorState(True, False)),
     DoorEnum.S_TOWER_TRAPDOOR_LEVEL_2: Door("bottom floor trapdoor", DoorState(True, False)),
     DoorEnum.S_TOWER_TRAPDOOR_LEVEL_3: Door("top floor trapdoor", DoorState(True, False)),
+    DoorEnum.WARREN_DOOR_1: Door("scratched door", DoorState(True, True), "a tarnished bronze key"),
+    DoorEnum.WARREN_DOOR_2: Door("door with a a strange triangle symbol", DoorState(True, True), "a triangle key"),
 }
 
 rooms = {
@@ -520,7 +522,8 @@ rooms = {
                  "Visiting merchants and other travelers who have quantities of goods are required to keep their materials "
                  "here until they are either sold to the persons at the keep or taken elsewhere.  Stored here are several "
                  "covered carts, many boxes, barrels, and bales.",
-                 "Large rat droppings can be seen in several corners."
+                 "Large rat droppings can be seen in several corners.",
+                 "A rickety staircase leads down along the west wall."
              ],
              flags=RoomFlag.LIGHT,
              exits={
@@ -877,10 +880,16 @@ rooms = {
     # RAT WARREN
     RoomEnum.BL_RAT_WARREN_1:
         Room(RoomEnum.BL_RAT_WARREN_1, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
-             ["** TODO **"],
+             [
+                 "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
+                 "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
+                 "occasional small scratch marks.",
+                 "A rickety staircase leads up along the west wall."
+             ],
              exits={
                  DirectionEnum.UP: Exit(RoomEnum.BL_WAREHOUSE),
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_2),
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_2,
+                                           frame_id=FrameGroupEnum.ARCHWAY),
              },
              periodics=[
                  Periodic(
@@ -894,17 +903,170 @@ rooms = {
              ]),
     RoomEnum.BL_RAT_WARREN_2:
         Room(RoomEnum.BL_RAT_WARREN_2, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
-             ["** TODO **"],
+             [
+                 "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
+                 "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
+                 "occasional small scratch marks."
+             ],
              exits={
                  DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_3),
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_1),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_1,
+                                           frame_id=FrameGroupEnum.ARCHWAY),
                  DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_4),
              }),
     RoomEnum.BL_RAT_WARREN_3:
         Room(RoomEnum.BL_RAT_WARREN_3, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
-             ["** TODO **"],
+             [
+                 "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
+                 "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
+                 "occasional small scratch marks."
+             ],
              exits={
                  DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_2),
+             },
+             periodics=[
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.ITEM_IN_ROOM, "a tarnished bronze key", 1),
+                         Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_INVEN, "a tarnished bronze key"),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_ITEM,
+                                 Item(ItemTypeEnum.MISC, "a tarnished bronze key", QualityEnum.AVE, MaterialEnum.BRONZE, 1)),
+                     ], 36000),
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT, 1),
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT)),
+                     ], 3600),
+             ]),
+    RoomEnum.BL_RAT_WARREN_4:
+        Room(RoomEnum.BL_RAT_WARREN_4, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             [
+                 "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
+                 "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
+                 "occasional small scratch marks."
+             ],
+             exits={
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_2),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_5),
+             },
+             periodics=[
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT, 1),
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT)),
+                     ], 3600),
+             ]),
+    RoomEnum.BL_RAT_WARREN_5:
+        Room(RoomEnum.BL_RAT_WARREN_5, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             [
+                 "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
+                 "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
+                 "occasional small scratch marks."
+             ],
+             exits={
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_4),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_7, DoorEnum.WARREN_DOOR_1,
+                                           FrameGroupEnum.DOOR_CLOSED, FrameGroupEnum.DOOR_OPEN),
+             }),
+    RoomEnum.BL_RAT_WARREN_6:
+        Room(RoomEnum.BL_RAT_WARREN_6, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             [
+                 "This open space is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
+                 "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
+                 "occasional small scratch marks."
+             ],
+             exits={
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_7),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_8),
+             }),
+    RoomEnum.BL_RAT_WARREN_7:
+        Room(RoomEnum.BL_RAT_WARREN_7, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             [
+                 "This open space is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
+                 "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
+                 "occasional small scratch marks."
+             ],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_5, DoorEnum.WARREN_DOOR_1,
+                                           FrameGroupEnum.DOOR_CLOSED, FrameGroupEnum.DOOR_OPEN),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_6),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_9),
+             }),
+    RoomEnum.BL_RAT_WARREN_8:
+        Room(RoomEnum.BL_RAT_WARREN_8, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             [
+                 "This open space is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
+                 "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
+                 "occasional small scratch marks."
+             ],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_6),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_9),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_10,
+                                           frame_id=FrameGroupEnum.ARCHWAY),
+             },
+             periodics=[
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT, 1),
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT)),
+                     ], 3600),
+             ]),
+    RoomEnum.BL_RAT_WARREN_9:
+        Room(RoomEnum.BL_RAT_WARREN_9, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             [
+                 "This open space is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
+                 "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
+                 "occasional small scratch marks."
+             ],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_7),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_8),
+             },
+             periodics=[
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT, 1),
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT)),
+                     ], 3600),
+             ]),
+    RoomEnum.BL_RAT_WARREN_10:
+        Room(RoomEnum.BL_RAT_WARREN_10, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             [
+                 "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
+                 "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
+                 "occasional small scratch marks."
+             ],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_8,
+                                           frame_id=FrameGroupEnum.ARCHWAY),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_11),
+             }),
+    RoomEnum.BL_RAT_WARREN_11:
+        Room(RoomEnum.BL_RAT_WARREN_11, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             [
+                 "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
+                 "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
+                 "occasional small scratch marks."
+             ],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_10),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_12,
+                                          frame_id=FrameGroupEnum.ARCHWAY),
              },
              periodics=[
                  Periodic(
@@ -928,145 +1090,76 @@ rooms = {
                          Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_LARGE)),
                      ], 3600),
              ]),
-    RoomEnum.BL_RAT_WARREN_4:
-        Room(RoomEnum.BL_RAT_WARREN_4, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
-             ["** TODO **"],
-             exits={
-                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_2),
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_5),
-             },
-             periodics=[
-                 Periodic(
-                     [
-                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT, 1),
-                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
-                     ],
-                     [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT)),
-                     ], 3600),
-             ]),
-    RoomEnum.BL_RAT_WARREN_5:
-        Room(RoomEnum.BL_RAT_WARREN_5, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
-             ["** TODO **"],
-             exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_4),
-                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_6),
-             },
-             periodics=[
-                 Periodic(
-                     [
-                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT, 1),
-                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
-                     ],
-                     [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT)),
-                     ], 3600),
-             ]),
-    RoomEnum.BL_RAT_WARREN_6:
-        Room(RoomEnum.BL_RAT_WARREN_6, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
-             ["** TODO **"],
-             exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_7),
-                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_5),
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_8),
-             }),
-    RoomEnum.BL_RAT_WARREN_7:
-        Room(RoomEnum.BL_RAT_WARREN_7, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
-             ["** TODO **"],
-             exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_9),
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_6),
-             },
-             periodics=[
-                 Periodic(
-                     [
-                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT_LARGE, 1),
-                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
-                     ],
-                     [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_LARGE)),
-                     ], 3600),
-             ]),
-    RoomEnum.BL_RAT_WARREN_8:
-        Room(RoomEnum.BL_RAT_WARREN_8, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
-             ["** TODO **"],
-             exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_6),
-             },
-             periodics=[
-                 Periodic(
-                     [
-                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT_LARGE, 1),
-                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
-                     ],
-                     [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_LARGE)),
-                     ], 3600),
-             ]),
-    RoomEnum.BL_RAT_WARREN_9:
-        Room(RoomEnum.BL_RAT_WARREN_9, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
-             ["** TODO **"],
-             exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_10),
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_7),
-             },
-             periodics=[
-                 Periodic(
-                     [
-                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT_LARGE, 1),
-                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
-                     ],
-                     [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_LARGE)),
-                     ], 3600),
-             ]),
-    RoomEnum.BL_RAT_WARREN_10:
-        Room(RoomEnum.BL_RAT_WARREN_10, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
-             ["** TODO **"],
-             exits={
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_9),
-                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_11),
-             },
-             periodics=[
-                 Periodic(
-                     [
-                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT_LARGE, 1),
-                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
-                     ],
-                     [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_LARGE)),
-                     ], 3600),
-             ]),
-    RoomEnum.BL_RAT_WARREN_11:
-        Room(RoomEnum.BL_RAT_WARREN_11, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
-             ["** TODO **"],
-             exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_13),
-                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_10),
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_12),
-             }),
     RoomEnum.BL_RAT_WARREN_12:
         Room(RoomEnum.BL_RAT_WARREN_12, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
-             ["** TODO **"],
+             [
+                 "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
+                 "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
+                 "occasional small scratch marks.",
+                 "The eastern side of the area reveals a large cavern in the ground."
+             ],
              exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_11),
-                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_14),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_11,
+                                          frame_id=FrameGroupEnum.ARCHWAY),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_13),
+             }),
+    RoomEnum.BL_RAT_WARREN_13:
+        Room(RoomEnum.BL_RAT_WARREN_13, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             [
+                 "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
+                 "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
+                 "occasional small scratch marks.",
+                 "The eastern side of the area reveals a large cavern in the ground."
+             ],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_12,
+                                           frame_id=FrameGroupEnum.ARCHWAY),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_14),
+             }),
+    RoomEnum.BL_RAT_WARREN_14:
+        Room(RoomEnum.BL_RAT_WARREN_14, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             [
+                 "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
+                 "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
+                 "occasional small scratch marks.",
+                 "A moldy wooden bridge crosses a large cavern in the ground to the east."
+             ],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_13),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_15),
              },
              periodics=[
                  Periodic(
                      [
-                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT_GUARD, 1),
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT_LARGE, 1),
                          Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
                      ],
                      [
-                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_GUARD)),
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_LARGE)),
                      ], 3600),
              ]),
-    RoomEnum.BL_RAT_WARREN_13:
-        Room(RoomEnum.BL_RAT_WARREN_13, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
-             ["** TODO **"],
+    RoomEnum.BL_RAT_WARREN_15:
+        Room(RoomEnum.BL_RAT_WARREN_15, ZoneEnum.KEEP, "On the Bridge over a Cavern", "a bridge over a cavern",
+             [
+                 "This moldy bridge is made of small wooden planks laid across 2 long beams which stretch across "
+                 "the cavern below.  A foul smelling wind rises below and blows across the bridge and back into "
+                 "the entry tunnels."
+             ],
              exits={
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_11),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_14),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_16),
+             }),
+    RoomEnum.BL_RAT_WARREN_16:
+        Room(RoomEnum.BL_RAT_WARREN_16, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             [
+                 "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
+                 "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
+                 "occasional small scratch marks.",
+                 "A moldy wooden bridge crosses a large cavern in the ground to the west."
+             ],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_17),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_15),
              },
              periodics=[
                  Periodic(
@@ -1090,12 +1183,85 @@ rooms = {
                          Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_LARGE)),
                      ], 3600),
              ]),
-    RoomEnum.BL_RAT_WARREN_14:
-        Room(RoomEnum.BL_RAT_WARREN_14, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
-             ["** TODO **"],
+    RoomEnum.BL_RAT_WARREN_17:
+        Room(RoomEnum.BL_RAT_WARREN_17, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             [
+                 "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
+                 "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
+                 "occasional small scratch marks.",
+                 "The western side of the area reveals a large cavern in the ground."
+             ],
              exits={
-                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_12),
-                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_15),
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_18),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_19,
+                                          frame_id=FrameGroupEnum.ARCHWAY),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_16),
+             }),
+    RoomEnum.BL_RAT_WARREN_18:
+        Room(RoomEnum.BL_RAT_WARREN_18, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             [
+                 "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
+                 "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
+                 "occasional small scratch marks.",
+                 "The west side of the area reveals a large cavern in the ground."
+             ],
+             exits={
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_17),
+             },
+             periodics=[
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.ITEM_IN_ROOM, "a triangle key", 1),
+                         Condition(ConditionCheckEnum.HAS_NOT, TargetTypeEnum.PLAYER_INVEN, "a triangle key"),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_ITEM,
+                                 Item(ItemTypeEnum.MISC, "a triangle key", QualityEnum.AVE, MaterialEnum.STEEL, 1)),
+                     ], 36000),
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT_LARGE, 1),
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_LARGE)),
+                     ], 3600),
+             ]),
+    RoomEnum.BL_RAT_WARREN_19:
+        Room(RoomEnum.BL_RAT_WARREN_19, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+             [
+                 "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
+                 "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
+                 "occasional small scratch marks."
+             ],
+             exits={
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_17),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_20,
+                                          frame_id=FrameGroupEnum.ARCHWAY),
+             }),
+    RoomEnum.BL_RAT_WARREN_20:
+        Room(RoomEnum.BL_RAT_WARREN_20, ZoneEnum.KEEP, "A well-appointed Ante-room", "a well-appointed ante-room",
+             [
+                 "The air is fresher in this open space.  A few of the walls have paintings hanging on them and a "
+                 "large rug is laid across the center of the room.  In one corner a small divan which might sit a "
+                 "small child or two."
+             ],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_22),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_21),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_19,
+                                          frame_id=FrameGroupEnum.ARCHWAY),
+             }),
+    RoomEnum.BL_RAT_WARREN_21:
+        Room(RoomEnum.BL_RAT_WARREN_21, ZoneEnum.KEEP, "A well-appointed Ante-room", "a well-appointed ante-room",
+             [
+                 "The air is fresher in this open space.  A few of the walls have paintings hanging on them and a "
+                 "large rug is laid across the center of the room.  In one corner a small divan which might sit a "
+                 "small child or two."
+             ],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_23),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_20),
              },
              periodics=[
                  Periodic(
@@ -1107,11 +1273,49 @@ rooms = {
                          Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_GUARD)),
                      ], 3600),
              ]),
-    RoomEnum.BL_RAT_WARREN_15:
-        Room(RoomEnum.BL_RAT_WARREN_15, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
-             ["** TODO **"],
+    RoomEnum.BL_RAT_WARREN_22:
+        Room(RoomEnum.BL_RAT_WARREN_22, ZoneEnum.KEEP, "A well-appointed Ante-room", "a well-appointed ante-room",
+             [
+                 "The air is fresher in this open space.  A few of the walls have paintings hanging on them and a "
+                 "large rug is laid across the center of the room.  In one corner a small divan which might sit a "
+                 "small child or two."
+             ],
              exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_14),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_20),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_23),
+             }),
+    RoomEnum.BL_RAT_WARREN_23:
+        Room(RoomEnum.BL_RAT_WARREN_23, ZoneEnum.KEEP, "A Well-Appointed Ante-Rroom", "a well-appointed ante-room",
+             [
+                 "The air is fresher in this open space.  A few of the walls have paintings hanging on them and a "
+                 "large rug is laid across the center of the room.  In one corner a small divan which might sit a "
+                 "small child or two."
+             ],
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_24, DoorEnum.WARREN_DOOR_2,
+                                           FrameGroupEnum.DOOR_CLOSED, FrameGroupEnum.DOOR_OPEN),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_21),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_22),
+             },
+             periodics=[
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.MOB_IN_ROOM, PersonEnum.MON_RAT_GUARD, 1),
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.PERCENT_CHANCE, value=100),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_GUARD)),
+                     ], 3600),
+             ]),
+    RoomEnum.BL_RAT_WARREN_24:
+        Room(RoomEnum.BL_RAT_WARREN_24, ZoneEnum.KEEP, "A small bedroom", "a small bedroom",
+             [
+                 "Crowded into this small space is a miniature bed, an armoire and small chest of drawers. "
+                 "Small items of decoration adorn the walls and top of the chest."
+             ],
+             exits={
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_23, DoorEnum.WARREN_DOOR_2,
+                                           FrameGroupEnum.DOOR_CLOSED, FrameGroupEnum.DOOR_OPEN),
              },
              periodics=[
                  Periodic(
