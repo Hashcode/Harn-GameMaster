@@ -17,7 +17,7 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             cultures, social_classes, sibling_ranks, wounds,
                             parent_statuses, player_frames, comelinesses,
                             complexions, color_hairs, color_eyes,
-                            skill_classes, skills, body_parts,
+                            SkillClassEnum, skill_classes, skills, body_parts,
                             materials, DamageTypeEnum, AttrEnum,
                             Material, PlayerCombatState, PersonTypeEnum,
                             ItemTypeEnum, ItemFlagEnum,
@@ -554,10 +554,19 @@ def actionSave():
     return False
 
 
-def actionSkills():
+def actionSkills(id=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
+  if id is None:
+    cm.Print("\nUSE ONE OF THE FOLLOWING COMMANDS TO SEE SKILLS\n", attr=ANSI.TEXT_BOLD)
+    cm.Print("skills-combat")
+    cm.Print("skills-communication")
+    cm.Print("skills-crafts")
+    cm.Print("skills-physical")
+    return
   for skc_id, skc in skill_classes.items():
+    if id != skc_id:
+      continue
     if skc.Hidden:
       continue
     cm.Print("\n%s SKILLS\n" % (skc.Name.upper()), attr=ANSI.TEXT_BOLD)
@@ -579,6 +588,22 @@ def actionSkills():
                attr=cm.ColorPair(attrColor(player.Attr[skills[sk_id].Attr3])),
                end="")
       cm.Print("  ML:%-3d" % (player.SkillML(sk_id)))
+
+
+def actionSkillsPhysical():
+  actionSkills(SkillClassEnum.PHYSICAL)
+
+
+def actionSkillsCommunication():
+  actionSkills(SkillClassEnum.COMMUNICATION)
+
+
+def actionSkillsCombat():
+  actionSkills(SkillClassEnum.COMBAT)
+
+
+def actionSkillsCrafts():
+  actionSkills(SkillClassEnum.LORE_CRAFTS)
 
 
 def actionInfo():
@@ -1599,6 +1624,10 @@ commands.append(GenericCommand(["rest", "r"], actionRest))
 commands.append(GenericCommand(["save"], actionSaveGeneric))
 commands.append(GenericCommand(["sell"], actionTalkSell))
 commands.append(GenericCommand(["skills", "sk"], actionSkills))
+commands.append(GenericCommand(["skills-physical", "skp"], actionSkillsPhysical))
+commands.append(GenericCommand(["skills-communication", "skcomm"], actionSkillsCommunication))
+commands.append(GenericCommand(["skills-combat", "skcombat"], actionSkillsCombat))
+commands.append(GenericCommand(["skills-crafts", "skcrafts"], actionSkillsCrafts))
 commands.append(GenericCommand(["stats", "st"], actionStatsGeneric))
 commands.append(GenericCommand(["talk"], actionTalk))
 commands.append(GenericCommand(["time"], actionTime))
