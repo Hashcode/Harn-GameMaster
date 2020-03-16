@@ -1437,7 +1437,8 @@ def actionListPlayers():
              ("--------------", "-----------", "-------------"),
              attr=ANSI.TEXT_BOLD)
     for x in sorted(pinfo):
-      cm.Print("%-20s %-11s %s" % (x, "%0.2f days" % (pinfo[x]["played"]), pinfo[x]["info"]))
+      if pinfo[x]["played"] > 0:
+        cm.Print("%-20s %-11s %s" % (x, "%0.2f days" % (pinfo[x]["played"]), pinfo[x]["info"]))
 
 
 def actionLook():
