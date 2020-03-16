@@ -1102,6 +1102,9 @@ rooms = {
                  DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_11,
                                           frame_id=FrameGroupEnum.ARCHWAY),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_13),
+             },
+             walls={
+                 DirectionEnum.EAST: FrameGroupEnum.CAVERN,
              }),
     RoomEnum.BL_RAT_WARREN_13:
         Room(RoomEnum.BL_RAT_WARREN_13, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
@@ -1112,9 +1115,11 @@ rooms = {
                  "The eastern side of the area reveals a large cavern in the ground."
              ],
              exits={
-                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_12,
-                                           frame_id=FrameGroupEnum.ARCHWAY),
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_12),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_14),
+             },
+             walls={
+                 DirectionEnum.EAST: FrameGroupEnum.CAVERN,
              }),
     RoomEnum.BL_RAT_WARREN_14:
         Room(RoomEnum.BL_RAT_WARREN_14, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
@@ -1126,7 +1131,8 @@ rooms = {
              ],
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_13),
-                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_15),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_15,
+                                          frame_id=FrameGroupEnum.BRIDGE),
              },
              periodics=[
                  Periodic(
@@ -1137,7 +1143,10 @@ rooms = {
                      [
                          Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_LARGE)),
                      ], 3600),
-             ]),
+             ],
+             walls={
+                 DirectionEnum.SOUTH: FrameGroupEnum.CAVERN,
+             }),
     RoomEnum.BL_RAT_WARREN_15:
         Room(RoomEnum.BL_RAT_WARREN_15, ZoneEnum.KEEP, "On the Bridge over a Cavern", "a bridge over a cavern",
              [
@@ -1146,8 +1155,14 @@ rooms = {
                  "the entry tunnels."
              ],
              exits={
-                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_14),
-                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_16),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_14,
+                                          frame_id=FrameGroupEnum.BRIDGE),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_16,
+                                          frame_id=FrameGroupEnum.BRIDGE),
+             },
+             walls={
+                 DirectionEnum.NORTH: FrameGroupEnum.WALL_BRIDGE,
+                 DirectionEnum.SOUTH: FrameGroupEnum.WALL_BRIDGE,
              }),
     RoomEnum.BL_RAT_WARREN_16:
         Room(RoomEnum.BL_RAT_WARREN_16, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
@@ -1159,7 +1174,8 @@ rooms = {
              ],
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_17),
-                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_15),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_15,
+                                          frame_id=FrameGroupEnum.BRIDGE),
              },
              periodics=[
                  Periodic(
@@ -1182,7 +1198,10 @@ rooms = {
                      [
                          Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_LARGE)),
                      ], 3600),
-             ]),
+             ],
+             walls={
+                 DirectionEnum.SOUTH: FrameGroupEnum.CAVERN,
+             }),
     RoomEnum.BL_RAT_WARREN_17:
         Room(RoomEnum.BL_RAT_WARREN_17, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
@@ -1196,6 +1215,9 @@ rooms = {
                  DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_19,
                                           frame_id=FrameGroupEnum.ARCHWAY),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_16),
+             },
+             walls={
+                 DirectionEnum.WEST: FrameGroupEnum.CAVERN,
              }),
     RoomEnum.BL_RAT_WARREN_18:
         Room(RoomEnum.BL_RAT_WARREN_18, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
@@ -1226,7 +1248,10 @@ rooms = {
                      [
                          Trigger(TriggerTypeEnum.ROOM_SPAWN_MOB, NewPerson(PersonEnum.MON_RAT_LARGE)),
                      ], 3600),
-             ]),
+             ],
+             walls={
+                 DirectionEnum.WEST: FrameGroupEnum.CAVERN,
+             }),
     RoomEnum.BL_RAT_WARREN_19:
         Room(RoomEnum.BL_RAT_WARREN_19, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
              [

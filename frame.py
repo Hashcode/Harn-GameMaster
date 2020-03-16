@@ -125,13 +125,17 @@ class Frame:
 
 
 class FrameGroupEnum(IntEnum):
+  BLANK = 0
   WALL = 1
   WALL_TORCH = 2
+  WALL_BRIDGE = 3
+  CAVERN = 4
   ARCHWAY = 10
   DOOR_CLOSED = 20
   DOOR_OPEN = 21
   DBL_DOOR_CLOSED = 22
   DBL_DOOR_OPEN = 23
+  BRIDGE = 30
 
 
 class FrameItemEnum(IntEnum):
@@ -141,13 +145,17 @@ class FrameItemEnum(IntEnum):
 
 
 frame_groups = {
+    FrameGroupEnum.BLANK: FrameGroup(["blank", "blank", "blank"], True),
     FrameGroupEnum.WALL: FrameGroup(["facing_wall", "left_wall", "right_wall"], False),
     FrameGroupEnum.WALL_TORCH: FrameGroup(["facing_wall_torch", "left_wall_torch", "right_wall_torch"], False),
+    FrameGroupEnum.WALL_BRIDGE: FrameGroup(["facing_wall_bridge", "blank", "blank"], False),
+    FrameGroupEnum.CAVERN: FrameGroup(["facing_cavern", "left_cavern", "right_cavern"], True),
     FrameGroupEnum.ARCHWAY: FrameGroup(["facing_archway", "left_archway", "right_archway"]),
     FrameGroupEnum.DOOR_CLOSED: FrameGroup(["facing_door_closed", "left_door_closed", "right_door_closed"], False),
     FrameGroupEnum.DOOR_OPEN: FrameGroup(["facing_door_open", "left_door_open", "right_door_open"], True),
     FrameGroupEnum.DBL_DOOR_CLOSED: FrameGroup(["facing_dbl_door_closed", "left_dbl_door_closed", "right_dbl_door_closed"], False),
     FrameGroupEnum.DBL_DOOR_OPEN: FrameGroup(["facing_dbl_door_open", "left_dbl_door_open", "right_dbl_door_open"], True),
+    FrameGroupEnum.BRIDGE: FrameGroup(["facing_bridge", "left_bridge", "right_bridge"], True),
 }
 
 
