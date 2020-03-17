@@ -381,12 +381,15 @@ def chooseItem(items, verb, stats=False, shop=False, valueAdj=1):
   cm = GameData.GetConsole()
   cm.Print("\nItems:\n")
   printItems(items, number=True, stats=stats, shop=shop, valueAdj=valueAdj)
-  x = cm.Input("Which item # to %s:" % verb, line_length=3,
+  x = cm.Input("Which item # to %s (0=Cancel):" % verb, line_length=3,
                input_flags=InputFlag.NUMERIC)
   if not x.isnumeric():
     cm.Print("\nInvalid item.")
     return None
   itemNum = int(x)
+  if itemNum == 0:
+    cm.Print("\nCancelled.")
+    return None
   if itemNum < 1 or itemNum > len(items):
     cm.Print("\nInvalid item.")
     return None
@@ -713,12 +716,15 @@ def chooseNPC(npcs, noun, stats=False):
       cm.Print("%d. %s [%d IP]" % (count, npc.Name, npc.IP()))
     else:
       cm.Print("%d. %s" % (count, npc.Name))
-  x = cm.Input("Which # to %s:" % noun, line_length=3,
+  x = cm.Input("Which # to %s (0=Cancel):" % noun, line_length=3,
                input_flags=InputFlag.NUMERIC)
   if not x.isnumeric():
     cm.Print("\nInvalid target.")
     return None
   personNum = int(x)
+  if personNum == 0:
+    cm.Print("\nCancelled.")
+    return None
   if personNum < 1 or personNum > len(npcs):
     cm.Print("\nInvalid target.")
     return None
@@ -1323,12 +1329,15 @@ def chooseDoor(room_id, action, door_closed=None, door_locked=None):
       if match:
           count += 1
           cm.Print("%d. %s" % (count, doors[ex.Door].Name))
-  x = cm.Input("Which # to %s:" % action, line_length=3,
+  x = cm.Input("Which # to %s (0=Cancel):" % action, line_length=3,
                input_flags=InputFlag.NUMERIC)
   if not x.isnumeric():
     cm.Print("\nInvalid door.")
     return ret
   doorNum = int(x)
+  if doorNum == 0:
+    cm.Print("\nCancelled.")
+    return ret
   if doorNum < 1 or doorNum > count:
     cm.Print("\nInvalid door.")
     return ret
