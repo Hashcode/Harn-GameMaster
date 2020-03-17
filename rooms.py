@@ -639,7 +639,7 @@ rooms = {
                      ],
                      [
                          Trigger(TriggerTypeEnum.ROOM_SPAWN_ITEM,
-                                 Item(ItemTypeEnum.MISC, "a small iron apartment key", QualityEnum.AVE, MaterialEnum.STEEL, 1)),
+                                 Item(ItemTypeEnum.MISC, "a small iron apartment key", QualityEnum.AVE, MaterialEnum.STEEL, 0.1)),
                      ], 36000),
              ]),
     RoomEnum.BL_SOUTHERN_WALK_2:
@@ -932,7 +932,7 @@ rooms = {
                      ],
                      [
                          Trigger(TriggerTypeEnum.ROOM_SPAWN_ITEM,
-                                 Item(ItemTypeEnum.MISC, "a tarnished bronze key", QualityEnum.AVE, MaterialEnum.BRONZE, 1)),
+                                 Item(ItemTypeEnum.MISC, "a tarnished bronze key", QualityEnum.AVE, MaterialEnum.BRONZE, 0.1)),
                      ], 36000),
                  Periodic(
                      [
@@ -1238,7 +1238,7 @@ rooms = {
                      ],
                      [
                          Trigger(TriggerTypeEnum.ROOM_SPAWN_ITEM,
-                                 Item(ItemTypeEnum.MISC, "a triangle key", QualityEnum.AVE, MaterialEnum.STEEL, 1)),
+                                 Item(ItemTypeEnum.MISC, "a triangle key", QualityEnum.AVE, MaterialEnum.STEEL, 0.1)),
                      ], 36000),
                  Periodic(
                      [
