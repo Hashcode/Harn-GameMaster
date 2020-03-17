@@ -528,8 +528,8 @@ def actionInventory():
     cm.Print("[NONE]")
   else:
     printItems(items, stats=True)
-  cm.Print("%-30s : %5s lbs" % ("EQUIPPED WEIGHT",
-                                "{:3.1f}".format(player.EquipWeight())),
+  cm.Print("%-30s : %5s lbs" % ("EQUIPPED WEIGHT=1/2",
+                                "{:3.1f}".format(player.EquipWeight() * 0.5)),
            attr=ANSI.TEXT_BOLD)
   cm.Print("\nITEMS", attr=ANSI.TEXT_BOLD)
   items = filterItems(player.Items, equipped=False)

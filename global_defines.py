@@ -1575,7 +1575,7 @@ class Person:
     return eq
 
   def ItemWeight(self):
-    return self.EquipWeight() + self.EquipWeight(False)
+    return self.EquipWeight() * 0.5 + self.EquipWeight(False)
 
   def FatigueRate(self):
     return self.ItemWeight() / self.AttrEndurance()
