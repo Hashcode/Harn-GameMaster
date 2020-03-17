@@ -1002,7 +1002,7 @@ def processTriggers(obj, triggers):
       elif tr.TriggerType == TriggerTypeEnum.PERSON_ATTACK:
         logd("[trigger] PERSON_ATTACK")
         if type(obj) is Mob:
-          player.SetTalking(False)
+          player.SetTalking(None)
           cm.Print("%s attacks you!" % (obj.Name.capitalize()), attr=ANSI.TEXT_BOLD)
           player.CombatTarget = obj.UUID
       elif tr.TriggerType == TriggerTypeEnum.PERSON_DESC:
@@ -1113,19 +1113,19 @@ def processTriggers(obj, triggers):
         return False
 
 
-def printNPCTalk(p, keyword):
+def printNPCTalk(keyword):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   ret = False
-  for tk in p.Talks:
+  for tk in player.Talk.Talks:
     if tk.Keyword.lower() == keyword:
-      if processConditions(player.Room, p, tk.Conditions):
+      if processConditions(player.Room, player.Talk, tk.Conditions):
         ret = True
         if tk.Triggers is not None:
-          processTriggers(p, tk.Triggers)
+          processTriggers(player.Talk, tk.Triggers)
   # handle shopkeep item names
-  if p.SellItems is not None:
-    for item in p.SellItems:
+  if player.Talk.SellItems is not None:
+    for item in player.Talk.SellItems:
       if item.ItemName.lower() == keyword:
         ret = True
         cm.Print("\n" + wrapper.fill(item.Description()))
@@ -1214,38 +1214,25 @@ def actionShopSell(shopkeep):
     cm.Print("\nSale aborted.", attr=ANSI.TEXT_BOLD)
 
 
-def talkHandler(command, data):
+def talkHandler(command):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  p = data[0]
   if command == "done":
-    player.SetTalking(False)
-    printNPCTalk(p, "~")
+    printNPCTalk("~")
+    player.SetTalking(None)
     command = ""
-    # exit prompt loop
+    # return True to end the talk prompt and reprint room desc
     return True
-  if command == "help" or command == "?":
-    return
-  if not printNPCTalk(p, command):
-    cm.Print("\n%s doesn't know anything about that." % p.Name.capitalize())
+  if not printNPCTalk(command):
+    cm.Print("\n%s doesn't know anything about that." % player.Talk.Name.capitalize())
   else:
     # 30 second talk turn
     player.GameTime += 30
+  # return None so that we avoid "You cannot do that here."
+  return None
 
 
-def playerTalk(p, keyword=""):
-  player = GameData.GetPlayer()
-  player.SetTalking(True)
-  printNPCTalk(p, keyword)
-  while player.IsTalking():
-    # Check for room events
-    GameData.ProcessEvents()
-    prompt(talkHandler, [p])
-  if player.CombatTarget is not None:
-    return True
-
-
-def actionTalk(keyword=""):
+def actionTalk():
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
@@ -1272,7 +1259,8 @@ def actionTalk(keyword=""):
   if count == 0:
     cm.Print("\n%s ignores your attempts to talk." % p.Name.capitalize())
     return
-  playerTalk(p, keyword)
+  player.SetTalking(p)
+  printNPCTalk("")
 
 
 def actionTalkBuy():
@@ -1291,7 +1279,8 @@ def actionTalkBuy():
     if shopkeep is None:
       cm.Print("\nNo one nearby wants to buy anything.")
       return
-    playerTalk(shopkeep, "buy")
+    player.SetTalking(shopkeep)
+    printNPCTalk("buy")
 
 
 def actionTalkSell():
@@ -1310,7 +1299,8 @@ def actionTalkSell():
     if shopkeep is None:
       cm.Print("\nNo one nearby wants to sell anything.")
       return
-    playerTalk(shopkeep, "sell")
+    player.SetTalking(shopkeep)
+    printNPCTalk("sell")
 
 
 def chooseDoor(room_id, action, door_closed=None, door_locked=None):
@@ -1670,6 +1660,9 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
         if cmdHandler is not None:
           if cmdHandler(x, cmdHandlerData):
             break
+        elif player.IsTalking():
+          if talkHandler(x):
+            break
       elif res is True:
         # attack and talk cmds can return true to re-enter main for combat
         break
@@ -1709,27 +1702,20 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
       if match_dir != DirectionEnum.NONE:
         if player.CombatState != PlayerCombatState.NONE:
           cm.Print("\nYou can't move in combat!  Try to FLEE!", attr=ANSI.TEXT_BOLD)
+          continue
         elif player.IsTalking():
-          cm.Print("\nYou are talking! Enter \"DONE\" to end conversation.", attr=ANSI.TEXT_BOLD)
-        else:
-          trigger_deny = False
-          for exit_dir, ex in rooms[player.Room].Exits.items():
-            if match_dir == exit_dir:
-              if ex.Door != DoorEnum.NONE:
-                if player.DoorState(ex.Door).Closed:
-                  cm.Print("\nThe %s %s closed." %
-                           (doors[ex.Door].Name, doors[ex.Door].Verb()),
-                           attr=ANSI.TEXT_BOLD)
-                  break
-                else:
-                  if not roomTalkTrigger("on_exit"):
-                    trigger_deny = True
-                    break
-                  # time to cross room
-                  player.GameTime += rooms[player.Room].TravelTime
-                  player.SetRoom(ex.Room)
-                  if x != "arrow_" and match_dir not in [DirectionEnum.DOWN, DirectionEnum.UP]:
-                    GameData.SetFacing(match_dir)
+          printNPCTalk("~")
+          player.SetTalking(None)
+
+        trigger_deny = False
+        for exit_dir, ex in rooms[player.Room].Exits.items():
+          if match_dir == exit_dir:
+            if ex.Door != DoorEnum.NONE:
+              if player.DoorState(ex.Door).Closed:
+                cm.Print("\nThe %s %s closed." %
+                         (doors[ex.Door].Name, doors[ex.Door].Verb()),
+                         attr=ANSI.TEXT_BOLD)
+                break
               else:
                 if not roomTalkTrigger("on_exit"):
                   trigger_deny = True
@@ -1739,14 +1725,24 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
                 player.SetRoom(ex.Room)
                 if x != "arrow_" and match_dir not in [DirectionEnum.DOWN, DirectionEnum.UP]:
                   GameData.SetFacing(match_dir)
-              return
-          if not trigger_deny:
-            cm.Print("\nYou can't go in that direction.", attr=ANSI.TEXT_BOLD)
-        continue
+            else:
+              if not roomTalkTrigger("on_exit"):
+                trigger_deny = True
+                break
+              # time to cross room
+              player.GameTime += rooms[player.Room].TravelTime
+              player.SetRoom(ex.Room)
+              if x != "arrow_" and match_dir not in [DirectionEnum.DOWN, DirectionEnum.UP]:
+                GameData.SetFacing(match_dir)
+            return
+        if not trigger_deny:
+          cm.Print("\nYou can't go in that direction.", attr=ANSI.TEXT_BOLD)
 
       res = False
       if cmdHandler is not None:
         res = cmdHandler(x, cmdHandlerData)
+      elif player.IsTalking():
+        res = talkHandler(x)
       if res is True:
         break
       elif res is False:

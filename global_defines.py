@@ -1382,7 +1382,6 @@ class PersonTypeEnum(IntEnum):
 
 class PersonFlag(IntEnum):
   AGGRESSIVE = 1 << 0
-  TALKING = 1 << 1
   BEHAVIOR_1 = 1 << 6
   BEHAVIOR_2 = 1 << 7
   PERIODIC_TRIGGERED = 1 << 15  # keep in sync with gamedata
@@ -1441,6 +1440,7 @@ class Person:
     self.LongDescription = long_desc
     self.DefaultAim = AimEnum.MID
     self.Flags = flags
+    self.Talk = None
     self.SkinMaterial = skin
     self.Attr = dict()
     self.SkillLinks = dict()
@@ -1455,7 +1455,8 @@ class Person:
   def Copy(self, p):
     self.PersonType = p.PersonType
     self.Name = p.Name
-    self.Flags = p.Flags & ~PersonFlag.TALKING
+    self.Flags = p.Flags
+    self.Talk = None
     self.SkinMaterial = p.SkinMaterial
     self.Attr.clear()
     for attr_id, attr in attributes.items():
@@ -1689,13 +1690,10 @@ class Person:
     return self.Flags & PersonFlag.AGGRESSIVE > 0
 
   def IsTalking(self):
-    return self.Flags & PersonFlag.TALKING > 0
+    return self.Talk is not None
 
   def SetTalking(self, talk):
-    if talk:
-      self.Flags |= PersonFlag.TALKING
-    else:
-      self.Flags &= ~PersonFlag.TALKING
+    self.Talk = talk
 
   def GenerateCombatAttacks(self, block=False):
     default = Weapon("punch", QualityEnum.AVE, MaterialEnum.BONE, 0,
