@@ -1512,20 +1512,23 @@ def actionRest():
     combat(player, enemies)
   else:
     if player.IP() > 0:
+      r = player.Attr[AttrEnum.AURA]
       for w in sorted(player.Wounds, reverse=True):
         cm.Print("\nYou clean and dress a %s %s %s wound ..." %
                  (wounds[w.WoundType].Name.lower(),
                   wounds[w.WoundType].Verbs[w.DamageType].lower(),
                   body_parts[w.Location].PartName.lower()))
-        sleep(5)
-        r = DiceRoll(1, player.Attr[AttrEnum.AURA]).Result()
+        sleep(3)
+        i = w.Impact
         w.Impact -= r
+        r -= i
         if w.Impact <= 0:
           player.Wounds.remove(w)
           cm.Print("It's all better!")
         else:
           cm.Print("It looks a bit better.")
-        break
+        if r <= 0:
+          break
 
 
 def actionStatsGeneric():
