@@ -1707,7 +1707,8 @@ commands.append(GenericCommand(["stats", "st"], actionStatsGeneric))
 commands.append(GenericCommand(["talk"], actionTalk))
 commands.append(GenericCommand(["time"], actionTime))
 commands.append(GenericCommand(["unlock"], actionUnlock))
-commands.append(GenericCommand(["who"], actionListPlayers))
+# No shiny things for silly users
+# commands.append(GenericCommand(["who"], actionListPlayers))
 
 
 def promptTimeout():
