@@ -1597,42 +1597,43 @@ commands = []
 
 
 def actionPrintCombatHelp(lines, data):
-    combatant = data[1]
-    target = data[2]
-    att = combatant.Person.GenerateCombatAttacks()
-    if len(att) > 0:
-      att_name = "%d ML [%s]" % (att[0].SkillML, att[0].Name)
-    else:
-      att_name = "no weapon!"
-    if combatant.Target is not None:
-      target_name = "%s [%d IP]" % (combatant.Target.Person.Name,
-                                    combatant.Target.Person.IP())
-    else:
-      target_name = "[NO TARGET]"
-    if combatant.Bloodloss > 0:
-      appendLine(lines, "")
-      appendLine(lines, "BLOODLOSS POINTS: %d of %d" %
-                   (combatant.Bloodloss, combatant.Person.AttrEndurance()))
+  cm = GameData.GetConsole()
+  combatant = data[1]
+  target = data[2]
+  att = combatant.Person.GenerateCombatAttacks()
+  if len(att) > 0:
+    att_name = "%d ML [%s]" % (att[0].SkillML, att[0].Name)
+  else:
+    att_name = "no weapon!"
+  if combatant.Target is not None:
+    target_name = "%s [%d IP]" % (combatant.Target.Person.Name,
+                                  combatant.Target.Person.IP())
+  else:
+    target_name = "[NO TARGET]"
+  if combatant.Bloodloss > 0:
     appendLine(lines, "")
-    appendLine(lines, "COMBAT COMMANDS:", ANSI.TEXT_BOLD)
-    appendLine(lines, "")
-    appendLine(lines, "%-8s %-5s : %s" % ("AIM", "", aims[combatant.Aim].Name))
-    if not combatant.Prone:
-      appendLine(lines, "%-8s %-5s : %s" % ("ATTACK", "[A]", att_name))
-    appendLine(lines, "%-8s %-5s :" % ("CAST", "[C]"))
-    defe_att = combatant.Person.GenerateCombatAttacks(block=True)
-    if combatant.DefAction == Action.DODGE or len(defe_att) < 1:
-      defe_name = "%d ML [%s]" % (combatant.Person.AttrDodge(), "DODGE")
-    else:
-      defe_name = "%s ML [BLOCK with %s]" % (defe_att[0].SkillML, defe_att[0].Name)
-    appendLine(lines, "%-8s %-5s : %s" % ("DEFENSE", "[DEF]", defe_name))
-    appendLine(lines, "%-8s %-5s : %d ML" % ("FLEE", "[F]", combatant.Person.AttrDodge()))
-    # appendLine(lines, "  GRAPPLE")
-    # appendLine(lines, "  MISSILE")
-    appendLine(lines, "%-8s %-5s :" % ("PASS", "[P]"))
-    if combatant.Prone:
-      appendLine(lines, "%-8s %-5s :" % ("STAND", ""), cm.ColorPair(TEXT_COLOR.YELLOW))
-    appendLine(lines, "%-8s %-5s : %s" % ("TARGET", "[T]", target_name))
+    appendLine(lines, "BLOODLOSS POINTS: %d of %d" %
+                 (combatant.Bloodloss, combatant.Person.AttrEndurance()))
+  appendLine(lines, "")
+  appendLine(lines, "COMBAT COMMANDS:", ANSI.TEXT_BOLD)
+  appendLine(lines, "")
+  appendLine(lines, "%-8s %-5s : %s" % ("AIM", "", aims[combatant.Aim].Name))
+  if not combatant.Prone:
+    appendLine(lines, "%-8s %-5s : %s" % ("ATTACK", "[A]", att_name))
+  appendLine(lines, "%-8s %-5s :" % ("CAST", "[C]"))
+  defe_att = combatant.Person.GenerateCombatAttacks(block=True)
+  if combatant.DefAction == Action.DODGE or len(defe_att) < 1:
+    defe_name = "%d ML [%s]" % (combatant.Person.AttrDodge(), "DODGE")
+  else:
+    defe_name = "%s ML [BLOCK with %s]" % (defe_att[0].SkillML, defe_att[0].Name)
+  appendLine(lines, "%-8s %-5s : %s" % ("DEFENSE", "[DEF]", defe_name))
+  appendLine(lines, "%-8s %-5s : %d ML" % ("FLEE", "[F]", combatant.Person.AttrDodge()))
+  # appendLine(lines, "  GRAPPLE")
+  # appendLine(lines, "  MISSILE")
+  appendLine(lines, "%-8s %-5s :" % ("PASS", "[P]"))
+  if combatant.Prone:
+    appendLine(lines, "%-8s %-5s :" % ("STAND", ""), cm.ColorPair(TEXT_COLOR.YELLOW))
+  appendLine(lines, "%-8s %-5s : %s" % ("TARGET", "[T]", target_name))
 
 
 def actionPrintHelp(data=None):
