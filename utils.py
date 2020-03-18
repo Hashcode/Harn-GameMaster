@@ -24,7 +24,9 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             DiceRoll, DoorEnum, Mob, Player,
                             TargetTypeEnum, ConditionCheckEnum,
                             TriggerTypeEnum, RoomEnum, RoomFlag,
-                            DirectionEnum, directions, Roll, armor_shapes)
+                            DirectionEnum, directions, Roll, armor_shapes,
+                            aims)
+from table_melee_attack import (Action)
 from logger import (logd, loge)
 
 
@@ -401,7 +403,7 @@ def chooseItem(items, verb, stats=False, shop=False, valueAdj=1):
   return None
 
 
-def actionGetItem():
+def actionGetItem(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
@@ -423,7 +425,7 @@ def actionGetItem():
   cm.Print("\n%s picked up." % item.ItemName.capitalize())
 
 
-def actionDropItem():
+def actionDropItem(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
@@ -451,7 +453,7 @@ def actionDropItem():
   cm.Print("\n%s dropped." % item.ItemName.capitalize())
 
 
-def actionEquipItem():
+def actionEquipItem(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   items = filterItems(player.Items, equipped=False, equippable=True)
@@ -498,7 +500,7 @@ def actionEquipItem():
     cm.Print("\n%s equipped." % equip_item.ItemName.capitalize())
 
 
-def actionRemoveItem():
+def actionRemoveItem(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   items = filterItems(player.Items, equipped=True)
@@ -517,7 +519,7 @@ def actionRemoveItem():
   cm.Print("\n%s removed." % item.ItemName.capitalize())
 
 
-def actionInventory():
+def actionInventory(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   cm.Print("\nCURRENCY", attr=ANSI.TEXT_BOLD, end="")
@@ -557,7 +559,7 @@ def actionSave():
     return False
 
 
-def actionSkills(id=None):
+def actionSkills(data=None, id=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   if id is None:
@@ -593,23 +595,23 @@ def actionSkills(id=None):
       cm.Print("  ML:%-3d" % (player.SkillML(sk_id)))
 
 
-def actionSkillsPhysical():
-  actionSkills(SkillClassEnum.PHYSICAL)
+def actionSkillsPhysical(data=None):
+  actionSkills(data, SkillClassEnum.PHYSICAL)
 
 
-def actionSkillsCommunication():
-  actionSkills(SkillClassEnum.COMMUNICATION)
+def actionSkillsCommunication(data=None):
+  actionSkills(data, SkillClassEnum.COMMUNICATION)
 
 
-def actionSkillsCombat():
-  actionSkills(SkillClassEnum.COMBAT)
+def actionSkillsCombat(data=None):
+  actionSkills(data, SkillClassEnum.COMBAT)
 
 
-def actionSkillsCrafts():
-  actionSkills(SkillClassEnum.LORE_CRAFTS)
+def actionSkillsCrafts(data=None):
+  actionSkills(data, SkillClassEnum.LORE_CRAFTS)
 
 
-def actionInfo():
+def actionInfo(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   cm.Print("\nBIRTH INFORMATION\n", attr=ANSI.TEXT_BOLD)
@@ -649,7 +651,7 @@ def actionInfo():
                           color_eyes[player.AttrColorEye()].Name))
 
 
-def actionArmor():
+def actionArmor(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   cm.Print("\nARMOR COVERAGE\n", attr=ANSI.TEXT_BOLD)
@@ -674,7 +676,7 @@ def actionArmor():
     m.Clear()
 
 
-def actionQuest():
+def actionQuest(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   quests = GameData.GetQuests()
@@ -731,7 +733,7 @@ def chooseNPC(npcs, noun, stats=False):
   return npcs[personNum - 1]
 
 
-def actionAttack():
+def actionAttack(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
@@ -756,7 +758,7 @@ def actionAttack():
     return True
 
 
-def actionInspect():
+def actionInspect(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
@@ -1119,6 +1121,30 @@ def processTriggers(obj, triggers):
         return False
 
 
+class PageLine:
+  def __init__(self, msg="", attr=0):
+    self.Line = msg
+    self.Attr = attr
+
+
+def appendLine(lines, line, attr=0):
+  lines.append(PageLine(line, attr))
+
+
+def printPaginate(lines):
+  cm = GameData.GetConsole()
+  if lines is not None and len(lines) > 0:
+    count = 0
+    for pl in lines:
+      cm.Print(pl.Line, pl.Attr)
+      count += 1
+      if count >= (cm.screenY - 2) and count < len(lines):
+        x = cm.Input("<< [Q] to Quit and [Enter] to Continue >>", line_length=1).lower()
+        if x == "q":
+          break
+        count = 0
+
+
 def printNPCTalk(keyword):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
@@ -1238,7 +1264,7 @@ def talkHandler(command):
   return None
 
 
-def actionTalk():
+def actionTalk(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
@@ -1269,7 +1295,7 @@ def actionTalk():
   printNPCTalk("")
 
 
-def actionTalkBuy():
+def actionTalkBuy(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
@@ -1289,7 +1315,7 @@ def actionTalkBuy():
     printNPCTalk("buy")
 
 
-def actionTalkSell():
+def actionTalkSell(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
@@ -1359,7 +1385,7 @@ def chooseDoor(room_id, action, door_closed=None, door_locked=None):
   return ret
 
 
-def actionUnlock():
+def actionUnlock(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   doors = GameData.GetDoors()
@@ -1376,7 +1402,7 @@ def actionUnlock():
     cm.Print("\nYou don't have the key for that!", attr=ANSI.TEXT_BOLD)
 
 
-def actionClose():
+def actionClose(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
@@ -1397,7 +1423,7 @@ def actionClose():
     frame.Render(cm, directions[facing].Names[0].capitalize())
 
 
-def actionOpen():
+def actionOpen(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
@@ -1423,30 +1449,28 @@ def actionOpen():
       frame.Render(cm, directions[facing].Names[0].capitalize())
 
 
-def actionListPlayers():
+def actionListPlayers(data=None):
   cm = GameData.GetConsole()
   pinfo = LoadStatsDB()
+  lines = []
   if len(pinfo) == 0:
-    cm.Print("\nThere are no saved characters!")
+    appendLine(lines, "")
+    appendLine(lines, "There are no saved characters!")
   else:
-    cm.Print("\n%-20s %-11s %s" %
-             ("CHARACTER NAME", "TIME PLAYED", "SAVED IN ROOM"),
-             attr=ANSI.TEXT_BOLD)
-    cm.Print("%-20s %-11s %s" %
-             ("--------------", "-----------", "-------------"),
-             attr=ANSI.TEXT_BOLD)
+    appendLine(lines, "\n%-20s %-11s %s" % ("CHARACTER NAME", "TIME PLAYED", "SAVED IN ROOM"), ANSI.TEXT_BOLD)
+    appendLine(lines, "%-20s %-11s %s" % ("--------------", "-----------", "-------------"), ANSI.TEXT_BOLD)
     for x in sorted(pinfo):
       if pinfo[x]["played"] > 0:
-        cm.Print("%-20s %-11s %s" % (x, "%0.2f days" % (pinfo[x]["played"]), pinfo[x]["info"]))
+        appendLine(lines, "%-20s %-11s %s" % (x, "%0.2f days" % (pinfo[x]["played"]), pinfo[x]["info"]))
+  printPaginate(lines)
 
-
-def actionLook():
+def actionLook(data=None):
   player = GameData.GetPlayer()
   printRoomDescription(player.Room)
   printRoomObjects(player.Room)
 
 
-def actionChangePassword():
+def actionChangePassword(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   if player.CombatState != PlayerCombatState.NONE:
@@ -1467,7 +1491,7 @@ def actionChangePassword():
     cm.Print("\nCharacter updated.")
 
 
-def actionQuit():
+def actionQuit(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   if player.CombatState != PlayerCombatState.NONE:
@@ -1485,7 +1509,7 @@ def actionQuit():
     cm.Print("\nQuit aborted.")
 
 
-def actionRest():
+def actionRest(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   if player.CombatState != PlayerCombatState.NONE:
@@ -1530,11 +1554,11 @@ def actionRest():
           break
 
 
-def actionStatsGeneric():
+def actionStatsGeneric(data=None):
   printStats(GameData.GetPlayer())
 
 
-def actionSaveGeneric():
+def actionSaveGeneric(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   if player.CombatState != PlayerCombatState.NONE:
@@ -1547,7 +1571,7 @@ def actionSaveGeneric():
     cm.Print("\nCharacter saved.")
 
 
-def actionTime():
+def actionTime(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   cm.Print("\n%s on %s" % (player.GameTimeStr(), player.GameTimeDateStr()))
@@ -1572,9 +1596,52 @@ class GenericCommand:
 commands = []
 
 
-def actionPrintHelp():
+def actionPrintCombatHelp(lines, data):
+    combatant = data[1]
+    target = data[2]
+    att = combatant.Person.GenerateCombatAttacks()
+    if len(att) > 0:
+      att_name = "%d ML [%s]" % (att[0].SkillML, att[0].Name)
+    else:
+      att_name = "no weapon!"
+    if combatant.Target is not None:
+      target_name = "%s [%d IP]" % (combatant.Target.Person.Name,
+                                    combatant.Target.Person.IP())
+    else:
+      target_name = "[NO TARGET]"
+    if combatant.Bloodloss > 0:
+      appendLine(lines, "")
+      appendLine(lines, "BLOODLOSS POINTS: %d of %d" %
+                   (combatant.Bloodloss, combatant.Person.AttrEndurance()))
+    appendLine(lines, "")
+    appendLine(lines, "COMBAT COMMANDS:", ANSI.TEXT_BOLD)
+    appendLine(lines, "")
+    appendLine(lines, "%-8s %-5s : %s" % ("AIM", "", aims[combatant.Aim].Name))
+    if not combatant.Prone:
+      appendLine(lines, "%-8s %-5s : %s" % ("ATTACK", "[A]", att_name))
+    appendLine(lines, "%-8s %-5s :" % ("CAST", "[C]"))
+    defe_att = combatant.Person.GenerateCombatAttacks(block=True)
+    if combatant.DefAction == Action.DODGE or len(defe_att) < 1:
+      defe_name = "%d ML [%s]" % (combatant.Person.AttrDodge(), "DODGE")
+    else:
+      defe_name = "%s ML [BLOCK with %s]" % (defe_att[0].SkillML, defe_att[0].Name)
+    appendLine(lines, "%-8s %-5s : %s" % ("DEFENSE", "[DEF]", defe_name))
+    appendLine(lines, "%-8s %-5s : %d ML" % ("FLEE", "[F]", combatant.Person.AttrDodge()))
+    # appendLine(lines, "  GRAPPLE")
+    # appendLine(lines, "  MISSILE")
+    appendLine(lines, "%-8s %-5s :" % ("PASS", "[P]"))
+    if combatant.Prone:
+      appendLine(lines, "%-8s %-5s :" % ("STAND", ""), cm.ColorPair(TEXT_COLOR.YELLOW))
+    appendLine(lines, "%-8s %-5s : %s" % ("TARGET", "[T]", target_name))
+
+
+def actionPrintHelp(data=None):
+  player = GameData.GetPlayer()
   cm = GameData.GetConsole()
-  cm.Print("\nGENERAL COMMANDS:\n")
+  lines = []
+  appendLine(lines, "")
+  appendLine(lines, "GENERAL COMMANDS:", ANSI.TEXT_BOLD)
+  appendLine(lines, "")
   # generic commands
   for cmd in commands:
     cmd_len = len(cmd.Commands)
@@ -1587,9 +1654,11 @@ def actionPrintHelp():
       abbrevs += "]"
     else:
       abbrevs = ""
-    cm.Print("%-10s%s" % (cmd.Commands[0].upper(), abbrevs))
+    appendLine(lines, "%-10s%s" % (cmd.Commands[0].upper(), abbrevs))
   # exits
-  cm.Print("\nMOVE DIRECTION:\n")
+  appendLine(lines, "")
+  appendLine(lines, "MOVE DIRECTIONS:", ANSI.TEXT_BOLD)
+  appendLine(lines, "")
   for dir_id, dir_info in directions.items():
     dir_len = len(dir_info.Names)
     if dir_len > 1:
@@ -1601,9 +1670,12 @@ def actionPrintHelp():
       abbrevs += "]"
     else:
       abbrevs = ""
-    cm.Print("%-10s%s" % (dir_info.Names[0].upper(), abbrevs))
-  # break prompt loop to let other sections add commands
-  return False
+    appendLine(lines, "%-10s%s" % (dir_info.Names[0].upper(), abbrevs))
+
+  if player.CombatState != PlayerCombatState.NONE and data is not None:
+    actionPrintCombatHelp(lines, data)
+
+  printPaginate(lines)
 
 
 commands.append(GenericCommand(["armor", "ac"], actionArmor))
@@ -1664,7 +1736,7 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
           cmd_match = gen_cmd
           break
     if cmd_match is not None:
-      res = cmd_match.Function()
+      res = cmd_match.Function(cmdHandlerData)
       if res is False:
         if cmdHandler is not None:
           if cmdHandler(x, cmdHandlerData):
@@ -1746,7 +1818,7 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
             return
         if not trigger_deny:
           cm.Print("\nYou can't go in that direction.", attr=ANSI.TEXT_BOLD)
-
+          continue
       res = False
       if cmdHandler is not None:
         res = cmdHandler(x, cmdHandlerData)

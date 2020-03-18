@@ -7,7 +7,7 @@
 from time import sleep
 
 from console import (TEXT_COLOR, ANSI, InputFlag)
-from global_defines import (DiceRoll, Roll, CoverageEnum, body_parts, aims,
+from global_defines import (DiceRoll, Roll, CoverageEnum, body_parts,
                             AimEnum, SkillEnum, ItemTypeEnum,
                             PlayerCombatState, wounds, PersonWound,
                             AttrEnum, PersonTypeEnum, ImpactActionEnum)
@@ -16,7 +16,7 @@ from logger import (logd, loge)
 from table_melee_attack import (Action, ResultEnum, T_ATK, T_DEF,
                                 resolve_melee)
 from table_dmg import dmg_table_melee
-from utils import (chooseNPC, prompt)
+from utils import (printPaginate, actionPrintCombatHelp, chooseNPC, prompt)
 
 
 # Combat Flags
@@ -95,44 +95,6 @@ hit_table_melee_default = {
 
 
 # COMBAT COMMANDS
-
-def printCombatAttackActions(combatant, target):
-  cm = GameData.GetConsole()
-  att = combatant.Person.GenerateCombatAttacks()
-  if len(att) > 0:
-    att_name = "%d ML [%s]" % (att[0].SkillML, att[0].Name)
-  else:
-    att_name = "no weapon!"
-  if combatant.Target is not None:
-    target_name = "%s [%d IP]" % (combatant.Target.Person.Name,
-                                  combatant.Target.Person.IP())
-  else:
-    target_name = "[NO TARGET]"
-  if combatant.Bloodloss > 0:
-    cm.Print("\nBLOODLOSS POINTS: %d of %d" %
-             (combatant.Bloodloss, combatant.Person.AttrEndurance()))
-  cm.Print("\nOFFENSE COMMANDS:\n")
-  cm.Print("%-8s %-5s : %s" % ("AIM", "", aims[combatant.Aim].Name))
-  if not combatant.Prone:
-    cm.Print("%-8s %-5s : %s" % ("ATTACK", "[A]", att_name))
-  cm.Print("%-8s %-5s :" % ("CAST", "[C]"))
-  defe_att = combatant.Person.GenerateCombatAttacks(block=True)
-  if combatant.DefAction == Action.DODGE or len(defe_att) < 1:
-    defe_name = "%d ML [%s]" % (combatant.Person.AttrDodge(), "DODGE")
-  else:
-    defe_name = "%s ML [BLOCK with %s]" % (defe_att[0].SkillML, defe_att[0].Name)
-  cm.Print("%-8s %-5s : %s" % ("DEFENSE", "[DEF]", defe_name))
-  cm.Print("%-8s %-5s : %d ML" % ("FLEE", "[F]",
-                                  combatant.Person.AttrDodge()))
-  # cm.Print("  GRAPPLE")
-  # cm.Print("  MISSILE")
-  cm.Print("%-8s %-5s :" % ("PASS", "[P]"))
-  if combatant.Prone:
-    cm.Print("%-8s %-5s :" % ("STAND", ""),
-             attr=cm.ColorPair(TEXT_COLOR.YELLOW))
-  cm.Print("%-8s %-5s : %s" %
-           ("TARGET", "[T]", target_name))
-
 
 def chooseDefense(combatant):
   cm = GameData.GetConsole()
@@ -459,8 +421,6 @@ def commandHandler(command, data):
     return True
   elif command == "target" or command == "t":
     chooseTarget(att, order)
-  elif command == "help" or command == "?":
-    printCombatAttackActions(att, defe)
   else:
     return False
 
@@ -516,7 +476,9 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
     if TAdv:
       cm.Print("\nTACTICAL ADVANTAGE!",
                attr=ANSI.TEXT_BOLD | cm.ColorPair(TEXT_COLOR.GREEN))
-    printCombatAttackActions(att, defe)
+    lines = []
+    actionPrintCombatHelp(lines, [None, att, defe])
+    printPaginate(lines)
     prompt(commandHandler, [order, att, defe])
 
   else:
