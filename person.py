@@ -137,7 +137,8 @@ persons = {
                 MobAttack("Claws", 100, 35, 0, 0, DiceRoll(1, 3), DamageTypeEnum.EDGE),
             ],
             loot={
-                Ring("silver ring", QualityEnum.SUP, MaterialEnum.SILVER, 0.1, 1500, flags=ItemFlagEnum.MAGIC, eff=[Effect(EffectTypeEnum.DEX, 1)]): 100,
+                Ring("silver ring", QualityEnum.SUP, MaterialEnum.SILVER, 0.1, 100, flags=ItemFlagEnum.MAGIC,
+                     eff=[Effect(EffectTypeEnum.ATTRIBUTE, AttrEnum.DEXTERITY, 1)]): 100,
                 rat_fur: 100,
             },
             frame=FrameItemEnum.RAT),

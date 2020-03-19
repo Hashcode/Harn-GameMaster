@@ -35,8 +35,12 @@ x Dynamic Item Placement
 / Paginate:
   x Help
   x News
+  x Stats
   - Any numbered lists
-  - Wounds list
+/ Person / Item Effects
+  x Stats
+  x Skills
+  - Other (Bleed, Poison)
 - Room Objects
   - Examine Action
 - Turn / Push / Pull Actions

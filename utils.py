@@ -87,6 +87,13 @@ def printItems(lines, items, number=False, stats=False, shop=False, valueAdj=1):
       appendLine(lines, "%2d. %-30s%s%s" % (count, item_name, item_info, item_value))
     else:
       appendLine(lines, "%-30s%s%s" % (item_name, item_info, item_value))
+    if stats:
+      if item.Effects is not None:
+        for eff in item.Effects:
+          if number:
+            appendLine(lines, "      (%s)" % eff.toString())
+          else:
+            appendLine(lines, "  (%s)" % eff.toString())
 
 
 '''
@@ -378,7 +385,8 @@ def printStats(person):
       appendLine(lines, "")
       appendLine(lines, "%s STATS" % (ac.Name.upper()), ANSI.TEXT_BOLD)
       appendLine(lines, "")
-      for attr, val in person.Attr.items():
+      for attr in person.Attr.keys():
+        val = person.GetAttr(attr)
         if not attributes[attr].Hidden:
           if attributes[attr].AttrClass == ac_id:
             appendLine(lines, "%-15s: " % (attributes[attr].Name), end="")
@@ -427,11 +435,11 @@ def actionComingSoon():
   cm.Print("\nComing soon!")
 
 
-def chooseItem(items, verb, stats=False, shop=False, valueAdj=1):
+def chooseItem(items, verb, stats=True, shop=False, valueAdj=1):
   cm = GameData.GetConsole()
   lines = []
   appendLine(lines, "")
-  appendLine(lines, "ITEMS", ANSI.TEXT_BOLD)
+  appendLine(lines, "%s AN ITEM" % verb.upper(), ANSI.TEXT_BOLD)
   appendLine(lines, "")
   printItems(lines, items, number=True, stats=stats, shop=shop, valueAdj=valueAdj)
   printPaginate(lines)
@@ -1167,8 +1175,20 @@ def processTriggers(obj, triggers):
         if item is not None:
           rooms[obj].RemoveItem(item)
           del item
-        # TODO:
-        cm.Print("* Coming Soon *")
+      elif tr.TriggerType == TriggerTypeEnum.EFFECT_ATTR:
+        logd("[trigger] EFFECT_ATTR: %s" % (attributes[tr.Data].Name))
+        if type(obj) == Mob or type(obj) == Player:
+          dur = 0
+          if tr.Data3 is not None:
+            dur = tr.Data3
+          obj.Effects.append(Effect(EffectTypeEnum.ATTRIBUTE, tr.Data, tr.Data2, dur))
+      elif tr.TriggerType == TriggerTypeEnum.EFFECT_SKILL:
+        logd("[trigger] EFFECT_SKILL: %s" % (skills[tr.Data].Name))
+        if type(obj) == Mob or type(obj) == Player:
+          dur = 0
+          if tr.Data3 is not None:
+            dur = tr.Data3
+          obj.Effects.append(Effect(EffectTypeEnum.SKILL, tr.Data, tr.Data2, dur))
       elif tr.TriggerType == TriggerTypeEnum.END:
         logd("[trigger] END")
         return False
@@ -1223,7 +1243,7 @@ def actionShopBuy(shopkeep):
   if len(items) < 1:
     cm.Print("\nThere is nothing to buy.")
     return
-  item = chooseItem(items, "buy", stats=True, shop=True)
+  item = chooseItem(items, "buy", shop=True)
   if item is None:
     return
   if item.Value > player.Currency:
@@ -1261,7 +1281,7 @@ def actionShopSell(shopkeep):
     return
   # sell items for 1/2 value
   priceAdj = .5
-  item = chooseItem(items, "sell", stats=True, shop=True, valueAdj=priceAdj)
+  item = chooseItem(items, "sell", shop=True, valueAdj=priceAdj)
   if item is None:
     return
   price = item.Value * priceAdj

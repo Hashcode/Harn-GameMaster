@@ -281,10 +281,8 @@ def HandleImpactDMG(player, att, defe, at, res_level):
 
         # determine if the Injury Point Index is > STA == DEATH
         logd("%s WOUND DEATH check: %d vs. %d STA" %
-             (defe.Person.Name, defe.Person.IPIndex(),
-              defe.Person.Attr[AttrEnum.STAMINA]))
-        if defe.Person.IPIndex() > \
-           defe.Person.Attr[AttrEnum.STAMINA]:
+             (defe.Person.Name, defe.Person.IPIndex(), defe.Person.GetAttr(AttrEnum.STAMINA)))
+        if defe.Person.IPIndex() > defe.Person.GetAttr(AttrEnum.STAMINA):
           if att.Person == player:
             cm.Print("%s DIES from %s wounds!" %
                      (defe.Person.Name.capitalize(),
@@ -299,9 +297,8 @@ def HandleImpactDMG(player, att, defe, at, res_level):
       elif ia.Action == ImpactActionEnum.KILL_CHECK:
         r = DiceRoll(ia.Level, 6).Result()
         logd("%s DEATH check: %d vs. %d STA" %
-             (defe.Person.Name, r,
-              defe.Person.Attr[AttrEnum.STAMINA]))
-        if r > defe.Person.Attr[AttrEnum.STAMINA]:
+             (defe.Person.Name, r, defe.Person.GetAttr(AttrEnum.STAMINA)))
+        if r > defe.Person.GetAttr(AttrEnum.STAMINA):
           # DEATH!
           if att.Person == player:
             cm.Print("%s DIES instantly!" % (defe.Person.Name.capitalize()),
@@ -338,11 +335,11 @@ def HandleImpactDMG(player, att, defe, at, res_level):
           ia.Action = ImpactActionEnum.STUMBLE
         else:
           r = DiceRoll(ia.Level, 6).Result() + defe.Person.PhysicalPenalty()
-          if r > defe.Person.Attr[AttrEnum.DEXTERITY]:
+          if r > defe.Person.GetAttr(AttrEnum.DEXTERITY):
             CombatantFumble(defe, defe.Attacks[0].Item)
       if ia.Action == ImpactActionEnum.STUMBLE:
         r = DiceRoll(ia.Level, 6).Result() + defe.Person.PhysicalPenalty()
-        if r > defe.Person.Attr[AttrEnum.AGILITY]:
+        if r > defe.Person.GetAttr(AttrEnum.AGILITY):
           CombatantStumble(defe)
       if ia.Action == ImpactActionEnum.BLEED:
         if att.Person == player:
@@ -570,7 +567,7 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
             # account for strapped on shield
             if at.Item.ItemType == ItemTypeEnum.SHIELD:
               r -= 5
-            if r > att.Person.Attr[AttrEnum.DEXTERITY]:
+            if r > att.Person.GetAttr(AttrEnum.DEXTERITY):
               CombatantFumble(att, at.Item)
             else:
               res.Result = ResultEnum.MISS
@@ -585,7 +582,7 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
             # account for strapped on shield
             if defe.Attacks[0].Item.ItemType == ItemTypeEnum.SHIELD:
               r -= 5
-            if r > defe.Person.Attr[AttrEnum.DEXTERITY]:
+            if r > defe.Person.GetAttr(AttrEnum.DEXTERITY):
               CombatantFumble(defe, defe.Attacks[0].Item)
           # T_ATK is not in targets, reset this to also show attacker missed
           if T_ATK & origTargetFlag == 0:
@@ -595,13 +592,13 @@ def HandleAttack(att, order, player_combatant, TAdv=False):
       if res.Result == ResultEnum.STUMBLE:
         if T_ATK & res.TargetFlag > 0:
           r = DiceRoll(res.Level, 6).Result() + att.Person.PhysicalPenalty()
-          if r > att.Person.Attr[AttrEnum.AGILITY]:
+          if r > att.Person.GetAttr(AttrEnum.AGILITY):
             CombatantStumble(att)
           else:
             res.Result = ResultEnum.MISS
         if T_DEF & res.TargetFlag > 0:
           r = DiceRoll(res.Level, 6).Result() + defe.Person.PhysicalPenalty()
-          if r > defe.Person.Attr[AttrEnum.AGILITY]:
+          if r > defe.Person.GetAttr(AttrEnum.AGILITY):
             CombatantStumble(defe)
           # T_ATK is not in targets, reset this to also show attacker missed
           if T_ATK & origTargetFlag == 0:

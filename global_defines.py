@@ -358,25 +358,42 @@ armor_shapes = {
 
 class EffectTypeEnum(IntEnum):
   NONE = 0
-  STR = 1
-  DEX = 2
-  WIS = 3
-  CON = 4
-  ATK = 5
-  DEF = 6
-  HP_MAX = 7
-  HP_REGEN = 8
-  MANA_MAX = 9
-  MANA_REGEN = 10
-  HEALING = 11
-  DAMAGE = 12
+  ATTRIBUTE = 1
+  SKILL = 2
 
 
 class Effect:
-  def __init__(self, effect_type, mod, dur=0):
+  def __init__(self, effect_type, value, mod, dur=0):
     self.EffectType = effect_type
+    self.Value= value
     self.Modifier = mod
     self.Duration = dur
+
+  def Copy(self, e):
+    # handle old effects
+    try:
+      self.EffectType = e.EffectType
+      self.Value = e.Value
+    except:
+      self.EffectType = EffectTypeEnum.NONE
+      self.Value = 0
+    self.Modifier = e.Modifier
+    self.Duration = e.Duration
+
+  def toString(self):
+    if self.EffectType == EffectTypeEnum.NONE:
+      return "broken effect"
+    desc = ""
+    if self.Modifier >= 0:
+      desc += "+"
+    desc += "%d " % self.Modifier
+    if self.EffectType == EffectTypeEnum.ATTRIBUTE:
+      desc += attributes[self.Value].Abbrev
+    elif self.EffectType == EffectTypeEnum.SKILL:
+      desc += skills[self.Value].Name
+    if self.Duration > 0:
+      desc += " (%d seconds left)" % self.Duration
+    return desc
 
 
 # ITEMS
@@ -1483,7 +1500,7 @@ class Person:
       self.Wounds.append(x)
     self.Effects.clear()
     for x in p.Effects:
-      self.Effects.append(x)
+      self.Effects.append(Effect(EffectTypeEnum.NONE, 0, 0).Copy(x))
     self.Items.clear()
     for it in p.Items:
       self.AddItem(it, it.Equipped)
@@ -1491,10 +1508,40 @@ class Person:
   def ResetStats(self):
     self.Effects.clear()
 
+  def CalcEffect(self, efType, efValue):
+    ret = 0
+    if self.Effects is not None:
+      for eff in self.Effects:
+        if eff.EffectType == efType and eff.Value == efValue:
+          ret += eff.Modifier
+    if self.Items is not None:
+      for it in self.Items:
+        if it.Equipped and it.Effects is not None:
+          for eff in it.Effects:
+            if eff.EffectType == efType and eff.Value == efValue:
+              ret += eff.Modifier
+    return ret
+
+  def GetAttr(self, attr):
+    if attr in self.Attr:
+      return self.Attr[attr] + self.CalcEffect(EffectTypeEnum.ATTRIBUTE, attr)
+    else:
+      return 0
+
   def AddItem(self, item, equipped=False):
+    effs = item.Effects
+    item.Effects = None
     i = deepcopy(item)
     i.UUID = uuid4()
     i.Equipped = equipped
+    if effs is not None:
+      cm = GameData.GetConsole()
+      i.Effects = []
+      for eff in effs:
+        e = Effect(EffectTypeEnum.NONE, 0, 0)
+        e.Copy(eff)
+        i.Effects.append(e)
+      del effs
     self.Items.append(i)
     return True
 
@@ -1594,11 +1641,11 @@ class Person:
     attr2 = 0
     attr3 = 0
     if skills[skill_id].Attr1 in self.Attr:
-      attr1 = self.Attr[skills[skill_id].Attr1]
+      attr1 = self.GetAttr(skills[skill_id].Attr1)
     if skills[skill_id].Attr2 in self.Attr:
-      attr2 = self.Attr[skills[skill_id].Attr2]
+      attr2 = self.GetAttr(skills[skill_id].Attr2)
     if skills[skill_id].Attr3 in self.Attr:
-      attr3 = self.Attr[skills[skill_id].Attr3]
+      attr3 = self.GetAttr(skills[skill_id].Attr3)
     sb = round((attr1 + attr2 + attr3) / 3)
     return sb
 
@@ -1612,6 +1659,7 @@ class Person:
     ml = self.SkillBase(skill_id) * skills[skill_id].OMLMod
     if skill_id in self.SkillLinks:
       ml += self.SkillLinks[skill_id].Points
+    ml += self.CalcEffect(EffectTypeEnum.SKILL, skill_id)
     if not skipPenalty:
       if skills[skill_id].SkillClass == SkillClassEnum.PHYSICAL or skills[skill_id].SkillClass == SkillClassEnum.COMBAT:
         ml -= (self.PhysicalPenalty() * 5)
@@ -1807,6 +1855,8 @@ class TriggerTypeEnum(IntEnum):
   PAUSE = 23
   ROOM_SPAWN_ITEM = 24
   ROOM_DESPAWN_ITEM = 25
+  EFFECT_ATTR = 26
+  EFFECT_SKILL = 27
   END = 127
 
 
@@ -1819,10 +1869,11 @@ class Condition:
 
 
 class Trigger:
-  def __init__(self, trigger_type, data=None, data2=None, chance=100):
+  def __init__(self, trigger_type, data=None, data2=None, data3=None, chance=100):
     self.TriggerType = trigger_type
     self.Data = data
     self.Data2 = data2
+    self.Data3 = data2
     self.Chance = chance
 
 
