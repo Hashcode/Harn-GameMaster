@@ -2471,6 +2471,7 @@ class RoomFlag(IntEnum):
   PEACEFUL = 1 << 0
   OUTSIDE = 1 << 1
   LIGHT = 1 << 2
+  NO_SAVE = 1 << 3
 
 
 class Room:

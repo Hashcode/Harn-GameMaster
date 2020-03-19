@@ -892,6 +892,7 @@ rooms = {
                  "occasional small scratch marks.",
                  "A rickety staircase leads up along the west wall."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.UP: Exit(RoomEnum.BL_WAREHOUSE),
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_2,
@@ -914,6 +915,7 @@ rooms = {
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
                  "occasional small scratch marks."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_3),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_1,
@@ -927,6 +929,7 @@ rooms = {
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
                  "occasional small scratch marks."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_2),
              },
@@ -956,6 +959,7 @@ rooms = {
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
                  "occasional small scratch marks."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_2),
                  DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_5),
@@ -977,6 +981,7 @@ rooms = {
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
                  "occasional small scratch marks."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_4),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_7, DoorEnum.WARREN_DOOR_1,
@@ -989,6 +994,7 @@ rooms = {
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
                  "occasional small scratch marks."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_7),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_8),
@@ -1000,6 +1006,7 @@ rooms = {
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
                  "occasional small scratch marks."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_5, DoorEnum.WARREN_DOOR_1,
                                            FrameGroupEnum.DOOR_CLOSED, FrameGroupEnum.DOOR_OPEN),
@@ -1013,6 +1020,7 @@ rooms = {
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
                  "occasional small scratch marks."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_6),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_9),
@@ -1036,6 +1044,7 @@ rooms = {
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
                  "occasional small scratch marks."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_7),
                  DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_8),
@@ -1057,6 +1066,7 @@ rooms = {
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
                  "occasional small scratch marks."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_8,
                                            frame_id=FrameGroupEnum.ARCHWAY),
@@ -1069,6 +1079,7 @@ rooms = {
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
                  "occasional small scratch marks."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_10),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_12,
@@ -1104,6 +1115,7 @@ rooms = {
                  "occasional small scratch marks.",
                  "The eastern side of the area reveals a large cavern in the ground."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_11,
                                           frame_id=FrameGroupEnum.ARCHWAY),
@@ -1120,6 +1132,7 @@ rooms = {
                  "occasional small scratch marks.",
                  "The eastern side of the area reveals a large cavern in the ground."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_12),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_14),
@@ -1135,6 +1148,7 @@ rooms = {
                  "occasional small scratch marks.",
                  "A moldy wooden bridge crosses a large cavern in the ground to the east."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_13),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_15,
@@ -1160,6 +1174,7 @@ rooms = {
                  "the cavern below.  A foul smelling wind rises below and blows across the bridge and back into "
                  "the entry tunnels."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_14,
                                           frame_id=FrameGroupEnum.BRIDGE),
@@ -1178,6 +1193,7 @@ rooms = {
                  "occasional small scratch marks.",
                  "A moldy wooden bridge crosses a large cavern in the ground to the west."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_17),
                  DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_15,
@@ -1216,6 +1232,7 @@ rooms = {
                  "occasional small scratch marks.",
                  "The western side of the area reveals a large cavern in the ground."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_18),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_19,
@@ -1233,6 +1250,7 @@ rooms = {
                  "occasional small scratch marks.",
                  "The west side of the area reveals a large cavern in the ground."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_17),
              },
@@ -1265,6 +1283,7 @@ rooms = {
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
                  "occasional small scratch marks."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_17),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_20,
@@ -1277,6 +1296,7 @@ rooms = {
                  "large rug is laid across the center of the room.  In one corner a small divan which might sit a "
                  "small child or two."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_22),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_21),
@@ -1290,6 +1310,7 @@ rooms = {
                  "large rug is laid across the center of the room.  In one corner a small divan which might sit a "
                  "small child or two."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_23),
                  DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_20),
@@ -1311,6 +1332,7 @@ rooms = {
                  "large rug is laid across the center of the room.  In one corner a small divan which might sit a "
                  "small child or two."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_20),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_23),
@@ -1322,6 +1344,7 @@ rooms = {
                  "large rug is laid across the center of the room.  In one corner a small divan which might sit a "
                  "small child or two."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_RAT_WARREN_24, DoorEnum.WARREN_DOOR_2,
                                            FrameGroupEnum.DOOR_CLOSED, FrameGroupEnum.DOOR_OPEN),
@@ -1344,6 +1367,7 @@ rooms = {
                  "Crowded into this small space is a miniature bed, an armoire and small chest of drawers. "
                  "Small items of decoration adorn the walls and top of the chest."
              ],
+             flags=RoomFlag.NO_SAVE,
              exits={
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_23, DoorEnum.WARREN_DOOR_2,
                                            FrameGroupEnum.DOOR_CLOSED, FrameGroupEnum.DOOR_OPEN),

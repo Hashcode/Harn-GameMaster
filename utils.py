@@ -110,6 +110,7 @@ render_offset = [
     [  -6,  -3, 0,  3,  6],
 ]
 
+
 def renderOffset(facing, level, x_offset):
   return render_offset[level - 1][x_offset + 2]
 
@@ -1479,8 +1480,12 @@ def actionLook(data=None):
 def actionChangePassword(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
+  rooms = GameData.GetRooms()
   if player.CombatState != PlayerCombatState.NONE:
     cm.Print("\nYou can't change your password in combat!", attr=ANSI.TEXT_BOLD)
+    return
+  if rooms[player.Room].Flags & RoomFlag.NO_SAVE != 0:
+    cm.Print("\nYou can't change your password in an unsafe area!", attr=ANSI.TEXT_BOLD)
     return
   if player.IsTalking():
     cm.Print("\nYou are talking! Enter \"DONE\" to end conversation.", attr=ANSI.TEXT_BOLD)
@@ -1500,8 +1505,12 @@ def actionChangePassword(data=None):
 def actionQuit(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
+  rooms = GameData.GetRooms()
   if player.CombatState != PlayerCombatState.NONE:
     cm.Print("\nYou can't QUIT in combat!", attr=ANSI.TEXT_BOLD)
+    return
+  if rooms[player.Room].Flags & RoomFlag.NO_SAVE != 0:
+    cm.Print("\nYou can't QUIT in an unsafe area!", attr=ANSI.TEXT_BOLD)
     return
   if player.IsTalking():
     cm.Print("\nYou are talking! Enter \"DONE\" to end conversation.", attr=ANSI.TEXT_BOLD)
@@ -1567,8 +1576,12 @@ def actionStatsGeneric(data=None):
 def actionSaveGeneric(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
+  rooms = GameData.GetRooms()
   if player.CombatState != PlayerCombatState.NONE:
     cm.Print("\nYou can't SAVE in combat!", attr=ANSI.TEXT_BOLD)
+    return
+  if rooms[player.Room].Flags & RoomFlag.NO_SAVE != 0:
+    cm.Print("\nYou can't SAVE in an unsafe area!", attr=ANSI.TEXT_BOLD)
     return
   if player.IsTalking():
     cm.Print("\nYou are talking! Enter \"DONE\" to end conversation.", attr=ANSI.TEXT_BOLD)
