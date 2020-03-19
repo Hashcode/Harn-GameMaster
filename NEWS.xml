@@ -29,6 +29,26 @@
       - Only 1/2 of equipped item weight is counted towards
         encumbrance penalty</text>
   </item>
+  <item>
+    <id>3</id>
+    <date>2020-03-19 4:30PM (PST)</date>
+    <subject>Effects are now in the game!</subject>
+    <text>There are 2 kinds of "effects" currently implemented:
+      1. Stat effects: like +1 DEXTERITY or +2 AGILITY
+      This kind of effect increases a base stat and that increase
+      can be noticed in related skills that use the stat or
+      whenever that stat is checked (such as a stumble roll, etc).
+      2. Skill effects: like +5 AXE or +10 CLUB skill
+      This kind of effect directly increases the skill so that
+      actions with that skill will be more successful than without
+      the effect.
+      
+      Currently, there is only 1 item in the game that has an
+      effect. However, it had to be broken in order to fix effects
+      in general. If you have this item you can see "(broken
+      effect)". Unfortunately, you'll need to discard the broken
+      item and get it again from the original location.</text>
+  </item>
 </news>
 <!--
 # vim: tabstop=2 shiftwidth=2 expandtab:
