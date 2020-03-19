@@ -67,7 +67,7 @@ def filterItems(items, equipped=False, equippable=False, flags=0, noflags=0):
   return item_array
 
 
-def printItems(items, number=False, stats=False, shop=False, valueAdj=1):
+def printItems(lines, items, number=False, stats=False, shop=False, valueAdj=1):
   cm = GameData.GetConsole()
   count = 0
   for item in items:
@@ -84,9 +84,9 @@ def printItems(items, number=False, stats=False, shop=False, valueAdj=1):
     else:
       item_value = ""
     if number:
-      cm.Print("%2d. %-30s%s%s" % (count, item_name, item_info, item_value))
+      appendLine(lines, "%2d. %-30s%s%s" % (count, item_name, item_info, item_value))
     else:
-      cm.Print("%-30s%s%s" % (item_name, item_info, item_value))
+      appendLine(lines, "%-30s%s%s" % (item_name, item_info, item_value))
 
 
 '''
@@ -312,15 +312,18 @@ def printRoomDescription(room_id):
 def printRoomObjects(room_id):
   cm = GameData.GetConsole()
   rooms = GameData.GetRooms()
+  lines = []
   # Persons
   if len(rooms[room_id].Persons) > 0:
-    cm.Print("")
+    appendLine(lines, "")
     for x in rooms[room_id].Persons:
-      cm.Print("%s" % x.LongDescription)
+      appendLine(lines, "%s" % x.LongDescription)
   # Items
   if len(rooms[room_id].Items) > 0:
-    cm.Print("\nThe following items are here:")
-    printItems(rooms[room_id].Items)
+    appendLine(lines, "")
+    appendLine(lines, "The following items are here:")
+    printItems(lines, rooms[room_id].Items)
+  printPaginate(lines)
 
 
 def attrColor(attr):
@@ -351,7 +354,8 @@ def printPaginate(lines, force_break=False):
     count = 0
     for pl in lines:
       cm.Print(pl.Line, pl.Attr, pl.LineEnding)
-      count += 1
+      if pl.LineEnding == "\n":
+        count += 1
       if count >= (cm.screenY - 2) and count < len(lines):
         x = cm.Input("<< [Q] to Quit and [Enter] to Continue >>", line_length=1).lower()
         if x == "q":
@@ -371,29 +375,40 @@ def printStats(person):
     for ac_id, ac in attribute_classes.items():
       if ac.Hidden:
         continue
-      appendLine(lines, "\n%s STATS\n" % (ac.Name.upper()), ANSI.TEXT_BOLD)
+      appendLine(lines, "")
+      appendLine(lines, "%s STATS" % (ac.Name.upper()), ANSI.TEXT_BOLD)
+      appendLine(lines, "")
       for attr, val in person.Attr.items():
         if not attributes[attr].Hidden:
           if attributes[attr].AttrClass == ac_id:
             appendLine(lines, "%-15s: " % (attributes[attr].Name), end="")
             appendLine(lines, "%d" % (val), cm.ColorPair(attrColor(val)))
-    appendLine(lines, "\nCHARACTER STATS\n", ANSI.TEXT_BOLD)
+    appendLine(lines, "")
+    appendLine(lines, "CHARACTER STATS", ANSI.TEXT_BOLD)
+    appendLine(lines, "")
   else:
-    appendLine(lines, "\n%s STATS\n" % (person.Name.upper()), ANSI.TEXT_BOLD)
+    appendLine(lines, "")
+    appendLine(lines, "%s STATS" % (person.Name.upper()), ANSI.TEXT_BOLD)
+    appendLine(lines, "")
   appendLine(lines, "%-15s: %d" % ("Endurance", person.AttrEndurance()))
   appendLine(lines, "%-15s: %d lbs" % ("Inven. Weight", person.ItemWeight()))
   appendLine(lines, "%-15s: %d" % ("Enc. Points", person.EncumbrancePenalty()))
   appendLine(lines, "%-15s: %d" % ("Injury Points", person.IP()))
   appendLine(lines, "%-15s: %d" % ("Fatigue Points", person.FatiguePoints()))
   appendLine(lines, "%-15s: %d" % ("Initiative", person.AttrInitiative()))
-  appendLine(lines, "\n%-15s: %d" % ("Universal Pen.", person.UniversalPenalty()), ANSI.TEXT_BOLD)
+  appendLine(lines, "")
+  appendLine(lines, "%-15s: %d" % ("Universal Pen.", person.UniversalPenalty()), ANSI.TEXT_BOLD)
   appendLine(lines, "%-15s: %d" % ("Physical Pen.", person.PhysicalPenalty()), ANSI.TEXT_BOLD)
   if person.PersonType == PersonTypeEnum.NPC:
     items = filterItems(person.Items, equipped=True)
     if len(items) > 0:
-      appendLine(lines, "\nEQUIPMENT\n", ANSI.TEXT_BOLD)
-      printItems(items, stats=True)
-  appendLine(lines, "\nWOUND LIST\n", ANSI.TEXT_BOLD)
+      appendLine(lines, "")
+      appendLine(lines, "EQUIPMENT", ANSI.TEXT_BOLD)
+      appendLine(lines, "")
+      printItems(lines, items, stats=True)
+  appendLine(lines, "")
+  appendLine(lines, "WOUND LIST", ANSI.TEXT_BOLD)
+  appendLine(lines, "")
   if len(person.Wounds) < 1:
     appendLine(lines, "[NONE]")
   else:
@@ -414,8 +429,12 @@ def actionComingSoon():
 
 def chooseItem(items, verb, stats=False, shop=False, valueAdj=1):
   cm = GameData.GetConsole()
-  cm.Print("\nItems:\n")
-  printItems(items, number=True, stats=stats, shop=shop, valueAdj=valueAdj)
+  lines = []
+  appendLine(lines, "")
+  appendLine(lines, "ITEMS", ANSI.TEXT_BOLD)
+  appendLine(lines, "")
+  printItems(lines, items, number=True, stats=stats, shop=shop, valueAdj=valueAdj)
+  printPaginate(lines)
   x = cm.Input("Which item # to %s (0=Cancel):" % verb, line_length=3,
                input_flags=InputFlag.NUMERIC)
   if not x.isnumeric():
@@ -555,29 +574,35 @@ def actionRemoveItem(data=None):
 def actionInventory(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  cm.Print("\nCURRENCY", attr=ANSI.TEXT_BOLD, end="")
-  cm.Print(": %d SP" % (player.Currency))
-  cm.Print("\nEQUIPMENT", attr=ANSI.TEXT_BOLD)
+  lines = []
+  appendLine(lines, "")
+  appendLine(lines, "CURRENCY", ANSI.TEXT_BOLD, end="")
+  appendLine(lines, ": %d SP" % (player.Currency))
+  appendLine(lines, "")
+  appendLine(lines, "EQUIPMENT", ANSI.TEXT_BOLD)
   items = filterItems(player.Items, equipped=True)
   if len(items) < 1:
-    cm.Print("[NONE]")
+    appendLine(lines, "[NONE]")
   else:
-    printItems(items, stats=True)
-  cm.Print("%-30s : %5s lbs" % ("EQUIPPED WEIGHT=1/2",
-                                "{:3.1f}".format(player.EquipWeight() * 0.5)),
-           attr=ANSI.TEXT_BOLD)
-  cm.Print("\nITEMS", attr=ANSI.TEXT_BOLD)
+    printItems(lines, items, stats=True)
+  appendLine(lines, "%-30s : %5s lbs" % ("EQUIPPED WEIGHT=1/2",
+                                         "{:3.1f}".format(player.EquipWeight() * 0.5)),
+             ANSI.TEXT_BOLD)
+  appendLine(lines, "")
+  appendLine(lines, "ITEMS", ANSI.TEXT_BOLD)
   items = filterItems(player.Items, equipped=False)
   if len(items) < 1:
-    cm.Print("[NONE]")
+    appendLine(lines, "[NONE]")
   else:
-    printItems(items, stats=True)
-  cm.Print("%-30s : %5s lbs" % ("INVENTORY WEIGHT",
-                                "{:3.1f}".format(player.EquipWeight(False))),
-           attr=ANSI.TEXT_BOLD)
-  cm.Print("\n%-30s : %5s lbs" % ("TOTAL WEIGHT",
-                                  "{:3.1f}".format(player.ItemWeight())),
-           attr=ANSI.TEXT_BOLD)
+    printItems(lines, items, stats=True)
+  appendLine(lines, "%-30s : %5s lbs" % ("INVENTORY WEIGHT",
+                                         "{:3.1f}".format(player.EquipWeight(False))),
+             ANSI.TEXT_BOLD)
+  appendLine(lines, "")
+  appendLine(lines, "%-30s : %5s lbs" % ("TOTAL WEIGHT",
+                                         "{:3.1f}".format(player.ItemWeight())),
+             ANSI.TEXT_BOLD)
+  printPaginate(lines)
 
 
 def actionSave():
@@ -595,37 +620,34 @@ def actionSave():
 def actionSkills(data=None, id=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  if id is None:
-    cm.Print("\nUSE ONE OF THE FOLLOWING COMMANDS TO SEE SKILLS\n", attr=ANSI.TEXT_BOLD)
-    cm.Print("skills-combat")
-    cm.Print("skills-communication")
-    cm.Print("skills-crafts")
-    cm.Print("skills-physical")
-    return
+  lines = []
   for skc_id, skc in skill_classes.items():
-    if id != skc_id:
+    if id is not None and id != skc_id:
       continue
     if skc.Hidden:
       continue
-    cm.Print("\n%s SKILLS\n" % (skc.Name.upper()), attr=ANSI.TEXT_BOLD)
+    appendLine(lines, "")
+    appendLine(lines, "%s SKILLS" % (skc.Name.upper()), ANSI.TEXT_BOLD)
+    appendLine(lines, "")
     for sk_id, sk in skills.items():
       if sk.SkillClass != skc_id:
         continue
       if sk.Hidden:
         continue
-      cm.Print("%-15s: " % (sk.Name), end="")
-      cm.Print("%s" % (attributes[skills[sk_id].Attr1].Abbrev),
-               attr=cm.ColorPair(attrColor(player.Attr[skills[sk_id].Attr1])),
-               end="")
-      cm.Print("/", end="")
-      cm.Print("%s" % (attributes[skills[sk_id].Attr2].Abbrev),
-               attr=cm.ColorPair(attrColor(player.Attr[skills[sk_id].Attr2])),
-               end="")
-      cm.Print("/", end="")
-      cm.Print("%s" % (attributes[skills[sk_id].Attr3].Abbrev),
-               attr=cm.ColorPair(attrColor(player.Attr[skills[sk_id].Attr3])),
-               end="")
-      cm.Print("  ML:%-3d" % (player.SkillML(sk_id)))
+      appendLine(lines, "%-15s: " % (sk.Name), end="")
+      appendLine(lines, "%s" % (attributes[skills[sk_id].Attr1].Abbrev),
+                 cm.ColorPair(attrColor(player.Attr[skills[sk_id].Attr1])),
+                 end="")
+      appendLine(lines, "/", end="")
+      appendLine(lines, "%s" % (attributes[skills[sk_id].Attr2].Abbrev),
+                 cm.ColorPair(attrColor(player.Attr[skills[sk_id].Attr2])),
+                 end="")
+      appendLine(lines, "/", end="")
+      appendLine(lines, "%s" % (attributes[skills[sk_id].Attr3].Abbrev),
+                 cm.ColorPair(attrColor(player.Attr[skills[sk_id].Attr3])),
+                 end="")
+      appendLine(lines, "  ML:%-3d" % (player.SkillML(sk_id)))
+  printPaginate(lines)
 
 
 def actionSkillsPhysical(data=None):
@@ -1463,7 +1485,8 @@ def actionListPlayers(data=None):
     appendLine(lines, "")
     appendLine(lines, "There are no saved characters!")
   else:
-    appendLine(lines, "\n%-20s %-11s %s" % ("CHARACTER NAME", "TIME PLAYED", "SAVED IN ROOM"), ANSI.TEXT_BOLD)
+    appendLine(lines, "")
+    appendLine(lines, "%-20s %-11s %s" % ("CHARACTER NAME", "TIME PLAYED", "SAVED IN ROOM"), ANSI.TEXT_BOLD)
     appendLine(lines, "%-20s %-11s %s" % ("--------------", "-----------", "-------------"), ANSI.TEXT_BOLD)
     for x in sorted(pinfo):
       if pinfo[x]["played"] > 0:
@@ -1769,7 +1792,7 @@ commands.append(GenericCommand(["talk"], actionTalk))
 commands.append(GenericCommand(["time"], actionTime))
 commands.append(GenericCommand(["unlock"], actionUnlock))
 # No shiny things for silly users
-# commands.append(GenericCommand(["who"], actionListPlayers))
+commands.append(GenericCommand(["who"], actionListPlayers))
 
 
 def promptTimeout():
