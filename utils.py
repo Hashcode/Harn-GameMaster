@@ -334,43 +334,75 @@ def attrColor(attr):
     return TEXT_COLOR.GREEN
 
 
+class PageLine:
+  def __init__(self, msg="", attr=0, end="\n"):
+    self.Line = msg
+    self.Attr = attr
+    self.LineEnding = end
+
+
+def appendLine(lines, line, attr=0, end="\n"):
+  lines.append(PageLine(line, attr, end))
+
+
+def printPaginate(lines, force_break=False):
+  cm = GameData.GetConsole()
+  if lines is not None and len(lines) > 0:
+    count = 0
+    for pl in lines:
+      cm.Print(pl.Line, pl.Attr, pl.LineEnding)
+      count += 1
+      if count >= (cm.screenY - 2) and count < len(lines):
+        x = cm.Input("<< [Q] to Quit and [Enter] to Continue >>", line_length=1).lower()
+        if x == "q":
+          return True
+        count = 0
+    if force_break and count > 0:
+      x = cm.Input("<< [Q] to Quit and [Enter] to Continue >>", line_length=1).lower()
+      if x == "q":
+        return True
+  return False
+
+
 def printStats(person):
   cm = GameData.GetConsole()
+  lines = []
   if person.PersonType == PersonTypeEnum.PLAYER:
     for ac_id, ac in attribute_classes.items():
       if ac.Hidden:
         continue
-      cm.Print("\n%s STATS\n" % (ac.Name.upper()), attr=ANSI.TEXT_BOLD)
+      appendLine(lines, "\n%s STATS\n" % (ac.Name.upper()), ANSI.TEXT_BOLD)
       for attr, val in person.Attr.items():
         if not attributes[attr].Hidden:
           if attributes[attr].AttrClass == ac_id:
-            cm.Print("%-15s: " % (attributes[attr].Name), end="")
-            cm.Print("%d" % (val), attr=cm.ColorPair(attrColor(val)))
-    cm.Print("\nCHARACTER STATS\n", attr=ANSI.TEXT_BOLD)
+            appendLine(lines, "%-15s: " % (attributes[attr].Name), end="")
+            appendLine(lines, "%d" % (val), cm.ColorPair(attrColor(val)))
+    appendLine(lines, "\nCHARACTER STATS\n", ANSI.TEXT_BOLD)
   else:
-    cm.Print("\n%s STATS\n" % (person.Name.upper()), attr=ANSI.TEXT_BOLD)
-  cm.Print("%-15s: %d" % ("Endurance", person.AttrEndurance()))
-  cm.Print("%-15s: %d lbs" % ("Inven. Weight", person.ItemWeight()))
-  cm.Print("%-15s: %d" % ("Enc. Points", person.EncumbrancePenalty()))
-  cm.Print("%-15s: %d" % ("Injury Points", person.IP()))
-  cm.Print("%-15s: %d" % ("Fatigue Points", person.FatiguePoints()))
-  cm.Print("%-15s: %d" % ("Initiative", person.AttrInitiative()))
-  cm.Print("\n%-15s: %d" % ("Universal Pen.", person.UniversalPenalty()), attr=ANSI.TEXT_BOLD)
-  cm.Print("%-15s: %d" % ("Physical Pen.", person.PhysicalPenalty()), attr=ANSI.TEXT_BOLD)
+    appendLine(lines, "\n%s STATS\n" % (person.Name.upper()), ANSI.TEXT_BOLD)
+  appendLine(lines, "%-15s: %d" % ("Endurance", person.AttrEndurance()))
+  appendLine(lines, "%-15s: %d lbs" % ("Inven. Weight", person.ItemWeight()))
+  appendLine(lines, "%-15s: %d" % ("Enc. Points", person.EncumbrancePenalty()))
+  appendLine(lines, "%-15s: %d" % ("Injury Points", person.IP()))
+  appendLine(lines, "%-15s: %d" % ("Fatigue Points", person.FatiguePoints()))
+  appendLine(lines, "%-15s: %d" % ("Initiative", person.AttrInitiative()))
+  appendLine(lines, "\n%-15s: %d" % ("Universal Pen.", person.UniversalPenalty()), ANSI.TEXT_BOLD)
+  appendLine(lines, "%-15s: %d" % ("Physical Pen.", person.PhysicalPenalty()), ANSI.TEXT_BOLD)
   if person.PersonType == PersonTypeEnum.NPC:
     items = filterItems(person.Items, equipped=True)
     if len(items) > 0:
-      cm.Print("\nEQUIPMENT\n", attr=ANSI.TEXT_BOLD)
+      appendLine(lines, "\nEQUIPMENT\n", ANSI.TEXT_BOLD)
       printItems(items, stats=True)
-  cm.Print("\nWOUND LIST\n", attr=ANSI.TEXT_BOLD)
+  appendLine(lines, "\nWOUND LIST\n", ANSI.TEXT_BOLD)
   if len(person.Wounds) < 1:
-    cm.Print("[NONE]")
+    appendLine(lines, "[NONE]")
   else:
     for w in person.Wounds:
-      cm.Print("%s %s %s wound [%d IP]" %
-               (wounds[w.WoundType].Name,
-                wounds[w.WoundType].Verbs[w.DamageType].lower(),
-                body_parts[w.Location].PartName.lower(), w.Impact))
+      appendLine(lines, "%s %s %s wound [%d IP]" %
+                 (wounds[w.WoundType].Name,
+                  wounds[w.WoundType].Verbs[w.DamageType].lower(),
+                  body_parts[w.Location].PartName.lower(), w.Impact))
+  printPaginate(lines)
 
 
 # GENERIC COMMAND FUNCTIONS
@@ -1122,35 +1154,6 @@ def processTriggers(obj, triggers):
         return False
 
 
-class PageLine:
-  def __init__(self, msg="", attr=0):
-    self.Line = msg
-    self.Attr = attr
-
-
-def appendLine(lines, line, attr=0):
-  lines.append(PageLine(line, attr))
-
-
-def printPaginate(lines, force_break=False):
-  cm = GameData.GetConsole()
-  if lines is not None and len(lines) > 0:
-    count = 0
-    for pl in lines:
-      cm.Print(pl.Line, pl.Attr)
-      count += 1
-      if count >= (cm.screenY - 2) and count < len(lines):
-        x = cm.Input("<< [Q] to Quit and [Enter] to Continue >>", line_length=1).lower()
-        if x == "q":
-          return True
-        count = 0
-    if force_break and count > 0:
-      x = cm.Input("<< [Q] to Quit and [Enter] to Continue >>", line_length=1).lower()
-      if x == "q":
-        return True
-  return False
-
-
 def printNPCTalk(keyword):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
@@ -1622,11 +1625,11 @@ def actionPrintNews(data=None, filter=False):
       for line in text_lines.split("\n"):
         appendLine(lines, "%s" % line.strip())
       quit = printPaginate(lines, force_break=True)
-      if quit:
-        return
+      player.NewsID = max_news
       while len(lines) > 0:
         lines.pop()
-      player.NewsID = max_news
+      if quit:
+        return
   if not filter and not header and len(lines) == 0:
     cm.Print("\nThere is no new news items at this time.")
 
