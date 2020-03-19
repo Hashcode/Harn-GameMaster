@@ -494,10 +494,10 @@ rooms = {
              ]),
     RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_2:
         Room(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_2, ZoneEnum.KEEP,
-             "Second Floor of the North Gatehouse Tower", "the second floor of the north gatehouse tower",
+             "Second Floor of the South Gatehouse Tower", "the second floor of the south gatehouse tower",
              [
-                 "The second floor of the North Gatehouse tower contains several barrels of oil and stacks of rocks which "
-                 "could be used as projectiles against attackers. A small trapdoor in the floor of the northeast corner "
+                 "The second floor of the South Gatehouse tower contains several barrels of oil and stacks of rocks which "
+                 "could be used as projectiles against attackers. A small trapdoor in the floor of the southeast corner "
                  "leads down and a ladder leads up to it's twin in the ceiling."
              ],
              flags=RoomFlag.LIGHT,
