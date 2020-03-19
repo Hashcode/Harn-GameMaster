@@ -1961,6 +1961,7 @@ class Player(Person):
   def __init__(self, name=""):
     super().__init__(PersonTypeEnum.PLAYER, name, "player")
     self.Time = int(time())  # epoch at login
+    self.NewsID = 0
     self.SecondsPlayed = 0
     self.GameTime = 43200  # 12 noon
     self.LastTimeUpdate = 0
@@ -1977,6 +1978,10 @@ class Player(Person):
   def Copy(self, p):
     super().Copy(p)
     self.Time = int(time())  # epoch at login
+    try:
+      self.NewsID = p.NewsID
+    except:
+      self.NewsID = 0
     self.SecondsPlayed = p.SecondsPlayed
     self.GameTime = p.GameTime
     self.LastTimeUpdate = p.LastTimeUpdate

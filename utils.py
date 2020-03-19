@@ -7,6 +7,7 @@
 from sys import exit
 from textwrap import TextWrapper
 from time import sleep
+from xml.dom.minidom import parse, parseString
 
 from console import (TEXT_COLOR, ANSI, InputFlag)
 from db import (LoadStatsDB, SavePlayer)
@@ -1131,7 +1132,7 @@ def appendLine(lines, line, attr=0):
   lines.append(PageLine(line, attr))
 
 
-def printPaginate(lines):
+def printPaginate(lines, force_break=False):
   cm = GameData.GetConsole()
   if lines is not None and len(lines) > 0:
     count = 0
@@ -1141,8 +1142,13 @@ def printPaginate(lines):
       if count >= (cm.screenY - 2) and count < len(lines):
         x = cm.Input("<< [Q] to Quit and [Enter] to Continue >>", line_length=1).lower()
         if x == "q":
-          break
+          return True
         count = 0
+    if force_break and count > 0:
+      x = cm.Input("<< [Q] to Quit and [Enter] to Continue >>", line_length=1).lower()
+      if x == "q":
+        return True
+  return False
 
 
 def printNPCTalk(keyword):
@@ -1583,6 +1589,48 @@ def actionTime(data=None):
             int((player.PlayerTime() % 86400) / 60)))
 
 
+def getText(nodelist):
+    rc = []
+    for node in nodelist:
+        if node.nodeType == node.TEXT_NODE:
+            rc.append(node.data)
+    return ''.join(rc)
+
+
+def actionPrintNews(data=None, filter=False):
+  player = GameData.GetPlayer()
+  cm = GameData.GetConsole()
+  lines = []
+  max_news = 0
+  header = False
+  doc = parse("NEWS.xml")
+  news_items = doc.getElementsByTagName("item")
+  for news in news_items:
+    news_id = int(getText(news.getElementsByTagName("id")[0].childNodes))
+    if news_id > max_news:
+      max_news = news_id
+    if not filter or news_id > player.NewsID:
+      if not header:
+        appendLine(lines, "")
+        appendLine(lines, "NEWS:", ANSI.TEXT_BOLD)
+        header = True
+      appendLine(lines, "")
+      appendLine(lines, "Date   : %s" % getText(news.getElementsByTagName("date")[0].childNodes))
+      appendLine(lines, "Subject: %s" % getText(news.getElementsByTagName("subject")[0].childNodes))
+      appendLine(lines, "")
+      text_lines = getText(news.getElementsByTagName("text")[0].childNodes)
+      for line in text_lines.split("\n"):
+        appendLine(lines, "%s" % line.strip())
+      quit = printPaginate(lines, force_break=True)
+      if quit:
+        return
+      while len(lines) > 0:
+        lines.pop()
+      player.NewsID = max_news
+  if not filter and not header and len(lines) == 0:
+    cm.Print("\nThere is no new news items at this time.")
+
+
 class GenericCommand:
   def __init__(self, cmds, cmd_func, desc=""):
     self.Commands = []
@@ -1691,6 +1739,7 @@ commands.append(GenericCommand(["get"], actionGetItem))
 commands.append(GenericCommand(["help", "?"], actionPrintHelp))
 commands.append(GenericCommand(["inventory", "i"], actionInventory))
 commands.append(GenericCommand(["look", "l"], actionLook))
+commands.append(GenericCommand(["news"], actionPrintNews))
 commands.append(GenericCommand(["open"], actionOpen))
 commands.append(GenericCommand(["password"], actionChangePassword))
 commands.append(GenericCommand(["quests", "quest"], actionQuest))

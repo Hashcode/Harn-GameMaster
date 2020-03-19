@@ -15,7 +15,7 @@ from global_defines import (PersonEnum, PersonFlag, DoorEnum, Door, DoorState, D
                             RoomFuncResponse, RoomEnum, Exit, RoomFlag, Room, QuestEnum,
                             AttrEnum, attribute_classes, attributes,
                             ShapeEnum, QualityEnum, MaterialEnum, ItemTypeEnum, Item, ArmorLayer, Armor)
-from utils import (attrColor, actionInfo, actionSave)
+from utils import (attrColor, actionInfo, actionSave, actionPrintNews)
 
 # from utils import (actionSave)
 
@@ -54,6 +54,9 @@ def room_RestoreSave():
   GameData.InitializeRooms()
   GameData.ProcessEvents(True)
   player.SetRoom(player.Room)
+
+  actionPrintNews(filter=True)
+
   return RoomFuncResponse.SKIP
 
 
@@ -217,6 +220,9 @@ def room_CreateCharacter():
   cm.Print("Done.")
 
   cm.Print("\nGood luck, %s!" % (player.Name))
+
+  actionPrintNews(filter=True)
+
   return RoomFuncResponse.SKIP
 
 

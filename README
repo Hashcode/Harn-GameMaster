@@ -32,6 +32,11 @@ x Time / Hour of Day
 / Tutorial
 x Dynamic Mob Placement
 x Dynamic Item Placement
+/ Paginate:
+  x Help
+  x News
+  - Any numbered lists
+  - Wounds list
 - Room Objects
   - Examine Action
 - Turn / Push / Pull Actions

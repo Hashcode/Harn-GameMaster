@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<news>
+  <item>
+    <id>1</id>
+    <date>2020-03-19 11AM (PST)</date>
+    <subject>News Section!</subject>
+    <text>In order to do a better job of announcing changes in the game,
+      I've added a "News" section which will be displayed during
+      login.  It should only display news that you haven't seen yet,
+      and you can use "Q" to quit out of the news display early.
+
+      If you want to see the news items at any point once in the
+      game, use the NEWS command.</text>
+  </item>
+</news>
+<!--
+# vim: tabstop=2 shiftwidth=2 expandtab:
+//-->
