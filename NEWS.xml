@@ -12,6 +12,19 @@
       If you want to see the news items at any point once in the
       game, use the NEWS command.</text>
   </item>
+  <item>
+    <id>2</id>
+    <date>2020-03-19 12PM (PST)</date>
+    <subject>Bug fixes</subject>
+    <text>- Character facing direction is now saved
+      - New characters will enter the game facing west
+      - Fixed typos in 2nd level of South Gatehouse Tower
+      - Paginated HELP, STATS (and more to come)
+      - Fixed crash when player stumbled
+      - Lowered the weight of keys
+      - Only 1/2 of equipped item weight is counted towards
+        encumbrance penalty</text>
+  </item>
 </news>
 <!--
 # vim: tabstop=2 shiftwidth=2 expandtab:
