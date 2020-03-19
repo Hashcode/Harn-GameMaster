@@ -380,7 +380,6 @@ def commandHandler(command, data):
   cm = GameData.GetConsole()
   order = data[0]
   att = data[1]
-  defe = data[2]
   if command == "stand":
     if att.Prone:
       cm.Print("\nYou stand up.")

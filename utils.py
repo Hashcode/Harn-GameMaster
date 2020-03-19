@@ -7,7 +7,7 @@
 from sys import exit
 from textwrap import TextWrapper
 from time import sleep
-from xml.dom.minidom import parse, parseString
+from xml.dom.minidom import parse
 
 from console import (TEXT_COLOR, ANSI, InputFlag)
 from db import (LoadStatsDB, SavePlayer)
@@ -105,9 +105,9 @@ REND_FACING = 2
 REND_RIGHT = 3
 
 render_offset = [
-    [ -38, -19, 0, 19, 38 ],
-    [ -18,  -9, 0,  9, 18],
-    [  -6,  -3, 0,  3,  6],
+    [-38, -19, 0, 19, 38],
+    [-18, -9, 0, 9, 18],
+    [-6, -3, 0, 3, 6],
 ]
 
 
@@ -1457,7 +1457,6 @@ def actionOpen(data=None):
 
 
 def actionListPlayers(data=None):
-  cm = GameData.GetConsole()
   pinfo = LoadStatsDB()
   lines = []
   if len(pinfo) == 0:
@@ -1470,6 +1469,7 @@ def actionListPlayers(data=None):
       if pinfo[x]["played"] > 0:
         appendLine(lines, "%-20s %-11s %s" % (x, "%0.2f days" % (pinfo[x]["played"]), pinfo[x]["info"]))
   printPaginate(lines)
+
 
 def actionLook(data=None):
   player = GameData.GetPlayer()
@@ -1660,7 +1660,6 @@ commands = []
 def actionPrintCombatHelp(lines, data):
   cm = GameData.GetConsole()
   combatant = data[1]
-  target = data[2]
   att = combatant.Person.GenerateCombatAttacks()
   if len(att) > 0:
     att_name = "%d ML [%s]" % (att[0].SkillML, att[0].Name)
@@ -1674,7 +1673,7 @@ def actionPrintCombatHelp(lines, data):
   if combatant.Bloodloss > 0:
     appendLine(lines, "")
     appendLine(lines, "BLOODLOSS POINTS: %d of %d" %
-                 (combatant.Bloodloss, combatant.Person.AttrEndurance()))
+               (combatant.Bloodloss, combatant.Person.AttrEndurance()))
   appendLine(lines, "")
   appendLine(lines, "COMBAT COMMANDS:", ANSI.TEXT_BOLD)
   appendLine(lines, "")
@@ -1699,7 +1698,6 @@ def actionPrintCombatHelp(lines, data):
 
 def actionPrintHelp(data=None):
   player = GameData.GetPlayer()
-  cm = GameData.GetConsole()
   lines = []
   appendLine(lines, "")
   appendLine(lines, "GENERAL COMMANDS:", ANSI.TEXT_BOLD)

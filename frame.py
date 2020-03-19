@@ -4,7 +4,7 @@
 
 from enum import (IntEnum)
 
-from logger import (logd, loge)
+from logger import (loge)
 
 
 FRAME_HEIGHT = 24
@@ -18,6 +18,7 @@ def CopyLine(line1, line2):
       break
     line1[x] = line2[x]
 
+
 '''
 OFFSET=0
   01234567
@@ -29,6 +30,8 @@ OFFSET=-2
   234567
 D[.....   ]
 '''
+
+
 def MergeLine(line1, line2, offset, logon=False):
   counter = ""
   lenLine = len(line1)
