@@ -16,7 +16,11 @@
     <id>2</id>
     <date>2020-03-19 12PM (PST)</date>
     <subject>Bug fixes</subject>
-    <text>- Character facing direction is now saved
+    <text>- The rat warren is now designated NO_SAVE
+      This means you cannot use SAVE or QUIT (or any other command
+      which causes the character to be saved) in these locations.
+      (This is to avoid camping mobs that drop loot / SP)
+      - Character facing direction is now saved
       - New characters will enter the game facing west
       - Fixed typos in 2nd level of South Gatehouse Tower
       - Paginated HELP, STATS (and more to come)
