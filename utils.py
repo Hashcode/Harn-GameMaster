@@ -256,14 +256,13 @@ def printRoomDescription(room_id):
   player = GameData.GetPlayer()
   doors = GameData.GetDoors()
   rooms = GameData.GetRooms()
-  facing = GameData.GetFacing()
 
   frame = Frame()
   lighting_level = 1
   if rooms[room_id].HasLight():
     lighting_level = 3
-  renderHudToFrame(cm, facing, frame, player.Room, 1, lighting_level)
-  frame.Render(cm, directions[GameData.GetFacing()].Names[0].capitalize())
+  renderHudToFrame(cm, player.Facing, frame, player.Room, 1, lighting_level)
+  frame.Render(cm, directions[player.Facing].Names[0].capitalize())
 
   cm.Print("")
 
@@ -1417,7 +1416,6 @@ def actionClose(data=None):
   rooms = GameData.GetRooms()
   doors = GameData.GetDoors()
   door_id = chooseDoor(GameData.GetPlayer().Room, "close", door_closed=False)
-  facing = GameData.GetFacing()
   if door_id != DoorEnum.NONE:
     player.SetDoorState(door_id).Closed = True
     cm.Print("\nYou close the %s." % doors[door_id].Name)
@@ -1428,8 +1426,8 @@ def actionClose(data=None):
     lighting_level = 1
     if rooms[player.Room].HasLight():
       lighting_level = 3
-    renderHudToFrame(cm, facing, frame, player.Room, 1, lighting_level)
-    frame.Render(cm, directions[facing].Names[0].capitalize())
+    renderHudToFrame(cm, player.Facing, frame, player.Room, 1, lighting_level)
+    frame.Render(cm, directions[player.Facing].Names[0].capitalize())
 
 
 def actionOpen(data=None):
@@ -1438,7 +1436,6 @@ def actionOpen(data=None):
   rooms = GameData.GetRooms()
   doors = GameData.GetDoors()
   door_id = chooseDoor(GameData.GetPlayer().Room, "open", door_closed=True)
-  facing = GameData.GetFacing()
   if door_id != DoorEnum.NONE:
     if player.DoorState(door_id).Locked:
       cm.Print("\nThe %s %s locked!" %
@@ -1454,8 +1451,8 @@ def actionOpen(data=None):
       lighting_level = 1
       if rooms[player.Room].HasLight():
         lighting_level = 3
-      renderHudToFrame(cm, facing, frame, player.Room, 1, lighting_level)
-      frame.Render(cm, directions[facing].Names[0].capitalize())
+      renderHudToFrame(cm, player.Facing, frame, player.Room, 1, lighting_level)
+      frame.Render(cm, directions[player.Facing].Names[0].capitalize())
 
 
 def actionListPlayers(data=None):
@@ -1803,7 +1800,7 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
         break
     else:
       match_dir = DirectionEnum.NONE
-      orig_facing = facing = GameData.GetFacing()
+      orig_facing = facing = player.Facing
       # Handle facing
       if (x == "arrow_right"):
         facing = directions[orig_facing].Right
@@ -1817,7 +1814,7 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
         match_dir = directions[orig_facing].Reverse
 
       if (orig_facing != facing):
-        GameData.SetFacing(facing)
+        player.Facing = facing
         frame = Frame()
         lighting_level = 1
         if rooms[player.Room].HasLight():
@@ -1859,7 +1856,7 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
                 player.GameTime += rooms[player.Room].TravelTime
                 player.SetRoom(ex.Room)
                 if x != "arrow_" and match_dir not in [DirectionEnum.DOWN, DirectionEnum.UP]:
-                  GameData.SetFacing(match_dir)
+                  player.Facing = match_dir
             else:
               if not roomTalkTrigger("on_exit"):
                 trigger_deny = True
@@ -1868,7 +1865,7 @@ def prompt(cmdHandler=None, cmdHandlerData=None):
               player.GameTime += rooms[player.Room].TravelTime
               player.SetRoom(ex.Room)
               if x != "arrow_" and match_dir not in [DirectionEnum.DOWN, DirectionEnum.UP]:
-                GameData.SetFacing(match_dir)
+                player.Facing = match_dir
             return
         if not trigger_deny:
           cm.Print("\nYou can't go in that direction.", attr=ANSI.TEXT_BOLD)

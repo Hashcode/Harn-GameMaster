@@ -213,7 +213,6 @@ def room_CreateCharacter():
   # Finish Map Setup
   GameData.InitializeRooms()
   GameData.ProcessEvents(True)
-  GameData.SetFacing(DirectionEnum.WEST)
   player.SetRoom(GameData.ROOM_START)
 
   cm.Print("\nSaving character ...")

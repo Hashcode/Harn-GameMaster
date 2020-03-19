@@ -1968,6 +1968,7 @@ class Player(Person):
     self.Password = ""
     self.Sunsign = SunsignEnum.NONE
     self.Room = None
+    self.Facing = DirectionEnum.WEST
     self.LastRoom = None
     self.Currency = 0
     self.CombatState = PlayerCombatState.NONE
@@ -1986,6 +1987,10 @@ class Player(Person):
     self.GameTime = p.GameTime
     self.LastTimeUpdate = p.LastTimeUpdate
     self.Room = p.Room
+    try:
+      self.Facing = p.Facing
+    except:
+      self.Facing = DirectionEnum.NORTH
     self.LastRoom = p.LastRoom
     self.Currency = p.Currency
     self.CalcSunsign()
