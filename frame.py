@@ -133,6 +133,7 @@ class FrameGroupEnum(IntEnum):
   WALL_TORCH = 2
   WALL_BRIDGE = 3
   CAVERN = 4
+  SHORT_WALL = 5
   ARCHWAY = 10
   DOOR_CLOSED = 20
   DOOR_OPEN = 21
@@ -153,6 +154,7 @@ frame_groups = {
     FrameGroupEnum.WALL_TORCH: FrameGroup(["facing_wall_torch", "left_wall_torch", "right_wall_torch"], False),
     FrameGroupEnum.WALL_BRIDGE: FrameGroup(["facing_wall_bridge", "blank", "blank"], False),
     FrameGroupEnum.CAVERN: FrameGroup(["facing_cavern", "left_cavern", "right_cavern"], True),
+    FrameGroupEnum.SHORT_WALL: FrameGroup(["facing_short_wall", "left_short_wall", "right_short_wall"], True),
     FrameGroupEnum.ARCHWAY: FrameGroup(["facing_archway", "left_archway", "right_archway"]),
     FrameGroupEnum.DOOR_CLOSED: FrameGroup(["facing_door_closed", "left_door_closed", "right_door_closed"], False),
     FrameGroupEnum.DOOR_OPEN: FrameGroup(["facing_door_open", "left_door_open", "right_door_open"], True),

@@ -418,6 +418,12 @@ rooms = {
              exits={
                  DirectionEnum.DOWN: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_2,
                                           DoorEnum.N_TOWER_TRAPDOOR_LEVEL_3),
+             },
+             walls={
+                 DirectionEnum.NORTH: FrameGroupEnum.SHORT_WALL,
+                 DirectionEnum.EAST: FrameGroupEnum.SHORT_WALL,
+                 DirectionEnum.SOUTH: FrameGroupEnum.SHORT_WALL,
+                 DirectionEnum.WEST: FrameGroupEnum.SHORT_WALL,
              }),
     RoomEnum.BL_STABLE:
         Room(RoomEnum.BL_STABLE, ZoneEnum.KEEP, "Common Stable", "a common stable",
@@ -521,6 +527,12 @@ rooms = {
              exits={
                  DirectionEnum.DOWN: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_2,
                                           DoorEnum.S_TOWER_TRAPDOOR_LEVEL_3),
+             },
+             walls={
+                 DirectionEnum.NORTH: FrameGroupEnum.SHORT_WALL,
+                 DirectionEnum.EAST: FrameGroupEnum.SHORT_WALL,
+                 DirectionEnum.SOUTH: FrameGroupEnum.SHORT_WALL,
+                 DirectionEnum.WEST: FrameGroupEnum.SHORT_WALL,
              }),
     RoomEnum.BL_WAREHOUSE:
         Room(RoomEnum.BL_WAREHOUSE, ZoneEnum.KEEP, "Common Warehouse", "a common warehouse",
