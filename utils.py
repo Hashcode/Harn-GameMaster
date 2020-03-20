@@ -21,7 +21,7 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             SkillClassEnum, skill_classes, skills, body_parts,
                             materials, DamageTypeEnum, AttrEnum,
                             Material, PlayerCombatState, PersonTypeEnum,
-                            ItemTypeEnum, ItemFlagEnum,
+                            ItemTypeEnum, ItemFlagEnum, ArmorLayer,
                             DiceRoll, DoorEnum, Mob, Player,
                             TargetTypeEnum, ConditionCheckEnum,
                             TriggerTypeEnum, RoomEnum, RoomFlag,
@@ -51,49 +51,114 @@ def CalcEffect(eff_type):
 
 def filterItems(items, equipped=False, equippable=False, flags=0, noflags=0):
   item_array = []
+
+  # sort items
+  items.sort(key=lambda x: x.ItemName)
+
+  # clear temp flags
   for item in items:
+    item.Flags &= ~ItemFlagEnum.TEMP
+
+  for itp in ItemTypeEnum:
     if equippable:
-      if item.ItemType not in [ItemTypeEnum.WEAPON, ItemTypeEnum.ARMOR, ItemTypeEnum.RING]:
+      if itp not in [ItemTypeEnum.WEAPON, ItemTypeEnum.ARMOR, ItemTypeEnum.RING]:
         continue
-    if not equipped and item.Equipped:
-      continue
-    if equipped and not item.Equipped:
-      continue
-    if flags > 0 and item.Flags & flags == 0:
-      continue
-    if noflags > 0 and item.Flags & noflags > 0:
-      continue
-    item_array.append(item)
+    if itp == ItemTypeEnum.ARMOR:
+      for al in ArmorLayer:
+        for bp_id in body_parts.keys():
+          for item in items:
+            if item.ItemType != itp:
+              continue
+            if item.Flags & ItemFlagEnum.TEMP > 0:
+              continue
+            if item.Covered(bp_id) and item.Layer & al > 0:
+              if not equipped and item.Equipped:
+                continue
+              if equipped and not item.Equipped:
+                continue
+              if flags > 0 and item.Flags & flags == 0:
+                continue
+              if noflags > 0 and item.Flags & noflags > 0:
+                continue
+              item.Flags |= ItemFlagEnum.TEMP
+              item_array.append(item)
+    else:
+      for item in items:
+        if item.ItemType != itp:
+          continue
+        if item.Flags & ItemFlagEnum.TEMP > 0:
+          continue
+        if not equipped and item.Equipped:
+          continue
+        if equipped and not item.Equipped:
+          continue
+        if flags > 0 and item.Flags & flags == 0:
+          continue
+        if noflags > 0 and item.Flags & noflags > 0:
+          continue
+        item.Flags |= ItemFlagEnum.TEMP
+        item_array.append(item)
+
+  # clear temp flags
+  for item in items:
+    item.Flags &= ~ItemFlagEnum.TEMP
   return item_array
+
+
+def appendItemLine(lines, item, count, qty, number, stats, shop, valueAdj):
+  if qty > 1:
+    item_name = "[%d] %s" % (qty, item.ItemName.capitalize())
+  else:
+    item_name = item.ItemName.capitalize()
+  item_name += item.ItemFlagStr(" (%s)")
+  if stats:
+    weight = item.Weight
+    item_info = " : %5s lbs" % "{:3.1f}".format(qty * weight)
+  else:
+    item_info = ""
+  if shop:
+    item_value = " [%d SP]" % int(item.Value * valueAdj)
+  else:
+    item_value = ""
+  item_desc = "%-30s%s%s" % (item_name, item_info, item_value)
+  if number:
+    appendLine(lines, "%2d. %s" % (count, item_desc))
+  else:
+    appendLine(lines, "%s" % (item_desc))
+  if stats:
+    if item.Effects is not None:
+      for eff in item.Effects:
+        if number:
+          appendLine(lines, "      (%s)" % eff.toString())
+        else:
+          appendLine(lines, "  (%s)" % eff.toString())
 
 
 def printItems(lines, items, number=False, stats=False, shop=False, valueAdj=1):
   cm = GameData.GetConsole()
   count = 0
+  last_item = None
+  last_desc = ""
+  last_qty = 1
   for item in items:
+    item_desc = item.ItemName
+    item_desc += item.ItemFlagStr("(%s)")
+    item_desc += "/%s" % "{:3.1f}".format(item.Weight)
+    if item.Effects is not None:
+      for eff in item.Effects:
+        item_desc += "(%s)" % eff.toString()
+    if item_desc != last_desc:
+      if last_item is not None:
+        count += 1
+        appendItemLine(lines, last_item, count, last_qty, number, stats, shop, valueAdj)
+      last_item = item
+      last_desc = item_desc
+      last_qty = 1
+    else:
+      last_qty += 1
+  if last_item is not None:
     count += 1
-    item_name = item.ItemName.capitalize()
-    item_name += item.ItemFlagStr(" (%s)")
-    if stats:
-      weight = item.Weight
-      item_info = " : %5s lbs" % "{:3.1f}".format(weight)
-    else:
-      item_info = ""
-    if shop:
-      item_value = " [%d SP]" % int(item.Value * valueAdj)
-    else:
-      item_value = ""
-    if number:
-      appendLine(lines, "%2d. %-30s%s%s" % (count, item_name, item_info, item_value))
-    else:
-      appendLine(lines, "%-30s%s%s" % (item_name, item_info, item_value))
-    if stats:
-      if item.Effects is not None:
-        for eff in item.Effects:
-          if number:
-            appendLine(lines, "      (%s)" % eff.toString())
-          else:
-            appendLine(lines, "  (%s)" % eff.toString())
+    appendItemLine(lines, last_item, count, last_qty, number, stats, shop, valueAdj)
 
 
 '''
@@ -586,16 +651,44 @@ def actionInventory(data=None):
   appendLine(lines, "")
   appendLine(lines, "CURRENCY", ANSI.TEXT_BOLD, end="")
   appendLine(lines, ": %d SP" % (player.Currency))
-  appendLine(lines, "")
-  appendLine(lines, "EQUIPMENT", ANSI.TEXT_BOLD)
   items = filterItems(player.Items, equipped=True)
-  if len(items) < 1:
+
+  # weapon / shield
+  hands = []
+  for it in items:
+    if it.ItemType in [ItemTypeEnum.WEAPON, ItemTypeEnum.SHIELD]:
+      hands.append(it)
+  appendLine(lines, "")
+  appendLine(lines, "WIELDED", ANSI.TEXT_BOLD)
+  if len(hands) <= 0:
     appendLine(lines, "[NONE]")
   else:
-    printItems(lines, items, stats=True)
+    printItems(lines, hands, stats=True)
+
+  # rings
+  rings = []
+  for it in items:
+    if it.ItemType == ItemTypeEnum.RING:
+      rings.append(it)
+  if len(rings) > 0:
+    appendLine(lines, "RINGS", ANSI.TEXT_BOLD)
+    printItems(lines, rings, stats=True)
+
+  # armor
+  armor = []
+  for it in items:
+    if it.ItemType == ItemTypeEnum.ARMOR:
+      armor.append(it)
+  appendLine(lines, "WORN", ANSI.TEXT_BOLD)
+  if len(armor) <= 0:
+    appendLine(lines, "[NONE]")
+  else:
+    printItems(lines, armor, stats=True)
+
   appendLine(lines, "%-30s : %5s lbs" % ("EQUIPPED WEIGHT=1/2",
                                          "{:3.1f}".format(player.EquipWeight() * 0.5)),
              ANSI.TEXT_BOLD)
+
   appendLine(lines, "")
   appendLine(lines, "ITEMS", ANSI.TEXT_BOLD)
   items = filterItems(player.Items, equipped=False)

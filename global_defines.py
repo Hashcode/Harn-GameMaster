@@ -419,6 +419,7 @@ class ItemFlagEnum(IntEnum):
   HIDDEN = 1 << 5
   INVIS = 1 << 6
   QUEST = 1 << 7
+  TEMP = 1 << 15
 
 
 class ItemFlag:
