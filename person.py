@@ -84,7 +84,7 @@ persons = {
         Mob(PersonEnum.MON_RAT_GUARD, "a rat guardian",
             "A rat guardian glares around the room.", 45, 5, 35,
             AimEnum.LOW, PersonFlag.AGGRESSIVE, MaterialEnum.FUR_LT,
-            cur=DiceRoll(1, 6, 10),
+            cur=DiceRoll(1, 4, 10),
             attrs={
                 AttrEnum.SEX: 0,
                 AttrEnum.STRENGTH: 8,
@@ -114,7 +114,7 @@ persons = {
         Mob(PersonEnum.MON_RAT_NOBLE, "a rat noble",
             "A rat noble calmly nibbles some cheese.", 45, 5, 35,
             AimEnum.LOW, PersonFlag.AGGRESSIVE, MaterialEnum.FUR_LT,
-            cur=DiceRoll(1, 6, 40),
+            cur=DiceRoll(1, 4, 20),
             attrs={
                 AttrEnum.SEX: 0,
                 AttrEnum.STRENGTH: 8,
