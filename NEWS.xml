@@ -22,6 +22,10 @@
       (This is to avoid camping mobs that drop loot / SP)
       - Character facing direction is now saved
       - New characters will enter the game facing west
+      - Added the following frames for the renderer:
+        - Drawbridge
+        - Porcullis
+        - Short Walls
       - Fixed typos in 2nd level of South Gatehouse Tower
       - Paginated HELP, STATS (and more to come)
       - Fixed crash when player stumbled
