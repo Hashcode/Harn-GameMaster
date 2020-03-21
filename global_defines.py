@@ -458,6 +458,13 @@ class Item:
     self.OnRemove = onRemove
     self.Equipped = equipped
 
+  def UniqueStr(self):
+    desc = "%s%s/%s" % (self.ItemName, self.ItemFlagStr("(%s)"), "{:3.1f}".format(self.Weight))
+    if self.Effects is not None:
+      for eff in self.Effects:
+        desc += "(%s)" % eff.toString()
+    return desc
+
   def ItemFlagStr(self, format="%s"):
     flag_list = []
     for x in ItemFlagEnum:
@@ -1558,6 +1565,13 @@ class Person:
         return True
     return False
 
+  def RemoveItemUniqueStr(self, itstr):
+    for item in self.Items:
+      if item.UniqueStr() == itstr:
+        self.Items.remove(item)
+        return True
+    return False
+
   def HasItem(self, item_name):
     for item in self.Items:
       if item.ItemName.lower() == item_name.lower():
@@ -2600,6 +2614,13 @@ class Room:
   def RemoveItem(self, it):
     for item in self.Items:
       if item.UUID == it.UUID:
+        self.Items.remove(item)
+        return True
+    return False
+
+  def RemoveItemUniqueStr(self, itstr):
+    for item in self.Items:
+      if item.UniqueStr() == itstr:
         self.Items.remove(item)
         return True
     return False

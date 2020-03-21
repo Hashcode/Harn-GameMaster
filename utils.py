@@ -26,7 +26,7 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             TargetTypeEnum, ConditionCheckEnum,
                             TriggerTypeEnum, RoomEnum, RoomFlag,
                             DirectionEnum, directions, Roll, armor_shapes,
-                            aims)
+                            aims, Effect, EffectTypeEnum)
 from table_melee_attack import (Action)
 from logger import (logd, loge)
 
@@ -47,6 +47,29 @@ def CalcEffect(eff_type):
       if y.EffectType == eff_type:
         value += y.Modifer
   return value
+
+
+class ItemQty:
+  def __init__(self, item, qty=1):
+    self.Item = item
+    self.Desc = item.UniqueStr()
+    self.Qty = qty
+
+  def IsEqual(self, item):
+    if self.Desc == item.UniqueStr():
+      return True
+    return False
+
+
+def appendFilterItem(items, item):
+  match = False
+  for i in items:
+    if i.IsEqual(item):
+      match = True
+      i.Qty += 1
+      break
+  if not match:
+    items.append(ItemQty(item, 1))
 
 
 def filterItems(items, equipped=False, equippable=False, flags=0, noflags=0):
@@ -80,8 +103,8 @@ def filterItems(items, equipped=False, equippable=False, flags=0, noflags=0):
                 continue
               if noflags > 0 and item.Flags & noflags > 0:
                 continue
+              appendFilterItem(item_array, item)
               item.Flags |= ItemFlagEnum.TEMP
-              item_array.append(item)
     else:
       for item in items:
         if item.ItemType != itp:
@@ -96,8 +119,8 @@ def filterItems(items, equipped=False, equippable=False, flags=0, noflags=0):
           continue
         if noflags > 0 and item.Flags & noflags > 0:
           continue
+        appendFilterItem(item_array, item)
         item.Flags |= ItemFlagEnum.TEMP
-        item_array.append(item)
 
   # clear temp flags
   for item in items:
@@ -105,60 +128,36 @@ def filterItems(items, equipped=False, equippable=False, flags=0, noflags=0):
   return item_array
 
 
-def appendItemLine(lines, item, count, qty, number, stats, shop, valueAdj):
-  if qty > 1:
-    item_name = "[%d] %s" % (qty, item.ItemName.capitalize())
-  else:
-    item_name = item.ItemName.capitalize()
-  item_name += item.ItemFlagStr(" (%s)")
-  if stats:
-    weight = item.Weight
-    item_info = " : %5s lbs" % "{:3.1f}".format(qty * weight)
-  else:
-    item_info = ""
-  if shop:
-    item_value = " [%d SP]" % int(item.Value * valueAdj)
-  else:
-    item_value = ""
-  item_desc = "%-30s%s%s" % (item_name, item_info, item_value)
-  if number:
-    appendLine(lines, "%2d. %s" % (count, item_desc))
-  else:
-    appendLine(lines, "%s" % (item_desc))
-  if stats:
-    if item.Effects is not None:
-      for eff in item.Effects:
-        if number:
-          appendLine(lines, "      (%s)" % eff.toString())
-        else:
-          appendLine(lines, "  (%s)" % eff.toString())
-
-
-def printItems(lines, items, number=False, stats=False, shop=False, valueAdj=1):
-  cm = GameData.GetConsole()
+def printItems(lines, itemqtylist, number=False, stats=False, shop=False, valueAdj=1):
   count = 0
-  last_item = None
-  last_desc = ""
-  last_qty = 1
-  for item in items:
-    item_desc = item.ItemName
-    item_desc += item.ItemFlagStr("(%s)")
-    item_desc += "/%s" % "{:3.1f}".format(item.Weight)
-    if item.Effects is not None:
-      for eff in item.Effects:
-        item_desc += "(%s)" % eff.toString()
-    if item_desc != last_desc:
-      if last_item is not None:
-        count += 1
-        appendItemLine(lines, last_item, count, last_qty, number, stats, shop, valueAdj)
-      last_item = item
-      last_desc = item_desc
-      last_qty = 1
-    else:
-      last_qty += 1
-  if last_item is not None:
+  for itemqty in itemqtylist:
     count += 1
-    appendItemLine(lines, last_item, count, last_qty, number, stats, shop, valueAdj)
+    if itemqty.Qty > 1:
+      item_name = "[%d] %s" % (itemqty.Qty, itemqty.Item.ItemName.capitalize())
+    else:
+      item_name = itemqty.Item.ItemName.capitalize()
+    item_name += itemqty.Item.ItemFlagStr(" (%s)")
+    if stats:
+      weight = itemqty.Item.Weight
+      item_info = " : %5s lbs" % "{:3.1f}".format(itemqty.Qty * weight)
+    else:
+      item_info = ""
+    if shop:
+      item_value = " [%d SP]" % int(itemqty.Item.Value * valueAdj)
+    else:
+      item_value = ""
+    item_desc = "%-30s%s%s" % (item_name, item_info, item_value)
+    if number:
+      appendLine(lines, "%2d. %s" % (count, item_desc))
+    else:
+      appendLine(lines, "%s" % (item_desc))
+    if stats:
+      if itemqty.Item.Effects is not None:
+        for eff in itemqty.Item.Effects:
+          if number:
+            appendLine(lines, "      (%s)" % eff.toString())
+          else:
+            appendLine(lines, "  (%s)" % eff.toString())
 
 
 '''
@@ -382,7 +381,6 @@ def printRoomDescription(room_id):
 
 
 def printRoomObjects(room_id):
-  cm = GameData.GetConsole()
   rooms = GameData.GetRooms()
   lines = []
   # Persons
@@ -394,7 +392,10 @@ def printRoomObjects(room_id):
   if len(rooms[room_id].Items) > 0:
     appendLine(lines, "")
     appendLine(lines, "The following items are here:")
-    printItems(lines, rooms[room_id].Items)
+    itemqtylist = []
+    for it in rooms[room_id].Items:
+      appendFilterItem(itemqtylist, it)
+    printItems(lines, itemqtylist)
   printPaginate(lines)
 
 
@@ -473,12 +474,12 @@ def printStats(person):
   appendLine(lines, "%-15s: %d" % ("Universal Pen.", person.UniversalPenalty()), ANSI.TEXT_BOLD)
   appendLine(lines, "%-15s: %d" % ("Physical Pen.", person.PhysicalPenalty()), ANSI.TEXT_BOLD)
   if person.PersonType == PersonTypeEnum.NPC:
-    items = filterItems(person.Items, equipped=True)
-    if len(items) > 0:
+    itemqtylist = filterItems(person.Items, equipped=True)
+    if len(itemqtylist) > 0:
       appendLine(lines, "")
       appendLine(lines, "EQUIPMENT", ANSI.TEXT_BOLD)
       appendLine(lines, "")
-      printItems(lines, items, stats=True)
+      printItems(lines, itemqtylist, stats=True)
   appendLine(lines, "")
   appendLine(lines, "WOUND LIST", ANSI.TEXT_BOLD)
   appendLine(lines, "")
@@ -500,46 +501,46 @@ def actionComingSoon():
   cm.Print("\nComing soon!")
 
 
-def chooseItem(items, verb, stats=True, shop=False, valueAdj=1):
+def chooseItem(itemqtylist, verb, stats=True, shop=False, valueAdj=1):
   cm = GameData.GetConsole()
   lines = []
   appendLine(lines, "")
   appendLine(lines, "%s AN ITEM" % verb.upper(), ANSI.TEXT_BOLD)
   appendLine(lines, "")
-  printItems(lines, items, number=True, stats=stats, shop=shop, valueAdj=valueAdj)
+  printItems(lines, itemqtylist, number=True, stats=stats, shop=shop, valueAdj=valueAdj)
   printPaginate(lines)
   x = cm.Input("Which item # to %s (0=Cancel):" % verb, line_length=3,
                input_flags=InputFlag.NUMERIC)
   if not x.isnumeric():
     cm.Print("\nInvalid item.")
-    return None
+    return (None, 0)
   itemNum = int(x)
   if itemNum == 0:
     cm.Print("\nCancelled.")
-    return None
-  if itemNum < 1 or itemNum > len(items):
+    return (None, 0)
+  if itemNum < 1 or itemNum > len(itemqtylist):
     cm.Print("\nInvalid item.")
-    return None
+    return (None, 0)
   count = 0
-  for item in items:
+  for itemqty in itemqtylist:
     count += 1
     if count == itemNum:
-      return item
-  return None
+      return (itemqty.Item, itemqty.Qty)
+  return (None, 0)
 
 
 def actionGetItem(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
-  items = filterItems(rooms[player.Room].Items, equipped=False)
-  if len(items) < 1:
+  itemqtylist = filterItems(rooms[player.Room].Items, equipped=False)
+  if len(itemqtylist) < 1:
     cm.Print("\nThere are no items in the room.")
     return
   if not rooms[player.Room].HasLight():
     cm.Print("\nYou can't see anything in the dark.")
     return
-  item = chooseItem(items, "pick up")
+  (item, qty) = chooseItem(itemqtylist, "pick up")
   if item is None:
     return
   if processTriggers(None, item.OnGet) is False:
@@ -554,14 +555,14 @@ def actionDropItem(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   rooms = GameData.GetRooms()
-  items = filterItems(player.Items, equipped=False)
-  if len(items) < 1:
+  itemqtylist = filterItems(player.Items, equipped=False)
+  if len(itemqtylist) < 1:
     cm.Print("\nNothing is droppable at the moment.")
     return
   if not rooms[player.Room].HasLight():
     cm.Print("\nYou can't see anything in the dark.")
     return
-  item = chooseItem(items, "drop")
+  (item, qty) = chooseItem(itemqtylist, "drop")
   if item is None:
     return
   if item.Flags & ItemFlagEnum.NO_DROP > 0:
@@ -571,7 +572,7 @@ def actionDropItem(data=None):
     cm.Print("\n%s cannot be dropped." % item.ItemName.capitalize())
     return
   if processTriggers(None, item.OnDrop) is False:
-    cm.Print("\nYou can't seem to drop %s." % items.ItemName)
+    cm.Print("\nYou can't seem to drop %s." % item.ItemName)
     return
   player.RemoveItem(item)
   rooms[player.Room].AttachItem(item)
@@ -581,11 +582,11 @@ def actionDropItem(data=None):
 def actionEquipItem(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  items = filterItems(player.Items, equipped=False, equippable=True)
-  if len(items) < 1:
+  itemqtylist = filterItems(player.Items, equipped=False, equippable=True)
+  if len(itemqtylist) < 1:
     cm.Print("\nNothing is equippable at the moment.")
     return
-  equip_item = chooseItem(items, "equip")
+  (equip_item, qty) = chooseItem(itemqtylist, "equip")
   if equip_item is None:
     return
   # check for item conflicts
@@ -628,11 +629,11 @@ def actionEquipItem(data=None):
 def actionRemoveItem(data=None):
   cm = GameData.GetConsole()
   player = GameData.GetPlayer()
-  items = filterItems(player.Items, equipped=True)
-  if len(items) < 1:
+  itemqtylist = filterItems(player.Items, equipped=True)
+  if len(itemqtylist) < 1:
     cm.Print("\nNothing is equipped.")
     return
-  item = chooseItem(items, "remove")
+  (item, qty) = chooseItem(itemqtylist, "remove")
   if item is None:
     return
   if processTriggers(None, item.OnRemove) is False:
@@ -645,18 +646,17 @@ def actionRemoveItem(data=None):
 
 
 def actionInventory(data=None):
-  cm = GameData.GetConsole()
   player = GameData.GetPlayer()
   lines = []
   appendLine(lines, "")
   appendLine(lines, "CURRENCY", ANSI.TEXT_BOLD, end="")
   appendLine(lines, ": %d SP" % (player.Currency))
-  items = filterItems(player.Items, equipped=True)
+  itemqtylist = filterItems(player.Items, equipped=True)
 
   # weapon / shield
   hands = []
-  for it in items:
-    if it.ItemType in [ItemTypeEnum.WEAPON, ItemTypeEnum.SHIELD]:
+  for it in itemqtylist:
+    if it.Item.ItemType in [ItemTypeEnum.WEAPON, ItemTypeEnum.SHIELD]:
       hands.append(it)
   appendLine(lines, "")
   appendLine(lines, "WIELDED", ANSI.TEXT_BOLD)
@@ -667,8 +667,8 @@ def actionInventory(data=None):
 
   # rings
   rings = []
-  for it in items:
-    if it.ItemType == ItemTypeEnum.RING:
+  for it in itemqtylist:
+    if it.Item.ItemType == ItemTypeEnum.RING:
       rings.append(it)
   if len(rings) > 0:
     appendLine(lines, "RINGS", ANSI.TEXT_BOLD)
@@ -676,8 +676,8 @@ def actionInventory(data=None):
 
   # armor
   armor = []
-  for it in items:
-    if it.ItemType == ItemTypeEnum.ARMOR:
+  for it in itemqtylist:
+    if it.Item.ItemType == ItemTypeEnum.ARMOR:
       armor.append(it)
   appendLine(lines, "WORN", ANSI.TEXT_BOLD)
   if len(armor) <= 0:
@@ -691,11 +691,11 @@ def actionInventory(data=None):
 
   appendLine(lines, "")
   appendLine(lines, "ITEMS", ANSI.TEXT_BOLD)
-  items = filterItems(player.Items, equipped=False)
-  if len(items) < 1:
+  itemqtylist = filterItems(player.Items, equipped=False)
+  if len(itemqtylist) < 1:
     appendLine(lines, "[NONE]")
   else:
-    printItems(lines, items, stats=True)
+    printItems(lines, itemqtylist, stats=True)
   appendLine(lines, "%-30s : %5s lbs" % ("INVENTORY WEIGHT",
                                          "{:3.1f}".format(player.EquipWeight(False))),
              ANSI.TEXT_BOLD)
@@ -1332,11 +1332,11 @@ def actionShopBuy(shopkeep):
   if player.CombatState != PlayerCombatState.NONE:
     cm.Print("\nYou can't BUY during combat!", attr=ANSI.TEXT_BOLD)
     return
-  items = filterItems(shopkeep.SellItems)
-  if len(items) < 1:
+  itemqtylist = filterItems(shopkeep.SellItems)
+  if len(itemqtylist) < 1:
     cm.Print("\nThere is nothing to buy.")
     return
-  item = chooseItem(items, "buy", shop=True)
+  (item, qty) = chooseItem(itemqtylist, "buy", shop=True)
   if item is None:
     return
   if item.Value > player.Currency:
@@ -1362,29 +1362,42 @@ def actionShopSell(shopkeep):
   if player.CombatState != PlayerCombatState.NONE:
     cm.Print("\nYou can't SELL during combat!", attr=ANSI.TEXT_BOLD)
     return
-  items = []
+  itemqtylist = []
   if shopkeep.BuyItems is None:
     cm.Print("\n%s doesn't want to buy anything." % shopkeep.Name.capitalize())
     return
   for item in player.Items:
     if not item.Equipped and item.ItemName.lower() in shopkeep.BuyItems:
-      items.append(item)
-  if len(items) < 1:
+      appendFilterItem(itemqtylist, item)
+  if len(itemqtylist) < 1:
     cm.Print("\n%s doesn't want to buy anything you have." % shopkeep.Name.capitalize())
     return
   # sell items for 1/2 value
   priceAdj = .5
-  item = chooseItem(items, "sell", shop=True, valueAdj=priceAdj)
+  (item, qty) = chooseItem(itemqtylist, "sell", shop=True, valueAdj=priceAdj)
+  sellqty = qty
+  if sellqty > 1:
+    x = cm.Input("How many would you like to sell (1-%d, 0=Cancel):" % (qty), line_length=3,
+                 input_flags=InputFlag.NUMERIC)
+    if not x.isnumeric():
+      cm.Print("\nSale aborted.", attr=ANSI.TEXT_BOLD)
+      return
+    sellqty = int(x)
+    if sellqty == 0 or sellqty > qty:
+      cm.Print("\nSale aborted.", attr=ANSI.TEXT_BOLD)
+      return
   if item is None:
     return
-  price = item.Value * priceAdj
-  x = cm.Input("Confirm sale of [%s] for %d SP [y/n]:" % (item.ItemName, price), line_length=1).lower()
+  price = sellqty * item.Value * priceAdj
+  x = cm.Input("Confirm sale of %d [%s] for %d SP [y/n]:" % (sellqty, item.ItemName, price), line_length=1).lower()
   if x == "y":
-    player.Currency += price
-    player.RemoveItem(item)
-    cm.Print("\nYou hand [%s] to %s." %
-             (item.ItemName, shopkeep.Name.capitalize()),
+    cm.Print("\nYou hand %d [%s] to %s." %
+             (sellqty, item.ItemName, shopkeep.Name.capitalize()),
              attr=ANSI.TEXT_BOLD)
+    while sellqty > 0:
+      sellqty -= 1
+      player.RemoveItemUniqueStr(item.UniqueStr())
+    player.Currency += price
     del item
   else:
     cm.Print("\nSale aborted.", attr=ANSI.TEXT_BOLD)
@@ -1605,7 +1618,7 @@ def actionListPlayers(data=None):
       if pinfo[x]["played"] > 0:
         appendLine(lines, "%-20s %-11s %s" % (x, "%0.2f days" % (pinfo[x]["played"]), pinfo[x]["info"]))
     appendLine(lines, "")
-    appendLine(lines, "%-20s %d" % ("TOTAL", len(lines)-4), ANSI.TEXT_BOLD)
+    appendLine(lines, "%-20s %d" % ("TOTAL", len(lines) - 4), ANSI.TEXT_BOLD)
   printPaginate(lines)
 
 
