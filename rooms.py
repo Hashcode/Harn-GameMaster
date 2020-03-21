@@ -277,14 +277,20 @@ rooms = {
              ],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
-                 DirectionEnum.WEST: Exit(RoomEnum.BL_GATEHOUSE_PASSAGE),
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_GATEHOUSE_PASSAGE,
+                                          frame_id=FrameGroupEnum.PORTCULLIS_OPEN),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_ROAD_TO_KEEP,
-                                          DoorEnum.KEEP_DRAWBRIDGE),
+                                          DoorEnum.KEEP_DRAWBRIDGE,
+                                          FrameGroupEnum.DRAWBRIDGE_CLOSED),
              },
              room_pers=[
                  NewPerson(PersonEnum.BL_KEEP_GUARD),
                  NewPerson(PersonEnum.BL_KEEP_SENTRY),
-             ]),
+             ],
+             walls={
+                 DirectionEnum.NORTH: FrameGroupEnum.SHORT_WALL,
+                 DirectionEnum.SOUTH: FrameGroupEnum.SHORT_WALL,
+             }),
     RoomEnum.BL_GATEHOUSE_PASSAGE:
         Room(RoomEnum.BL_GATEHOUSE_PASSAGE, ZoneEnum.KEEP, "Gatehouse Passage", "a gatehouse passage",
              [
@@ -297,7 +303,8 @@ rooms = {
              ],
              exits={
                  DirectionEnum.WEST: Exit(RoomEnum.BL_ENTRY_YARD),
-                 DirectionEnum.EAST: Exit(RoomEnum.BL_KEEP_GATEHOUSE),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_KEEP_GATEHOUSE,
+                                          frame_id=FrameGroupEnum.PORTCULLIS_OPEN),
              },
              walls={
                  DirectionEnum.NORTH: FrameGroupEnum.WALL_TORCH,
@@ -1403,7 +1410,11 @@ rooms = {
              exits={
                  DirectionEnum.WEST: Exit(RoomEnum.BL_KEEP_GATEHOUSE,
                                           DoorEnum.KEEP_DRAWBRIDGE,
-                                          FrameGroupEnum.ARCHWAY),
+                                          FrameGroupEnum.DRAWBRIDGE_CLOSED),
+             },
+             walls={
+                 DirectionEnum.NORTH: FrameGroupEnum.CAVERN,
+                 DirectionEnum.SOUTH: FrameGroupEnum.CAVERN,
              }),
 }
 

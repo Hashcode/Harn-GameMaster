@@ -139,6 +139,10 @@ class FrameGroupEnum(IntEnum):
   DOOR_OPEN = 21
   DBL_DOOR_CLOSED = 22
   DBL_DOOR_OPEN = 23
+  DRAWBRIDGE_CLOSED = 24
+  DRAWBRIDGE_OPEN = 25
+  PORTCULLIS_CLOSED = 26
+  PORTCULLIS_OPEN = 27
   BRIDGE = 30
 
 
@@ -160,6 +164,10 @@ frame_groups = {
     FrameGroupEnum.DOOR_OPEN: FrameGroup(["facing_door_open", "left_door_open", "right_door_open"], True),
     FrameGroupEnum.DBL_DOOR_CLOSED: FrameGroup(["facing_dbl_door_closed", "left_dbl_door_closed", "right_dbl_door_closed"], False),
     FrameGroupEnum.DBL_DOOR_OPEN: FrameGroup(["facing_dbl_door_open", "left_dbl_door_open", "right_dbl_door_open"], True),
+    FrameGroupEnum.DRAWBRIDGE_CLOSED: FrameGroup(["facing_drawbridge_closed", "blank", "blank"], False),
+    FrameGroupEnum.DRAWBRIDGE_OPEN: FrameGroup(["blank", "blank", "blank"], True),
+    FrameGroupEnum.PORTCULLIS_CLOSED: FrameGroup(["facing_portcullis_closed", "blank", "blank"], False),
+    FrameGroupEnum.PORTCULLIS_OPEN: FrameGroup(["facing_portcullis_open", "blank", "blank"], True),
     FrameGroupEnum.BRIDGE: FrameGroup(["facing_bridge", "left_bridge", "right_bridge"], True),
 }
 
