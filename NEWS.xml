@@ -31,7 +31,9 @@
       - Fixed crash when player stumbled
       - Lowered the weight of keys
       - Only 1/2 of equipped item weight is counted towards
-        encumbrance penalty</text>
+        encumbrance penalty
+      - Items are now grouped up in lists
+      - Can SELL multiple items at once</text>
   </item>
   <item>
     <id>3</id>
