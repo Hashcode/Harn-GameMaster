@@ -29,14 +29,20 @@ x Events / Triggers for Rooms and Mobs
 x Periodic Events / Triggers for Roombs and Mobs
 x Lighting / Darkness
 x Time / Hour of Day
-/ Tutorial
+/ Tutorial:
+  - include REST
 x Dynamic Mob Placement
 x Dynamic Item Placement
-/ Paginate:
+x Paginate:
   x Help
   x News
   x Stats
-  - Any numbered lists
+  x Any numbered lists
+/ Items:
+  x Better Item Sorting / Quantities
+  - UNIQUE flag (can only carry / equip 1)
+/ Rooms:
+  x NO_SAVE flag (can't save / quit)
 / Person / Item Effects
   x Stats
   x Skills
@@ -48,7 +54,7 @@ x Dynamic Item Placement
 - Search Action
 - Sneak Action [Stealth]
 - Pick Lock Action [Legerdemain]
-- Shops:
+x Shops:
   x Provisioner
   x Smithy
   x Tanner
@@ -56,26 +62,55 @@ x Dynamic Item Placement
 - Trainer:
   - Weapon Trainer (price based on current skill level -- up to max ML5)
 - Rooms:
-  x Entry: Descriptions
-  / Entry: Mobs
-  / Entry: Quests
+  x Keep Entry
   / Rat Warren (Entry Dungeon)
-  - Eastern Walk: Descriptions
-  - Eastern Walk: Mobs / Talk Data
-  - Eastern Walk: Quests
-  - Southern Walk: Descriptions
-  - Southern Walk: Mobs / Talk Data
-  - Southern Walk: Quests
-  - Fountain Sq. / Tavern: Descriptions
-  - Fountain Sq. / Tavern: Mobs / Talk Data
-  - Fountain Sq. / Tavern: Quests
-  - Main Walk: Descriptions
-  - Main Walk: Mobs / Talk Data
-  - Main Walk: Quests
-  - Inn: Descriptions
-  - Inn: Mobs / Talk Data
-  - Inn: Quests
-  - Outside Inner Gatehouse: Descriptions
-  - Outside Inner Gatehouse: Mobs / Talk Data
-  - Outside Inner Gatehouse: Quests
+  - Eastern Walk
+  - Southern Walk
+  - Fountain Sq.
+  - Tavern
+  - Main Walk
+  - Inn
+  - Outside Inner Gatehouse
+  - Upper Rampart Walkways (outside inner keep)
   - Catacombs Beneath Church (Random Dungeon)
+- Quests:
+  / Keep Entry
+  - Eastern Walk
+  - Southern Walk
+  - Fountain Sq.
+  - Tavern
+  - Main Walk
+  - Inn
+  - Outside Inner Gatehouse
+- NPCs:
+  / Keep Entry
+  - Eastern Walk
+  - Southern Walk
+  - Fountain Sq.
+  - Tavern
+  - Main Walk
+  - Inn
+  - Outside Inner Gatehouse
+- Mobs
+  x Rats (normal, large, guardian, noble)
+  - Rabid / Feral Wolves
+  - Spiders (poison?)
+  - Snakes (poison?)
+  - Small 
+- Frames:
+  x Walls
+  x Doors
+  x Double Doors
+  x Archways
+  x Torch Wall
+  x Short Wall
+  x Bridge
+  x Cavern Edge (wall)
+  / Portcullis (Closed / Open)
+  / Drawbridge (Closed / Open)
+  - Up / Down Arrows
+  - Tree (wall)
+  - Stream
+  - Cave Entrance
+  - Docks
+  - Boat Side
