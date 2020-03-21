@@ -1604,6 +1604,8 @@ def actionListPlayers(data=None):
     for x in sorted(pinfo):
       if pinfo[x]["played"] > 0:
         appendLine(lines, "%-20s %-11s %s" % (x, "%0.2f days" % (pinfo[x]["played"]), pinfo[x]["info"]))
+    appendLine(lines, "")
+    appendLine(lines, "%-20s %d" % ("TOTAL", len(lines)-4), ANSI.TEXT_BOLD)
   printPaginate(lines)
 
 
