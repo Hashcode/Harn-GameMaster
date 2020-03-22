@@ -322,6 +322,10 @@ def renderHudToFrame(cm, facing, frame, room_id, level, lighting_level, x_offset
             renderHudToFrame(cm, facing, frame, rooms[re.Room].Exits[facing].Room,
                              level + 1, lighting_level, x_offset=x_offset + 1, indent=indent, dirs=[REND_FACING])
 
+    # at the end render a ceiling if needed
+    if level == 1 and rooms[room_id].Flags & RoomFlag.OUTSIDE > 0:
+      frame.Merge(frame_items[FrameItemEnum.CEILING_OUTSIDE].Facing[level - 1], renderOffset(REND_FACING, level, 0))
+
 
 def printRoomDescription(room_id):
   cm = GameData.GetConsole()
