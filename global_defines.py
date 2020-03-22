@@ -123,6 +123,9 @@ class MaterialEnum(IntEnum):
   FEATHERS_LT = 1
   FEATHERS_MD = 2
   FEATHERS_HV = 3
+  INSECT_SKIN_LT = 4
+  INSECT_SKIN_MD = 5
+  INSECT_SKIN_HV = 6
   FUR_LT = 7
   FUR_MD = 8
   FUR_HV = 9
@@ -193,6 +196,9 @@ materials = {
     MaterialEnum.FUR_LT: Material("Fur", 0.1, 1, [2, 1, 1, 2]),
     MaterialEnum.FUR_MD: Material("Fur", 0.2, 2, [4, 3, 1, 3]),
     MaterialEnum.FUR_HV: Material("Fur", 0.3, 3, [5, 4, 1, 3]),
+    MaterialEnum.INSECT_SKIN_LT: Material("Skin", 0.1, 1, [1, 2, 1, 2]),
+    MaterialEnum.INSECT_SKIN_MD: Material("Skin", 0.2, 2, [3, 4, 1, 3]),
+    MaterialEnum.INSECT_SKIN_HV: Material("Skin", 0.3, 3, [4, 5, 1, 3]),
     MaterialEnum.HIDE: Material("Hide", 0.2, 4, [5, 4, 1, 3]),
     MaterialEnum.HIDE_BEAR_LT: Material("Bear Hide", 0.2, 3, [5, 3, 2, 4]),
     MaterialEnum.HIDE_BEAR_MD: Material("Bear Hide", 0.2, 5, [6, 4, 3, 5]),
@@ -1389,6 +1395,10 @@ class PersonEnum(IntEnum):
   MON_RAT_LARGE = 101
   MON_RAT_GUARD = 102
   MON_RAT_NOBLE = 103
+  MON_SPIDER_WORKER = 110
+  MON_SPIDER_HUNTSMAN = 111
+  MON_SPIDER_GOLIATH = 112
+  MON_SPIDER_QUEEN = 113
   BL_KEEP_GUARD = 10000
   BL_KEEP_SENTRY = 10001
   BL_KEEP_BEGGAR = 10002

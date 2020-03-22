@@ -22,6 +22,8 @@ rat_fur = Item(ItemTypeEnum.MISC, "rat fur", QualityEnum.AVE, MaterialEnum.FUR_L
                    Trigger(TriggerTypeEnum.DENY, chance=90),
                ])
 
+spider_silk = Item(ItemTypeEnum.MISC, "spider silk", QualityEnum.SUP, MaterialEnum.CLOTH, 5)
+
 persons = {
     PersonEnum.MON_RAT:
         Mob(PersonEnum.MON_RAT, "an ugly rat",
@@ -142,6 +144,120 @@ persons = {
                 rat_fur: 100,
             },
             frame=FrameItemEnum.RAT),
+    PersonEnum.MON_SPIDER_WORKER:
+        Mob(PersonEnum.MON_SPIDER_WORKER, "a large worker spider",
+            "A larger than normal spider is busily scurring around.", 50, 3, 45,
+            AimEnum.LOW, PersonFlag.AGGRESSIVE, MaterialEnum.INSECT_SKIN_LT,
+            attrs={
+                AttrEnum.SEX: 0,
+                AttrEnum.STRENGTH: 5,
+                AttrEnum.STAMINA: 4,
+                AttrEnum.DEXTERITY: 10,
+                AttrEnum.AGILITY: 10,
+                AttrEnum.EYESIGHT: 15,
+                AttrEnum.HEARING: 10,
+                AttrEnum.SMELL: 8,
+                AttrEnum.INTELLIGENCE: 3,
+                AttrEnum.AURA: 5,
+                AttrEnum.WILL: 7,
+            },
+            mob_skills={
+                SkillEnum.AWARENESS: 30,
+                SkillEnum.STEALTH: 25,
+            },
+            mob_attacks=[
+                MobAttack("Bite", 100, 45, 0, 0, DiceRoll(1, 5), DamageTypeEnum.PIERCE),
+            ],
+            loot={
+                spider_silk: 25,
+            },
+            frame=FrameItemEnum.SPIDER),
+    PersonEnum.MON_SPIDER_HUNTSMAN:
+        Mob(PersonEnum.MON_SPIDER_HUNTSMAN, "a large huntsman spider",
+            "A large huntsman spider kepts watch.", 55, 4, 45,
+            AimEnum.LOW, PersonFlag.AGGRESSIVE, MaterialEnum.INSECT_SKIN_LT,
+            attrs={
+                AttrEnum.SEX: 0,
+                AttrEnum.STRENGTH: 6,
+                AttrEnum.STAMINA: 6,
+                AttrEnum.DEXTERITY: 12,
+                AttrEnum.AGILITY: 10,
+                AttrEnum.EYESIGHT: 15,
+                AttrEnum.HEARING: 10,
+                AttrEnum.SMELL: 8,
+                AttrEnum.INTELLIGENCE: 4,
+                AttrEnum.AURA: 5,
+                AttrEnum.WILL: 8,
+            },
+            mob_skills={
+                SkillEnum.AWARENESS: 40,
+                SkillEnum.STEALTH: 30,
+            },
+            mob_attacks=[
+                MobAttack("Bite", 100, 50, 0, 0, DiceRoll(1, 6), DamageTypeEnum.PIERCE),
+            ],
+            loot={
+                spider_silk: 25,
+            },
+            frame=FrameItemEnum.SPIDER),
+    PersonEnum.MON_SPIDER_GOLIATH:
+        Mob(PersonEnum.MON_SPIDER_GOLIATH, "a goliath spider",
+            "A goliath spider glares at you!", 55, 5, 40,
+            AimEnum.LOW, PersonFlag.AGGRESSIVE, MaterialEnum.INSECT_SKIN_MD,
+            attrs={
+                AttrEnum.SEX: 0,
+                AttrEnum.STRENGTH: 7,
+                AttrEnum.STAMINA: 7,
+                AttrEnum.DEXTERITY: 12,
+                AttrEnum.AGILITY: 11,
+                AttrEnum.EYESIGHT: 15,
+                AttrEnum.HEARING: 10,
+                AttrEnum.SMELL: 8,
+                AttrEnum.INTELLIGENCE: 4,
+                AttrEnum.AURA: 6,
+                AttrEnum.WILL: 9,
+            },
+            mob_skills={
+                SkillEnum.AWARENESS: 40,
+                SkillEnum.STEALTH: 0,
+            },
+            mob_attacks=[
+                MobAttack("Bite", 100, 50, 0, 0, DiceRoll(1, 6), DamageTypeEnum.PIERCE),
+            ],
+            loot={
+                spider_silk: 25,
+                spider_silk: 25,
+            },
+            frame=FrameItemEnum.SPIDER),
+    PersonEnum.MON_SPIDER_QUEEN:
+        Mob(PersonEnum.MON_SPIDER_QUEEN, "a bloated spider queen",
+            "A huge spider queen stares at you.", 55, 6, 35,
+            AimEnum.LOW, PersonFlag.AGGRESSIVE, MaterialEnum.INSECT_SKIN_LT,
+            attrs={
+                AttrEnum.SEX: 0,
+                AttrEnum.STRENGTH: 7,
+                AttrEnum.STAMINA: 7,
+                AttrEnum.DEXTERITY: 12,
+                AttrEnum.AGILITY: 11,
+                AttrEnum.EYESIGHT: 15,
+                AttrEnum.HEARING: 10,
+                AttrEnum.SMELL: 8,
+                AttrEnum.INTELLIGENCE: 6,
+                AttrEnum.AURA: 6,
+                AttrEnum.WILL: 9,
+            },
+            mob_skills={
+                SkillEnum.AWARENESS: 45,
+                SkillEnum.STEALTH: 0,
+            },
+            mob_attacks=[
+                MobAttack("Bite", 100, 55, 0, 0, DiceRoll(1, 4), DamageTypeEnum.PIERCE),
+            ],
+            loot={
+                spider_silk: 100,
+                spider_silk: 100,
+            },
+            frame=FrameItemEnum.SPIDER),
     PersonEnum.BL_KEEP_GUARD:
         Mob(PersonEnum.BL_KEEP_GUARD, "a gatehouse guard",
             "A gatehouse guard keeps watch over his post.", 60, 14, 50,
