@@ -257,8 +257,7 @@ rooms = {
                  "your progress won't be lost.",
                  "NOTE: Best played with a fairly large window!",
                  "ESRB Rated (T) TEEN: Content is generally suitable for ages 13 and up. May contain violence, "
-                 "suggestive themes, crude humor, minimal blood, simulated gambling and/or infrequent use of strong "
-                 "language.",
+                 "crude humor, minimal blood, and/or simulated gambling.",
              ],
              flags=RoomFlag.LIGHT,
              func=room_StartGame),
