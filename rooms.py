@@ -255,7 +255,10 @@ rooms = {
                  "and Dragons(tm) modules.",
                  "During your adventures you will accumulate skills, items and wealth. Make sure to SAVE along the way to ensure "
                  "your progress won't be lost.",
-                 "NOTE: Best played with a fairly large window!"
+                 "NOTE: Best played with a fairly large window!",
+                 "ESRB Rated (T) TEEN: Content is generally suitable for ages 13 and up. May contain violence, "
+                 "suggestive themes, crude humor, minimal blood, simulated gambling and/or infrequent use of strong "
+                 "language.",
              ],
              flags=RoomFlag.LIGHT,
              func=room_StartGame),
