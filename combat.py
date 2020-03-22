@@ -267,14 +267,20 @@ def HandleImpactDMG(player, att, defe, at, res_level):
       if ia.Action in [ImpactActionEnum.WOUND_MLD,
                        ImpactActionEnum.WOUND_SRS,
                        ImpactActionEnum.WOUND_GRV]:
+        color = cm.ColorPair(TEXT_COLOR.BRIGHT_YELLOW)
+        if ia.Action == ImpactActionEnum.WOUND_SRS:
+          color = cm.ColorPair(TEXT_COLOR.YELLOW)
+        elif ia.Action == ImpactActionEnum.WOUND_GRV:
+          color = cm.ColorPair(TEXT_COLOR.BRIGHT_RED)
         if att.Person == player:
-          cm.Print("%s suffers a %s wound!" %
-                   (defe.Person.Name.capitalize(),
-                    wounds[ia.Action].Name.lower()),
-                   attr=ANSI.TEXT_BOLD)
+          cm.Print("%s suffers a " % defe.Person.Name.capitalize(),
+                   attr=ANSI.TEXT_BOLD, end="")
+          cm.Print("%s" % (wounds[ia.Action].Name.lower()), attr=color, end="")
+          cm.Print(" wound!", attr=ANSI.TEXT_BOLD)
         else:
-          cm.Print("You suffer a %s wound!" % (wounds[ia.Action].Name.lower()),
-                   attr=ANSI.TEXT_BOLD)
+          cm.Print("You suffer a ", attr=ANSI.TEXT_BOLD, end="")
+          cm.Print("%s" % wounds[ia.Action].Name.lower(), attr=color, end="")
+          cm.Print(" wound!", attr=ANSI.TEXT_BOLD)
         w = PersonWound(ia.Action, at.DamageType, loc,
                         impact + wounds[ia.Action].IPBonus)
         defe.Person.Wounds.append(w)
