@@ -12,6 +12,7 @@ LOG_ERR = 1
 LOG_WRN = 2
 LOG_INF = 3
 LOG_DBG = 4
+LOG_VBS = 5
 
 LogLevel = LOG_INF
 
@@ -35,5 +36,9 @@ def logi(line):
 
 def logd(line):
   log(LOG_DBG, "> [debug] %s" % line)
+
+
+def logv(line):
+  log(LOG_VBS, "> [verbose] %s" % line)
 
 # vim: tabstop=2 shiftwidth=2 expandtab:
