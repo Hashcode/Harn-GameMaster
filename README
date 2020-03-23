@@ -93,10 +93,13 @@ x Shops:
   - Outside Inner Gatehouse
 - Mobs
   x Rats (normal, large, guardian, noble)
-  - Rabid / Feral Wolves
-  - Spiders (poison?)
+  x Spiders (poison?)
+  x Skeletons
   - Snakes (poison?)
-  - Small 
+  - Rabid / Feral Wolves
+  - Bears
+  - Zombies / Wights?
+  - Gargun
 - Frames:
   x Walls
   x Doors
@@ -114,3 +117,7 @@ x Shops:
   - Cave Entrance
   - Docks
   - Boat Side
+- Activites:
+  - Jousting
+  - Tavern Games
+  - Gambling
