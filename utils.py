@@ -28,7 +28,7 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             DirectionEnum, directions, Roll, armor_shapes,
                             aims, Effect, EffectTypeEnum)
 from table_melee_attack import (Action)
-from logger import (logd, loge)
+from logger import (logv, logd, loge)
 
 
 wrapper = TextWrapper(width=70, fix_sentence_endings=True)
@@ -198,17 +198,17 @@ def renderHudToFrame(cm, facing, frame, room_id, level, lighting_level, x_offset
 
   # forward facing
   if REND_FACING in dirs:
-    logd("%s[START F%d] r=%d, offset=%d/%d, dirs=%s" % (indent, level, room_id, x_offset,
+    logv("%s[START F%d] r=%d, offset=%d/%d, dirs=%s" % (indent, level, room_id, x_offset,
                                                         renderOffset(REND_FACING, level, x_offset), dirs))
     if facing in rooms[room_id].Exits.keys():
       if rooms[room_id].Exits[facing].Frame() is not None:
-        logd("%s[F%dA] (%d/%d) %s" % (indent, level, x_offset,
+        logv("%s[F%dA] (%d/%d) %s" % (indent, level, x_offset,
                                       renderOffset(REND_FACING, level, x_offset),
                                       rooms[room_id].Exits[facing].Frame()))
         frame.Merge(frame_groups[rooms[room_id].Exits[facing].Frame()].Facing[level - 1],
                     renderOffset(REND_FACING, level, x_offset))
     else:
-      logd("%s[F%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset,
+      logv("%s[F%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset,
                                                      renderOffset(REND_FACING, level, x_offset)))
       if facing in rooms[room_id].Walls.keys():
         frame.Merge(frame_groups[rooms[room_id].Walls[facing]].Facing[level - 1],
@@ -218,25 +218,25 @@ def renderHudToFrame(cm, facing, frame, room_id, level, lighting_level, x_offset
                     renderOffset(REND_FACING, level, x_offset))
 
   # left of facing
-  logd("%s[START L%d] r=%d, offset=%d/%d" % (indent, level, room_id, x_offset,
+  logv("%s[START L%d] r=%d, offset=%d/%d" % (indent, level, room_id, x_offset,
                                              renderOffset(REND_LEFT, level, x_offset)))
   if directions[facing].Left in rooms[room_id].Exits.keys():
     re = rooms[room_id].Exits[directions[facing].Left]
     if REND_LEFT in dirs and re.Frame() is not None:
-      logd("%s[L%dA] (%d/%d) %s" % (indent, level, x_offset, renderOffset(REND_LEFT, level, x_offset), re.Frame()))
+      logv("%s[L%dA] (%d/%d) %s" % (indent, level, x_offset, renderOffset(REND_LEFT, level, x_offset), re.Frame()))
       frame.Merge(frame_groups[rooms[room_id].Exits[directions[facing].Left].Frame()].Left[level - 1],
                   renderOffset(REND_LEFT, level, x_offset))
     if REND_LEFT in dirs and level <= lighting_level and (re.Frame() is None or frame_groups[re.Frame()].Transparent):
       if facing in rooms[re.Room].Exits.keys():
         rre = rooms[re.Room].Exits[facing]
         if rre.Frame() is not None:
-          logd("%s[LF%dA] (%d/%d) %s" % (indent, level, x_offset,
+          logv("%s[LF%dA] (%d/%d) %s" % (indent, level, x_offset,
                                          renderOffset(REND_FACING, level, x_offset - 1),
                                          rre.Frame()))
           frame.Merge(frame_groups[rre.Frame()].Facing[level - 1],
                       renderOffset(REND_FACING, level, x_offset - 1))
       else:
-        logd("%s[LF%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset,
+        logv("%s[LF%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset,
                                                         renderOffset(REND_FACING, level, x_offset - 1)))
         if facing in rooms[re.Room].Walls.keys():
           frame.Merge(frame_groups[rooms[re.Room].Walls[facing]].Facing[level - 1],
@@ -245,7 +245,7 @@ def renderHudToFrame(cm, facing, frame, room_id, level, lighting_level, x_offset
           frame.Merge(frame_groups[FrameGroupEnum.WALL].Facing[level - 1],
                       renderOffset(REND_FACING, level, x_offset - 1))
   elif REND_LEFT in dirs:
-    logd("%s[L%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset,
+    logv("%s[L%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset,
                                                    renderOffset(REND_LEFT, level, x_offset)))
     if directions[facing].Left in rooms[room_id].Walls.keys():
       frame.Merge(frame_groups[rooms[room_id].Walls[directions[facing].Left]].Left[level - 1],
@@ -255,12 +255,12 @@ def renderHudToFrame(cm, facing, frame, room_id, level, lighting_level, x_offset
                   renderOffset(REND_LEFT, level, x_offset))
 
   # right of facing
-  logd("%s[START R%d] r=%d, offset=%d/%d" % (indent, level, room_id, x_offset,
+  logv("%s[START R%d] r=%d, offset=%d/%d" % (indent, level, room_id, x_offset,
                                              renderOffset(REND_RIGHT, level, x_offset)))
   if directions[facing].Right in rooms[room_id].Exits.keys():
     re = rooms[room_id].Exits[directions[facing].Right]
     if REND_RIGHT in dirs and re.Frame() is not None:
-      logd("%s[R%dA] (%d/%d) %s" % (indent, level, x_offset,
+      logv("%s[R%dA] (%d/%d) %s" % (indent, level, x_offset,
                                     renderOffset(REND_RIGHT, level, x_offset),
                                     re.Frame()))
       frame.Merge(frame_groups[re.Frame()].Right[level - 1],
@@ -269,13 +269,13 @@ def renderHudToFrame(cm, facing, frame, room_id, level, lighting_level, x_offset
       if facing in rooms[re.Room].Exits.keys():
         rre = rooms[re.Room].Exits[facing]
         if rre.Frame() is not None:
-          logd("%s[RF%dA] (%d/%d) %s" % (indent, level, x_offset,
+          logv("%s[RF%dA] (%d/%d) %s" % (indent, level, x_offset,
                                          renderOffset(REND_FACING, level, x_offset + 1),
                                          rre.Frame()))
           frame.Merge(frame_groups[rre.Frame()].Facing[level - 1],
                       renderOffset(REND_FACING, level, x_offset + 1))
       else:
-        logd("%s[RF%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset,
+        logv("%s[RF%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset,
                                                         renderOffset(REND_FACING, level, x_offset + 1)))
         if facing in rooms[re.Room].Walls.keys():
           frame.Merge(frame_groups[rooms[re.Room].Walls[facing]].Facing[level - 1],
@@ -284,7 +284,7 @@ def renderHudToFrame(cm, facing, frame, room_id, level, lighting_level, x_offset
           frame.Merge(frame_groups[FrameGroupEnum.WALL].Facing[level - 1],
                       renderOffset(REND_FACING, level, x_offset + 1))
   elif REND_RIGHT in dirs:
-    logd("%s[R%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset,
+    logv("%s[R%dB] (%d/%d) FrameGroupEnum.WALL" % (indent, level, x_offset,
                                                    renderOffset(REND_RIGHT, level, x_offset)))
     if directions[facing].Right in rooms[room_id].Walls.keys():
         frame.Merge(frame_groups[rooms[room_id].Walls[directions[facing].Right]].Right[level - 1],
@@ -300,7 +300,7 @@ def renderHudToFrame(cm, facing, frame, room_id, level, lighting_level, x_offset
     # dive down facing path
     if facing in rooms[room_id].Exits.keys():
       if rooms[room_id].Exits[facing].Frame() is None or frame_groups[rooms[room_id].Exits[facing].Frame()].Transparent:
-        logd("%s[DIVE F%d] r=%d, offset=%d" % (indent, level, room_id, x_offset))
+        logv("%s[DIVE F%d] r=%d, offset=%d" % (indent, level, room_id, x_offset))
         renderHudToFrame(cm, facing, frame, rooms[room_id].Exits[facing].Room,
                          level + 1, lighting_level, indent=indent, x_offset=x_offset)
     # dive down left path
@@ -309,7 +309,7 @@ def renderHudToFrame(cm, facing, frame, room_id, level, lighting_level, x_offset
       if re.Frame() is None or frame_groups[re.Frame()].Transparent:
         if REND_LEFT in dirs and facing in rooms[re.Room].Exits.keys():
           if level > 1:
-            logd("%s[DIVE L%d] r=%d, offset=%d" % (indent, level, room_id, x_offset))
+            logv("%s[DIVE L%d] r=%d, offset=%d" % (indent, level, room_id, x_offset))
             renderHudToFrame(cm, facing, frame, rooms[re.Room].Exits[facing].Room,
                              level + 1, lighting_level, x_offset=x_offset - 1, indent=indent, dirs=[REND_FACING])
     # dive down right path if the room to the right's exit is clear
@@ -318,7 +318,7 @@ def renderHudToFrame(cm, facing, frame, room_id, level, lighting_level, x_offset
       if re.Frame() is None or frame_groups[re.Frame()].Transparent:
         if REND_RIGHT in dirs and facing in rooms[re.Room].Exits.keys():
           if level > 1:
-            logd("%s[DIVE R%d] r=%d, offset=%d" % (indent, level, room_id, x_offset))
+            logv("%s[DIVE R%d] r=%d, offset=%d" % (indent, level, room_id, x_offset))
             renderHudToFrame(cm, facing, frame, rooms[re.Room].Exits[facing].Room,
                              level + 1, lighting_level, x_offset=x_offset + 1, indent=indent, dirs=[REND_FACING])
 
