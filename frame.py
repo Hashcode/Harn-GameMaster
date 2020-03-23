@@ -152,6 +152,7 @@ class FrameItemEnum(IntEnum):
   TREASURE = 100
   RAT = 101
   SPIDER = 102
+  SKELETON = 200
 
 
 frame_groups = {
@@ -179,6 +180,7 @@ frame_items = {
     FrameItemEnum.TREASURE: FrameItem("treasure"),
     FrameItemEnum.RAT: FrameItem("rat"),
     FrameItemEnum.SPIDER: FrameItem("spider"),
+    FrameItemEnum.SKELETON: FrameItem("skeleton"),
 }
 
 
