@@ -117,7 +117,7 @@ class GameData:
       # Set NextRoomEvent max 10mins
       GameData._NextRoomEvent = seconds + (10 * 60)
       for room_id, r in rooms.items():
-        if rooms[player.Room].Zone != r.Zone:
+        if not first and rooms[player.Room].Zone != r.Zone:
           continue
         if rooms[room_id].Periodics is not None:
           for per in rooms[room_id].Periodics:
