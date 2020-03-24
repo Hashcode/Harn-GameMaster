@@ -242,9 +242,11 @@ doors = {
     DoorEnum.N_TOWER_TRAPDOOR_LEVEL_3: Door("top floor trapdoor", DoorState(True, False)),
     DoorEnum.S_TOWER_TRAPDOOR_LEVEL_2: Door("bottom floor trapdoor", DoorState(True, False)),
     DoorEnum.S_TOWER_TRAPDOOR_LEVEL_3: Door("top floor trapdoor", DoorState(True, False)),
+    DoorEnum.APPT_DOOR_2: Door("weathered door to an apartment", DoorState(True, False)),
     DoorEnum.WARREN_DOOR_1: Door("scratched door", DoorState(True, True), "a tarnished bronze key"),
     DoorEnum.WARREN_DOOR_2: Door("door with a a strange triangle symbol", DoorState(True, True), "a triangle key"),
 }
+
 
 rooms = {
     # GAME ROOMS
@@ -371,7 +373,7 @@ rooms = {
     RoomEnum.BL_NORTHEASTERN_WALK:
         Room(RoomEnum.BL_NORTHEASTERN_WALK, ZoneEnum.KEEP, "North-Eastern Walk", "the north-eastern walk",
              [
-                 "You stand on a cobblestone paved walk which follows the interior wall of the keep."
+                 "You stand on a cobblestone paved walk which follows the interior eastern wall of the keep."
              ],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
@@ -476,7 +478,7 @@ rooms = {
     RoomEnum.BL_EASTERN_WALK:
         Room(RoomEnum.BL_EASTERN_WALK, ZoneEnum.KEEP, "Eastern Walk", "the eastern walk",
              [
-                 "You stand on a cobblestone paved walk which follows the interior wall of the keep."
+                 "You stand on a cobblestone paved walk which follows the interior eastern wall of the keep."
              ],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
@@ -575,7 +577,7 @@ rooms = {
     RoomEnum.BL_EASTERN_WALK_2:
         Room(RoomEnum.BL_EASTERN_WALK_2, ZoneEnum.KEEP, "Eastern Walk", "the eastern walk",
              [
-                 "You stand on a cobblestone paved walk which follows the interior wall of the keep."
+                 "You stand on a cobblestone paved walk which follows the interior eastern wall of the keep."
              ],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
@@ -595,7 +597,9 @@ rooms = {
     RoomEnum.BL_SOUTHEASTERN_WALK:
         Room(RoomEnum.BL_SOUTHEASTERN_WALK, ZoneEnum.KEEP, "South-Eastern Walk", "the south-eastern walk",
              [
-                 "You stand on a cobblestone paved walk which follows the interior wall of the keep."
+                 "This is the south-eastern corner of a cobblestone paved walk which follows eastern "
+                 "and southern edges of the keep.  From this vantage point the walk continues north "
+                 "and west."
              ],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
@@ -604,7 +608,10 @@ rooms = {
              }),
     RoomEnum.BL_SOUTHERN_WALK:
         Room(RoomEnum.BL_SOUTHERN_WALK, ZoneEnum.KEEP, "Southern Walk", "the southern walk",
-             ["** TODO **"],
+             [
+                 "You stand on a cobblestone paved walk which follows the southern edge of the keep. "
+                 "The outer wall rises above the buildings to the south."
+             ],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_SMITHY,
@@ -618,7 +625,10 @@ rooms = {
              }),
     RoomEnum.BL_SMITHY:
         Room(RoomEnum.BL_SMITHY, ZoneEnum.KEEP, "The Smithy", "the smithy",
-             ["** TODO **"],
+             [
+                 "This large space is dominated by a forge in the center of the room. "
+                 "Scattered around it are several barrels of water, an anvil and a well-used grinding stone."
+             ],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHERN_WALK,
@@ -626,10 +636,53 @@ rooms = {
              },
              room_pers=[
                  NewPerson(PersonEnum.BL_SMITHY),
+             ],
+             onLook=[
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.HOUR_OF_DAY_CHECK, value=6),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.MESSAGE,
+                                 [
+                                     "", "The empty forge is lit from within by fading coals. "
+                                     "At this hour, a quiet blanket of stillness echoes about the place."
+                                 ]),
+                         Trigger(TriggerTypeEnum.END),
+                     ]),
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.HOUR_OF_DAY_CHECK, value=20),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.MESSAGE,
+                                 [
+                                     "", "Heat radiates from the glowing forge as it's tended by an assistant. "
+                                     "Several other assistants run about the room working on projects at various "
+                                     "stages of completion."
+                                 ]),
+                         Trigger(TriggerTypeEnum.END),
+                     ]),
+                 Periodic(
+                     [
+                         Condition(ConditionCheckEnum.LESS_THAN, TargetTypeEnum.HOUR_OF_DAY_CHECK, value=25),
+                     ],
+                     [
+                         Trigger(TriggerTypeEnum.MESSAGE,
+                                 [
+                                     "", "The forge is cooling after the work day has ended. "
+                                     "Only a single assistant can be seen cleaning up portions of the area. "
+                                 ]),
+                         Trigger(TriggerTypeEnum.END),
+                     ]),
              ]),
     RoomEnum.BL_APARMENT_1:
         Room(RoomEnum.BL_APARMENT_1, ZoneEnum.KEEP, "A Private Apartment", "a private apartment",
-             ["** TODO **"],
+             [
+                 "This small apartment is sparsely decorated with the most functional of furniture. "
+                 "A sturdy armoire sits in a corner and an aging bed anchors the eastern wall. "
+                 "A small writing desk is jammed next to a privy making for a very tight space."
+             ],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK,
@@ -671,26 +724,40 @@ rooms = {
              ]),
     RoomEnum.BL_SOUTHERN_WALK_2:
         Room(RoomEnum.BL_SOUTHERN_WALK_2, ZoneEnum.KEEP, "Southern Walk", "the southern walk",
-             ["** TODO **"],
+             [
+                 "You stand on a cobblestone paved walk which follows the southern edge of the keep. "
+                 "The outer wall rises above the buildings to the south."
+             ],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_MAIN_WALK),
                  DirectionEnum.EAST: Exit(RoomEnum.BL_SOUTHERN_WALK),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_APARMENT_2,
-                                           frame_id=FrameGroupEnum.ARCHWAY),
+                                           DoorEnum.APPT_DOOR_2,
+                                           FrameGroupEnum.DOOR_CLOSED,
+                                           FrameGroupEnum.DOOR_OPEN),
                  DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHERN_WALK_3),
              }),
     RoomEnum.BL_APARMENT_2:
         Room(RoomEnum.BL_APARMENT_2, ZoneEnum.KEEP, "A Private Apartment", "a private apartment",
-             ["** TODO **"],
+             [
+                 "This sparsely decorated apartment houses an ancient-looking armoire, small bed of "
+                 "straw and a moth-eaten blanket. The smell eminating from the privy indicates it "
+                 "hasn't been changed in days."
+             ],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK_2,
-                                           frame_id=FrameGroupEnum.ARCHWAY),
+                                           DoorEnum.APPT_DOOR_2,
+                                           FrameGroupEnum.DOOR_CLOSED,
+                                           FrameGroupEnum.DOOR_OPEN),
              }),
     RoomEnum.BL_SOUTHERN_WALK_3:
         Room(RoomEnum.BL_SOUTHERN_WALK_3, ZoneEnum.KEEP, "Southern Walk", "the southern walk",
-             ["** TODO **"],
+             [
+                 "You stand on a cobblestone paved walk which follows the southern edge of the keep. "
+                 "The outer wall rises above the buildings to the south."
+             ],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_LEATHERWORKS,
@@ -701,8 +768,14 @@ rooms = {
                  DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHWESTERN_WALK),
              }),
     RoomEnum.BL_LEATHERWORKS:
-        Room(RoomEnum.BL_LEATHERWORKS, ZoneEnum.KEEP, "The Tanner", "the tanner",
-             ["** TODO **"],
+        Room(RoomEnum.BL_LEATHERWORKS, ZoneEnum.KEEP, "The Tannery", "the tannery",
+             [
+                 "The smell of tanning chemicals is an assault of the senses.  Shelves "
+                 "lines the western wall where various bits of leather are strewn about "
+                 "to dry over a period of days.  Baskets of freshly delivered hides are "
+                 "stored in one corner.  The area is littered with instruments used in "
+                 "the stretching and preparation of leather goods."
+             ],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHERN_WALK_3,
@@ -713,7 +786,13 @@ rooms = {
              ]),
     RoomEnum.BL_PROVISIONS:
         Room(RoomEnum.BL_PROVISIONS, ZoneEnum.KEEP, "Provisions Shop", "a provisions shop",
-             ["** TODO **"],
+             [
+                 "The front of this small shop contains several shelves displaying items "
+                 "which might be useful for traveling beyond the Keep. A smart adventurer "
+                 "would certainly make sure they were well stocked on rations, torches and the like. "
+                 "A small counter separates the back half of the room where boxes seem to be "
+                 "organized into stacks along the walls."
+             ],
              flags=RoomFlag.LIGHT,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_SOUTHERN_WALK_3,
@@ -724,7 +803,9 @@ rooms = {
              ]),
     RoomEnum.BL_SOUTHWESTERN_WALK:
         Room(RoomEnum.BL_SOUTHWESTERN_WALK, ZoneEnum.KEEP, "South-Western Walk", "the south-western walk",
-             ["** TODO **"],
+             [
+                 "This is the south-western corner of a cobblestone paved walk which follows the southern edge of the keep."
+             ],
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_FOUNTAIN_SQUARE),

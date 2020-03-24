@@ -902,7 +902,7 @@ persons = {
                         [
                             Trigger(TriggerTypeEnum.MESSAGE,
                                     [
-                                        "\"Great! The warehouse is back down the Southern Walk and then north on Eastern "
+                                        "\"Great! The warehouse is east back down the Southern Walk and then north on Eastern "
                                         "Walk. It's there on the left. Return to me and I'll pay you for each fur you "
                                         "collect.\"",
                                     ]),
