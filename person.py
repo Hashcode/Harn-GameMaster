@@ -46,8 +46,8 @@ persons = {
                 MobAttack("Claws", 100, 24, 0, 0, DiceRoll(1, 1), DamageTypeEnum.EDGE),
             ],
             mob_skills={
-                SkillEnum.AWARENESS: 0,
-                SkillEnum.STEALTH: 0,
+                SkillEnum.AWARENESS: 50,
+                SkillEnum.STEALTH: 30,
             },
             loot={
                 rat_fur: 100,
@@ -75,8 +75,8 @@ persons = {
                 MobAttack("Claws", 100, 27, 0, 0, DiceRoll(1, 2), DamageTypeEnum.EDGE),
             ],
             mob_skills={
-                SkillEnum.AWARENESS: 10,
-                SkillEnum.STEALTH: 0,
+                SkillEnum.AWARENESS: 60,
+                SkillEnum.STEALTH: 25,
             },
             loot={
                 rat_fur: 100,
@@ -105,8 +105,8 @@ persons = {
                 MobAttack("Claws", 100, 31, 0, 0, DiceRoll(1, 3), DamageTypeEnum.EDGE),
             ],
             mob_skills={
-                SkillEnum.AWARENESS: 10,
-                SkillEnum.STEALTH: 0,
+                SkillEnum.AWARENESS: 60,
+                SkillEnum.STEALTH: 20,
             },
             loot={
                 rat_fur: 100,
@@ -131,8 +131,8 @@ persons = {
                 AttrEnum.WILL: 9,
             },
             mob_skills={
-                SkillEnum.AWARENESS: 10,
-                SkillEnum.STEALTH: 0,
+                SkillEnum.AWARENESS: 60,
+                SkillEnum.STEALTH: 30,
             },
             mob_attacks=[
                 MobAttack("Bite", 60, 45, 0, 0, DiceRoll(1, 4), DamageTypeEnum.PIERCE),
@@ -162,8 +162,8 @@ persons = {
                 AttrEnum.WILL: 7,
             },
             mob_skills={
-                SkillEnum.AWARENESS: 30,
-                SkillEnum.STEALTH: 25,
+                SkillEnum.AWARENESS: 60,
+                SkillEnum.STEALTH: 45,
             },
             mob_attacks=[
                 MobAttack("Bite", 100, 45, 0, 0, DiceRoll(1, 5), DamageTypeEnum.PIERCE),
@@ -190,8 +190,8 @@ persons = {
                 AttrEnum.WILL: 8,
             },
             mob_skills={
-                SkillEnum.AWARENESS: 40,
-                SkillEnum.STEALTH: 30,
+                SkillEnum.AWARENESS: 70,
+                SkillEnum.STEALTH: 50,
             },
             mob_attacks=[
                 MobAttack("Bite", 100, 50, 0, 0, DiceRoll(1, 6), DamageTypeEnum.PIERCE),
@@ -218,8 +218,7 @@ persons = {
                 AttrEnum.WILL: 9,
             },
             mob_skills={
-                SkillEnum.AWARENESS: 40,
-                SkillEnum.STEALTH: 0,
+                SkillEnum.AWARENESS: 70,
             },
             mob_attacks=[
                 MobAttack("Bite", 100, 50, 0, 0, DiceRoll(1, 6), DamageTypeEnum.PIERCE),
@@ -247,8 +246,7 @@ persons = {
                 AttrEnum.WILL: 9,
             },
             mob_skills={
-                SkillEnum.AWARENESS: 45,
-                SkillEnum.STEALTH: 0,
+                SkillEnum.AWARENESS: 75,
             },
             mob_attacks=[
                 MobAttack("Bite", 100, 55, 0, 0, DiceRoll(1, 4), DamageTypeEnum.PIERCE),
@@ -276,7 +274,7 @@ persons = {
                 AttrEnum.WILL: 14,
             },
             mob_skills={
-                SkillEnum.POLEARM: 15,  # Skill Points (<<) + Base(13 * 4) + Offense Rating (25): 92
+                SkillEnum.POLEARM: 70,
             },
             eq=[
                 Weapon("pike", QualityEnum.INF, MaterialEnum.STEEL_WOOD, 15, SkillEnum.POLEARM, 25, 5, 25, DiceRoll(2, 6, 0),
@@ -428,7 +426,7 @@ persons = {
                 AttrEnum.WILL: 11,
             },
             mob_skills={
-                SkillEnum.POLEARM: 10,  # Skill Points (<<) + Base(12 * 4) + Offense Rating (25): 83
+                SkillEnum.POLEARM: 60,
             },
             eq=[
                 Weapon("poleaxe", QualityEnum.AVE, MaterialEnum.STEEL_WOOD, 10.5, SkillEnum.POLEARM, 25, 5, 20, DiceRoll(2, 6, 0),
@@ -489,7 +487,7 @@ persons = {
                 AttrEnum.WILL: 11,
             },
             mob_skills={
-                SkillEnum.UNARMED: 10, # Skill Points (<<) + Base(11 * 4): 54
+                SkillEnum.UNARMED: 55,
             },
             eq=[
                 Armor("dirty cloth tunic", QualityEnum.INF, MaterialEnum.CLOTH, ArmorLayer.AL_1, ShapeEnum.TUNIC, equipped=True),
@@ -556,7 +554,7 @@ persons = {
                 AttrEnum.WILL: 12,
             },
             mob_skills={
-                SkillEnum.SWORD: 30,  # Skill Points (<<) + Base(14 * 4) + Offense Rating (20): 106
+                SkillEnum.SWORD: 80,
             },
             eq=[
                 Weapon("steel bastard sword", QualityEnum.AVE, MaterialEnum.STEEL, 7.5, SkillEnum.SWORD, 20, 10, 10, DiceRoll(1, 6, 2),
@@ -706,7 +704,7 @@ persons = {
                 AttrEnum.WILL: 11,
             },
             mob_skills={
-                SkillEnum.UNARMED: 5, # Skill Points (<<) + Base(12 * 4) + Offense Rating (0): 53
+                SkillEnum.UNARMED: 50,
             },
             eq=[
                 Armor("cloth robe", QualityEnum.AVE, MaterialEnum.CLOTH, ArmorLayer.AL_1, ShapeEnum.ROBE, equipped=True),
@@ -738,8 +736,8 @@ persons = {
                 AttrEnum.WILL: 16,
             },
             mob_skills={
-                SkillEnum.CLUB: 20, # Skill Points (<<) + Base(17 * 4) + Offense Rating (20): 108
-                SkillEnum.METALCRAFT: 50,
+                SkillEnum.CLUB: 80,
+                SkillEnum.METALCRAFT: 80,
             },
             eq=[
                 Weapon("wicked-looking spiked maul", QualityEnum.SUP, MaterialEnum.WOOD, 8, SkillEnum.CLUB, 20, 5, 20, DiceRoll(1, 6, 3),
@@ -799,7 +797,7 @@ persons = {
                 AttrEnum.WILL: 13,
             },
             mob_skills={
-                SkillEnum.DAGGER: 10, # Skill Points (<<) + Base(16 * 4) + Offense Rating (5): 79
+                SkillEnum.DAGGER: 60,
             },
             eq=[
                 Weapon("sharp dagger", QualityEnum.AVE, MaterialEnum.STEEL, 1, SkillEnum.DAGGER, 5, 5, 0, DiceRoll(1, 6),
@@ -997,8 +995,8 @@ persons = {
                 AttrEnum.WILL: 13,
             },
             mob_skills={
-                SkillEnum.DAGGER: 10, # Skill Points (<<) + Base(16 * 4) + Offense Rating (5): 79
-                SkillEnum.HIDEWORK: 50,
+                SkillEnum.DAGGER: 70,
+                SkillEnum.HIDEWORK: 80,
             },
             eq=[
                 Weapon("sharp dagger", QualityEnum.AVE, MaterialEnum.STEEL, 1, SkillEnum.DAGGER, 5, 5, 0, DiceRoll(1, 6),
@@ -1081,8 +1079,8 @@ persons = {
                 AttrEnum.WILL: 13,
             },
             mob_skills={
-                SkillEnum.DAGGER: 15, # Skill Points (<<) + Base(14 * 4) + Offense Rating (5): 76
-                SkillEnum.SURVIVAL: 50,
+                SkillEnum.DAGGER: 70,
+                SkillEnum.SURVIVAL: 80,
             },
             eq=[
                 Weapon("sharp dagger", QualityEnum.AVE, MaterialEnum.STEEL, 1, SkillEnum.DAGGER, 5, 5, 0, DiceRoll(1, 6),

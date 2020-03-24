@@ -12,7 +12,7 @@ from copy import deepcopy
 from time import time
 
 from gamedata import GameData
-from logger import logd
+from logger import (logd, loge)
 
 
 # ROLL
@@ -1544,7 +1544,8 @@ class Person:
     if attr in self.Attr:
       return self.Attr[attr] + self.CalcEffect(EffectTypeEnum.ATTRIBUTE, attr)
     else:
-      return 0
+      loge("%s MISSING ATTR: %s" % (self.Name, attributes[attr].Name))
+      return 0 + self.CalcEffect(EffectTypeEnum.ATTRIBUTE, attr)
 
   def AddItem(self, item, equipped=False):
     effs = item.Effects
@@ -1681,7 +1682,11 @@ class Person:
     return ret
 
   def SkillML(self, skill_id, skipPenalty=False):
-    ml = self.SkillBase(skill_id) * skills[skill_id].OMLMod
+    # only players get the opening skill base
+    # mobs have their skills hard-coded to exact values
+    ml = 0
+    if type(self) is Player:
+      ml = self.SkillBase(skill_id) * skills[skill_id].OMLMod
     if skill_id in self.SkillLinks:
       ml += self.SkillLinks[skill_id].Points
     ml += self.CalcEffect(EffectTypeEnum.SKILL, skill_id)
@@ -1698,7 +1703,9 @@ class Person:
     return round(self.SkillML(skill_id) / 10)
 
   def SkillMax(self, skill_id):
-    return 100 + self.SkillBase(skill_id)
+    if type(self) is Player:
+      return 100 + self.SkillBase(skill_id)
+    return 120
 
   def ResolveSkill(self, ml, skill_id):
     if type(self) is Player:
