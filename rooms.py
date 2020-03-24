@@ -231,7 +231,8 @@ class ZoneEnum(IntEnum):
   NONE = 0
   KEEP = 1
   INNER_KEEP = 2
-  FOREST = 3
+  RAT_WARREN = 5
+  FOREST = 10
 
 
 doors = {
@@ -410,10 +411,42 @@ rooms = {
              ],
              flags=RoomFlag.LIGHT,
              exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAMPARTS_E2,
+                                           frame_id=FrameGroupEnum.ARCHWAY),
                  DirectionEnum.DOWN: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER,
                                           DoorEnum.N_TOWER_TRAPDOOR_LEVEL_2),
                  DirectionEnum.UP: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_3,
                                         DoorEnum.N_TOWER_TRAPDOOR_LEVEL_3),
+             }),
+    RoomEnum.BL_RAMPARTS_E1:
+        Room(RoomEnum.BL_RAMPARTS_E1, ZoneEnum.KEEP,
+             "On the Ramparts", "on the ramparts of the Keep",
+             [
+                 "TODO"
+             ],
+             flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
+             exits={
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAMPARTS_E2),
+             },
+             walls={
+                 DirectionEnum.EAST: FrameGroupEnum.SHORT_WALL,
+                 DirectionEnum.WEST: FrameGroupEnum.SHORT_WALL,
+             }),
+    RoomEnum.BL_RAMPARTS_E2:
+        Room(RoomEnum.BL_RAMPARTS_E2, ZoneEnum.KEEP,
+             "On the Ramparts", "on the ramparts of the Keep",
+             [
+                 "TODO"
+             ],
+             flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAMPARTS_E1),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_2,
+                                           frame_id=FrameGroupEnum.ARCHWAY),
+             },
+             walls={
+                 DirectionEnum.EAST: FrameGroupEnum.SHORT_WALL,
+                 DirectionEnum.WEST: FrameGroupEnum.SHORT_WALL,
              }),
     RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_3:
         Room(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_3, ZoneEnum.KEEP,
@@ -425,7 +458,7 @@ rooms = {
                  "length of the outer wall providing cover for launching missile weapons at attackers coming in from "
                  "the road."
              ],
-             flags=RoomFlag.LIGHT,
+             flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
                  DirectionEnum.DOWN: Exit(RoomEnum.BL_N_GATEHOUSE_TOWER_LEVEL_2,
                                           DoorEnum.N_TOWER_TRAPDOOR_LEVEL_3),
@@ -519,10 +552,29 @@ rooms = {
              ],
              flags=RoomFlag.LIGHT,
              exits={
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAMPARTS_E3,
+                                           frame_id=FrameGroupEnum.ARCHWAY),
                  DirectionEnum.DOWN: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER,
                                           DoorEnum.S_TOWER_TRAPDOOR_LEVEL_2),
                  DirectionEnum.UP: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_3,
                                         DoorEnum.S_TOWER_TRAPDOOR_LEVEL_3),
+             }),
+    RoomEnum.BL_RAMPARTS_E3:
+        Room(RoomEnum.BL_RAMPARTS_E3, ZoneEnum.KEEP,
+             "On the Ramparts", "on the ramparts of the Keep",
+             [
+                 "TODO"
+             ],
+             flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_2,
+                                           frame_id=FrameGroupEnum.ARCHWAY),
+                 DirectionEnum.SOUTH: Exit(RoomEnum.BL_BAILIFF_TOWER_LEVEL_2,
+                                           frame_id=FrameGroupEnum.ARCHWAY),
+             },
+             walls={
+                 DirectionEnum.EAST: FrameGroupEnum.SHORT_WALL,
+                 DirectionEnum.WEST: FrameGroupEnum.SHORT_WALL,
              }),
     RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_3:
         Room(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_3, ZoneEnum.KEEP,
@@ -534,7 +586,7 @@ rooms = {
                  "length of the outer wall providing cover for launching missile weapons at attackers coming in from "
                  "the road."
              ],
-             flags=RoomFlag.LIGHT,
+             flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
                  DirectionEnum.DOWN: Exit(RoomEnum.BL_S_GATEHOUSE_TOWER_LEVEL_2,
                                           DoorEnum.S_TOWER_TRAPDOOR_LEVEL_3),
@@ -582,17 +634,7 @@ rooms = {
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_EASTERN_WALK),
-                 DirectionEnum.EAST: Exit(RoomEnum.BL_BAILIFF_TOWER,
-                                          frame_id=FrameGroupEnum.ARCHWAY),
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_SOUTHEASTERN_WALK),
-             }),
-    RoomEnum.BL_BAILIFF_TOWER:
-        Room(RoomEnum.BL_BAILIFF_TOWER, ZoneEnum.KEEP, "Bailiff's Tower", "the Bailiff's tower",
-             ["** TODO **"],
-             flags=RoomFlag.LIGHT,
-             exits={
-                 DirectionEnum.WEST: Exit(RoomEnum.BL_EASTERN_WALK_2,
-                                          frame_id=FrameGroupEnum.ARCHWAY),
              }),
     RoomEnum.BL_SOUTHEASTERN_WALK:
         Room(RoomEnum.BL_SOUTHEASTERN_WALK, ZoneEnum.KEEP, "South-Eastern Walk", "the south-eastern walk",
@@ -604,7 +646,27 @@ rooms = {
              flags=RoomFlag.LIGHT | RoomFlag.OUTSIDE,
              exits={
                  DirectionEnum.NORTH: Exit(RoomEnum.BL_EASTERN_WALK_2),
+                 DirectionEnum.EAST: Exit(RoomEnum.BL_BAILIFF_TOWER,
+                                          frame_id=FrameGroupEnum.ARCHWAY),
                  DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHERN_WALK),
+             }),
+    RoomEnum.BL_BAILIFF_TOWER:
+        Room(RoomEnum.BL_BAILIFF_TOWER, ZoneEnum.KEEP, "Bailiff's Tower", "the Bailiff's tower",
+             ["** TODO **"],
+             flags=RoomFlag.LIGHT,
+             exits={
+                 DirectionEnum.WEST: Exit(RoomEnum.BL_SOUTHEASTERN_WALK,
+                                          frame_id=FrameGroupEnum.ARCHWAY),
+                 DirectionEnum.UP: Exit(RoomEnum.BL_BAILIFF_TOWER_LEVEL_2),
+             }),
+    RoomEnum.BL_BAILIFF_TOWER_LEVEL_2:
+        Room(RoomEnum.BL_BAILIFF_TOWER_LEVEL_2, ZoneEnum.KEEP, "Bailiff's Tower 2nd Floor", "the Bailiff's tower second floor",
+             ["** TODO **"],
+             flags=RoomFlag.LIGHT,
+             exits={
+                 DirectionEnum.NORTH: Exit(RoomEnum.BL_RAMPARTS_E3,
+                                           frame_id=FrameGroupEnum.ARCHWAY),
+                 DirectionEnum.DOWN: Exit(RoomEnum.BL_BAILIFF_TOWER),
              }),
     RoomEnum.BL_SOUTHERN_WALK:
         Room(RoomEnum.BL_SOUTHERN_WALK, ZoneEnum.KEEP, "Southern Walk", "the southern walk",
@@ -987,7 +1049,7 @@ rooms = {
 
     # RAT WARREN
     RoomEnum.BL_RAT_WARREN_1:
-        Room(RoomEnum.BL_RAT_WARREN_1, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+        Room(RoomEnum.BL_RAT_WARREN_1, ZoneEnum.RAT_WARREN, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
                  "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
@@ -1011,7 +1073,7 @@ rooms = {
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_2:
-        Room(RoomEnum.BL_RAT_WARREN_2, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+        Room(RoomEnum.BL_RAT_WARREN_2, ZoneEnum.RAT_WARREN, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
                  "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
@@ -1025,7 +1087,7 @@ rooms = {
                  DirectionEnum.WEST: Exit(RoomEnum.BL_RAT_WARREN_4),
              }),
     RoomEnum.BL_RAT_WARREN_3:
-        Room(RoomEnum.BL_RAT_WARREN_3, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+        Room(RoomEnum.BL_RAT_WARREN_3, ZoneEnum.RAT_WARREN, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
                  "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
@@ -1055,7 +1117,7 @@ rooms = {
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_4:
-        Room(RoomEnum.BL_RAT_WARREN_4, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+        Room(RoomEnum.BL_RAT_WARREN_4, ZoneEnum.RAT_WARREN, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
                  "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
@@ -1077,7 +1139,7 @@ rooms = {
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_5:
-        Room(RoomEnum.BL_RAT_WARREN_5, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+        Room(RoomEnum.BL_RAT_WARREN_5, ZoneEnum.RAT_WARREN, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
                  "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
@@ -1090,7 +1152,7 @@ rooms = {
                                            FrameGroupEnum.DOOR_CLOSED, FrameGroupEnum.DOOR_OPEN),
              }),
     RoomEnum.BL_RAT_WARREN_6:
-        Room(RoomEnum.BL_RAT_WARREN_6, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+        Room(RoomEnum.BL_RAT_WARREN_6, ZoneEnum.RAT_WARREN, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
                  "This open space is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
@@ -1102,7 +1164,7 @@ rooms = {
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_8),
              }),
     RoomEnum.BL_RAT_WARREN_7:
-        Room(RoomEnum.BL_RAT_WARREN_7, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+        Room(RoomEnum.BL_RAT_WARREN_7, ZoneEnum.RAT_WARREN, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
                  "This open space is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
@@ -1116,7 +1178,7 @@ rooms = {
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_9),
              }),
     RoomEnum.BL_RAT_WARREN_8:
-        Room(RoomEnum.BL_RAT_WARREN_8, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+        Room(RoomEnum.BL_RAT_WARREN_8, ZoneEnum.RAT_WARREN, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
                  "This open space is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
@@ -1140,7 +1202,7 @@ rooms = {
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_9:
-        Room(RoomEnum.BL_RAT_WARREN_9, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+        Room(RoomEnum.BL_RAT_WARREN_9, ZoneEnum.RAT_WARREN, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
                  "This open space is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
@@ -1162,7 +1224,7 @@ rooms = {
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_10:
-        Room(RoomEnum.BL_RAT_WARREN_10, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+        Room(RoomEnum.BL_RAT_WARREN_10, ZoneEnum.RAT_WARREN, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
                  "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
@@ -1175,7 +1237,7 @@ rooms = {
                  DirectionEnum.SOUTH: Exit(RoomEnum.BL_RAT_WARREN_11),
              }),
     RoomEnum.BL_RAT_WARREN_11:
-        Room(RoomEnum.BL_RAT_WARREN_11, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+        Room(RoomEnum.BL_RAT_WARREN_11, ZoneEnum.RAT_WARREN, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
                  "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
@@ -1210,7 +1272,7 @@ rooms = {
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_12:
-        Room(RoomEnum.BL_RAT_WARREN_12, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+        Room(RoomEnum.BL_RAT_WARREN_12, ZoneEnum.RAT_WARREN, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
                  "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
@@ -1227,7 +1289,7 @@ rooms = {
                  DirectionEnum.EAST: FrameGroupEnum.CAVERN,
              }),
     RoomEnum.BL_RAT_WARREN_13:
-        Room(RoomEnum.BL_RAT_WARREN_13, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+        Room(RoomEnum.BL_RAT_WARREN_13, ZoneEnum.RAT_WARREN, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
                  "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
@@ -1243,7 +1305,7 @@ rooms = {
                  DirectionEnum.EAST: FrameGroupEnum.CAVERN,
              }),
     RoomEnum.BL_RAT_WARREN_14:
-        Room(RoomEnum.BL_RAT_WARREN_14, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+        Room(RoomEnum.BL_RAT_WARREN_14, ZoneEnum.RAT_WARREN, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
                  "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
@@ -1270,7 +1332,7 @@ rooms = {
                  DirectionEnum.SOUTH: FrameGroupEnum.CAVERN,
              }),
     RoomEnum.BL_RAT_WARREN_15:
-        Room(RoomEnum.BL_RAT_WARREN_15, ZoneEnum.KEEP, "On the Bridge over a Cavern", "a bridge over a cavern",
+        Room(RoomEnum.BL_RAT_WARREN_15, ZoneEnum.RAT_WARREN, "On the Bridge over a Cavern", "a bridge over a cavern",
              [
                  "This moldy bridge is made of small wooden planks laid across 2 long beams which stretch across "
                  "the cavern below.  A foul smelling wind rises below and blows across the bridge and back into "
@@ -1288,7 +1350,7 @@ rooms = {
                  DirectionEnum.SOUTH: FrameGroupEnum.WALL_BRIDGE,
              }),
     RoomEnum.BL_RAT_WARREN_16:
-        Room(RoomEnum.BL_RAT_WARREN_16, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+        Room(RoomEnum.BL_RAT_WARREN_16, ZoneEnum.RAT_WARREN, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
                  "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
@@ -1327,7 +1389,7 @@ rooms = {
                  DirectionEnum.SOUTH: FrameGroupEnum.CAVERN,
              }),
     RoomEnum.BL_RAT_WARREN_17:
-        Room(RoomEnum.BL_RAT_WARREN_17, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+        Room(RoomEnum.BL_RAT_WARREN_17, ZoneEnum.RAT_WARREN, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
                  "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
@@ -1345,7 +1407,7 @@ rooms = {
                  DirectionEnum.WEST: FrameGroupEnum.CAVERN,
              }),
     RoomEnum.BL_RAT_WARREN_18:
-        Room(RoomEnum.BL_RAT_WARREN_18, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+        Room(RoomEnum.BL_RAT_WARREN_18, ZoneEnum.RAT_WARREN, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
                  "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
@@ -1379,7 +1441,7 @@ rooms = {
                  DirectionEnum.WEST: FrameGroupEnum.CAVERN,
              }),
     RoomEnum.BL_RAT_WARREN_19:
-        Room(RoomEnum.BL_RAT_WARREN_19, ZoneEnum.KEEP, "A Warren Below the Warehouse", "a warren below the warehouse",
+        Room(RoomEnum.BL_RAT_WARREN_19, ZoneEnum.RAT_WARREN, "A Warren Below the Warehouse", "a warren below the warehouse",
              [
                  "This room is part of a series of interconnected tunnels. The walls expose earth and rock at irregular "
                  "intervals and the air is moist and foul.  The uneven ground is littered with roots, rat droppings and "
@@ -1392,7 +1454,7 @@ rooms = {
                                           frame_id=FrameGroupEnum.ARCHWAY),
              }),
     RoomEnum.BL_RAT_WARREN_20:
-        Room(RoomEnum.BL_RAT_WARREN_20, ZoneEnum.KEEP, "A well-appointed Ante-room", "a well-appointed ante-room",
+        Room(RoomEnum.BL_RAT_WARREN_20, ZoneEnum.RAT_WARREN, "A well-appointed Ante-room", "a well-appointed ante-room",
              [
                  "The air is fresher in this open space.  A few of the walls have paintings hanging on them and a "
                  "large rug is laid across the center of the room.  In one corner a small divan which might sit a "
@@ -1406,7 +1468,7 @@ rooms = {
                                           frame_id=FrameGroupEnum.ARCHWAY),
              }),
     RoomEnum.BL_RAT_WARREN_21:
-        Room(RoomEnum.BL_RAT_WARREN_21, ZoneEnum.KEEP, "A well-appointed Ante-room", "a well-appointed ante-room",
+        Room(RoomEnum.BL_RAT_WARREN_21, ZoneEnum.RAT_WARREN, "A well-appointed Ante-room", "a well-appointed ante-room",
              [
                  "The air is fresher in this open space.  A few of the walls have paintings hanging on them and a "
                  "large rug is laid across the center of the room.  In one corner a small divan which might sit a "
@@ -1428,7 +1490,7 @@ rooms = {
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_22:
-        Room(RoomEnum.BL_RAT_WARREN_22, ZoneEnum.KEEP, "A well-appointed Ante-room", "a well-appointed ante-room",
+        Room(RoomEnum.BL_RAT_WARREN_22, ZoneEnum.RAT_WARREN, "A well-appointed Ante-room", "a well-appointed ante-room",
              [
                  "The air is fresher in this open space.  A few of the walls have paintings hanging on them and a "
                  "large rug is laid across the center of the room.  In one corner a small divan which might sit a "
@@ -1440,7 +1502,7 @@ rooms = {
                  DirectionEnum.EAST: Exit(RoomEnum.BL_RAT_WARREN_23),
              }),
     RoomEnum.BL_RAT_WARREN_23:
-        Room(RoomEnum.BL_RAT_WARREN_23, ZoneEnum.KEEP, "A Well-Appointed Ante-Rroom", "a well-appointed ante-room",
+        Room(RoomEnum.BL_RAT_WARREN_23, ZoneEnum.RAT_WARREN, "A Well-Appointed Ante-Rroom", "a well-appointed ante-room",
              [
                  "The air is fresher in this open space.  A few of the walls have paintings hanging on them and a "
                  "large rug is laid across the center of the room.  In one corner a small divan which might sit a "
@@ -1464,7 +1526,7 @@ rooms = {
                      ], 3600),
              ]),
     RoomEnum.BL_RAT_WARREN_24:
-        Room(RoomEnum.BL_RAT_WARREN_24, ZoneEnum.KEEP, "A small bedroom", "a small bedroom",
+        Room(RoomEnum.BL_RAT_WARREN_24, ZoneEnum.RAT_WARREN, "A small bedroom", "a small bedroom",
              [
                  "Crowded into this small space is a miniature bed, an armoire and small chest of drawers. "
                  "Small items of decoration adorn the walls and top of the chest."
