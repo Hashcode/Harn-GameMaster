@@ -936,7 +936,7 @@ persons = {
                             Trigger(TriggerTypeEnum.ITEM_GIVE,
                                     Armor("stained quilt tunic", QualityEnum.TER, MaterialEnum.QUILT, ArmorLayer.AL_2, ShapeEnum.TUNIC)),
                             Trigger(TriggerTypeEnum.ITEM_GIVE,
-                                    Item(ItemTypeEnum.MISC, "a large bronze warehouse key", QualityEnum.AVE, MaterialEnum.BRONZE, 1)),
+                                    Item(ItemTypeEnum.MISC, "a large bronze warehouse key", QualityEnum.AVE, MaterialEnum.BRONZE, 0.1)),
                             Trigger(TriggerTypeEnum.QUEST_GIVE, QuestEnum.WAREHOUSE_RATS),
                             Trigger(TriggerTypeEnum.PAUSE, 1),
                             Trigger(TriggerTypeEnum.MESSAGE,
