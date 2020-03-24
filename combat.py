@@ -180,13 +180,13 @@ def CombatantFumble(combatant, att_item):
   if combatant.Person is GameData.GetPlayer():
     cm.Print("\nYou FUMBLE your %s!" %
              (combatant.Attacks[0].Name.lower()),
-             attr=ANSI.TEXT_BOLD)
+             attr=cm.ColorPair(TEXT_COLOR.BRIGHT_YELLOW))
   else:
     cm.Print("\n%s FUMBLES %s %s!" %
              (combatant.Person.Name.capitalize(),
               combatant.Person.AttrSexPossessivePronounStr().lower(),
               combatant.Attacks[0].Name.lower()),
-             attr=ANSI.TEXT_BOLD)
+             attr=cm.ColorPair(TEXT_COLOR.BRIGHT_YELLOW))
   # unequip weapon
   for item in combatant.Person.Items:
     if att_item.UUID == item.UUID and item.Equipped:
