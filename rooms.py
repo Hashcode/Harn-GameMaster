@@ -1,4 +1,4 @@
-# Copyright (c) 2019 Michael Scott
+# Copyright (c) 2019-2020 Michael Scott
 #
 # SPDX-License-Identifier: Apache-2.0
 
