@@ -26,7 +26,7 @@ from global_defines import (attribute_classes, attributes, months, sunsigns,
                             TargetTypeEnum, ConditionCheckEnum,
                             TriggerTypeEnum, RoomEnum, RoomFlag,
                             DirectionEnum, directions, Roll, armor_shapes,
-                            aims, Effect, EffectTypeEnum)
+                            aims, Effect, EffectTypeEnum, SkillEnum)
 from table_melee_attack import (Action)
 from logger import (logv, logd, loge)
 
@@ -741,15 +741,15 @@ def actionSkills(data=None, id=None):
         continue
       appendLine(lines, "%-15s: " % (sk.Name), end="")
       appendLine(lines, "%s" % (attributes[skills[sk_id].Attr1].Abbrev),
-                 cm.ColorPair(attrColor(player.Attr[skills[sk_id].Attr1])),
+                 cm.ColorPair(attrColor(player.GetAttr(skills[sk_id].Attr1))),
                  end="")
       appendLine(lines, "/", end="")
       appendLine(lines, "%s" % (attributes[skills[sk_id].Attr2].Abbrev),
-                 cm.ColorPair(attrColor(player.Attr[skills[sk_id].Attr2])),
+                 cm.ColorPair(attrColor(player.GetAttr(skills[sk_id].Attr2))),
                  end="")
       appendLine(lines, "/", end="")
       appendLine(lines, "%s" % (attributes[skills[sk_id].Attr3].Abbrev),
-                 cm.ColorPair(attrColor(player.Attr[skills[sk_id].Attr3])),
+                 cm.ColorPair(attrColor(player.GetAttr(skills[sk_id].Attr3))),
                  end="")
       appendLine(lines, "  ML:%-3d" % (player.SkillML(sk_id)))
   printPaginate(lines)
@@ -1068,8 +1068,8 @@ def processConditions(room_id, obj, conditions):
           return False
       elif c.TargetType == TargetTypeEnum.ATTR_CHECK:
         r = DiceRoll(1, c.Value).Result()
-        logd("[cond] ATTR_CHECK: %d vs. %d" % (r, player.Attr[c.Data]))
-        if r > player.Attr[c.Data]:
+        logd("[cond] ATTR_CHECK: %d vs. %d" % (r, player.GetAttr(c.Data)))
+        if r > player.GetAttr(c.Data):
           return False
       elif c.TargetType == TargetTypeEnum.SKILL_CHECK:
         res = player.ResolveSkill(c.Value, c.Data)
@@ -1705,7 +1705,7 @@ def actionRest(data=None):
     combat(player, enemies)
   else:
     if player.IP() > 0:
-      r = player.Attr[AttrEnum.AURA]
+      r = player.GetAttr(AttrEnum.AURA)
       for w in sorted(player.Wounds, reverse=True):
         cm.Print("\nYou clean and dress a %s %s %s wound ..." %
                  (wounds[w.WoundType].Name.lower(),
@@ -1834,7 +1834,10 @@ def actionPrintCombatHelp(lines, data):
   appendLine(lines, "")
   appendLine(lines, "%-8s %-5s : %s" % ("AIM", "", aims[combatant.Aim].Name))
   if not combatant.Prone:
-    appendLine(lines, "%-8s %-5s : %s" % ("ATTACK", "[A]", att_name))
+    attr = 0
+    if att[0].SkillID == SkillEnum.UNARMED:
+      attr = cm.ColorPair(TEXT_COLOR.YELLOW)
+    appendLine(lines, "%-8s %-5s : %s" % ("ATTACK", "[A]", att_name), attr)
   appendLine(lines, "%-8s %-5s :" % ("CAST", "[C]"))
   defe_att = combatant.Person.GenerateCombatAttacks(block=True)
   if combatant.DefAction == Action.DODGE or len(defe_att) < 1:
