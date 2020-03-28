@@ -79,7 +79,7 @@ def LoadStatsDB():
   try:
     record = r.json()
     if record["result"] is not None:
-      players = json.loads(record["result"])
+      players = record["result"]
   finally:
     return players
 
