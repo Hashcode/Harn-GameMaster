@@ -130,10 +130,9 @@ class Frame:
 class FrameGroupEnum(IntEnum):
   BLANK = 0
   WALL = 1
-  WALL_TORCH = 2
-  WALL_BRIDGE = 3
-  CAVERN = 4
-  SHORT_WALL = 5
+  WALL_RAIL = 3
+  WALL_CAVERN = 4
+  WALL_SHORT = 5
   ARCHWAY = 10
   DOOR_CLOSED = 20
   DOOR_OPEN = 21
@@ -144,11 +143,19 @@ class FrameGroupEnum(IntEnum):
   PORTCULLIS_CLOSED = 26
   PORTCULLIS_OPEN = 27
   BRIDGE = 30
+  CEILING_TRAPDOOR_CLOSED = 31
+  CEILING_TRAPDOOR_OPEN = 32
+  FLOOR_TRAPDOOR_CLOSED = 33
+  FLOOR_TRAPDOOR_OPEN = 34
+  DECO_TORCH = 100
 
 
 class FrameItemEnum(IntEnum):
   NONE = 0
-  CEILING_OUTSIDE = 1
+  CEILING_BLANK = 1
+  CEILING_OUTSIDE = 2
+  FLOOR_BLANK = 50
+  FLOOR_WOOD = 51
   TREASURE = 100
   RAT = 101
   SPIDER = 102
@@ -158,10 +165,9 @@ class FrameItemEnum(IntEnum):
 frame_groups = {
     FrameGroupEnum.BLANK: FrameGroup(["blank", "blank", "blank"], True),
     FrameGroupEnum.WALL: FrameGroup(["facing_wall", "left_wall", "right_wall"], False),
-    FrameGroupEnum.WALL_TORCH: FrameGroup(["facing_wall_torch", "left_wall_torch", "right_wall_torch"], False),
-    FrameGroupEnum.WALL_BRIDGE: FrameGroup(["facing_wall_bridge", "blank", "blank"], False),
-    FrameGroupEnum.CAVERN: FrameGroup(["facing_cavern", "left_cavern", "right_cavern"], True),
-    FrameGroupEnum.SHORT_WALL: FrameGroup(["facing_short_wall", "left_short_wall", "right_short_wall"], True),
+    FrameGroupEnum.WALL_RAIL: FrameGroup(["facing_wall_rail", "left_wall_rail", "right_wall_rail"], False),
+    FrameGroupEnum.WALL_CAVERN: FrameGroup(["facing_cavern", "left_cavern", "right_cavern"], True),
+    FrameGroupEnum.WALL_SHORT: FrameGroup(["facing_wall_short", "left_wall_short", "right_wall_short"], True),
     FrameGroupEnum.ARCHWAY: FrameGroup(["facing_archway", "left_archway", "right_archway"]),
     FrameGroupEnum.DOOR_CLOSED: FrameGroup(["facing_door_closed", "left_door_closed", "right_door_closed"], False),
     FrameGroupEnum.DOOR_OPEN: FrameGroup(["facing_door_open", "left_door_open", "right_door_open"], True),
@@ -171,12 +177,20 @@ frame_groups = {
     FrameGroupEnum.DRAWBRIDGE_OPEN: FrameGroup(["blank", "blank", "blank"], True),
     FrameGroupEnum.PORTCULLIS_CLOSED: FrameGroup(["facing_portcullis_closed", "blank", "blank"], False),
     FrameGroupEnum.PORTCULLIS_OPEN: FrameGroup(["facing_portcullis_open", "blank", "blank"], True),
-    FrameGroupEnum.BRIDGE: FrameGroup(["facing_bridge", "left_bridge", "right_bridge"], True),
+    FrameGroupEnum.BRIDGE: FrameGroup(["blank", "left_bridge", "right_bridge"], True),
+    FrameGroupEnum.CEILING_TRAPDOOR_CLOSED: FrameGroup(["ceiling_trapdoor_closed", "blank", "blank"], False),
+    FrameGroupEnum.CEILING_TRAPDOOR_OPEN: FrameGroup(["ceiling_trapdoor_open", "blank", "blank"], True),
+    FrameGroupEnum.FLOOR_TRAPDOOR_CLOSED: FrameGroup(["floor_trapdoor_closed", "blank", "blank"], False),
+    FrameGroupEnum.FLOOR_TRAPDOOR_OPEN: FrameGroup(["floor_trapdoor_open", "blank", "blank"], True),
+    FrameGroupEnum.DECO_TORCH: FrameGroup(["facing_deco_torch", "left_deco_torch", "right_deco_torch"], True),
 }
 
 
 frame_items = {
+    FrameItemEnum.CEILING_BLANK: FrameItem("ceiling_blank"),
     FrameItemEnum.CEILING_OUTSIDE: FrameItem("ceiling_outdoors"),
+    FrameItemEnum.FLOOR_BLANK: FrameItem("floor_blank"),
+    FrameItemEnum.FLOOR_WOOD: FrameItem("floor_wood"),
     FrameItemEnum.TREASURE: FrameItem("treasure"),
     FrameItemEnum.RAT: FrameItem("rat"),
     FrameItemEnum.SPIDER: FrameItem("spider"),
